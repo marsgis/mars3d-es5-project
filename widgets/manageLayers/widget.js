@@ -8,6 +8,8 @@
         type: "window",
         url: "view.html",
         windowOptions: {
+          // noTitle: true,
+          // closeBtn: 0,
           width: 250,
           height: 500,
         },

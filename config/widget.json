@@ -18,7 +18,7 @@
   "openAtStart": [
     {
       "name": "POI查询",
-      "uri": "widgets/queryBaiduPOI/widget.js"
+      "uri": "widgets/queryGaodePOI/widget.js"
     },
     {
       "name": "右上角工具栏",

@@ -108,9 +108,9 @@ function initMap(mapOptions) {
   }
 
   //webgl渲染失败后，刷新页面
-  //map.scene.renderError.addEventListener(function (scene, error) {
-  //    window.location.reload();
-  //});
+  // map.on(mars3d.EventType.renderError, function (scene, error) {
+  //   window.location.reload();
+  // });
 
   //绑定单击显示BIM的构件树
   bindShowTilesParts();

@@ -29,46 +29,41 @@
         pid: 99, //图层管理 中使用，父节点id
       });
       //鼠标单击后的信息面板弹窗
-      this.graphicLayer.bindPopup(
-        function (event) {
-          let item = event.graphic?.attr;
-          if (!item) {
-            return;
-          }
-
-          var name;
-          if (item.detail_info && item.detail_info.detail_url) {
-            name = '<a href="' + item.detail_info.detail_url + '"  target="_black" style="color: #ffffff; ">' + item.name + "</a>";
-          } else {
-            name = item.name;
-          }
-
-          var inHtml = '<div class="mars-popup-titile">' + name + '</div><div class="mars-popup-content" >';
-
-          var phone = $.trim(item.tel);
-          if (phone != "") {
-            inHtml += "<div><label>电话</label>" + phone + "</div>";
-          }
-
-          var dz = $.trim(item.address);
-          if (dz != "") {
-            inHtml += "<div><label>地址</label>" + dz + "</div>";
-          }
-
-          if (item.type) {
-            var fl = $.trim(item.type);
-            if (fl != "") {
-              inHtml += "<div><label>类别</label>" + fl + "</div>";
-            }
-          }
-          inHtml += "</div>";
-
-          return inHtml;
-        },
-        {
-          anchor: [0, -10],
+      this.graphicLayer.bindPopup(function (event) {
+        let item = event.graphic?.attr;
+        if (!item) {
+          return;
         }
-      );
+
+        var name;
+        if (item.detail_info && item.detail_info.detail_url) {
+          name = '<a href="' + item.detail_info.detail_url + '"  target="_black" style="color: #ffffff; ">' + item.name + "</a>";
+        } else {
+          name = item.name;
+        }
+
+        var inHtml = '<div class="mars-popup-titile">' + name + '</div><div class="mars-popup-content" >';
+
+        var phone = $.trim(item.tel);
+        if (phone != "") {
+          inHtml += "<div><label>电话</label>" + phone + "</div>";
+        }
+
+        var dz = $.trim(item.address);
+        if (dz != "") {
+          inHtml += "<div><label>地址</label>" + dz + "</div>";
+        }
+
+        if (item.type) {
+          var fl = $.trim(item.type);
+          if (fl != "") {
+            inHtml += "<div><label>类别</label>" + fl + "</div>";
+          }
+        }
+        inHtml += "</div>";
+
+        return inHtml;
+      });
 
       //查询控制器
       this._queryPoi = new mars3d.query.BaiduPOI({
@@ -506,28 +501,28 @@
     showHistoryList() {
       $("#querybar_histroy_view").hide();
 
-      var laststorage = haoutil.storage.get(this.storageName); //读取storage值
-      if (laststorage == null) {
-        return;
-      }
+      localforage.getItem(this.storageName).then((laststorage) => {
+        if (laststorage == null) {
+          return;
+        }
+        this.arrHistory = eval(laststorage);
+        if (this.arrHistory == null || this.arrHistory.length == 0) {
+          return;
+        }
 
-      this.arrHistory = eval(laststorage);
-      if (this.arrHistory == null || this.arrHistory.length == 0) {
-        return;
-      }
-
-      var inhtml = "";
-      for (var index = this.arrHistory.length - 1; index >= 0; index--) {
-        var item = this.arrHistory[index];
-        inhtml += "<li><i class='fa fa-history'/><a href=\"javascript:queryBaiduPOIWidget.autoSearch('" + item + "');\">" + item + "</a></li>";
-      }
-      $("#querybar_ul_history").html(inhtml);
-      $("#querybar_histroy_view").show();
+        var inhtml = "";
+        for (var index = this.arrHistory.length - 1; index >= 0; index--) {
+          var item = this.arrHistory[index];
+          inhtml += "<li><i class='fa fa-history'/><a href=\"javascript:queryBaiduPOIWidget.autoSearch('" + item + "');\">" + item + "</a></li>";
+        }
+        $("#querybar_ul_history").html(inhtml);
+        $("#querybar_histroy_view").show();
+      });
     }
 
     clearHistory() {
       this.arrHistory = [];
-      haoutil.storage.del(this.storageName);
+      localforage.removeItem(this.storageName);
 
       $("#querybar_ul_history").html("");
       $("#querybar_histroy_view").hide();
@@ -536,21 +531,19 @@
     //记录历史值
     addHistory(data) {
       this.arrHistory = [];
-      var laststorage = haoutil.storage.get(this.storageName); //读取storage值
-      if (laststorage != null) {
-        this.arrHistory = eval(laststorage);
-      }
-      //先删除之前相同记录
-      haoutil.array.remove(this.arrHistory, data);
+      localforage.getItem(this.storageName).then((laststorage) => {
+        if (laststorage != null) {
+          this.arrHistory = eval(laststorage);
+        }
+        //先删除之前相同记录
+        haoutil.array.remove(this.arrHistory, data);
+        this.arrHistory.push(data);
 
-      this.arrHistory.push(data);
-
-      if (this.arrHistory.length > 10) {
-        this.arrHistory.splice(0, 1);
-      }
-
-      laststorage = JSON.stringify(this.arrHistory);
-      haoutil.storage.add(this.storageName, laststorage);
+        if (this.arrHistory.length > 10) {
+          this.arrHistory.splice(0, 1);
+        }
+        localforage.setItem(this.storageName, this.arrHistory);
+      });
     }
 
     //======================查询非百度poi，联合查询处理=================
