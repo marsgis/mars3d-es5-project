@@ -35,14 +35,7 @@
           return;
         }
 
-        var name;
-        // if (item.detail_info && item.detail_info.detail_url) {
-        name = `<a href="https://www.amap.com/detail/${item.id}"  target="_black" style="color: #ffffff; ">${item.name}</a>`;
-        // } else {
-        //   name = item.name;
-        // }
-
-        var inHtml = '<div class="mars-popup-titile">' + name + '</div><div class="mars-popup-content" >';
+        var inHtml = `<div class="mars-popup-titile"><a href="https://www.amap.com/detail/${item.id}"  target="_black" style="color: #ffffff; ">${item.name}</a></div><div class="mars-popup-content" >`;
 
         var phone = $.trim(item.tel);
         if (phone != "") {
@@ -380,14 +373,14 @@
       this.clearLayers();
 
       arr.forEach((item) => {
-        var jd = Number(item.x);
-        var wd = Number(item.y);
+        var jd = Number(item.lng);
+        var wd = Number(item.lat);
         if (isNaN(jd) || isNaN(wd)) {
           return;
         }
 
-        item.x = jd;
-        item.y = wd;
+        item.lng = jd;
+        item.lat = wd;
 
         //添加实体
         var graphic = new mars3d.graphic.PointEntity({
@@ -458,8 +451,6 @@
         return;
       }
 
-      this.map.setCameraView({ x: jd, y: wd, minz: 2500 });
-
       //添加实体
       var graphic = new mars3d.graphic.PointEntity({
         position: Cesium.Cartesian3.fromDegrees(jd, wd),
@@ -475,6 +466,8 @@
         },
       });
       this.graphicLayer.addGraphic(graphic);
+
+      graphic.flyTo();
 
       graphic.bindPopup(`<div class="mars-popup-titile">坐标定位</div>
               <div class="mars-popup-content" >

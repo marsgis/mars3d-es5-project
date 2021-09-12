@@ -86,6 +86,10 @@
           this._lastWidget = item.onWidget;
         }
       } else {
+        if (this.config.autoCenter && !layer.options.noCenter) {
+          this.map.cancelFlight();
+        }
+
         //存在关联widget时
         let item = layer.options;
         if (item.onWidget) {
