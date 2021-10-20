@@ -1,4 +1,5 @@
-# Mars3D Vue3 template
+# Mars3D base project - Widget module (native JS) approach
+
  [**English**](./README_EN.md) |[**中文**](./README.md) 
 
 <p>
