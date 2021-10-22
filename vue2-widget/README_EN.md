@@ -2,7 +2,7 @@
 <img src="https://mars3d.cn/logo.png" width="300px" />
 </p>
 
-<p align="center">Mars3d development template based on Widget module (native JS)</p>
+<p align="center">Mars3d widget project template based on Vue version</p>
 
 <p align="center">
 <a target="_black" href="https://github.com/marsgis/mars3d">
@@ -18,24 +18,46 @@
 
  [**English**](./README_EN.md) |[**中文**](./README.md) 
 
- 🌎 The Mars3D platform foundation project under the `native JS` technology stack uses widget modules to organize functions.
+   🌎 Mars3d platform, the project template of widget mode under `Vue technology stack`, based on vuecli 4. X.
+     
 
+ > For other technology stacks, please refer to： [https://github.com/marsgis/mars3d](https://github.com/marsgis/mars3d)
  
-
-## Subdirectories
   
-| Directory  |Technology stack  |   Instructions  | 
-|  ----  |---- | ----  |
-|[es5-widget](./es5-widget/README.md)	| Native JS | Can be combined with JSP, ASP.NET, PHP, native JS and other technologies, do not rely on any framework| 
-|[vue2-widget](./vue2-widget/README.md)	| vue2.x | It can be used in combination with the vue2. X technology below| 
+## Project description
+1. Some third-party libraries are not imported in NPM mode, but in static resource mode in the homepage head. Resources are placed in the public directory. 
+
+2. The files in the public directory are exactly the same as the directories and files of `the mars3d basic project`, and can be directly copied to this directory for updating.
+
+3. The widgets directory under public is some widget modules written in the previous traditional JS method. At present, it is not rewritten as Vue. At present, it is introduced statically for compatibility.  
+  For newly developed business functions, please write them in Vue mode in SRC directory instead of using the original widget mode.
+ 
+### Update project
+ Class libraries and widgets in this scaffold are not guaranteed to be the latest version
+ Please copy the config, img, lib and widgets directories of "the basic project" and overwrite them in the public directory of the current project
 
 
 
+## Run command
+ 
+### Install dependencies before first run
+ `npm install` or `cnpm install`
+ 
+### http run project
+ `npm run serve` after run access：`http://localhost:3001/` 
 
-## Operation effect 
+### Package and compile project
+ Run `npm run build` to build the project.
+
+
+
+## Operation effect
  [online Demo](http://mars3d.cn/project/jcxm/)  
 
  ![image](http://mars3d.cn/img/jcxm.jpg)
+ 
+
+ 
  
 
 ## What is Mars3D
@@ -43,11 +65,11 @@
 
  > Mars3d platform can be used to build 3D GIS applications without plug-ins, across operating systems and across browsers. The platform uses WebGL for hardware accelerated graphics, and realizes real dynamic big data 3D visualization across platforms and browsers. The Mars3D product can quickly realize beautiful and smooth 3D map presentation and spatial analysis on browsers and mobile terminals.
 
-### Related websites
-- Mars3D official website: [http://mars3d.cn](http://mars3d.cn)
+### Related websites 
+- Mars3D official website：[http://mars3d.cn](http://mars3d.cn)  
 
-- Making navigation list: [https://github.com/marsgis/mars3d](https://github.com/marsgis/mars3d)
- 
+- GitHub navigation lis：[https://github.com/marsgis/mars3d](https://github.com/marsgis/mars3d)
+
 
 ## Copyright notice
 1. Any `individual or organization` can use it `free and unrestricted` in compliance with the relevant requirements of mars3d.
