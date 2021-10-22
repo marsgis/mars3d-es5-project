@@ -52,7 +52,7 @@ function _getNodeConfig(layer) {
 
   var item = layer.options;
 
-  if (!item.name) {
+  if (!item.name || item.name == "未命名") {
     console.log("未命名图层不加入图层管理", layer);
     return;
   }
