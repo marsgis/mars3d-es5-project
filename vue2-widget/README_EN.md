@@ -21,7 +21,7 @@
    🌎 Mars3d platform, the project template of widget mode under `Vue technology stack`, based on vuecli 4. X.
      
 
- > For other technology stacks, please refer to： [https://github.com/marsgis/mars3d](https://github.com/marsgis/mars3d)
+
  
   
 ## Project description

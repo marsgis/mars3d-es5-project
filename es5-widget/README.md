@@ -2,7 +2,7 @@
 <img src="https://mars3d.cn/logo.png" width="300px" />
 </p>
 
-<p align="center">基于ES5传统版(含widget模块)的Mars3d开发模板</p>
+<p align="center">基于 原生JS下widget模块 的 Mars3D🌎基础项目模板（ES5版）</p>
 
 <p align="center">
 <a target="_black" href="https://github.com/marsgis/mars3d">
@@ -19,9 +19,8 @@
  [**English**](./README_EN.md) |[**中文**](./README.md) 
 
 
- 🌎 传统模式Web前端技术栈下的一个具备widget基础功能的[Mars3D](http://mars3d.cn)应用的三维地球项目模版
+  传统模式Web前端技术栈下的一个具备widget基础功能的[Mars3D](http://mars3d.cn)应用的三维地球项目模版
  
-   其他技术栈，请参考 [Mars3D开源导航](https://github.com/marsgis/mars3d)
  
  
 ## 项目说明
@@ -50,8 +49,9 @@
 ### 相关网站 
 - Mars3D官网：[http://mars3d.cn](http://mars3d.cn)  
 
-- GitHub导航列表：[https://github.com/marsgis/mars3d](https://github.com/marsgis/mars3d)
+- Mars3D开源项目列表：[https://github.com/marsgis/mars3d](https://github.com/marsgis/mars3d)
 
 
 ## 版权说明
-1. 任何`个人或组织`可以在遵守Mars3D相关要求下`免费无限制`使用。
+1. Mars3D平台由[火星科技](http://marsgis.cn/)自主研发，拥有所有权利。
+2. 任何个人或组织可以在遵守相关要求下可以免费无限制使用。
