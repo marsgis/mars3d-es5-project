@@ -50,7 +50,7 @@
 
       "defaultContextMenu": true,
       "mouseDownView": true,
-      "compass": { "bottom": "240px", "right": "5px" },
+      "compass": { "bottom": "toolbar", "right": "5px" },
       "distanceLegend": { "left": "100px", "bottom": "2px" },
       "locationBar": {
         "fps": false,
@@ -479,18 +479,17 @@
         "name": "安徽各市",
         "url": "{dataServer}/file/geojson/areas/340000_full.json",
         "symbol": {
+          "type": "polygon",
           "styleOptions": {
-            "fill": true,
-            "opacity": 0.5,
-            "outline": true,
-            "outlineColor": "#FED976",
-            "outlineWidth": 3,
-            "outlineOpacity": 1,
-            "perPositionHeight": false,
+            "materialType": "PolyGradient",
+            "color": "rgb(15,176,255)",
+            "opacity": 0.7,
+            "alphaPower": 1.3,
+            "diffHeight":"{gdp}",
             "label": {
               "text": "{name}",
               "opacity": 1,
-              "font_size": 30,
+              "font_size": 25,
               "color": "#ffffff",
               "outline": true,
               "outlineColor": "#000000",
@@ -516,6 +515,7 @@
         "name": "中国省界",
         "url": "{dataServer}/file/geojson/areas/100000_full.json",
         "symbol": {
+          "type":"polylineP",
           "styleOptions": {
             "color": "#ffffff",
             "width": 2,

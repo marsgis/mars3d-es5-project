@@ -42,11 +42,6 @@
     var libpath = targetScript.getAttribute('libpath') || ''
 
 
-    //为了节省github空间，没有上传lib下面的类库到github
-    //如果离线使用，可以从  http://mars3d.cn/download/lib.rar  下载后覆盖lib目录，并注释下面一行代码
-    libpath = "//mars3d.cn/lib/"
-
-
     if (libpath.lastIndexOf('/') !== libpath.length - 1) {
       libpath += '/'
     }
@@ -216,7 +211,7 @@
       ],
 
       // 'mars3d': [
-      //   //三维地球“主库”
+      //   //三维地球“主库”(本地的)
       //   libpath + 'Cesium/Widgets/widgets.css', //cesium
       //   libpath + 'Cesium/Cesium.js',
       //   // libpath + 'mars3d/plugins/compatible/cesium-version.js', //cesium版本兼容处理
@@ -225,10 +220,10 @@
       // ],
       'mars3d': [
         //三维地球“主库” CDN版本
-        'https://cdn.jsdelivr.net/npm/mars3d-cesium/Build/Cesium/Widgets/widgets.css', //cesium
-        'https://cdn.jsdelivr.net/npm/mars3d-cesium/Build/Cesium/Cesium.js',
+        'https://cdn.jsdelivr.net/npm/mars3d-cesium/Build/Cesium/Widgets/widgets.css', //cesium  
+        'https://cdn.jsdelivr.net/npm/mars3d-cesium/Build/Cesium/Cesium.js', 
         'https://cdn.jsdelivr.net/npm/mars3d/dist/mars3d.css', //mars3d
-        'https://cdn.jsdelivr.net/npm/mars3d/dist/mars3d.js',
+        'https://cdn.jsdelivr.net/npm/mars3d/dist/mars3d.js', 
       ],
     }
 

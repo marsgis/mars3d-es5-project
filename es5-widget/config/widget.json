@@ -88,7 +88,8 @@
         "max-width": "300px"
       },
       "autoDisable": false,
-      "disableOther": false
+      "disableOther": false,
+      "openAtStart": false
     },
     {
       "name": "剖面分析图表",
