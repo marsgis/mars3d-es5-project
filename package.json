@@ -1,5 +1,5 @@
 {
-  "name": "mars3d-vue2-template",
+  "name": "mars3d-widget-project",
   "version": "3.1.0",
   "description": "Mars3D平台,Vue最简项目模版",
   "main": "index.js",
@@ -8,10 +8,10 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/marsgis/mars3d-vue2-template.git"
+    "url": "https://github.com/marsgis/mars3d-widget-project.git"
   },
   "bugs": {
-    "url": "https://github.com/marsgis/mars3d-vue2-template/issues",
+    "url": "https://github.com/marsgis/mars3d-widget-project/issues",
     "email": "wh@marsgis.cn"
   },
   "keywords": [
