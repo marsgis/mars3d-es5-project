@@ -100,6 +100,10 @@ const instance = getCurrentInstance()
 const mars3d = instance?.appContext.config.globalProperties.mars3d;
 const Cesium = instance?.appContext.config.globalProperties.Cesium;
 ```
+ 
+5. ### 下载最新lib
+从[http://mars3d.cn/download](http://mars3d.cn/download)下载最新mars3d类库后覆盖至`public/lib/`目录下即可。
+
 
  
 ## Mars3D 是什么 

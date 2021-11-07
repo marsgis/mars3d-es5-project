@@ -30,6 +30,11 @@
 3. public下面的widgets目录为之前传统js方式编写的一些widget模块，目前未重写为vue，当前为了兼容使用是静态引入的方式。  
   新开发业务功能请在src目录下按vue方式去编写，不要使用原有的widget方式。
  
+ 
+### 下载最新lib
+从[http://mars3d.cn/download](http://mars3d.cn/download)下载最新mars3d类库后覆盖至`public/lib/`目录下即可。
+
+
 ### 更新项目
  此脚手架中类库和widgets不保证是最新版本
  请您自行拷贝"基础项目"的 config、img、lib和widgets目录覆盖至当前项目的public目录下

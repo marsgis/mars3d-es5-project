@@ -30,6 +30,10 @@
 ### 使用说明
  在任意开发编辑器（如vscode等）或http服务器(如node、nginx、tomcat、IIS等)下直接运行浏览index.html即可
 
+### 下载最新lib
+从[http://mars3d.cn/download](http://mars3d.cn/download)下载最新mars3d类库后覆盖至`lib/`目录下即可。
+
+
 ### 压缩及混淆
  build整站压缩及混淆：[https://github.com/muyao1987/web-dist](https://github.com/muyao1987/web-dist)
 
