@@ -47,65 +47,7 @@
       },
 
       //载入 CSS 依赖
-      link: function (href, fn, cssname) {
-        return;
-        //未设置路径，则不主动加载css
-        if (!layer.path) {
-          return;
-        }
-
-        var head = document.getElementsByTagName("head")[0],
-          link = document.createElement("link");
-
-        if (typeof fn === "string") {
-          cssname = fn;
-        }
-
-        var app = (cssname || href).replace(/\.|\//g, "");
-        var id = "layuicss-" + app,
-          STAUTS_NAME = "creating",
-          timeout = 0;
-
-        link.rel = "stylesheet";
-        link.href = layer.path + href;
-        link.id = id;
-
-        if (!document.getElementById(id)) {
-          head.appendChild(link);
-        }
-
-        if (typeof fn !== "function") {
-          return;
-        }
-
-        //轮询 css 是否加载完毕
-        (function poll(status) {
-          var delay = 100,
-            getLinkElem = document.getElementById(id); //获取动态插入的 link 元素
-
-          //如果轮询超过指定秒数，则视为请求文件失败或 css 文件不符合规范
-          if (++timeout > (10 * 1000) / delay) {
-            return window.console && console.error(app + ".css: Invalid");
-          }
-
-          //css 加载就绪
-          if (parseInt(ready.getStyle(getLinkElem, "width")) === 1989) {
-            //如果参数来自于初始轮询（即未加载就绪时的），则移除 link 标签状态
-            if (status === STAUTS_NAME) {
-              getLinkElem.removeAttribute("lay-status");
-            }
-            //如果 link 标签的状态仍为「创建中」，则继续进入轮询，直到状态改变，则执行回调
-            getLinkElem.getAttribute("lay-status") === STAUTS_NAME ? setTimeout(poll, delay) : fn();
-          } else {
-            getLinkElem.setAttribute("lay-status", STAUTS_NAME);
-            setTimeout(function () {
-              poll(STAUTS_NAME);
-            }, delay);
-          }
-
-          //parseInt(ready.getStyle(document.getElementById(id), 'width')) === 1989 ? fn() : setTimeout(poll, 1000);
-        })();
-      },
+      link: function (href, fn, cssname) {},
     };
 
   var admuiIframe = null;

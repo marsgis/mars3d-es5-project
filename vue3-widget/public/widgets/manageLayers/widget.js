@@ -15,10 +15,6 @@
         },
       };
     }
-    //是否可以控制basemaps，因为有底图控制了，具体项目中可以按需改为false
-    get hasManagerBaseMaps() {
-      return true;
-    }
 
     //初始化[仅执行1次]
     create() {}
@@ -58,7 +54,7 @@
 
     getLayers() {
       return this.map.getLayers({
-        basemaps: true, //是否取config.json中的basempas
+        basemaps: true, //是否取config.json中的basempas  ，因为有底图控制了，具体项目中可以按需改为false
         layers: true, //是否取config.json中的layers
       });
     }

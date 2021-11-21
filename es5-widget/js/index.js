@@ -76,7 +76,9 @@ function initMap(mapOptions) {
   }
 
   //开场动画
-  map.openFlyAnimation();
+  if (window.location.hostname.indexOf("127.0.0.1") == -1) {
+    map.openFlyAnimation();
+  }
 
   //针对不同终端的优化配置
   if (haoutil.system.isPCBroswer()) {
@@ -94,6 +96,7 @@ function initMap(mapOptions) {
   } else {
     //鼠标滚轮放大的步长参数
     map.scene.screenSpaceCameraController._zoomFactor = 5.0;
+    map.scene.screenSpaceCameraController.enableTilt = false;
 
     //移动设备上禁掉以下几个选项，可以相对更加流畅
     map.viewer.requestRenderMode = true; //取消实时渲染

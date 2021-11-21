@@ -1,6 +1,6 @@
 /* MVT加载类 作者： 木遥（微信:  http://marsgis.cn/weixin.html ） */
-;(function (window) {
-  function MvtImageryProvider(options) {
+; (function (window) {
+  function MvtImageryProvider (options) {
     options = Cesium.defaultValue(options, Cesium.defaultValue.EMPTY_OBJECT)
     this.options = options
 
@@ -33,17 +33,28 @@
     this._ol = window.ol
     this._mvtParser = new this._ol.format.MVT()
 
-    switch (options.style) {
-      case 'mapbox-streets-v6':
-        this._styleClass = new mars3d.MapboxStreetsV6()
-        break
-      default:
-        this._styleClass = options.style
-        break
-    }
 
     this._key = Cesium.defaultValue(options.key, '')
     this._url = Cesium.defaultValue(options.url, '')
+
+    if (options.styleConfig) {
+      //(glStyle, sources, resolutions = defaultResolutions, spriteData, spriteImageUrl, getFonts)
+      this._styleClass = window.olms.stylefunction(options.styleConfig, options.styleConfig.sources, "", null, null)
+      // this._url = options.styleConfig.tiles[0]
+    }
+    else if (options.style) {
+      switch (options.style) {
+        case 'mapbox-streets-v6':
+          this._styleClass = new mars3d.MapboxStreetsV6()
+          break
+        default:
+          this._styleClass = options.style
+          break
+      }
+    }
+
+
+
 
     var sw = this._tilingScheme._rectangleSouthwestInMeters
     var ne = this._tilingScheme._rectangleNortheastInMeters
@@ -203,7 +214,7 @@
     }
   }
 
-  function findTileInQueue(x, y, level, tileQueue) {
+  function findTileInQueue (x, y, level, tileQueue) {
     var item = tileQueue.head
     while (item != undefined && !(item.xMvt == x && item.yMvt == y && item.zMvt == level)) {
       item = item.replacementNext
@@ -211,7 +222,7 @@
     return item
   }
 
-  function removeQueue(tileReplacementQueue, item) {
+  function removeQueue (tileReplacementQueue, item) {
     var previous = item.replacementPrevious
     var next = item.replacementNext
 
@@ -237,7 +248,7 @@
     --tileReplacementQueue.count
   }
 
-  function trimTiles(tileQueue, maximumTiles) {
+  function trimTiles (tileQueue, maximumTiles) {
     var tileToTrim = tileQueue.tail
     while (tileQueue.count > maximumTiles && Cesium.defined(tileToTrim)) {
       var previous = tileToTrim.replacementPrevious
@@ -251,14 +262,41 @@
   }
 
 
-
   class MvtLayer extends mars3d.layer.BaseTileLayer {
+    _addedHook () {
+      let styleUrl = this.options.style
+      if (mars3d.Util.isString(styleUrl) && styleUrl.endsWith(".json")) {
+        this.getPbfStyle(styleUrl).then((data) => {
+          if (this.isAdded) {
+            super._addedHook();
+          }
+        });
+      } else {
+        super._addedHook();
+      }
+    }
     //构建ImageryProvider
-    _createImageryProvider(options) {
+    _createImageryProvider (options) {
       return createImageryProvider(options)
     }
+
+    //取样式数据
+    getPbfStyle (styleUrl) {
+      return mars3d.Resource.fetchJson({
+        url: styleUrl,
+        queryParameters: {
+          access_token: this.options.key || "mars3d"
+        }
+      }).then((json) => {
+        this.options.styleConfig = json
+      })
+        .otherwise(function (error) {
+          console.log("加载样式出错", error);
+        });
+    }
   }
-  function createImageryProvider(options) {
+
+  function createImageryProvider (options) {
     return new MvtImageryProvider(options)
   }
   MvtLayer.createImageryProvider = createImageryProvider

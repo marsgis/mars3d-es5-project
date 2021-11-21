@@ -146,6 +146,7 @@
       //单击地图事件
       this.map.on(mars3d.EventType.clickMap, this.onMapClick, this);
       this.map.on(mars3d.EventType.cameraChanged, this.onMapCameraChanged, this);
+      this.onMapCameraChanged();
     }
     //关闭释放
     disable() {
