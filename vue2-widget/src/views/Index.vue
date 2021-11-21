@@ -15,16 +15,20 @@ export default {
   },
 
   data() {
-    let basePathUrl = window.basePathUrl || ''
+    const basePathUrl = window.basePathUrl || ''
     return {
       configUrl: basePathUrl + 'config/config.json',
-      widgetUrl: basePathUrl + "config/widget.json"
+      widgetUrl: basePathUrl + 'config/widget.json'
     }
   },
 
   methods: {
     // 地图构造完成回调
     onMapload(map) {
+      map.on('centerXY', function (event) {
+        console.log('在widget进行了坐标定位', event)
+      })
+
       // 以下为演示代码
 
       // 创建entity图层

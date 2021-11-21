@@ -90,6 +90,10 @@
       if (iscenter) {
         this.map.flyToGraphic(this.graphic, { radius: 2000 });
       }
+
+
+      //演示传递给vue使用
+      this.map.fire("centerXY",{position:position })
     }
 
 
