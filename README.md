@@ -27,8 +27,12 @@
 |  ----  |---- | ----  |
 |[es5-widget](./es5-widget/README.md)	| 原生JS | 可以与jsp、asp.net、php、原生js等技术下面结合使用，不依赖任何框架| 
 |[vue2-widget](./vue2-widget/README.md)	| vue2.x | 可以vue2.x技术下面结合使用| 
+|[vue3-widget](./vue3-widget/README.md)	| vue3.x | 可以vue3.x技术下面结合使用| 
 
 
+
+### 教程
+ [widget模式教程](http://mars3d.cn/dev/guide/project/widget.html)
 
 
 ### 运行效果 
