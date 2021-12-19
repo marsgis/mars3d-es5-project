@@ -10268,7 +10268,7 @@ declare namespace TilesetLayer {
 
 /**
  * 3dtiles 三维模型图层。
- * @param options - 参数对象， 构造参数建议从{@link https://cdn.jsdelivr.net/gh/marsgis/mars3d-es5-example/example/gh/marsgis/mars3d-es5-example/example/g20_3dtiles_edit.html|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
+ * @param options - 参数对象， 构造参数建议从{@link https://cdn.jsdelivr.net/gh/marsgis/mars3d-es5-example/example/g20_3dtiles_edit.html|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
  * @param [options.通用参数] - 包含父类支持的所有参数
  * @param options.url - tileset的主JSON文件的 url
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。数值加大，能让最终成像变模糊
