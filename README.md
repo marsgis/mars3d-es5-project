@@ -30,6 +30,10 @@
 |[vue3-widget](./vue3-widget/README.md)	| vue3.x | 可以vue3.x技术下面结合使用| 
 
 
+### 插件源码
+mars3d-widget插件源码可以访问：[https://github.com/marsgis/mars3d-plugin](https://github.com/marsgis/mars3d-plugin/)
+
+
 
 ### 教程
  [widget模式教程](http://mars3d.cn/dev/guide/project/widget.html)
