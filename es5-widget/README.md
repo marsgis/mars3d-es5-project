@@ -93,7 +93,7 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 
  ![image](/dev/img/guide/start-includeLib-ml.jpg) 
 
-为了方便切换和引入第3方lib，我们编写了一个独立的js文件[include-lib.js](https://cdn.jsdelivr.net/gh/marsgis/mars3d-es5-example/lib//include-lib.js)来统一调用使用第3方lib,在需要的页面按下面方式引入lib：
+为了方便切换和引入第3方lib，我们编写了一个独立的js文件[include-lib.js](https://unpkg.com/marsgis-lib/lib//include-lib.js)来统一调用使用第3方lib,在需要的页面按下面方式引入lib：
 ```html
 <!--第三方lib-->
 <script type="text/javascript" src="../lib/include-lib.js" libpath="../lib/"
