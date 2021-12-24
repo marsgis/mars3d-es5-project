@@ -22,56 +22,24 @@
  
 
  
- 
 ## 项目介绍
 
-这是一个基于传统模式Web前端技术栈下的一个具备widget基础功能的[Mars3D](http://mars3d.cn)应用的三维地球项目模版，我们称之为“基础项目”。
+Mars3D基础项目 是基于[Mars3D平台](http://mars3d.cn)做的一个应用系统，提供的一个基础项目模版，包含常用基础地图功能，可在该基础项目上快速开发搭建新项目。方便快速搭建三维地图产品，敏捷开发，可复用，支持各种配置，适合各种场景使用。
 
-[基础项目 (widget方式)](http://mars3d.cn/project/jcxm/index.html)是我们已经开发完成，并多年来应用于无数项目，归纳总结的一个基础的项目模版，包含常用基础地图功能，可在该基础项目上快速开发搭建新项目。
-电子沙盘、综合态势等系统代码内部结构和基础项目类同，只是在widget功能数量和样式上有所不同。
-
- ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
- 
-
-  
-## 项目说明
-1. 部分第三方库不是npm方式引入，是主页head中静态资源方式引入的。资源放在public目录下。 
-
-2. public目录下文件与 Mars3D基础项目 的目录和文件完全相同，可以直接复制到该目录下进行更新。
-
-3. public下面的widgets目录为之前传统js方式编写的一些widget模块，目前未重写为vue，当前为了兼容使用是静态引入的方式。  
-  新开发业务功能请在src目录下按vue方式去编写，不要使用原有的widget方式。
-  
-
-## 运行命令
- 
-### 首次运行前安装依赖
- `npm install` 或 `cnpm install`
- 
-### http运行项目
- `npm run serve`  运行后访问：`http://localhost:3001/` 
-
-### 打包编译项目
- 运行`npm run build`来构建项目。 
+原生JS版 (widget方式) 的特点：
+1. 基于**传统模式原生JS**技术栈下开发的
+2. 使用[mars3d-widget](https://gitee.com/marsgis/mars3d-plugin/tree/master/mars3d-plugin-widget)插件进行模块化封装调用各功能
+3. 火星科技在传统技术栈时(vue还没成熟流行时)多年来应用于无数项目，归纳总结的一个基础的项目模版
 
 
-### 运行效果 
- [在线Demo](http://mars3d.cn/project/jcxm/)  
-
- ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
 
 
-### 更新项目
- 此脚手架中类库和widgets不保证是最新版本
- 请您自行拷贝"基础项目"的 config、img、lib和widgets目录覆盖至当前项目的public目录下
- 
+## 运行效果 
+访问[基础项目在线](http://mars3d.cn/project/jcxm/index.html)体验效果和功能
 
-### 下载最新lib
- 从[http://mars3d.cn/download](http://mars3d.cn/download)下载最新mars3d类库后覆盖至`public/lib/`目录下即可。
+ ![image](https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/xm/jcxm/1.jpg)
 
 
-### 压缩及混淆
- build整站压缩及混淆：[https://github.com/muyao1987/web-dist](https://github.com/muyao1987/web-dist)
 
 
 
@@ -91,7 +59,9 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 - 有很多可配置的参数，无需代码即可按需配置自动释放激活、界面位置、大小等。
 
 
-> 保留使用 widget模块化 方式，并不是指我们不用vue等现代化技术栈，目前我们也有Vue版基础项目在使用，目前尚未公开，后续合适时间会公开发布。
+> 保留使用 widget模块化 方式，并不是指我们不用vue等现代化技术栈，而是具体按公司人员研发水平和技术栈情况按需选择，适合自己的才是最好的。
+
+
 
 
 ## 2. 基础项目
@@ -102,7 +72,7 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 - `widgets目录`为模块功能目录，也可以按业务分在多个目录中，比如`widgetsTS目录`
 
 
- ![image](/dev/img/guide/project-widget-jxcm.jpg) 
+ ![image](https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/xm/jcxm/1.jpg) 
 
 ### 2.1 下载代码
 目前我们已经开源了基础项目的基础框架和一些部分widget。可以从下面链接下载代码：
@@ -110,10 +80,15 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 1. 国外Github:[https://github.com/marsgis/mars3d-widget-project](https://github.com/marsgis/mars3d-widget-project)
 2. 国内Gitee [https://gitee.com/marsgis/mars3d-widget-project](https://gitee.com/marsgis/mars3d-widget-project)
 
+
+在任意开发编辑器（如vscode等）或http服务器(如node、nginx、tomcat、IIS等)下直接运行浏览index.html即可
   
+>电子沙盘、综合态势等系统代码内部结构和基础项目类同，只是在widget功能数量和样式上有所不同。
+
+
 ::: danger 
 如果需要所有功能模块的widget和其他一些项目模板，需要联系我们付费购买 项目源代码。
-:::
+::: 
 
 
 

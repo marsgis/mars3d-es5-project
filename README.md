@@ -30,13 +30,23 @@
 |[vue3-widget](./vue3-widget/README.md)	| vue3.x | 可以vue3.x技术下面结合使用| 
 
 
+
+## 项目介绍
+
+Mars3D基础项目 是基于[Mars3D平台](http://mars3d.cn)做的一个应用系统，提供的一个基础项目模版，包含常用基础地图功能，可在该基础项目上快速开发搭建新项目。方便快速搭建三维地图产品，敏捷开发，可复用，支持各种配置，适合各种场景使用。
+
+原生JS版 (widget方式) 的特点：
+1. 基于**传统模式原生JS**技术栈下开发的
+2. 使用[mars3d-widget](https://gitee.com/marsgis/mars3d-plugin/tree/master/mars3d-plugin-widget)插件进行模块化封装调用各功能
+3. 火星科技在传统技术栈时(vue还没成熟流行时)多年来应用于无数项目，归纳总结的一个基础的项目模版
+ 
+### 教程
+ [widget模式教程](http://mars3d.cn/dev/guide/project/widget.html)
+
+
 ### 插件源码
 mars3d-widget插件源码可以访问：[https://github.com/marsgis/mars3d-plugin](https://github.com/marsgis/mars3d-plugin/)
 
-
-
-### 教程
- [widget模式教程](http://mars3d.cn/dev/guide/project/widget.html)
 
 
 ### 运行效果 
@@ -44,9 +54,7 @@ mars3d-widget插件源码可以访问：[https://github.com/marsgis/mars3d-plugi
 
  ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
  
-
-
-
+ 
 
 ## Mars3D 是什么 
 >  `Mars3D平台` 是[火星科技](http://marsgis.cn/)研发的一款基于 WebGL 技术实现的三维客户端开发平台，基于[Cesium](https://cesium.com/cesiumjs/)优化提升与B/S架构设计，支持多行业扩展的轻量级高效能GIS开发平台，能够免安装、无插件地在浏览器中高效运行，并可快速接入与使用多种GIS数据和三维模型，呈现三维空间的可视化，完成平台在不同行业的灵活应用。
