@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/logo.png" width="300px" />
+<img src="https://muyao1987.gitee.io/cdn/mars3d.cn/logo.png" width="300px" />
 </p>
 
 <p align="center">基于 原生JS下widget模块 的 Mars3D🌎基础项目模板（ES5版）</p>
@@ -27,7 +27,7 @@
 [基础项目 (widget方式)](http://mars3d.cn/project/jcxm/index.html)是我们已经开发完成，并多年来应用于无数项目，归纳总结的一个基础的项目模版，包含常用基础地图功能，可在该基础项目上快速开发搭建新项目。
 电子沙盘、综合态势等系统代码内部结构和基础项目类同，只是在widget功能数量和样式上有所不同。
 
- ![image](https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/xm/jcxm/1.jpg)
+ ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
 
 ### 使用说明
  在任意开发编辑器（如vscode等）或http服务器(如node、nginx、tomcat、IIS等)下直接运行浏览index.html即可
@@ -35,7 +35,7 @@
 ### 运行效果 
  [在线Demo](http://mars3d.cn/project/jcxm/)  
 
- ![image](https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/xm/jcxm/1.jpg)
+ ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
 
 ### 下载最新lib
  建议从[http://mars3d.cn/download](http://mars3d.cn/download)下载最新mars3d类库后覆盖至`lib/`目录下即可。

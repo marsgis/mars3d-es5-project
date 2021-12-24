@@ -8,7 +8,7 @@ GL:https://github.com/ecomfe/echarts-gl
 水球：https://github.com/ecomfe/echarts-liquidfill
 
 
-本地版本：echarts-5.2.0 , echarts-gl-2.0.8
+本地版本：echarts-5.2.2 , echarts-gl-2.0.8
 更新日期：
 
 介绍：

@@ -90,6 +90,10 @@
       if (iscenter) {
         this.map.flyToGraphic(this.graphic, { radius: 2000 });
       }
+
+
+      //演示：抛出事件，在其他widget或vue中监听使用
+      mars3d.widget.fire("centerXY",{position:position })
     }
 
 

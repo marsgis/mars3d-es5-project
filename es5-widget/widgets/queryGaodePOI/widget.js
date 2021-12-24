@@ -134,7 +134,9 @@
     activate() {
       this.map.addLayer(this.graphicLayer);
 
-      $(".mars3d-locationbar").append('<div id="queryAddress" class="mars3d-locationbar-content" style="margin-right: 50px;"></div>');
+      $(".mars3d-locationbar").append(
+        '<div id="queryAddress" class="mars3d-locationbar-content mars3d-locationbar-autohide" style="margin-right: 50px;"></div>'
+      );
 
       //单击地图事件
       this.map.on(mars3d.EventType.clickMap, this.onMapClick, this);
