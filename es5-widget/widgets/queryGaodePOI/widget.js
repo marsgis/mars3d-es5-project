@@ -116,6 +116,13 @@
 
         var queryVal = $.trim($("#txt_querypoi").val());
         this.strartQueryPOI(queryVal, true);
+
+        // //演示：抛出事件
+        // let layer = this.map.getLayer(203012, "id"); //文庙图层
+        // layer.show = true; //为了演示勾选
+        // this.map.addLayer(layer);
+
+        // mars3d.widget.fire("checkLayer", { layer });
       });
       //绑定回车键
       $("#txt_querypoi").bind("keydown", (event) => {

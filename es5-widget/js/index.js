@@ -120,11 +120,10 @@ function initMap(mapOptions) {
 
   //下面可以继续加项目相关的其他代码
 
-
   //演示：接收的widget内抛出的事件
-  mars3d.widget.on('centerXY', function (event) {
-    console.log('在widget进行了坐标定位', event)
-  })
+  mars3d.widget.on("centerXY", function (event) {
+    console.log("在widget进行了坐标定位", event);
+  });
 }
 
 //初始化widget相关

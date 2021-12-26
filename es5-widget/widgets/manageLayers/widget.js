@@ -17,7 +17,16 @@
     }
 
     //初始化[仅执行1次]
-    create() {}
+    create() {
+      //演示，监听事件
+      // mars3d.widget.on("checkLayer", (event) => {
+      //   if (!this.isActivate || !this.viewWindow) {
+      //     return;
+      //   }
+      //   var layer = event.layer;
+      //   this.viewWindow.updateNode(layer);
+      // });
+    }
     //每个窗口创建完成后调用
     winCreateOK(opt, result) {
       this.viewWindow = result;

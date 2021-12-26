@@ -1,5 +1,4 @@
 (function (window, mars3d) {
-
   //全局中间变量
   let currJD;
   let currWD;
@@ -8,11 +7,11 @@
   //创建widget类，需要继承BaseWidget
   class MyWidget extends mars3d.widget.BaseWidget {
     //外部资源配置
-    get resources () {
+    get resources() {
       return ["view.css"];
     }
     //弹窗配置
-    get view () {
+    get view() {
       return {
         type: "divwindow",
         url: "view.html",
@@ -24,27 +23,25 @@
     }
 
     //每个窗口创建完成后调用
-    winCreateOK (opt, result) {
-
+    winCreateOK(opt, result) {
       var point = this.map.getCenter();
       point.format();
       currJD = point.lng;
       currWD = point.lat;
       currGD = point.alt;
 
-      this.chooseEvent() //事件处理
+      this.chooseEvent(); //事件处理
       this.updateTen();
     }
     //激活插件
-    activate () {
+    activate() {
       //单击地图事件
       $("#btnSelectPoint").click(() => {
         this.map.once(mars3d.EventType.click, this.onMapClick, this);
-      })
-
+      });
     }
     //释放插件
-    disable () {
+    disable() {
       //释放单击地图事件
       this.map.off(mars3d.EventType.click, this.onMapClick, this);
 
@@ -54,7 +51,7 @@
       }
     }
 
-    onMapClick (event) {
+    onMapClick(event) {
       var cartesian = event.cartesian;
       if (cartesian) {
         var point = mars3d.LatLngPoint.fromCartesian(cartesian);
@@ -67,11 +64,10 @@
         this.updateMarker(point);
 
         this.updateTen();
-
       }
     }
     //点击地图坐标更新
-    updateMarker (position, iscenter) {
+    updateMarker(position, iscenter) {
       if (this.graphic) {
         this.graphic.position = position;
       } else {
@@ -91,26 +87,24 @@
         this.map.flyToGraphic(this.graphic, { radius: 2000 });
       }
 
-
       //演示：抛出事件，在其他widget或vue中监听使用
-      mars3d.widget.fire("centerXY",{position:position })
+      mars3d.widget.fire("centerXY", { position: position });
     }
-
 
     //===============================================================================
 
-    chooseEvent () {
+    chooseEvent() {
       $("#txtLngTen,#txtLatTen,#txtLatAlt").change(() => {
-        this.changeTen()
-      })
+        this.changeTen();
+      });
 
       $("#txtLngDegree,#txtDmsAlt,#txtLngMinute,#txtLngSecond,#txtLatDegree,#txtLatMinute,#txtLatSecond").change(() => {
-        this.changeDfm()
-      })
+        this.changeDfm();
+      });
 
       $("#txtGk3X,#txtGk3Y,#txtGk3Alt").change(() => {
-        this.change3GKZone()
-      })
+        this.change3GKZone();
+      });
 
       $("#btnCenterXY").click(() => {
         if (currJD > 180 || currJD < -180) {
@@ -127,7 +121,7 @@
       });
 
       $('input:radio[name="rdoType"]').change(() => {
-        let selectType = $('input:radio[name="rdoType"]:checked').val()
+        let selectType = $('input:radio[name="rdoType"]:checked').val();
         switch (selectType) {
           default:
             //十进制
@@ -150,24 +144,23 @@
             break;
         }
       });
-
     }
 
     //更新：十进制
-    updateTen () {
+    updateTen() {
       $("#txtLngTen").val(currJD.toFixed(6));
       $("#txtLatTen").val(currWD.toFixed(6));
       $("#txtLatAlt").val(currGD.toFixed(1));
     }
     // 修改了：十进制
-    changeTen () {
+    changeTen() {
       currJD = Number($("#txtLngTen").val() || 0); //获取经度
       currWD = Number($("#txtLatTen").val() || 0); //获取纬度
       currGD = Number($("#txtLatAlt").val() || 0); //高度
     }
 
     //更新：度分秒
-    updataDfm () {
+    updataDfm() {
       let tenJD = mars3d.PointTrans.degree2dms(currJD);
       $("#txtLngDegree").val(tenJD.degree);
       $("#txtLngMinute").val(tenJD.minute);
@@ -182,7 +175,7 @@
     }
 
     //修改了：度分秒
-    changeDfm () {
+    changeDfm() {
       let jd_du = Number($("#txtLngDegree").val() || 0); //获取
       let jd_fen = Number($("#txtLngMinute").val() || 0);
       let jd_miao = Number($("#txtLngSecond").val() || 0);
@@ -197,7 +190,7 @@
     }
 
     //更新：2000平面坐标三分度
-    updata3GKZone () {
+    updata3GKZone() {
       var zone3 = mars3d.PointTrans.proj4Trans([currJD, currWD], mars3d.CRS.EPSG4326, mars3d.CRS.CGCS2000_GK_Zone_3); //十进制转2000平面三分度
       $("#txtGk3X").val(mars3d.Util.formatNum(zone3[0], 1));
       $("#txtGk3Y").val(mars3d.Util.formatNum(zone3[1], 1));
@@ -205,7 +198,7 @@
     }
 
     //修改了：2000平面坐标三分度
-    change3GKZone () {
+    change3GKZone() {
       let jd = Number($("#txtGk3X").val()); //获取
       let wd = Number($("#txtGk3Y").val());
       var gk3 = mars3d.PointTrans.proj4Trans([jd, wd], mars3d.CRS.CGCS2000_GK_Zone_3, mars3d.CRS.EPSG4326);
@@ -213,9 +206,6 @@
       currWD = gk3[1];
       currGD = Number($("#txtGk3Alt").val() || 0); //高度
     }
-
-
-
   }
 
   //注册到widget管理器中。

@@ -4,9 +4,11 @@ Mars3D平台插件, 结合supermap超图库使用的功能插件
  
  
 ## 相关依赖 
- 超图版Cesium、mars3d、
+ 超图版Cesium、mars3d
  
-
+## 查看源码
+  https://github.com/marsgis/mars3d-plugin/
+ 
 
 
 ## Mars3D 是什么 

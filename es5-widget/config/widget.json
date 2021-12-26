@@ -88,7 +88,9 @@
         "max-width": "300px"
       },
       "autoDisable": false,
-      "disableOther": false,
+      "disableOther": [
+        "widgets/roamFly/widget.js"
+      ],
       "openAtStart": false
     },
     {
