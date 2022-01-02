@@ -28,10 +28,6 @@
         "left": "auto",
         "right": "10px"
       }
-    },
-    {
-      "name": "放大缩小按钮",
-      "uri": "widgets/toolButton/zoom.js"
     }
   ],
   "widgets": [
@@ -88,7 +84,9 @@
         "max-width": "300px"
       },
       "autoDisable": false,
-      "disableOther": false,
+      "disableOther": [
+        "widgets/roamFly/widget.js"
+      ],
       "openAtStart": false
     },
     {

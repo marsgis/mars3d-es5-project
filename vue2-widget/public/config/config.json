@@ -16,6 +16,7 @@
       "showSkyAtmosphere": true,
       "fog": true,
       "fxaa": true,
+      "requestRenderMode": true,
       "globe": {
         "depthTestAgainstTerrain": false,
         "baseColor": "#546a53",
@@ -39,7 +40,7 @@
       "baseLayerPicker": false,
       "sceneModePicker": true,
       "vrButton": false,
-      "fullscreenButton": false,
+      "fullscreenButton": true,
       "navigationHelpButton": true,
       "animation": false,
       "timeline": false,
@@ -50,6 +51,7 @@
 
       "defaultContextMenu": true,
       "mouseDownView": true,
+      "zoom": { "insertIndex": 1 },
       "compass": { "bottom": "toolbar", "right": "5px" },
       "distanceLegend": { "left": "100px", "bottom": "2px" },
       "locationBar": {
@@ -276,7 +278,7 @@
         "layers": "mars:hfjy",
         "crs": "EPSG:4326",
         "parameters": { "transparent": "true", "format": "image/png" },
-        "highlight": { "type": "click", "clampToGround": true },
+        "highlight": { "clampToGround": true },
         "center": { "lat": 31.743214, "lng": 117.277097, "alt": 47197.7, "heading": 0.3, "pitch": -78.8 },
         "popup": "名称：{项目名称}<br />类型：{设施类型}<br />面积：{用地面积}亩<br />位置：{具体位置}",
         "mapSplit": false,
@@ -306,7 +308,6 @@
         "crs": "EPSG:4326",
         "parameters": { "transparent": "true", "format": "image/png" },
         "highlight": {
-          "type": "click",
           "showTime": 5000,
           "fill": true,
           "color": "#2deaf7",
@@ -355,7 +356,7 @@
         "name": "主要道路",
         "url": "//server.mars3d.cn/arcgis/rest/services/mars/hefei/MapServer",
         "layers": "24",
-        "highlight": { "type": "click", "clampToGround": true },
+        "highlight": { "clampToGround": true },
         "center": { "lat": 31.814176, "lng": 117.225362, "alt": 5105.3, "heading": 359.2, "pitch": -83.1 },
         "popup": "all",
         "onWidget": "widgets/manageLayers-tuli/heatmap.js",
@@ -369,7 +370,6 @@
         "url": "//server.mars3d.cn/arcgis/rest/services/mars/hefei/MapServer",
         "layers": "35,36,37,39",
         "highlight": {
-          "type": "click",
           "fill": true,
           "color": "#2deaf7",
           "opacity": 0.6,
@@ -390,7 +390,6 @@
         "name": "规划",
         "url": "//server.mars3d.cn/arcgis/rest/services/mars/guihua/MapServer",
         "highlight": {
-          "type": "click",
           "showTime": 5000,
           "fill": true,
           "color": "#2deaf7",
