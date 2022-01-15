@@ -1,4 +1,4 @@
-declare module "cesium" {
+declare module "mars3d-cesium" {
 
 /**
  * Private interfaces to support PropertyBag being a dictionary-like object.
@@ -864,9 +864,9 @@ var b = Cesium.barycentricCoordinates(p,
  * @param p1 - The second point of the triangle, corresponding to the barycentric y-axis.
  * @param p2 - The third point of the triangle, corresponding to the barycentric z-axis.
  * @param [result] - The object onto which to store the result.
- * @returns The modified result parameter or a new Cartesian3 instance if one was not provided.
+ * @returns The modified result parameter or a new Cartesian3 instance if one was not provided. If the triangle is degenerate the function will return undefined.
  */
-export function barycentricCoordinates(point: Cartesian2 | Cartesian3, p0: Cartesian2 | Cartesian3, p1: Cartesian2 | Cartesian3, p2: Cartesian2 | Cartesian3, result?: Cartesian3): Cartesian3;
+export function barycentricCoordinates(point: Cartesian2 | Cartesian3, p0: Cartesian2 | Cartesian3, p1: Cartesian2 | Cartesian3, p2: Cartesian2 | Cartesian3, result?: Cartesian3): Cartesian3 | undefined;
 
 /**
  * Finds an item in a sorted array.
@@ -21157,7 +21157,7 @@ export namespace KmlDataSource {
 KML support in Cesium is incomplete, but a large amount of the standard,
 as well as Google's <code>gx</code> extension namespace, is supported. See Github issue
 {@link https://github.com/CesiumGS/cesium/issues/873|#873} for a
-detailed list of what is and isn't support. Cesium will also write information to the
+detailed list of what is and isn't supported. Cesium will also write information to the
 console when it encounters most unsupported features.
 </p>
 <p>
@@ -26867,7 +26867,7 @@ export class Cesium3DTileFeature {
       <li>Otherwise, return undefined</li>
     </ol>
     <p>
-    For 3D Tiles Next details, see the {@link https://github.com/CesiumGS/3d-tiles/tree/3d-tiles-next/extensions/3DTILES_metadata|3DTILES_metadata Extension}
+    For 3D Tiles Next details, see the {@link https://github.com/CesiumGS/3d-tiles/tree/main/extensions/3DTILES_metadata|3DTILES_metadata Extension}
     for 3D Tiles, as well as the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_mesh_features|EXT_mesh_features Extension}
     for glTF. For the legacy glTF extension, see {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_feature_metadata|EXT_feature_metadata Extension}
     </p>
@@ -27689,6 +27689,14 @@ export class Cesium3DTileset {
      */
     examineVectorLinesFunction: (...params: any[]) => any;
     /**
+     * If true, {@link ModelExperimental} will be used instead of {@link Model}
+    for each tile with a glTF or 3D Tiles 1.0 content (where applicable).
+    <p>
+    The value defaults to {@link ExperimentalFeatures.enableModelExperimental}.
+    </p>
+     */
+    enableModelExperimental: boolean;
+    /**
      * Gets the tileset's asset object property, which contains metadata about the tileset.
     <p>
     See the {@link https://github.com/CesiumGS/3d-tiles/tree/main/specification#reference-asset|asset schema reference}
@@ -27792,7 +27800,7 @@ export class Cesium3DTileset {
     contents that use {@link ModelExperimental}. Using custom shaders with a
     {@link Cesium3DTileStyle} may lead to undefined behavior.
     <p>
-    To enable {@link ModelExperimental}, set {@link ExperimentalFeatures.enableModelExperimental} to <code>true</code>.
+    To enable {@link ModelExperimental}, set {@link ExperimentalFeatures.enableModelExperimental} or tileset.enableModelExperimental to <code>true</code>.
     </p>
      */
     customShader: CustomShader | undefined;
@@ -29636,6 +29644,10 @@ export class CumulusCloud {
      */
     maximumSize: Cartesian3;
     /**
+     * Sets the color of the cloud
+     */
+    color: Color;
+    /**
      * <p>Gets or sets the "slice" of the cloud that is rendered on the billboard, i.e.
     the specific cross-section of the cloud chosen for the billboard's appearance.
     Given a value between 0 and 1, the slice specifies how deeply into the cloud
@@ -30425,6 +30437,12 @@ export class Globe {
      * Enable lighting the globe with the scene's light source.
      */
     enableLighting: boolean;
+    /**
+     * A multiplier to adjust terrain lambert lighting.
+    This number is multiplied by the result of <code>czm_getLambertDiffuse</code> in GlobeFS.glsl.
+    This only takes effect when <code>enableLighting</code> is <code>true</code>.
+     */
+    lambertDiffuseMultiplier: number;
     /**
      * Enable dynamic lighting effects on atmosphere and fog. This only takes effect
     when <code>enableLighting</code> is <code>true</code>.
@@ -34131,56 +34149,56 @@ export namespace MaterialAppearance {
 
 /**
  * A 3D model based on glTF, the runtime asset format for WebGL, OpenGL ES, and OpenGL.
- * <p>
- * Cesium includes support for geometry and materials, glTF animations, and glTF skinning.
- * In addition, individual glTF nodes are pickable with {@link Scene#pick} and animatable
- * with {@link Model#getNode}.  glTF cameras and lights are not currently supported.
- * </p>
- * <p>
- * An external glTF asset is created with {@link Model.fromGltf}.  glTF JSON can also be
- * created at runtime and passed to this constructor function.  In either case, the
- * {@link Model#readyPromise} is resolved when the model is ready to render, i.e.,
- * when the external binary, image, and shader files are downloaded and the WebGL
- * resources are created.
- * </p>
- * <p>
- * Cesium supports glTF assets with the following extensions:
- * <ul>
- * <li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
- * </li><li>
- * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu|KHR_texture_basisu}
- * </li>
- * </ul>
- * </p>
- * <p>
- * Note: for models with compressed textures using the KHR_texture_basisu extension, we recommend power of 2 textures in both dimensions
- * for maximum compatibility. This is because some samplers require power of 2 textures ({@link https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL|Using textures in WebGL})
- * and KHR_texture_basisu requires multiple of 4 dimensions ({@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md#additional-requirements|KHR_texture_basisu additional requirements}).
- * </p>
- * <p>
- * For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
- * CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
- * relative to a local origin.
- * </p>
+<p>
+Cesium includes support for geometry and materials, glTF animations, and glTF skinning.
+In addition, individual glTF nodes are pickable with {@link Scene#pick} and animatable
+with {@link Model#getNode}.  glTF cameras and lights are not currently supported.
+</p>
+<p>
+An external glTF asset is created with {@link Model.fromGltf}.  glTF JSON can also be
+created at runtime and passed to this constructor function.  In either case, the
+{@link Model#readyPromise} is resolved when the model is ready to render, i.e.,
+when the external binary, image, and shader files are downloaded and the WebGL
+resources are created.
+</p>
+<p>
+Cesium supports glTF assets with the following extensions:
+<ul>
+<li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
+</li><li>
+{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu|KHR_texture_basisu}
+</li>
+</ul>
+</p>
+<p>
+Note: for models with compressed textures using the KHR_texture_basisu extension, we recommend power of 2 textures in both dimensions
+for maximum compatibility. This is because some samplers require power of 2 textures ({@link https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL|Using textures in WebGL})
+and KHR_texture_basisu requires multiple of 4 dimensions ({@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md#additional-requirements|KHR_texture_basisu additional requirements}).
+</p>
+<p>
+For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
+CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
+relative to a local origin.
+</p>
  * @param [options] - Object with the following properties:
  * @param [options.gltf] - A glTF JSON object, or a binary glTF buffer.
  * @param [options.basePath = ''] - The base path that paths in the glTF JSON are relative to.
@@ -34266,30 +34284,30 @@ export class Model {
     silhouetteSize: number;
     /**
      * The 4x4 transformation matrix that transforms the model from model to world coordinates.
-     * When this is the identity matrix, the model is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
-     * Local reference frames can be used by providing a different transformation matrix, like that returned
-     * by {@link Transforms.eastNorthUpToFixedFrame}.
+    When this is the identity matrix, the model is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
+    Local reference frames can be used by providing a different transformation matrix, like that returned
+    by {@link Transforms.eastNorthUpToFixedFrame}.
      * @example
      * var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-     * m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+    m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
      */
     modelMatrix: Matrix4;
     /**
      * A uniform scale applied to this model before the {@link Model#modelMatrix}.
-     * Values greater than <code>1.0</code> increase the size of the model; values
-     * less than <code>1.0</code> decrease.
+    Values greater than <code>1.0</code> increase the size of the model; values
+    less than <code>1.0</code> decrease.
      */
     scale: number;
     /**
      * The approximate minimum pixel size of the model regardless of zoom.
-     * This can be used to ensure that a model is visible even when the viewer
-     * zooms out.  When <code>0.0</code>, no minimum size is enforced.
+    This can be used to ensure that a model is visible even when the viewer
+    zooms out.  When <code>0.0</code>, no minimum size is enforced.
      */
     minimumPixelSize: number;
     /**
      * The maximum scale size for a model. This can be used to give
-     * an upper limit to the {@link Model#minimumPixelSize}, ensuring that the model
-     * is never an unreasonable scale.
+    an upper limit to the {@link Model#minimumPixelSize}, ensuring that the model
+    is never an unreasonable scale.
      */
     maximumScale: number;
     /**
@@ -34322,85 +34340,85 @@ export class Model {
     colorBlendMode: ColorBlendMode;
     /**
      * Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>.
-     * A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with
-     * any value in-between resulting in a mix of the two.
+    A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with
+    any value in-between resulting in a mix of the two.
      */
     colorBlendAmount: number;
     /**
      * Whether to cull back-facing geometry. When true, back face culling is
-     * determined by the material's doubleSided property; when false, back face
-     * culling is disabled. Back faces are not culled if {@link Model#color} is
-     * translucent or {@link Model#silhouetteSize} is greater than 0.0.
+    determined by the material's doubleSided property; when false, back face
+    culling is disabled. Back faces are not culled if {@link Model#color} is
+    translucent or {@link Model#silhouetteSize} is greater than 0.0.
      */
     backFaceCulling: boolean;
     /**
      * Whether to display the outline for models using the
-     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension.
-     * When true, outlines are displayed. When false, outlines are not displayed.
+    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension.
+    When true, outlines are displayed. When false, outlines are not displayed.
      */
     readonly showOutline: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-     * <p>
-     * Draws the bounding sphere for each draw command in the model.  A glTF primitive corresponds
-     * to one draw command.  A glTF mesh has an array of primitives, often of length one.
-     * </p>
+    <p>
+    Draws the bounding sphere for each draw command in the model.  A glTF primitive corresponds
+    to one draw command.  A glTF mesh has an array of primitives, often of length one.
+    </p>
      */
     debugShowBoundingVolume: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-     * <p>
-     * Draws the model in wireframe.
-     * </p>
+    <p>
+    Draws the model in wireframe.
+    </p>
      */
     debugWireframe: boolean;
     /**
      * The object for the glTF JSON, including properties with default values omitted
-     * from the JSON provided to this model.
+    from the JSON provided to this model.
      */
     readonly gltf: any;
     /**
      * The base path that paths in the glTF JSON are relative to.  The base
-     * path is the same path as the path containing the .gltf file
-     * minus the .gltf file, when binary, image, and shader files are
-     * in the same directory as the .gltf.  When this is <code>''</code>,
-     * the app's base path is used.
+    path is the same path as the path containing the .gltf file
+    minus the .gltf file, when binary, image, and shader files are
+    in the same directory as the .gltf.  When this is <code>''</code>,
+    the app's base path is used.
      */
     readonly basePath: string;
     /**
      * The model's bounding sphere in its local coordinate system.  This does not take into
-     * account glTF animations and skins nor does it take into account {@link Model#minimumPixelSize}.
+    account glTF animations and skins nor does it take into account {@link Model#minimumPixelSize}.
      * @example
      * // Center in WGS84 coordinates
-     * var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
+    var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
      */
     readonly boundingSphere: BoundingSphere;
     /**
      * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
-     * and shader files were downloaded and the WebGL resources were created.  This is set to
-     * <code>true</code> right before {@link Model#readyPromise} is resolved.
+    and shader files were downloaded and the WebGL resources were created.  This is set to
+    <code>true</code> right before {@link Model#readyPromise} is resolved.
      */
     readonly ready: boolean;
     /**
      * Gets the promise that will be resolved when this model is ready to render, i.e., when the external binary, image,
-     * and shader files were downloaded and the WebGL resources were created.
-     * <p>
-     * This promise is resolved at the end of the frame before the first frame the model is rendered in.
-     * </p>
+    and shader files were downloaded and the WebGL resources were created.
+    <p>
+    This promise is resolved at the end of the frame before the first frame the model is rendered in.
+    </p>
      * @example
      * // Play all animations at half-speed when the model is ready to render
-     * Cesium.when(model.readyPromise).then(function(model) {
-     *   model.activeAnimations.addAll({
-     *     multiplier : 0.5
-     *   });
-     * }).otherwise(function(error){
-     *   window.alert(error);
-     * });
+    Cesium.when(model.readyPromise).then(function(model) {
+      model.activeAnimations.addAll({
+        multiplier : 0.5
+      });
+    }).otherwise(function(error){
+      window.alert(error);
+    });
      */
     readonly readyPromise: Promise<Model>;
     /**
      * Determines if model WebGL resource creation will be spread out over several frames or
-     * block until completion once all glTF files are loaded.
+    block until completion once all glTF files are loaded.
      */
     readonly asynchronous: boolean;
     /**
@@ -34425,33 +34443,33 @@ export class Model {
     clippingPlanes: ClippingPlaneCollection;
     /**
      * Cesium adds lighting from the earth, sky, atmosphere, and star skybox. This cartesian is used to scale the final
-     * diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
+    diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
      */
     imageBasedLightingFactor: Cartesian2;
     /**
      * The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
-     * <p>
-     * For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cesium.Cartesian2(0.0, 0.0)</code> will make the
-     * model much darker. Here, increasing the intensity of the light source will make the model brighter.
-     * </p>
+    <p>
+    For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cesium.Cartesian2(0.0, 0.0)</code> will make the
+    model much darker. Here, increasing the intensity of the light source will make the model brighter.
+    </p>
      */
     lightColor: Cartesian3;
     /**
      * The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
-     * This is used when {@link Model#specularEnvironmentMaps} and {@link Model#sphericalHarmonicCoefficients} are not defined.
+    This is used when {@link Model#specularEnvironmentMaps} and {@link Model#sphericalHarmonicCoefficients} are not defined.
      */
     luminanceAtZenith: number;
     /**
      * The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. When <code>undefined</code>, a diffuse irradiance
-     * computed from the atmosphere color is used.
-     * <p>
-     * There are nine <code>Cartesian3</code> coefficients.
-     * The order of the coefficients is: L<sub>00</sub>, L<sub>1-1</sub>, L<sub>10</sub>, L<sub>11</sub>, L<sub>2-2</sub>, L<sub>2-1</sub>, L<sub>20</sub>, L<sub>21</sub>, L<sub>22</sub>
-     * </p>
-     *
-     * These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
-     * {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
-     * supplied to {@link Model#specularEnvironmentMaps}.
+    computed from the atmosphere color is used.
+    <p>
+    There are nine <code>Cartesian3</code> coefficients.
+    The order of the coefficients is: L<sub>00</sub>, L<sub>1-1</sub>, L<sub>10</sub>, L<sub>11</sub>, L<sub>2-2</sub>, L<sub>2-1</sub>, L<sub>20</sub>, L<sub>21</sub>, L<sub>22</sub>
+    </p>
+    
+    These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
+    {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
+    supplied to {@link Model#specularEnvironmentMaps}.
      */
     sphericalHarmonicCoefficients: Cartesian3[];
     /**
@@ -34470,71 +34488,71 @@ export class Model {
     static silhouetteSupported(scene: Scene): boolean;
     /**
      * <p>
-     * Creates a model from a glTF asset.  When the model is ready to render, i.e., when the external binary, image,
-     * and shader files are downloaded and the WebGL resources are created, the {@link Model#readyPromise} is resolved.
-     * </p>
-     * <p>
-     * The model can be a traditional glTF asset with a .gltf extension or a Binary glTF using the .glb extension.
-     * </p>
-     * <p>
-     * Cesium supports glTF assets with the following extensions:
-     * <ul>
-     * <li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
-     * </li><li>
-     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md|KHR_texture_basisu}
-     * </li>
-     * </ul>
-     * </p>
-     * <p>
-     * For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
-     * CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
-     * relative to a local origin.
-     * </p>
+    Creates a model from a glTF asset.  When the model is ready to render, i.e., when the external binary, image,
+    and shader files are downloaded and the WebGL resources are created, the {@link Model#readyPromise} is resolved.
+    </p>
+    <p>
+    The model can be a traditional glTF asset with a .gltf extension or a Binary glTF using the .glb extension.
+    </p>
+    <p>
+    Cesium supports glTF assets with the following extensions:
+    <ul>
+    <li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
+    </li><li>
+    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md|KHR_texture_basisu}
+    </li>
+    </ul>
+    </p>
+    <p>
+    For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
+    CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
+    relative to a local origin.
+    </p>
      * @example
      * // Example 1. Create a model from a glTF asset
-     * var model = scene.primitives.add(Cesium.Model.fromGltf({
-     *   url : './duck/duck.gltf'
-     * }));
+    var model = scene.primitives.add(Cesium.Model.fromGltf({
+      url : './duck/duck.gltf'
+    }));
      * @example
      * // Example 2. Create model and provide all properties and events
-     * var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-     * var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
-     *
-     * var model = scene.primitives.add(Cesium.Model.fromGltf({
-     *   url : './duck/duck.gltf',
-     *   show : true,                     // default
-     *   modelMatrix : modelMatrix,
-     *   scale : 2.0,                     // double size
-     *   minimumPixelSize : 128,          // never smaller than 128 pixels
-     *   maximumScale: 20000,             // never larger than 20000 * model size (overrides minimumPixelSize)
-     *   allowPicking : false,            // not pickable
-     *   debugShowBoundingVolume : false, // default
-     *   debugWireframe : false
-     * }));
-     *
-     * model.readyPromise.then(function(model) {
-     *   // Play all animations when the model is ready to render
-     *   model.activeAnimations.addAll();
-     * });
+    var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
+    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+    
+    var model = scene.primitives.add(Cesium.Model.fromGltf({
+      url : './duck/duck.gltf',
+      show : true,                     // default
+      modelMatrix : modelMatrix,
+      scale : 2.0,                     // double size
+      minimumPixelSize : 128,          // never smaller than 128 pixels
+      maximumScale: 20000,             // never larger than 20000 * model size (overrides minimumPixelSize)
+      allowPicking : false,            // not pickable
+      debugShowBoundingVolume : false, // default
+      debugWireframe : false
+    }));
+    
+    model.readyPromise.then(function(model) {
+      // Play all animations when the model is ready to render
+      model.activeAnimations.addAll();
+    });
      * @param options - Object with the following properties:
      * @param options.url - The url to the .gltf file.
      * @param [options.basePath] - The base path that paths in the glTF JSON are relative to.
@@ -34598,11 +34616,11 @@ export class Model {
     }): Model;
     /**
      * Returns the glTF node with the given <code>name</code> property.  This is used to
-     * modify a node's transform for animation outside of glTF animations.
+    modify a node's transform for animation outside of glTF animations.
      * @example
      * // Apply non-uniform scale to node LOD3sp
-     * var node = model.getNode('LOD3sp');
-     * node.matrix = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(5.0, 1.0, 1.0), node.matrix);
+    var node = model.getNode('LOD3sp');
+    node.matrix = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(5.0, 1.0, 1.0), node.matrix);
      * @param name - The glTF name of the node.
      * @returns The node or <code>undefined</code> if no node with <code>name</code> exists.
      */
@@ -34621,40 +34639,40 @@ export class Model {
     getMaterial(name: string): ModelMaterial;
     /**
      * Sets the current value of an articulation stage.  After setting one or multiple stage values, call
-     * Model.applyArticulations() to cause the node matrices to be recalculated.
+    Model.applyArticulations() to cause the node matrices to be recalculated.
      * @param articulationStageKey - The name of the articulation, a space, and the name of the stage.
      * @param value - The numeric value of this stage of the articulation.
      */
     setArticulationStage(articulationStageKey: string, value: number): void;
     /**
      * Applies any modified articulation stages to the matrix of each node that participates
-     * in any articulation.  Note that this will overwrite any nodeTransformations on participating nodes.
+    in any articulation.  Note that this will overwrite any nodeTransformations on participating nodes.
      */
     applyArticulations(): void;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
-     * get the draw commands needed to render this primitive.
-     * <p>
-     * Do not call this function directly.  This is documented just to
-     * list the exceptions that may be propagated when the scene is rendered:
-     * </p>
+    get the draw commands needed to render this primitive.
+    <p>
+    Do not call this function directly.  This is documented just to
+    list the exceptions that may be propagated when the scene is rendered:
+    </p>
      */
     update(): void;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-     * <br /><br />
-     * If this object was destroyed, it should not be used; calling any function other than
-     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+    <br /><br />
+    If this object was destroyed, it should not be used; calling any function other than
+    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
      * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-     * <br /><br />
-     * Once an object is destroyed, it should not be used; calling any function other than
-     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-     * assign the return value (<code>undefined</code>) to the object as done in the example.
+    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+    <br /><br />
+    Once an object is destroyed, it should not be used; calling any function other than
+    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+    assign the return value (<code>undefined</code>) to the object as done in the example.
      * @example
      * model = model && model.destroy();
      */
@@ -34970,7 +34988,7 @@ If texture uniforms are used, additional resource management must be done:
   </li>
 </ul>
 <p>
-To enable the use of {@link ModelExperimental} in {@link Cesium3DTileset}, set {@link ExperimentalFeatures.enableModelExperimental} to <code>true</code>.
+To enable the use of {@link ModelExperimental} in {@link Cesium3DTileset}, set {@link ExperimentalFeatures.enableModelExperimental} to <code>true</code> or tileset.enableModelExperimental to <code>true</code>.
 </p>
  * @example
  * var customShader = new CustomShader({
@@ -34990,9 +35008,9 @@ To enable the use of {@link ModelExperimental} in {@link Cesium3DTileset}, set {
     v_selectedColor: Cesium.VaryingType.VEC3
   },
   vertexShaderText: `
-  void vertexMain(VertexInput vsInput, inout vec3 position) {
+  void vertexMain(VertexInput vsInput, inout czm_modelVertexOutput vsOutput) {
     v_selectedColor = mix(vsInput.attributes.color_0, vsInput.attributes.color_1, u_colorIndex);
-    position += 0.1 * vsInput.attributes.normal;
+    vsOutput.positionMC += 0.1 * vsInput.attributes.normal;
   }
   `,
   fragmentShaderText: `
@@ -38212,13 +38230,6 @@ export class Scene {
     /**
      * This property is for debugging only; it is not for production use.
     <p>
-    Displays depth information for the indicated frustum.
-    </p>
-     */
-    debugShowGlobeDepth: boolean;
-    /**
-     * This property is for debugging only; it is not for production use.
-    <p>
     Indicates which frustum will have depth information displayed.
     </p>
      */
@@ -40429,6 +40440,16 @@ export class ViewportQuad {
     destroy(): void;
 }
 
+/**
+ * EPSG codes known to include reverse axis orders, but are not within 4000-5000.
+ */
+export var includesReverseAxis: number[];
+
+/**
+ * EPSG codes known to not include reverse axis orders, and are within 4000-5000.
+ */
+export var excludesReverseAxis: number[];
+
 export namespace WebMapServiceImageryProvider {
     /**
      * Initialization options for the WebMapServiceImageryProvider constructor
@@ -40464,6 +40485,7 @@ export namespace WebMapServiceImageryProvider {
                              an array, each element in the array is a subdomain.
      * @property [clock] - A Clock instance that is used when determining the value for the time dimension. Required when `times` is specified.
      * @property [times] - TimeIntervalCollection with its data property being an object containing time dynamic dimension and their values.
+     * @property [getFeatureInfoUrl] - The getFeatureInfo URL of the WMS service. If the property is not defined then we use the property value of url.
      */
     type ConstructorOptions = {
         url: Resource | string;
@@ -40485,6 +40507,7 @@ export namespace WebMapServiceImageryProvider {
         subdomains?: string | string[];
         clock?: Clock;
         times?: TimeIntervalCollection;
+        getFeatureInfoUrl?: Resource | string;
     };
 }
 
@@ -40642,6 +40665,10 @@ export class WebMapServiceImageryProvider {
     tile requests.
      */
     times: TimeIntervalCollection;
+    /**
+     * Gets the getFeatureInfo URL of the WMS server.
+     */
+    readonly getFeatureInfoUrl: Resource | string;
     /**
      * Gets the credits to be displayed when a given tile is displayed.
      * @param x - The tile X coordinate.
@@ -41745,14 +41772,6 @@ export class CesiumInspectorViewModel {
      * Gets or sets the show wireframe state.  This property is observable.
      */
     wireframe: boolean;
-    /**
-     * Gets or sets the show globe depth state.  This property is observable.
-     */
-    globeDepth: boolean;
-    /**
-     * Gets or sets the show pick depth state.  This property is observable.
-     */
-    pickDepth: boolean;
     /**
      * Gets or sets the index of the depth frustum to display.  This property is observable.
      */
@@ -43599,478 +43618,478 @@ export class VRButtonViewModel {
 
 }
 
-declare module "cesium/Source/Core/ArcGISTiledElevationTerrainProvider" { import { ArcGISTiledElevationTerrainProvider } from 'cesium'; export default ArcGISTiledElevationTerrainProvider; }
-declare module "cesium/Source/Core/ArcType" { import { ArcType } from 'cesium'; export default ArcType; }
-declare module "cesium/Source/Core/AssociativeArray" { import { AssociativeArray } from 'cesium'; export default AssociativeArray; }
-declare module "cesium/Source/Core/AxisAlignedBoundingBox" { import { AxisAlignedBoundingBox } from 'cesium'; export default AxisAlignedBoundingBox; }
-declare module "cesium/Source/Core/barycentricCoordinates" { import { barycentricCoordinates } from 'cesium'; export default barycentricCoordinates; }
-declare module "cesium/Source/Core/binarySearch" { import { binarySearch } from 'cesium'; export default binarySearch; }
-declare module "cesium/Source/Core/BingMapsGeocoderService" { import { BingMapsGeocoderService } from 'cesium'; export default BingMapsGeocoderService; }
-declare module "cesium/Source/Core/BoundingRectangle" { import { BoundingRectangle } from 'cesium'; export default BoundingRectangle; }
-declare module "cesium/Source/Core/BoundingSphere" { import { BoundingSphere } from 'cesium'; export default BoundingSphere; }
-declare module "cesium/Source/Core/BoxGeometry" { import { BoxGeometry } from 'cesium'; export default BoxGeometry; }
-declare module "cesium/Source/Core/BoxOutlineGeometry" { import { BoxOutlineGeometry } from 'cesium'; export default BoxOutlineGeometry; }
-declare module "cesium/Source/Core/buildModuleUrl" { import { buildModuleUrl } from 'cesium'; export default buildModuleUrl; }
-declare module "cesium/Source/Core/cancelAnimationFrame" { import { cancelAnimationFrame } from 'cesium'; export default cancelAnimationFrame; }
-declare module "cesium/Source/Core/Cartesian2" { import { Cartesian2 } from 'cesium'; export default Cartesian2; }
-declare module "cesium/Source/Core/Cartesian3" { import { Cartesian3 } from 'cesium'; export default Cartesian3; }
-declare module "cesium/Source/Core/Cartesian4" { import { Cartesian4 } from 'cesium'; export default Cartesian4; }
-declare module "cesium/Source/Core/Cartographic" { import { Cartographic } from 'cesium'; export default Cartographic; }
-declare module "cesium/Source/Core/CartographicGeocoderService" { import { CartographicGeocoderService } from 'cesium'; export default CartographicGeocoderService; }
-declare module "cesium/Source/Core/CatmullRomSpline" { import { CatmullRomSpline } from 'cesium'; export default CatmullRomSpline; }
-declare module "cesium/Source/Core/CesiumTerrainProvider" { import { CesiumTerrainProvider } from 'cesium'; export default CesiumTerrainProvider; }
-declare module "cesium/Source/Core/CircleGeometry" { import { CircleGeometry } from 'cesium'; export default CircleGeometry; }
-declare module "cesium/Source/Core/CircleOutlineGeometry" { import { CircleOutlineGeometry } from 'cesium'; export default CircleOutlineGeometry; }
-declare module "cesium/Source/Core/Clock" { import { Clock } from 'cesium'; export default Clock; }
-declare module "cesium/Source/Core/ClockRange" { import { ClockRange } from 'cesium'; export default ClockRange; }
-declare module "cesium/Source/Core/ClockStep" { import { ClockStep } from 'cesium'; export default ClockStep; }
-declare module "cesium/Source/Core/clone" { import { clone } from 'cesium'; export default clone; }
-declare module "cesium/Source/Core/Color" { import { Color } from 'cesium'; export default Color; }
-declare module "cesium/Source/Core/ColorGeometryInstanceAttribute" { import { ColorGeometryInstanceAttribute } from 'cesium'; export default ColorGeometryInstanceAttribute; }
-declare module "cesium/Source/Core/combine" { import { combine } from 'cesium'; export default combine; }
-declare module "cesium/Source/Core/ComponentDatatype" { import { ComponentDatatype } from 'cesium'; export default ComponentDatatype; }
-declare module "cesium/Source/Core/CompressedTextureBuffer" { import { CompressedTextureBuffer } from 'cesium'; export default CompressedTextureBuffer; }
-declare module "cesium/Source/Core/CoplanarPolygonGeometry" { import { CoplanarPolygonGeometry } from 'cesium'; export default CoplanarPolygonGeometry; }
-declare module "cesium/Source/Core/CoplanarPolygonOutlineGeometry" { import { CoplanarPolygonOutlineGeometry } from 'cesium'; export default CoplanarPolygonOutlineGeometry; }
-declare module "cesium/Source/Core/CornerType" { import { CornerType } from 'cesium'; export default CornerType; }
-declare module "cesium/Source/Core/CorridorGeometry" { import { CorridorGeometry } from 'cesium'; export default CorridorGeometry; }
-declare module "cesium/Source/Core/CorridorOutlineGeometry" { import { CorridorOutlineGeometry } from 'cesium'; export default CorridorOutlineGeometry; }
-declare module "cesium/Source/Core/createGuid" { import { createGuid } from 'cesium'; export default createGuid; }
-declare module "cesium/Source/Core/createWorldTerrain" { import { createWorldTerrain } from 'cesium'; export default createWorldTerrain; }
-declare module "cesium/Source/Core/Credit" { import { Credit } from 'cesium'; export default Credit; }
-declare module "cesium/Source/Core/CubicRealPolynomial" { import { CubicRealPolynomial } from 'cesium'; export default CubicRealPolynomial; }
-declare module "cesium/Source/Core/CullingVolume" { import { CullingVolume } from 'cesium'; export default CullingVolume; }
-declare module "cesium/Source/Core/CustomHeightmapTerrainProvider" { import { CustomHeightmapTerrainProvider } from 'cesium'; export default CustomHeightmapTerrainProvider; }
-declare module "cesium/Source/Core/CylinderGeometry" { import { CylinderGeometry } from 'cesium'; export default CylinderGeometry; }
-declare module "cesium/Source/Core/CylinderOutlineGeometry" { import { CylinderOutlineGeometry } from 'cesium'; export default CylinderOutlineGeometry; }
-declare module "cesium/Source/Core/DefaultProxy" { import { DefaultProxy } from 'cesium'; export default DefaultProxy; }
-declare module "cesium/Source/Core/defaultValue" { import { defaultValue } from 'cesium'; export default defaultValue; }
-declare module "cesium/Source/Core/defined" { import { defined } from 'cesium'; export default defined; }
-declare module "cesium/Source/Core/destroyObject" { import { destroyObject } from 'cesium'; export default destroyObject; }
-declare module "cesium/Source/Core/DeveloperError" { import { DeveloperError } from 'cesium'; export default DeveloperError; }
-declare module "cesium/Source/Core/DistanceDisplayCondition" { import { DistanceDisplayCondition } from 'cesium'; export default DistanceDisplayCondition; }
-declare module "cesium/Source/Core/DistanceDisplayConditionGeometryInstanceAttribute" { import { DistanceDisplayConditionGeometryInstanceAttribute } from 'cesium'; export default DistanceDisplayConditionGeometryInstanceAttribute; }
-declare module "cesium/Source/Core/EasingFunction" { import { EasingFunction } from 'cesium'; export default EasingFunction; }
-declare module "cesium/Source/Core/EllipseGeometry" { import { EllipseGeometry } from 'cesium'; export default EllipseGeometry; }
-declare module "cesium/Source/Core/EllipseOutlineGeometry" { import { EllipseOutlineGeometry } from 'cesium'; export default EllipseOutlineGeometry; }
-declare module "cesium/Source/Core/Ellipsoid" { import { Ellipsoid } from 'cesium'; export default Ellipsoid; }
-declare module "cesium/Source/Core/EllipsoidGeodesic" { import { EllipsoidGeodesic } from 'cesium'; export default EllipsoidGeodesic; }
-declare module "cesium/Source/Core/EllipsoidGeometry" { import { EllipsoidGeometry } from 'cesium'; export default EllipsoidGeometry; }
-declare module "cesium/Source/Core/EllipsoidOutlineGeometry" { import { EllipsoidOutlineGeometry } from 'cesium'; export default EllipsoidOutlineGeometry; }
-declare module "cesium/Source/Core/EllipsoidRhumbLine" { import { EllipsoidRhumbLine } from 'cesium'; export default EllipsoidRhumbLine; }
-declare module "cesium/Source/Core/EllipsoidTangentPlane" { import { EllipsoidTangentPlane } from 'cesium'; export default EllipsoidTangentPlane; }
-declare module "cesium/Source/Core/EllipsoidTerrainProvider" { import { EllipsoidTerrainProvider } from 'cesium'; export default EllipsoidTerrainProvider; }
-declare module "cesium/Source/Core/Event" { import { Event } from 'cesium'; export default Event; }
-declare module "cesium/Source/Core/EventHelper" { import { EventHelper } from 'cesium'; export default EventHelper; }
-declare module "cesium/Source/Core/ExtrapolationType" { import { ExtrapolationType } from 'cesium'; export default ExtrapolationType; }
-declare module "cesium/Source/Core/FeatureDetection" { import { FeatureDetection } from 'cesium'; export default FeatureDetection; }
-declare module "cesium/Source/Core/formatError" { import { formatError } from 'cesium'; export default formatError; }
-declare module "cesium/Source/Core/FrustumGeometry" { import { FrustumGeometry } from 'cesium'; export default FrustumGeometry; }
-declare module "cesium/Source/Core/FrustumOutlineGeometry" { import { FrustumOutlineGeometry } from 'cesium'; export default FrustumOutlineGeometry; }
-declare module "cesium/Source/Core/Fullscreen" { import { Fullscreen } from 'cesium'; export default Fullscreen; }
-declare module "cesium/Source/Core/GeocoderService" { import { GeocoderService } from 'cesium'; export default GeocoderService; }
-declare module "cesium/Source/Core/GeocodeType" { import { GeocodeType } from 'cesium'; export default GeocodeType; }
-declare module "cesium/Source/Core/GeographicProjection" { import { GeographicProjection } from 'cesium'; export default GeographicProjection; }
-declare module "cesium/Source/Core/GeographicTilingScheme" { import { GeographicTilingScheme } from 'cesium'; export default GeographicTilingScheme; }
-declare module "cesium/Source/Core/Geometry" { import { Geometry } from 'cesium'; export default Geometry; }
-declare module "cesium/Source/Core/GeometryAttribute" { import { GeometryAttribute } from 'cesium'; export default GeometryAttribute; }
-declare module "cesium/Source/Core/GeometryAttributes" { import { GeometryAttributes } from 'cesium'; export default GeometryAttributes; }
-declare module "cesium/Source/Core/GeometryFactory" { import { GeometryFactory } from 'cesium'; export default GeometryFactory; }
-declare module "cesium/Source/Core/GeometryInstance" { import { GeometryInstance } from 'cesium'; export default GeometryInstance; }
-declare module "cesium/Source/Core/GeometryInstanceAttribute" { import { GeometryInstanceAttribute } from 'cesium'; export default GeometryInstanceAttribute; }
-declare module "cesium/Source/Core/GeometryPipeline" { import { GeometryPipeline } from 'cesium'; export default GeometryPipeline; }
-declare module "cesium/Source/Core/getAbsoluteUri" { import { getAbsoluteUri } from 'cesium'; export default getAbsoluteUri; }
-declare module "cesium/Source/Core/getBaseUri" { import { getBaseUri } from 'cesium'; export default getBaseUri; }
-declare module "cesium/Source/Core/getExtensionFromUri" { import { getExtensionFromUri } from 'cesium'; export default getExtensionFromUri; }
-declare module "cesium/Source/Core/getFilenameFromUri" { import { getFilenameFromUri } from 'cesium'; export default getFilenameFromUri; }
-declare module "cesium/Source/Core/getImagePixels" { import { getImagePixels } from 'cesium'; export default getImagePixels; }
-declare module "cesium/Source/Core/getTimestamp" { import { getTimestamp } from 'cesium'; export default getTimestamp; }
-declare module "cesium/Source/Core/GoogleEarthEnterpriseMetadata" { import { GoogleEarthEnterpriseMetadata } from 'cesium'; export default GoogleEarthEnterpriseMetadata; }
-declare module "cesium/Source/Core/GoogleEarthEnterpriseTerrainData" { import { GoogleEarthEnterpriseTerrainData } from 'cesium'; export default GoogleEarthEnterpriseTerrainData; }
-declare module "cesium/Source/Core/GoogleEarthEnterpriseTerrainProvider" { import { GoogleEarthEnterpriseTerrainProvider } from 'cesium'; export default GoogleEarthEnterpriseTerrainProvider; }
-declare module "cesium/Source/Core/GregorianDate" { import { GregorianDate } from 'cesium'; export default GregorianDate; }
-declare module "cesium/Source/Core/GroundPolylineGeometry" { import { GroundPolylineGeometry } from 'cesium'; export default GroundPolylineGeometry; }
-declare module "cesium/Source/Core/HeadingPitchRange" { import { HeadingPitchRange } from 'cesium'; export default HeadingPitchRange; }
-declare module "cesium/Source/Core/HeadingPitchRoll" { import { HeadingPitchRoll } from 'cesium'; export default HeadingPitchRoll; }
-declare module "cesium/Source/Core/HeightmapEncoding" { import { HeightmapEncoding } from 'cesium'; export default HeightmapEncoding; }
-declare module "cesium/Source/Core/HeightmapTerrainData" { import { HeightmapTerrainData } from 'cesium'; export default HeightmapTerrainData; }
-declare module "cesium/Source/Core/HermitePolynomialApproximation" { import { HermitePolynomialApproximation } from 'cesium'; export default HermitePolynomialApproximation; }
-declare module "cesium/Source/Core/HermiteSpline" { import { HermiteSpline } from 'cesium'; export default HermiteSpline; }
-declare module "cesium/Source/Core/HilbertOrder" { import { HilbertOrder } from 'cesium'; export default HilbertOrder; }
-declare module "cesium/Source/Core/IndexDatatype" { import { IndexDatatype } from 'cesium'; export default IndexDatatype; }
-declare module "cesium/Source/Core/InterpolationAlgorithm" { import { InterpolationAlgorithm } from 'cesium'; export default InterpolationAlgorithm; }
-declare module "cesium/Source/Core/Intersect" { import { Intersect } from 'cesium'; export default Intersect; }
-declare module "cesium/Source/Core/Intersections2D" { import { Intersections2D } from 'cesium'; export default Intersections2D; }
-declare module "cesium/Source/Core/IntersectionTests" { import { IntersectionTests } from 'cesium'; export default IntersectionTests; }
-declare module "cesium/Source/Core/Interval" { import { Interval } from 'cesium'; export default Interval; }
-declare module "cesium/Source/Core/Ion" { import { Ion } from 'cesium'; export default Ion; }
-declare module "cesium/Source/Core/IonGeocoderService" { import { IonGeocoderService } from 'cesium'; export default IonGeocoderService; }
-declare module "cesium/Source/Core/IonResource" { import { IonResource } from 'cesium'; export default IonResource; }
-declare module "cesium/Source/Core/isLeapYear" { import { isLeapYear } from 'cesium'; export default isLeapYear; }
-declare module "cesium/Source/Core/Iso8601" { import { Iso8601 } from 'cesium'; export default Iso8601; }
-declare module "cesium/Source/Core/JulianDate" { import { JulianDate } from 'cesium'; export default JulianDate; }
-declare module "cesium/Source/Core/KeyboardEventModifier" { import { KeyboardEventModifier } from 'cesium'; export default KeyboardEventModifier; }
-declare module "cesium/Source/Core/LagrangePolynomialApproximation" { import { LagrangePolynomialApproximation } from 'cesium'; export default LagrangePolynomialApproximation; }
-declare module "cesium/Source/Core/LeapSecond" { import { LeapSecond } from 'cesium'; export default LeapSecond; }
-declare module "cesium/Source/Core/LinearApproximation" { import { LinearApproximation } from 'cesium'; export default LinearApproximation; }
-declare module "cesium/Source/Core/LinearSpline" { import { LinearSpline } from 'cesium'; export default LinearSpline; }
-declare module "cesium/Source/Core/MapProjection" { import { MapProjection } from 'cesium'; export default MapProjection; }
-declare module "cesium/Source/Core/Math" { import { Math } from 'cesium'; export default Math; }
-declare module "cesium/Source/Core/Matrix2" { import { Matrix2 } from 'cesium'; export default Matrix2; }
-declare module "cesium/Source/Core/Matrix3" { import { Matrix3 } from 'cesium'; export default Matrix3; }
-declare module "cesium/Source/Core/Matrix4" { import { Matrix4 } from 'cesium'; export default Matrix4; }
-declare module "cesium/Source/Core/mergeSort" { import { mergeSort } from 'cesium'; export default mergeSort; }
-declare module "cesium/Source/Core/NearFarScalar" { import { NearFarScalar } from 'cesium'; export default NearFarScalar; }
-declare module "cesium/Source/Core/objectToQuery" { import { objectToQuery } from 'cesium'; export default objectToQuery; }
-declare module "cesium/Source/Core/Occluder" { import { Occluder } from 'cesium'; export default Occluder; }
-declare module "cesium/Source/Core/OpenCageGeocoderService" { import { OpenCageGeocoderService } from 'cesium'; export default OpenCageGeocoderService; }
-declare module "cesium/Source/Core/OrientedBoundingBox" { import { OrientedBoundingBox } from 'cesium'; export default OrientedBoundingBox; }
-declare module "cesium/Source/Core/OrthographicFrustum" { import { OrthographicFrustum } from 'cesium'; export default OrthographicFrustum; }
-declare module "cesium/Source/Core/OrthographicOffCenterFrustum" { import { OrthographicOffCenterFrustum } from 'cesium'; export default OrthographicOffCenterFrustum; }
-declare module "cesium/Source/Core/Packable" { import { Packable } from 'cesium'; export default Packable; }
-declare module "cesium/Source/Core/PackableForInterpolation" { import { PackableForInterpolation } from 'cesium'; export default PackableForInterpolation; }
-declare module "cesium/Source/Core/PeliasGeocoderService" { import { PeliasGeocoderService } from 'cesium'; export default PeliasGeocoderService; }
-declare module "cesium/Source/Core/PerspectiveFrustum" { import { PerspectiveFrustum } from 'cesium'; export default PerspectiveFrustum; }
-declare module "cesium/Source/Core/PerspectiveOffCenterFrustum" { import { PerspectiveOffCenterFrustum } from 'cesium'; export default PerspectiveOffCenterFrustum; }
-declare module "cesium/Source/Core/PinBuilder" { import { PinBuilder } from 'cesium'; export default PinBuilder; }
-declare module "cesium/Source/Core/PixelFormat" { import { PixelFormat } from 'cesium'; export default PixelFormat; }
-declare module "cesium/Source/Core/Plane" { import { Plane } from 'cesium'; export default Plane; }
-declare module "cesium/Source/Core/PlaneGeometry" { import { PlaneGeometry } from 'cesium'; export default PlaneGeometry; }
-declare module "cesium/Source/Core/PlaneOutlineGeometry" { import { PlaneOutlineGeometry } from 'cesium'; export default PlaneOutlineGeometry; }
-declare module "cesium/Source/Core/pointInsideTriangle" { import { pointInsideTriangle } from 'cesium'; export default pointInsideTriangle; }
-declare module "cesium/Source/Core/PolygonGeometry" { import { PolygonGeometry } from 'cesium'; export default PolygonGeometry; }
-declare module "cesium/Source/Core/PolygonHierarchy" { import { PolygonHierarchy } from 'cesium'; export default PolygonHierarchy; }
-declare module "cesium/Source/Core/PolygonOutlineGeometry" { import { PolygonOutlineGeometry } from 'cesium'; export default PolygonOutlineGeometry; }
-declare module "cesium/Source/Core/PolylineGeometry" { import { PolylineGeometry } from 'cesium'; export default PolylineGeometry; }
-declare module "cesium/Source/Core/PolylineVolumeGeometry" { import { PolylineVolumeGeometry } from 'cesium'; export default PolylineVolumeGeometry; }
-declare module "cesium/Source/Core/PolylineVolumeOutlineGeometry" { import { PolylineVolumeOutlineGeometry } from 'cesium'; export default PolylineVolumeOutlineGeometry; }
-declare module "cesium/Source/Core/PrimitiveType" { import { PrimitiveType } from 'cesium'; export default PrimitiveType; }
-declare module "cesium/Source/Core/Proxy" { import { Proxy } from 'cesium'; export default Proxy; }
-declare module "cesium/Source/Core/QuadraticRealPolynomial" { import { QuadraticRealPolynomial } from 'cesium'; export default QuadraticRealPolynomial; }
-declare module "cesium/Source/Core/QuantizedMeshTerrainData" { import { QuantizedMeshTerrainData } from 'cesium'; export default QuantizedMeshTerrainData; }
-declare module "cesium/Source/Core/QuarticRealPolynomial" { import { QuarticRealPolynomial } from 'cesium'; export default QuarticRealPolynomial; }
-declare module "cesium/Source/Core/Quaternion" { import { Quaternion } from 'cesium'; export default Quaternion; }
-declare module "cesium/Source/Core/QuaternionSpline" { import { QuaternionSpline } from 'cesium'; export default QuaternionSpline; }
-declare module "cesium/Source/Core/queryToObject" { import { queryToObject } from 'cesium'; export default queryToObject; }
-declare module "cesium/Source/Core/Queue" { import { Queue } from 'cesium'; export default Queue; }
-declare module "cesium/Source/Core/Ray" { import { Ray } from 'cesium'; export default Ray; }
-declare module "cesium/Source/Core/Rectangle" { import { Rectangle } from 'cesium'; export default Rectangle; }
-declare module "cesium/Source/Core/RectangleGeometry" { import { RectangleGeometry } from 'cesium'; export default RectangleGeometry; }
-declare module "cesium/Source/Core/RectangleOutlineGeometry" { import { RectangleOutlineGeometry } from 'cesium'; export default RectangleOutlineGeometry; }
-declare module "cesium/Source/Core/ReferenceFrame" { import { ReferenceFrame } from 'cesium'; export default ReferenceFrame; }
-declare module "cesium/Source/Core/Request" { import { Request } from 'cesium'; export default Request; }
-declare module "cesium/Source/Core/requestAnimationFrame" { import { requestAnimationFrame } from 'cesium'; export default requestAnimationFrame; }
-declare module "cesium/Source/Core/RequestErrorEvent" { import { RequestErrorEvent } from 'cesium'; export default RequestErrorEvent; }
-declare module "cesium/Source/Core/RequestScheduler" { import { RequestScheduler } from 'cesium'; export default RequestScheduler; }
-declare module "cesium/Source/Core/RequestState" { import { RequestState } from 'cesium'; export default RequestState; }
-declare module "cesium/Source/Core/RequestType" { import { RequestType } from 'cesium'; export default RequestType; }
-declare module "cesium/Source/Core/Resource" { import { Resource } from 'cesium'; export default Resource; }
-declare module "cesium/Source/Core/RuntimeError" { import { RuntimeError } from 'cesium'; export default RuntimeError; }
-declare module "cesium/Source/Core/sampleTerrain" { import { sampleTerrain } from 'cesium'; export default sampleTerrain; }
-declare module "cesium/Source/Core/sampleTerrainMostDetailed" { import { sampleTerrainMostDetailed } from 'cesium'; export default sampleTerrainMostDetailed; }
-declare module "cesium/Source/Core/ScreenSpaceEventHandler" { import { ScreenSpaceEventHandler } from 'cesium'; export default ScreenSpaceEventHandler; }
-declare module "cesium/Source/Core/ScreenSpaceEventType" { import { ScreenSpaceEventType } from 'cesium'; export default ScreenSpaceEventType; }
-declare module "cesium/Source/Core/ShowGeometryInstanceAttribute" { import { ShowGeometryInstanceAttribute } from 'cesium'; export default ShowGeometryInstanceAttribute; }
-declare module "cesium/Source/Core/Simon1994PlanetaryPositions" { import { Simon1994PlanetaryPositions } from 'cesium'; export default Simon1994PlanetaryPositions; }
-declare module "cesium/Source/Core/SimplePolylineGeometry" { import { SimplePolylineGeometry } from 'cesium'; export default SimplePolylineGeometry; }
-declare module "cesium/Source/Core/SphereGeometry" { import { SphereGeometry } from 'cesium'; export default SphereGeometry; }
-declare module "cesium/Source/Core/SphereOutlineGeometry" { import { SphereOutlineGeometry } from 'cesium'; export default SphereOutlineGeometry; }
-declare module "cesium/Source/Core/Spherical" { import { Spherical } from 'cesium'; export default Spherical; }
-declare module "cesium/Source/Core/Spline" { import { Spline } from 'cesium'; export default Spline; }
-declare module "cesium/Source/Core/subdivideArray" { import { subdivideArray } from 'cesium'; export default subdivideArray; }
-declare module "cesium/Source/Core/TaskProcessor" { import { TaskProcessor } from 'cesium'; export default TaskProcessor; }
-declare module "cesium/Source/Core/TerrainData" { import { TerrainData } from 'cesium'; export default TerrainData; }
-declare module "cesium/Source/Core/TerrainProvider" { import { TerrainProvider } from 'cesium'; export default TerrainProvider; }
-declare module "cesium/Source/Core/TileAvailability" { import { TileAvailability } from 'cesium'; export default TileAvailability; }
-declare module "cesium/Source/Core/TileProviderError" { import { TileProviderError } from 'cesium'; export default TileProviderError; }
-declare module "cesium/Source/Core/TilingScheme" { import { TilingScheme } from 'cesium'; export default TilingScheme; }
-declare module "cesium/Source/Core/TimeInterval" { import { TimeInterval } from 'cesium'; export default TimeInterval; }
-declare module "cesium/Source/Core/TimeIntervalCollection" { import { TimeIntervalCollection } from 'cesium'; export default TimeIntervalCollection; }
-declare module "cesium/Source/Core/TimeStandard" { import { TimeStandard } from 'cesium'; export default TimeStandard; }
-declare module "cesium/Source/Core/Transforms" { import { Transforms } from 'cesium'; export default Transforms; }
-declare module "cesium/Source/Core/TranslationRotationScale" { import { TranslationRotationScale } from 'cesium'; export default TranslationRotationScale; }
-declare module "cesium/Source/Core/TridiagonalSystemSolver" { import { TridiagonalSystemSolver } from 'cesium'; export default TridiagonalSystemSolver; }
-declare module "cesium/Source/Core/TrustedServers" { import { TrustedServers } from 'cesium'; export default TrustedServers; }
-declare module "cesium/Source/Core/VertexFormat" { import { VertexFormat } from 'cesium'; export default VertexFormat; }
-declare module "cesium/Source/Core/VideoSynchronizer" { import { VideoSynchronizer } from 'cesium'; export default VideoSynchronizer; }
-declare module "cesium/Source/Core/Visibility" { import { Visibility } from 'cesium'; export default Visibility; }
-declare module "cesium/Source/Core/VRTheWorldTerrainProvider" { import { VRTheWorldTerrainProvider } from 'cesium'; export default VRTheWorldTerrainProvider; }
-declare module "cesium/Source/Core/WallGeometry" { import { WallGeometry } from 'cesium'; export default WallGeometry; }
-declare module "cesium/Source/Core/WallOutlineGeometry" { import { WallOutlineGeometry } from 'cesium'; export default WallOutlineGeometry; }
-declare module "cesium/Source/Core/WebGLConstants" { import { WebGLConstants } from 'cesium'; export default WebGLConstants; }
-declare module "cesium/Source/Core/WebMercatorProjection" { import { WebMercatorProjection } from 'cesium'; export default WebMercatorProjection; }
-declare module "cesium/Source/Core/WebMercatorTilingScheme" { import { WebMercatorTilingScheme } from 'cesium'; export default WebMercatorTilingScheme; }
-declare module "cesium/Source/Core/WeightSpline" { import { WeightSpline } from 'cesium'; export default WeightSpline; }
-declare module "cesium/Source/Core/WindingOrder" { import { WindingOrder } from 'cesium'; export default WindingOrder; }
-declare module "cesium/Source/Core/writeTextToCanvas" { import { writeTextToCanvas } from 'cesium'; export default writeTextToCanvas; }
-declare module "cesium/Source/DataSources/BillboardGraphics" { import { BillboardGraphics } from 'cesium'; export default BillboardGraphics; }
-declare module "cesium/Source/DataSources/BillboardVisualizer" { import { BillboardVisualizer } from 'cesium'; export default BillboardVisualizer; }
-declare module "cesium/Source/DataSources/BoxGeometryUpdater" { import { BoxGeometryUpdater } from 'cesium'; export default BoxGeometryUpdater; }
-declare module "cesium/Source/DataSources/BoxGraphics" { import { BoxGraphics } from 'cesium'; export default BoxGraphics; }
-declare module "cesium/Source/DataSources/CallbackProperty" { import { CallbackProperty } from 'cesium'; export default CallbackProperty; }
-declare module "cesium/Source/DataSources/Cesium3DTilesetGraphics" { import { Cesium3DTilesetGraphics } from 'cesium'; export default Cesium3DTilesetGraphics; }
-declare module "cesium/Source/DataSources/Cesium3DTilesetVisualizer" { import { Cesium3DTilesetVisualizer } from 'cesium'; export default Cesium3DTilesetVisualizer; }
-declare module "cesium/Source/DataSources/CheckerboardMaterialProperty" { import { CheckerboardMaterialProperty } from 'cesium'; export default CheckerboardMaterialProperty; }
-declare module "cesium/Source/DataSources/ColorMaterialProperty" { import { ColorMaterialProperty } from 'cesium'; export default ColorMaterialProperty; }
-declare module "cesium/Source/DataSources/CompositeEntityCollection" { import { CompositeEntityCollection } from 'cesium'; export default CompositeEntityCollection; }
-declare module "cesium/Source/DataSources/CompositeMaterialProperty" { import { CompositeMaterialProperty } from 'cesium'; export default CompositeMaterialProperty; }
-declare module "cesium/Source/DataSources/CompositePositionProperty" { import { CompositePositionProperty } from 'cesium'; export default CompositePositionProperty; }
-declare module "cesium/Source/DataSources/CompositeProperty" { import { CompositeProperty } from 'cesium'; export default CompositeProperty; }
-declare module "cesium/Source/DataSources/ConstantPositionProperty" { import { ConstantPositionProperty } from 'cesium'; export default ConstantPositionProperty; }
-declare module "cesium/Source/DataSources/ConstantProperty" { import { ConstantProperty } from 'cesium'; export default ConstantProperty; }
-declare module "cesium/Source/DataSources/CorridorGeometryUpdater" { import { CorridorGeometryUpdater } from 'cesium'; export default CorridorGeometryUpdater; }
-declare module "cesium/Source/DataSources/CorridorGraphics" { import { CorridorGraphics } from 'cesium'; export default CorridorGraphics; }
-declare module "cesium/Source/DataSources/CustomDataSource" { import { CustomDataSource } from 'cesium'; export default CustomDataSource; }
-declare module "cesium/Source/DataSources/CylinderGeometryUpdater" { import { CylinderGeometryUpdater } from 'cesium'; export default CylinderGeometryUpdater; }
-declare module "cesium/Source/DataSources/CylinderGraphics" { import { CylinderGraphics } from 'cesium'; export default CylinderGraphics; }
-declare module "cesium/Source/DataSources/CzmlDataSource" { import { CzmlDataSource } from 'cesium'; export default CzmlDataSource; }
-declare module "cesium/Source/DataSources/DataSource" { import { DataSource } from 'cesium'; export default DataSource; }
-declare module "cesium/Source/DataSources/DataSourceClock" { import { DataSourceClock } from 'cesium'; export default DataSourceClock; }
-declare module "cesium/Source/DataSources/DataSourceCollection" { import { DataSourceCollection } from 'cesium'; export default DataSourceCollection; }
-declare module "cesium/Source/DataSources/DataSourceDisplay" { import { DataSourceDisplay } from 'cesium'; export default DataSourceDisplay; }
-declare module "cesium/Source/DataSources/EllipseGeometryUpdater" { import { EllipseGeometryUpdater } from 'cesium'; export default EllipseGeometryUpdater; }
-declare module "cesium/Source/DataSources/EllipseGraphics" { import { EllipseGraphics } from 'cesium'; export default EllipseGraphics; }
-declare module "cesium/Source/DataSources/EllipsoidGeometryUpdater" { import { EllipsoidGeometryUpdater } from 'cesium'; export default EllipsoidGeometryUpdater; }
-declare module "cesium/Source/DataSources/EllipsoidGraphics" { import { EllipsoidGraphics } from 'cesium'; export default EllipsoidGraphics; }
-declare module "cesium/Source/DataSources/Entity" { import { Entity } from 'cesium'; export default Entity; }
-declare module "cesium/Source/DataSources/EntityCluster" { import { EntityCluster } from 'cesium'; export default EntityCluster; }
-declare module "cesium/Source/DataSources/EntityCollection" { import { EntityCollection } from 'cesium'; export default EntityCollection; }
-declare module "cesium/Source/DataSources/EntityView" { import { EntityView } from 'cesium'; export default EntityView; }
-declare module "cesium/Source/DataSources/exportKml" { import { exportKml } from 'cesium'; export default exportKml; }
-declare module "cesium/Source/DataSources/GeoJsonDataSource" { import { GeoJsonDataSource } from 'cesium'; export default GeoJsonDataSource; }
-declare module "cesium/Source/DataSources/GeometryUpdater" { import { GeometryUpdater } from 'cesium'; export default GeometryUpdater; }
-declare module "cesium/Source/DataSources/GeometryVisualizer" { import { GeometryVisualizer } from 'cesium'; export default GeometryVisualizer; }
-declare module "cesium/Source/DataSources/GridMaterialProperty" { import { GridMaterialProperty } from 'cesium'; export default GridMaterialProperty; }
-declare module "cesium/Source/DataSources/GroundGeometryUpdater" { import { GroundGeometryUpdater } from 'cesium'; export default GroundGeometryUpdater; }
-declare module "cesium/Source/DataSources/ImageMaterialProperty" { import { ImageMaterialProperty } from 'cesium'; export default ImageMaterialProperty; }
-declare module "cesium/Source/DataSources/KmlCamera" { import { KmlCamera } from 'cesium'; export default KmlCamera; }
-declare module "cesium/Source/DataSources/KmlDataSource" { import { KmlDataSource } from 'cesium'; export default KmlDataSource; }
-declare module "cesium/Source/DataSources/KmlLookAt" { import { KmlLookAt } from 'cesium'; export default KmlLookAt; }
-declare module "cesium/Source/DataSources/KmlTour" { import { KmlTour } from 'cesium'; export default KmlTour; }
-declare module "cesium/Source/DataSources/KmlTourFlyTo" { import { KmlTourFlyTo } from 'cesium'; export default KmlTourFlyTo; }
-declare module "cesium/Source/DataSources/KmlTourWait" { import { KmlTourWait } from 'cesium'; export default KmlTourWait; }
-declare module "cesium/Source/DataSources/LabelGraphics" { import { LabelGraphics } from 'cesium'; export default LabelGraphics; }
-declare module "cesium/Source/DataSources/LabelVisualizer" { import { LabelVisualizer } from 'cesium'; export default LabelVisualizer; }
-declare module "cesium/Source/DataSources/MaterialProperty" { import { MaterialProperty } from 'cesium'; export default MaterialProperty; }
-declare module "cesium/Source/DataSources/ModelGraphics" { import { ModelGraphics } from 'cesium'; export default ModelGraphics; }
-declare module "cesium/Source/DataSources/ModelVisualizer" { import { ModelVisualizer } from 'cesium'; export default ModelVisualizer; }
-declare module "cesium/Source/DataSources/NodeTransformationProperty" { import { NodeTransformationProperty } from 'cesium'; export default NodeTransformationProperty; }
-declare module "cesium/Source/DataSources/PathGraphics" { import { PathGraphics } from 'cesium'; export default PathGraphics; }
-declare module "cesium/Source/DataSources/PathVisualizer" { import { PathVisualizer } from 'cesium'; export default PathVisualizer; }
-declare module "cesium/Source/DataSources/PlaneGeometryUpdater" { import { PlaneGeometryUpdater } from 'cesium'; export default PlaneGeometryUpdater; }
-declare module "cesium/Source/DataSources/PlaneGraphics" { import { PlaneGraphics } from 'cesium'; export default PlaneGraphics; }
-declare module "cesium/Source/DataSources/PointGraphics" { import { PointGraphics } from 'cesium'; export default PointGraphics; }
-declare module "cesium/Source/DataSources/PointVisualizer" { import { PointVisualizer } from 'cesium'; export default PointVisualizer; }
-declare module "cesium/Source/DataSources/PolygonGeometryUpdater" { import { PolygonGeometryUpdater } from 'cesium'; export default PolygonGeometryUpdater; }
-declare module "cesium/Source/DataSources/PolygonGraphics" { import { PolygonGraphics } from 'cesium'; export default PolygonGraphics; }
-declare module "cesium/Source/DataSources/PolylineArrowMaterialProperty" { import { PolylineArrowMaterialProperty } from 'cesium'; export default PolylineArrowMaterialProperty; }
-declare module "cesium/Source/DataSources/PolylineDashMaterialProperty" { import { PolylineDashMaterialProperty } from 'cesium'; export default PolylineDashMaterialProperty; }
-declare module "cesium/Source/DataSources/PolylineGeometryUpdater" { import { PolylineGeometryUpdater } from 'cesium'; export default PolylineGeometryUpdater; }
-declare module "cesium/Source/DataSources/PolylineGlowMaterialProperty" { import { PolylineGlowMaterialProperty } from 'cesium'; export default PolylineGlowMaterialProperty; }
-declare module "cesium/Source/DataSources/PolylineGraphics" { import { PolylineGraphics } from 'cesium'; export default PolylineGraphics; }
-declare module "cesium/Source/DataSources/PolylineOutlineMaterialProperty" { import { PolylineOutlineMaterialProperty } from 'cesium'; export default PolylineOutlineMaterialProperty; }
-declare module "cesium/Source/DataSources/PolylineVisualizer" { import { PolylineVisualizer } from 'cesium'; export default PolylineVisualizer; }
-declare module "cesium/Source/DataSources/PolylineVolumeGeometryUpdater" { import { PolylineVolumeGeometryUpdater } from 'cesium'; export default PolylineVolumeGeometryUpdater; }
-declare module "cesium/Source/DataSources/PolylineVolumeGraphics" { import { PolylineVolumeGraphics } from 'cesium'; export default PolylineVolumeGraphics; }
-declare module "cesium/Source/DataSources/PositionProperty" { import { PositionProperty } from 'cesium'; export default PositionProperty; }
-declare module "cesium/Source/DataSources/PositionPropertyArray" { import { PositionPropertyArray } from 'cesium'; export default PositionPropertyArray; }
-declare module "cesium/Source/DataSources/Property" { import { Property } from 'cesium'; export default Property; }
-declare module "cesium/Source/DataSources/PropertyArray" { import { PropertyArray } from 'cesium'; export default PropertyArray; }
-declare module "cesium/Source/DataSources/PropertyBag" { import { PropertyBag } from 'cesium'; export default PropertyBag; }
-declare module "cesium/Source/DataSources/RectangleGeometryUpdater" { import { RectangleGeometryUpdater } from 'cesium'; export default RectangleGeometryUpdater; }
-declare module "cesium/Source/DataSources/RectangleGraphics" { import { RectangleGraphics } from 'cesium'; export default RectangleGraphics; }
-declare module "cesium/Source/DataSources/ReferenceProperty" { import { ReferenceProperty } from 'cesium'; export default ReferenceProperty; }
-declare module "cesium/Source/DataSources/Rotation" { import { Rotation } from 'cesium'; export default Rotation; }
-declare module "cesium/Source/DataSources/SampledPositionProperty" { import { SampledPositionProperty } from 'cesium'; export default SampledPositionProperty; }
-declare module "cesium/Source/DataSources/SampledProperty" { import { SampledProperty } from 'cesium'; export default SampledProperty; }
-declare module "cesium/Source/DataSources/StripeMaterialProperty" { import { StripeMaterialProperty } from 'cesium'; export default StripeMaterialProperty; }
-declare module "cesium/Source/DataSources/StripeOrientation" { import { StripeOrientation } from 'cesium'; export default StripeOrientation; }
-declare module "cesium/Source/DataSources/TimeIntervalCollectionPositionProperty" { import { TimeIntervalCollectionPositionProperty } from 'cesium'; export default TimeIntervalCollectionPositionProperty; }
-declare module "cesium/Source/DataSources/TimeIntervalCollectionProperty" { import { TimeIntervalCollectionProperty } from 'cesium'; export default TimeIntervalCollectionProperty; }
-declare module "cesium/Source/DataSources/VelocityOrientationProperty" { import { VelocityOrientationProperty } from 'cesium'; export default VelocityOrientationProperty; }
-declare module "cesium/Source/DataSources/VelocityVectorProperty" { import { VelocityVectorProperty } from 'cesium'; export default VelocityVectorProperty; }
-declare module "cesium/Source/DataSources/Visualizer" { import { Visualizer } from 'cesium'; export default Visualizer; }
-declare module "cesium/Source/DataSources/WallGeometryUpdater" { import { WallGeometryUpdater } from 'cesium'; export default WallGeometryUpdater; }
-declare module "cesium/Source/DataSources/WallGraphics" { import { WallGraphics } from 'cesium'; export default WallGraphics; }
-declare module "cesium/Source/Renderer/PixelDatatype" { import { PixelDatatype } from 'cesium'; export default PixelDatatype; }
-declare module "cesium/Source/Renderer/TextureMagnificationFilter" { import { TextureMagnificationFilter } from 'cesium'; export default TextureMagnificationFilter; }
-declare module "cesium/Source/Renderer/TextureMinificationFilter" { import { TextureMinificationFilter } from 'cesium'; export default TextureMinificationFilter; }
-declare module "cesium/Source/Scene/Appearance" { import { Appearance } from 'cesium'; export default Appearance; }
-declare module "cesium/Source/Scene/ArcGisMapServerImageryProvider" { import { ArcGisMapServerImageryProvider } from 'cesium'; export default ArcGisMapServerImageryProvider; }
-declare module "cesium/Source/Scene/Axis" { import { Axis } from 'cesium'; export default Axis; }
-declare module "cesium/Source/Scene/Billboard" { import { Billboard } from 'cesium'; export default Billboard; }
-declare module "cesium/Source/Scene/BillboardCollection" { import { BillboardCollection } from 'cesium'; export default BillboardCollection; }
-declare module "cesium/Source/Scene/BingMapsImageryProvider" { import { BingMapsImageryProvider } from 'cesium'; export default BingMapsImageryProvider; }
-declare module "cesium/Source/Scene/BingMapsStyle" { import { BingMapsStyle } from 'cesium'; export default BingMapsStyle; }
-declare module "cesium/Source/Scene/BlendEquation" { import { BlendEquation } from 'cesium'; export default BlendEquation; }
-declare module "cesium/Source/Scene/BlendFunction" { import { BlendFunction } from 'cesium'; export default BlendFunction; }
-declare module "cesium/Source/Scene/BlendingState" { import { BlendingState } from 'cesium'; export default BlendingState; }
-declare module "cesium/Source/Scene/BlendOption" { import { BlendOption } from 'cesium'; export default BlendOption; }
-declare module "cesium/Source/Scene/BoxEmitter" { import { BoxEmitter } from 'cesium'; export default BoxEmitter; }
-declare module "cesium/Source/Scene/Camera" { import { Camera } from 'cesium'; export default Camera; }
-declare module "cesium/Source/Scene/CameraEventAggregator" { import { CameraEventAggregator } from 'cesium'; export default CameraEventAggregator; }
-declare module "cesium/Source/Scene/CameraEventType" { import { CameraEventType } from 'cesium'; export default CameraEventType; }
-declare module "cesium/Source/Scene/Cesium3DTile" { import { Cesium3DTile } from 'cesium'; export default Cesium3DTile; }
-declare module "cesium/Source/Scene/Cesium3DTileColorBlendMode" { import { Cesium3DTileColorBlendMode } from 'cesium'; export default Cesium3DTileColorBlendMode; }
-declare module "cesium/Source/Scene/Cesium3DTileContent" { import { Cesium3DTileContent } from 'cesium'; export default Cesium3DTileContent; }
-declare module "cesium/Source/Scene/Cesium3DTileFeature" { import { Cesium3DTileFeature } from 'cesium'; export default Cesium3DTileFeature; }
-declare module "cesium/Source/Scene/Cesium3DTilePointFeature" { import { Cesium3DTilePointFeature } from 'cesium'; export default Cesium3DTilePointFeature; }
-declare module "cesium/Source/Scene/Cesium3DTileset" { import { Cesium3DTileset } from 'cesium'; export default Cesium3DTileset; }
-declare module "cesium/Source/Scene/Cesium3DTileStyle" { import { Cesium3DTileStyle } from 'cesium'; export default Cesium3DTileStyle; }
-declare module "cesium/Source/Scene/CircleEmitter" { import { CircleEmitter } from 'cesium'; export default CircleEmitter; }
-declare module "cesium/Source/Scene/ClassificationPrimitive" { import { ClassificationPrimitive } from 'cesium'; export default ClassificationPrimitive; }
-declare module "cesium/Source/Scene/ClassificationType" { import { ClassificationType } from 'cesium'; export default ClassificationType; }
-declare module "cesium/Source/Scene/ClippingPlane" { import { ClippingPlane } from 'cesium'; export default ClippingPlane; }
-declare module "cesium/Source/Scene/ClippingPlaneCollection" { import { ClippingPlaneCollection } from 'cesium'; export default ClippingPlaneCollection; }
-declare module "cesium/Source/Scene/CloudCollection" { import { CloudCollection } from 'cesium'; export default CloudCollection; }
-declare module "cesium/Source/Scene/CloudType" { import { CloudType } from 'cesium'; export default CloudType; }
-declare module "cesium/Source/Scene/ColorBlendMode" { import { ColorBlendMode } from 'cesium'; export default ColorBlendMode; }
-declare module "cesium/Source/Scene/ConditionsExpression" { import { ConditionsExpression } from 'cesium'; export default ConditionsExpression; }
-declare module "cesium/Source/Scene/ConeEmitter" { import { ConeEmitter } from 'cesium'; export default ConeEmitter; }
-declare module "cesium/Source/Scene/createElevationBandMaterial" { import { createElevationBandMaterial } from 'cesium'; export default createElevationBandMaterial; }
-declare module "cesium/Source/Scene/createOsmBuildings" { import { createOsmBuildings } from 'cesium'; export default createOsmBuildings; }
-declare module "cesium/Source/Scene/createTangentSpaceDebugPrimitive" { import { createTangentSpaceDebugPrimitive } from 'cesium'; export default createTangentSpaceDebugPrimitive; }
-declare module "cesium/Source/Scene/createWorldImagery" { import { createWorldImagery } from 'cesium'; export default createWorldImagery; }
-declare module "cesium/Source/Scene/CreditDisplay" { import { CreditDisplay } from 'cesium'; export default CreditDisplay; }
-declare module "cesium/Source/Scene/CullFace" { import { CullFace } from 'cesium'; export default CullFace; }
-declare module "cesium/Source/Scene/CumulusCloud" { import { CumulusCloud } from 'cesium'; export default CumulusCloud; }
-declare module "cesium/Source/Scene/DebugAppearance" { import { DebugAppearance } from 'cesium'; export default DebugAppearance; }
-declare module "cesium/Source/Scene/DebugCameraPrimitive" { import { DebugCameraPrimitive } from 'cesium'; export default DebugCameraPrimitive; }
-declare module "cesium/Source/Scene/DebugModelMatrixPrimitive" { import { DebugModelMatrixPrimitive } from 'cesium'; export default DebugModelMatrixPrimitive; }
-declare module "cesium/Source/Scene/DepthFunction" { import { DepthFunction } from 'cesium'; export default DepthFunction; }
-declare module "cesium/Source/Scene/DirectionalLight" { import { DirectionalLight } from 'cesium'; export default DirectionalLight; }
-declare module "cesium/Source/Scene/DiscardEmptyTileImagePolicy" { import { DiscardEmptyTileImagePolicy } from 'cesium'; export default DiscardEmptyTileImagePolicy; }
-declare module "cesium/Source/Scene/DiscardMissingTileImagePolicy" { import { DiscardMissingTileImagePolicy } from 'cesium'; export default DiscardMissingTileImagePolicy; }
-declare module "cesium/Source/Scene/EllipsoidSurfaceAppearance" { import { EllipsoidSurfaceAppearance } from 'cesium'; export default EllipsoidSurfaceAppearance; }
-declare module "cesium/Source/Scene/Expression" { import { Expression } from 'cesium'; export default Expression; }
-declare module "cesium/Source/Scene/Fog" { import { Fog } from 'cesium'; export default Fog; }
-declare module "cesium/Source/Scene/FrameRateMonitor" { import { FrameRateMonitor } from 'cesium'; export default FrameRateMonitor; }
-declare module "cesium/Source/Scene/GetFeatureInfoFormat" { import { GetFeatureInfoFormat } from 'cesium'; export default GetFeatureInfoFormat; }
-declare module "cesium/Source/Scene/Globe" { import { Globe } from 'cesium'; export default Globe; }
-declare module "cesium/Source/Scene/GlobeTranslucency" { import { GlobeTranslucency } from 'cesium'; export default GlobeTranslucency; }
-declare module "cesium/Source/Scene/GoogleEarthEnterpriseImageryProvider" { import { GoogleEarthEnterpriseImageryProvider } from 'cesium'; export default GoogleEarthEnterpriseImageryProvider; }
-declare module "cesium/Source/Scene/GoogleEarthEnterpriseMapsProvider" { import { GoogleEarthEnterpriseMapsProvider } from 'cesium'; export default GoogleEarthEnterpriseMapsProvider; }
-declare module "cesium/Source/Scene/GridImageryProvider" { import { GridImageryProvider } from 'cesium'; export default GridImageryProvider; }
-declare module "cesium/Source/Scene/GroundPolylinePrimitive" { import { GroundPolylinePrimitive } from 'cesium'; export default GroundPolylinePrimitive; }
-declare module "cesium/Source/Scene/GroundPrimitive" { import { GroundPrimitive } from 'cesium'; export default GroundPrimitive; }
-declare module "cesium/Source/Scene/HeightReference" { import { HeightReference } from 'cesium'; export default HeightReference; }
-declare module "cesium/Source/Scene/HorizontalOrigin" { import { HorizontalOrigin } from 'cesium'; export default HorizontalOrigin; }
-declare module "cesium/Source/Scene/ImageryLayer" { import { ImageryLayer } from 'cesium'; export default ImageryLayer; }
-declare module "cesium/Source/Scene/ImageryLayerCollection" { import { ImageryLayerCollection } from 'cesium'; export default ImageryLayerCollection; }
-declare module "cesium/Source/Scene/ImageryLayerFeatureInfo" { import { ImageryLayerFeatureInfo } from 'cesium'; export default ImageryLayerFeatureInfo; }
-declare module "cesium/Source/Scene/ImageryProvider" { import { ImageryProvider } from 'cesium'; export default ImageryProvider; }
-declare module "cesium/Source/Scene/ImagerySplitDirection" { import { ImagerySplitDirection } from 'cesium'; export default ImagerySplitDirection; }
-declare module "cesium/Source/Scene/IonImageryProvider" { import { IonImageryProvider } from 'cesium'; export default IonImageryProvider; }
-declare module "cesium/Source/Scene/IonWorldImageryStyle" { import { IonWorldImageryStyle } from 'cesium'; export default IonWorldImageryStyle; }
-declare module "cesium/Source/Scene/Label" { import { Label } from 'cesium'; export default Label; }
-declare module "cesium/Source/Scene/LabelCollection" { import { LabelCollection } from 'cesium'; export default LabelCollection; }
-declare module "cesium/Source/Scene/LabelStyle" { import { LabelStyle } from 'cesium'; export default LabelStyle; }
-declare module "cesium/Source/Scene/Light" { import { Light } from 'cesium'; export default Light; }
-declare module "cesium/Source/Scene/MapboxImageryProvider" { import { MapboxImageryProvider } from 'cesium'; export default MapboxImageryProvider; }
-declare module "cesium/Source/Scene/MapboxStyleImageryProvider" { import { MapboxStyleImageryProvider } from 'cesium'; export default MapboxStyleImageryProvider; }
-declare module "cesium/Source/Scene/MapMode2D" { import { MapMode2D } from 'cesium'; export default MapMode2D; }
-declare module "cesium/Source/Scene/Material" { import { Material } from 'cesium'; export default Material; }
-declare module "cesium/Source/Scene/MaterialAppearance" { import { MaterialAppearance } from 'cesium'; export default MaterialAppearance; }
-declare module "cesium/Source/Scene/Model" { import { Model } from 'cesium'; export default Model; }
-declare module "cesium/Source/Scene/ModelAnimation" { import { ModelAnimation } from 'cesium'; export default ModelAnimation; }
-declare module "cesium/Source/Scene/ModelAnimationCollection" { import { ModelAnimationCollection } from 'cesium'; export default ModelAnimationCollection; }
-declare module "cesium/Source/Scene/ModelAnimationLoop" { import { ModelAnimationLoop } from 'cesium'; export default ModelAnimationLoop; }
-declare module "cesium/Source/Scene/ModelMaterial" { import { ModelMaterial } from 'cesium'; export default ModelMaterial; }
-declare module "cesium/Source/Scene/ModelMesh" { import { ModelMesh } from 'cesium'; export default ModelMesh; }
-declare module "cesium/Source/Scene/ModelNode" { import { ModelNode } from 'cesium'; export default ModelNode; }
-declare module "cesium/Source/Scene/Moon" { import { Moon } from 'cesium'; export default Moon; }
-declare module "cesium/Source/Scene/NeverTileDiscardPolicy" { import { NeverTileDiscardPolicy } from 'cesium'; export default NeverTileDiscardPolicy; }
-declare module "cesium/Source/Scene/OpenStreetMapImageryProvider" { import { OpenStreetMapImageryProvider } from 'cesium'; export default OpenStreetMapImageryProvider; }
-declare module "cesium/Source/Scene/Particle" { import { Particle } from 'cesium'; export default Particle; }
-declare module "cesium/Source/Scene/ParticleBurst" { import { ParticleBurst } from 'cesium'; export default ParticleBurst; }
-declare module "cesium/Source/Scene/ParticleEmitter" { import { ParticleEmitter } from 'cesium'; export default ParticleEmitter; }
-declare module "cesium/Source/Scene/ParticleSystem" { import { ParticleSystem } from 'cesium'; export default ParticleSystem; }
-declare module "cesium/Source/Scene/PerInstanceColorAppearance" { import { PerInstanceColorAppearance } from 'cesium'; export default PerInstanceColorAppearance; }
-declare module "cesium/Source/Scene/PointCloudShading" { import { PointCloudShading } from 'cesium'; export default PointCloudShading; }
-declare module "cesium/Source/Scene/PointPrimitive" { import { PointPrimitive } from 'cesium'; export default PointPrimitive; }
-declare module "cesium/Source/Scene/PointPrimitiveCollection" { import { PointPrimitiveCollection } from 'cesium'; export default PointPrimitiveCollection; }
-declare module "cesium/Source/Scene/Polyline" { import { Polyline } from 'cesium'; export default Polyline; }
-declare module "cesium/Source/Scene/PolylineCollection" { import { PolylineCollection } from 'cesium'; export default PolylineCollection; }
-declare module "cesium/Source/Scene/PolylineColorAppearance" { import { PolylineColorAppearance } from 'cesium'; export default PolylineColorAppearance; }
-declare module "cesium/Source/Scene/PolylineMaterialAppearance" { import { PolylineMaterialAppearance } from 'cesium'; export default PolylineMaterialAppearance; }
-declare module "cesium/Source/Scene/PostProcessStage" { import { PostProcessStage } from 'cesium'; export default PostProcessStage; }
-declare module "cesium/Source/Scene/PostProcessStageCollection" { import { PostProcessStageCollection } from 'cesium'; export default PostProcessStageCollection; }
-declare module "cesium/Source/Scene/PostProcessStageComposite" { import { PostProcessStageComposite } from 'cesium'; export default PostProcessStageComposite; }
-declare module "cesium/Source/Scene/PostProcessStageLibrary" { import { PostProcessStageLibrary } from 'cesium'; export default PostProcessStageLibrary; }
-declare module "cesium/Source/Scene/PostProcessStageSampleMode" { import { PostProcessStageSampleMode } from 'cesium'; export default PostProcessStageSampleMode; }
-declare module "cesium/Source/Scene/Primitive" { import { Primitive } from 'cesium'; export default Primitive; }
-declare module "cesium/Source/Scene/PrimitiveCollection" { import { PrimitiveCollection } from 'cesium'; export default PrimitiveCollection; }
-declare module "cesium/Source/Scene/Scene" { import { Scene } from 'cesium'; export default Scene; }
-declare module "cesium/Source/Scene/SceneMode" { import { SceneMode } from 'cesium'; export default SceneMode; }
-declare module "cesium/Source/Scene/SceneTransforms" { import { SceneTransforms } from 'cesium'; export default SceneTransforms; }
-declare module "cesium/Source/Scene/ScreenSpaceCameraController" { import { ScreenSpaceCameraController } from 'cesium'; export default ScreenSpaceCameraController; }
-declare module "cesium/Source/Scene/ShadowMap" { import { ShadowMap } from 'cesium'; export default ShadowMap; }
-declare module "cesium/Source/Scene/ShadowMode" { import { ShadowMode } from 'cesium'; export default ShadowMode; }
-declare module "cesium/Source/Scene/SingleTileImageryProvider" { import { SingleTileImageryProvider } from 'cesium'; export default SingleTileImageryProvider; }
-declare module "cesium/Source/Scene/SkyAtmosphere" { import { SkyAtmosphere } from 'cesium'; export default SkyAtmosphere; }
-declare module "cesium/Source/Scene/SkyBox" { import { SkyBox } from 'cesium'; export default SkyBox; }
-declare module "cesium/Source/Scene/SphereEmitter" { import { SphereEmitter } from 'cesium'; export default SphereEmitter; }
-declare module "cesium/Source/Scene/StencilFunction" { import { StencilFunction } from 'cesium'; export default StencilFunction; }
-declare module "cesium/Source/Scene/StencilOperation" { import { StencilOperation } from 'cesium'; export default StencilOperation; }
-declare module "cesium/Source/Scene/StyleExpression" { import { StyleExpression } from 'cesium'; export default StyleExpression; }
-declare module "cesium/Source/Scene/Sun" { import { Sun } from 'cesium'; export default Sun; }
-declare module "cesium/Source/Scene/SunLight" { import { SunLight } from 'cesium'; export default SunLight; }
-declare module "cesium/Source/Scene/TileCoordinatesImageryProvider" { import { TileCoordinatesImageryProvider } from 'cesium'; export default TileCoordinatesImageryProvider; }
-declare module "cesium/Source/Scene/TileDiscardPolicy" { import { TileDiscardPolicy } from 'cesium'; export default TileDiscardPolicy; }
-declare module "cesium/Source/Scene/TileMapServiceImageryProvider" { import { TileMapServiceImageryProvider } from 'cesium'; export default TileMapServiceImageryProvider; }
-declare module "cesium/Source/Scene/TimeDynamicImagery" { import { TimeDynamicImagery } from 'cesium'; export default TimeDynamicImagery; }
-declare module "cesium/Source/Scene/TimeDynamicPointCloud" { import { TimeDynamicPointCloud } from 'cesium'; export default TimeDynamicPointCloud; }
-declare module "cesium/Source/Scene/UrlTemplateImageryProvider" { import { UrlTemplateImageryProvider } from 'cesium'; export default UrlTemplateImageryProvider; }
-declare module "cesium/Source/Scene/VerticalOrigin" { import { VerticalOrigin } from 'cesium'; export default VerticalOrigin; }
-declare module "cesium/Source/Scene/ViewportQuad" { import { ViewportQuad } from 'cesium'; export default ViewportQuad; }
-declare module "cesium/Source/Scene/WebMapServiceImageryProvider" { import { WebMapServiceImageryProvider } from 'cesium'; export default WebMapServiceImageryProvider; }
-declare module "cesium/Source/Scene/WebMapTileServiceImageryProvider" { import { WebMapTileServiceImageryProvider } from 'cesium'; export default WebMapTileServiceImageryProvider; }
-declare module "cesium/Source/Widgets/ClockViewModel" { import { ClockViewModel } from 'cesium'; export default ClockViewModel; }
-declare module "cesium/Source/Widgets/Command" { import { Command } from 'cesium'; export default Command; }
-declare module "cesium/Source/Widgets/createCommand" { import { createCommand } from 'cesium'; export default createCommand; }
-declare module "cesium/Source/Widgets/SvgPathBindingHandler" { import { SvgPathBindingHandler } from 'cesium'; export default SvgPathBindingHandler; }
-declare module "cesium/Source/Widgets/ToggleButtonViewModel" { import { ToggleButtonViewModel } from 'cesium'; export default ToggleButtonViewModel; }
-declare module "cesium/Source/Scene/ModelExperimental/CustomShader" { import { CustomShader } from 'cesium'; export default CustomShader; }
-declare module "cesium/Source/Scene/ModelExperimental/CustomShaderMode" { import { CustomShaderMode } from 'cesium'; export default CustomShaderMode; }
-declare module "cesium/Source/Scene/ModelExperimental/LightingModel" { import { LightingModel } from 'cesium'; export default LightingModel; }
-declare module "cesium/Source/Scene/ModelExperimental/ModelExperimental" { import { ModelExperimental } from 'cesium'; export default ModelExperimental; }
-declare module "cesium/Source/Scene/ModelExperimental/ModelFeature" { import { ModelFeature } from 'cesium'; export default ModelFeature; }
-declare module "cesium/Source/Scene/ModelExperimental/TextureUniform" { import { TextureUniform } from 'cesium'; export default TextureUniform; }
-declare module "cesium/Source/Scene/ModelExperimental/UniformType" { import { UniformType } from 'cesium'; export default UniformType; }
-declare module "cesium/Source/Scene/ModelExperimental/VaryingType" { import { VaryingType } from 'cesium'; export default VaryingType; }
-declare module "cesium/Source/Widgets/Animation/Animation" { import { Animation } from 'cesium'; export default Animation; }
-declare module "cesium/Source/Widgets/Animation/AnimationViewModel" { import { AnimationViewModel } from 'cesium'; export default AnimationViewModel; }
-declare module "cesium/Source/Widgets/BaseLayerPicker/BaseLayerPicker" { import { BaseLayerPicker } from 'cesium'; export default BaseLayerPicker; }
-declare module "cesium/Source/Widgets/BaseLayerPicker/BaseLayerPickerViewModel" { import { BaseLayerPickerViewModel } from 'cesium'; export default BaseLayerPickerViewModel; }
-declare module "cesium/Source/Widgets/BaseLayerPicker/ProviderViewModel" { import { ProviderViewModel } from 'cesium'; export default ProviderViewModel; }
-declare module "cesium/Source/Widgets/Cesium3DTilesInspector/Cesium3DTilesInspector" { import { Cesium3DTilesInspector } from 'cesium'; export default Cesium3DTilesInspector; }
-declare module "cesium/Source/Widgets/Cesium3DTilesInspector/Cesium3DTilesInspectorViewModel" { import { Cesium3DTilesInspectorViewModel } from 'cesium'; export default Cesium3DTilesInspectorViewModel; }
-declare module "cesium/Source/Widgets/CesiumInspector/CesiumInspector" { import { CesiumInspector } from 'cesium'; export default CesiumInspector; }
-declare module "cesium/Source/Widgets/CesiumInspector/CesiumInspectorViewModel" { import { CesiumInspectorViewModel } from 'cesium'; export default CesiumInspectorViewModel; }
-declare module "cesium/Source/Widgets/CesiumWidget/CesiumWidget" { import { CesiumWidget } from 'cesium'; export default CesiumWidget; }
-declare module "cesium/Source/Widgets/FullscreenButton/FullscreenButton" { import { FullscreenButton } from 'cesium'; export default FullscreenButton; }
-declare module "cesium/Source/Widgets/FullscreenButton/FullscreenButtonViewModel" { import { FullscreenButtonViewModel } from 'cesium'; export default FullscreenButtonViewModel; }
-declare module "cesium/Source/Widgets/Geocoder/Geocoder" { import { Geocoder } from 'cesium'; export default Geocoder; }
-declare module "cesium/Source/Widgets/Geocoder/GeocoderViewModel" { import { GeocoderViewModel } from 'cesium'; export default GeocoderViewModel; }
-declare module "cesium/Source/Widgets/HomeButton/HomeButton" { import { HomeButton } from 'cesium'; export default HomeButton; }
-declare module "cesium/Source/Widgets/HomeButton/HomeButtonViewModel" { import { HomeButtonViewModel } from 'cesium'; export default HomeButtonViewModel; }
-declare module "cesium/Source/Widgets/InfoBox/InfoBox" { import { InfoBox } from 'cesium'; export default InfoBox; }
-declare module "cesium/Source/Widgets/InfoBox/InfoBoxViewModel" { import { InfoBoxViewModel } from 'cesium'; export default InfoBoxViewModel; }
-declare module "cesium/Source/Widgets/NavigationHelpButton/NavigationHelpButton" { import { NavigationHelpButton } from 'cesium'; export default NavigationHelpButton; }
-declare module "cesium/Source/Widgets/NavigationHelpButton/NavigationHelpButtonViewModel" { import { NavigationHelpButtonViewModel } from 'cesium'; export default NavigationHelpButtonViewModel; }
-declare module "cesium/Source/Widgets/PerformanceWatchdog/PerformanceWatchdog" { import { PerformanceWatchdog } from 'cesium'; export default PerformanceWatchdog; }
-declare module "cesium/Source/Widgets/PerformanceWatchdog/PerformanceWatchdogViewModel" { import { PerformanceWatchdogViewModel } from 'cesium'; export default PerformanceWatchdogViewModel; }
-declare module "cesium/Source/Widgets/ProjectionPicker/ProjectionPicker" { import { ProjectionPicker } from 'cesium'; export default ProjectionPicker; }
-declare module "cesium/Source/Widgets/ProjectionPicker/ProjectionPickerViewModel" { import { ProjectionPickerViewModel } from 'cesium'; export default ProjectionPickerViewModel; }
-declare module "cesium/Source/Widgets/SceneModePicker/SceneModePicker" { import { SceneModePicker } from 'cesium'; export default SceneModePicker; }
-declare module "cesium/Source/Widgets/SceneModePicker/SceneModePickerViewModel" { import { SceneModePickerViewModel } from 'cesium'; export default SceneModePickerViewModel; }
-declare module "cesium/Source/Widgets/SelectionIndicator/SelectionIndicator" { import { SelectionIndicator } from 'cesium'; export default SelectionIndicator; }
-declare module "cesium/Source/Widgets/SelectionIndicator/SelectionIndicatorViewModel" { import { SelectionIndicatorViewModel } from 'cesium'; export default SelectionIndicatorViewModel; }
-declare module "cesium/Source/Widgets/Timeline/Timeline" { import { Timeline } from 'cesium'; export default Timeline; }
-declare module "cesium/Source/Widgets/Viewer/Viewer" { import { Viewer } from 'cesium'; export default Viewer; }
-declare module "cesium/Source/Widgets/Viewer/viewerCesium3DTilesInspectorMixin" { import { viewerCesium3DTilesInspectorMixin } from 'cesium'; export default viewerCesium3DTilesInspectorMixin; }
-declare module "cesium/Source/Widgets/Viewer/viewerCesiumInspectorMixin" { import { viewerCesiumInspectorMixin } from 'cesium'; export default viewerCesiumInspectorMixin; }
-declare module "cesium/Source/Widgets/Viewer/viewerDragDropMixin" { import { viewerDragDropMixin } from 'cesium'; export default viewerDragDropMixin; }
-declare module "cesium/Source/Widgets/Viewer/viewerPerformanceWatchdogMixin" { import { viewerPerformanceWatchdogMixin } from 'cesium'; export default viewerPerformanceWatchdogMixin; }
-declare module "cesium/Source/Widgets/VRButton/VRButton" { import { VRButton } from 'cesium'; export default VRButton; }
-declare module "cesium/Source/Widgets/VRButton/VRButtonViewModel" { import { VRButtonViewModel } from 'cesium'; export default VRButtonViewModel; }
+declare module "cesium/Source/Core/ArcGISTiledElevationTerrainProvider" { import { ArcGISTiledElevationTerrainProvider } from 'mars3d-cesium'; export default ArcGISTiledElevationTerrainProvider; }
+declare module "cesium/Source/Core/ArcType" { import { ArcType } from 'mars3d-cesium'; export default ArcType; }
+declare module "cesium/Source/Core/AssociativeArray" { import { AssociativeArray } from 'mars3d-cesium'; export default AssociativeArray; }
+declare module "cesium/Source/Core/AxisAlignedBoundingBox" { import { AxisAlignedBoundingBox } from 'mars3d-cesium'; export default AxisAlignedBoundingBox; }
+declare module "cesium/Source/Core/barycentricCoordinates" { import { barycentricCoordinates } from 'mars3d-cesium'; export default barycentricCoordinates; }
+declare module "cesium/Source/Core/binarySearch" { import { binarySearch } from 'mars3d-cesium'; export default binarySearch; }
+declare module "cesium/Source/Core/BingMapsGeocoderService" { import { BingMapsGeocoderService } from 'mars3d-cesium'; export default BingMapsGeocoderService; }
+declare module "cesium/Source/Core/BoundingRectangle" { import { BoundingRectangle } from 'mars3d-cesium'; export default BoundingRectangle; }
+declare module "cesium/Source/Core/BoundingSphere" { import { BoundingSphere } from 'mars3d-cesium'; export default BoundingSphere; }
+declare module "cesium/Source/Core/BoxGeometry" { import { BoxGeometry } from 'mars3d-cesium'; export default BoxGeometry; }
+declare module "cesium/Source/Core/BoxOutlineGeometry" { import { BoxOutlineGeometry } from 'mars3d-cesium'; export default BoxOutlineGeometry; }
+declare module "cesium/Source/Core/buildModuleUrl" { import { buildModuleUrl } from 'mars3d-cesium'; export default buildModuleUrl; }
+declare module "cesium/Source/Core/cancelAnimationFrame" { import { cancelAnimationFrame } from 'mars3d-cesium'; export default cancelAnimationFrame; }
+declare module "cesium/Source/Core/Cartesian2" { import { Cartesian2 } from 'mars3d-cesium'; export default Cartesian2; }
+declare module "cesium/Source/Core/Cartesian3" { import { Cartesian3 } from 'mars3d-cesium'; export default Cartesian3; }
+declare module "cesium/Source/Core/Cartesian4" { import { Cartesian4 } from 'mars3d-cesium'; export default Cartesian4; }
+declare module "cesium/Source/Core/Cartographic" { import { Cartographic } from 'mars3d-cesium'; export default Cartographic; }
+declare module "cesium/Source/Core/CartographicGeocoderService" { import { CartographicGeocoderService } from 'mars3d-cesium'; export default CartographicGeocoderService; }
+declare module "cesium/Source/Core/CatmullRomSpline" { import { CatmullRomSpline } from 'mars3d-cesium'; export default CatmullRomSpline; }
+declare module "cesium/Source/Core/CesiumTerrainProvider" { import { CesiumTerrainProvider } from 'mars3d-cesium'; export default CesiumTerrainProvider; }
+declare module "cesium/Source/Core/CircleGeometry" { import { CircleGeometry } from 'mars3d-cesium'; export default CircleGeometry; }
+declare module "cesium/Source/Core/CircleOutlineGeometry" { import { CircleOutlineGeometry } from 'mars3d-cesium'; export default CircleOutlineGeometry; }
+declare module "cesium/Source/Core/Clock" { import { Clock } from 'mars3d-cesium'; export default Clock; }
+declare module "cesium/Source/Core/ClockRange" { import { ClockRange } from 'mars3d-cesium'; export default ClockRange; }
+declare module "cesium/Source/Core/ClockStep" { import { ClockStep } from 'mars3d-cesium'; export default ClockStep; }
+declare module "cesium/Source/Core/clone" { import { clone } from 'mars3d-cesium'; export default clone; }
+declare module "cesium/Source/Core/Color" { import { Color } from 'mars3d-cesium'; export default Color; }
+declare module "cesium/Source/Core/ColorGeometryInstanceAttribute" { import { ColorGeometryInstanceAttribute } from 'mars3d-cesium'; export default ColorGeometryInstanceAttribute; }
+declare module "cesium/Source/Core/combine" { import { combine } from 'mars3d-cesium'; export default combine; }
+declare module "cesium/Source/Core/ComponentDatatype" { import { ComponentDatatype } from 'mars3d-cesium'; export default ComponentDatatype; }
+declare module "cesium/Source/Core/CompressedTextureBuffer" { import { CompressedTextureBuffer } from 'mars3d-cesium'; export default CompressedTextureBuffer; }
+declare module "cesium/Source/Core/CoplanarPolygonGeometry" { import { CoplanarPolygonGeometry } from 'mars3d-cesium'; export default CoplanarPolygonGeometry; }
+declare module "cesium/Source/Core/CoplanarPolygonOutlineGeometry" { import { CoplanarPolygonOutlineGeometry } from 'mars3d-cesium'; export default CoplanarPolygonOutlineGeometry; }
+declare module "cesium/Source/Core/CornerType" { import { CornerType } from 'mars3d-cesium'; export default CornerType; }
+declare module "cesium/Source/Core/CorridorGeometry" { import { CorridorGeometry } from 'mars3d-cesium'; export default CorridorGeometry; }
+declare module "cesium/Source/Core/CorridorOutlineGeometry" { import { CorridorOutlineGeometry } from 'mars3d-cesium'; export default CorridorOutlineGeometry; }
+declare module "cesium/Source/Core/createGuid" { import { createGuid } from 'mars3d-cesium'; export default createGuid; }
+declare module "cesium/Source/Core/createWorldTerrain" { import { createWorldTerrain } from 'mars3d-cesium'; export default createWorldTerrain; }
+declare module "cesium/Source/Core/Credit" { import { Credit } from 'mars3d-cesium'; export default Credit; }
+declare module "cesium/Source/Core/CubicRealPolynomial" { import { CubicRealPolynomial } from 'mars3d-cesium'; export default CubicRealPolynomial; }
+declare module "cesium/Source/Core/CullingVolume" { import { CullingVolume } from 'mars3d-cesium'; export default CullingVolume; }
+declare module "cesium/Source/Core/CustomHeightmapTerrainProvider" { import { CustomHeightmapTerrainProvider } from 'mars3d-cesium'; export default CustomHeightmapTerrainProvider; }
+declare module "cesium/Source/Core/CylinderGeometry" { import { CylinderGeometry } from 'mars3d-cesium'; export default CylinderGeometry; }
+declare module "cesium/Source/Core/CylinderOutlineGeometry" { import { CylinderOutlineGeometry } from 'mars3d-cesium'; export default CylinderOutlineGeometry; }
+declare module "cesium/Source/Core/DefaultProxy" { import { DefaultProxy } from 'mars3d-cesium'; export default DefaultProxy; }
+declare module "cesium/Source/Core/defaultValue" { import { defaultValue } from 'mars3d-cesium'; export default defaultValue; }
+declare module "cesium/Source/Core/defined" { import { defined } from 'mars3d-cesium'; export default defined; }
+declare module "cesium/Source/Core/destroyObject" { import { destroyObject } from 'mars3d-cesium'; export default destroyObject; }
+declare module "cesium/Source/Core/DeveloperError" { import { DeveloperError } from 'mars3d-cesium'; export default DeveloperError; }
+declare module "cesium/Source/Core/DistanceDisplayCondition" { import { DistanceDisplayCondition } from 'mars3d-cesium'; export default DistanceDisplayCondition; }
+declare module "cesium/Source/Core/DistanceDisplayConditionGeometryInstanceAttribute" { import { DistanceDisplayConditionGeometryInstanceAttribute } from 'mars3d-cesium'; export default DistanceDisplayConditionGeometryInstanceAttribute; }
+declare module "cesium/Source/Core/EasingFunction" { import { EasingFunction } from 'mars3d-cesium'; export default EasingFunction; }
+declare module "cesium/Source/Core/EllipseGeometry" { import { EllipseGeometry } from 'mars3d-cesium'; export default EllipseGeometry; }
+declare module "cesium/Source/Core/EllipseOutlineGeometry" { import { EllipseOutlineGeometry } from 'mars3d-cesium'; export default EllipseOutlineGeometry; }
+declare module "cesium/Source/Core/Ellipsoid" { import { Ellipsoid } from 'mars3d-cesium'; export default Ellipsoid; }
+declare module "cesium/Source/Core/EllipsoidGeodesic" { import { EllipsoidGeodesic } from 'mars3d-cesium'; export default EllipsoidGeodesic; }
+declare module "cesium/Source/Core/EllipsoidGeometry" { import { EllipsoidGeometry } from 'mars3d-cesium'; export default EllipsoidGeometry; }
+declare module "cesium/Source/Core/EllipsoidOutlineGeometry" { import { EllipsoidOutlineGeometry } from 'mars3d-cesium'; export default EllipsoidOutlineGeometry; }
+declare module "cesium/Source/Core/EllipsoidRhumbLine" { import { EllipsoidRhumbLine } from 'mars3d-cesium'; export default EllipsoidRhumbLine; }
+declare module "cesium/Source/Core/EllipsoidTangentPlane" { import { EllipsoidTangentPlane } from 'mars3d-cesium'; export default EllipsoidTangentPlane; }
+declare module "cesium/Source/Core/EllipsoidTerrainProvider" { import { EllipsoidTerrainProvider } from 'mars3d-cesium'; export default EllipsoidTerrainProvider; }
+declare module "cesium/Source/Core/Event" { import { Event } from 'mars3d-cesium'; export default Event; }
+declare module "cesium/Source/Core/EventHelper" { import { EventHelper } from 'mars3d-cesium'; export default EventHelper; }
+declare module "cesium/Source/Core/ExtrapolationType" { import { ExtrapolationType } from 'mars3d-cesium'; export default ExtrapolationType; }
+declare module "cesium/Source/Core/FeatureDetection" { import { FeatureDetection } from 'mars3d-cesium'; export default FeatureDetection; }
+declare module "cesium/Source/Core/formatError" { import { formatError } from 'mars3d-cesium'; export default formatError; }
+declare module "cesium/Source/Core/FrustumGeometry" { import { FrustumGeometry } from 'mars3d-cesium'; export default FrustumGeometry; }
+declare module "cesium/Source/Core/FrustumOutlineGeometry" { import { FrustumOutlineGeometry } from 'mars3d-cesium'; export default FrustumOutlineGeometry; }
+declare module "cesium/Source/Core/Fullscreen" { import { Fullscreen } from 'mars3d-cesium'; export default Fullscreen; }
+declare module "cesium/Source/Core/GeocoderService" { import { GeocoderService } from 'mars3d-cesium'; export default GeocoderService; }
+declare module "cesium/Source/Core/GeocodeType" { import { GeocodeType } from 'mars3d-cesium'; export default GeocodeType; }
+declare module "cesium/Source/Core/GeographicProjection" { import { GeographicProjection } from 'mars3d-cesium'; export default GeographicProjection; }
+declare module "cesium/Source/Core/GeographicTilingScheme" { import { GeographicTilingScheme } from 'mars3d-cesium'; export default GeographicTilingScheme; }
+declare module "cesium/Source/Core/Geometry" { import { Geometry } from 'mars3d-cesium'; export default Geometry; }
+declare module "cesium/Source/Core/GeometryAttribute" { import { GeometryAttribute } from 'mars3d-cesium'; export default GeometryAttribute; }
+declare module "cesium/Source/Core/GeometryAttributes" { import { GeometryAttributes } from 'mars3d-cesium'; export default GeometryAttributes; }
+declare module "cesium/Source/Core/GeometryFactory" { import { GeometryFactory } from 'mars3d-cesium'; export default GeometryFactory; }
+declare module "cesium/Source/Core/GeometryInstance" { import { GeometryInstance } from 'mars3d-cesium'; export default GeometryInstance; }
+declare module "cesium/Source/Core/GeometryInstanceAttribute" { import { GeometryInstanceAttribute } from 'mars3d-cesium'; export default GeometryInstanceAttribute; }
+declare module "cesium/Source/Core/GeometryPipeline" { import { GeometryPipeline } from 'mars3d-cesium'; export default GeometryPipeline; }
+declare module "cesium/Source/Core/getAbsoluteUri" { import { getAbsoluteUri } from 'mars3d-cesium'; export default getAbsoluteUri; }
+declare module "cesium/Source/Core/getBaseUri" { import { getBaseUri } from 'mars3d-cesium'; export default getBaseUri; }
+declare module "cesium/Source/Core/getExtensionFromUri" { import { getExtensionFromUri } from 'mars3d-cesium'; export default getExtensionFromUri; }
+declare module "cesium/Source/Core/getFilenameFromUri" { import { getFilenameFromUri } from 'mars3d-cesium'; export default getFilenameFromUri; }
+declare module "cesium/Source/Core/getImagePixels" { import { getImagePixels } from 'mars3d-cesium'; export default getImagePixels; }
+declare module "cesium/Source/Core/getTimestamp" { import { getTimestamp } from 'mars3d-cesium'; export default getTimestamp; }
+declare module "cesium/Source/Core/GoogleEarthEnterpriseMetadata" { import { GoogleEarthEnterpriseMetadata } from 'mars3d-cesium'; export default GoogleEarthEnterpriseMetadata; }
+declare module "cesium/Source/Core/GoogleEarthEnterpriseTerrainData" { import { GoogleEarthEnterpriseTerrainData } from 'mars3d-cesium'; export default GoogleEarthEnterpriseTerrainData; }
+declare module "cesium/Source/Core/GoogleEarthEnterpriseTerrainProvider" { import { GoogleEarthEnterpriseTerrainProvider } from 'mars3d-cesium'; export default GoogleEarthEnterpriseTerrainProvider; }
+declare module "cesium/Source/Core/GregorianDate" { import { GregorianDate } from 'mars3d-cesium'; export default GregorianDate; }
+declare module "cesium/Source/Core/GroundPolylineGeometry" { import { GroundPolylineGeometry } from 'mars3d-cesium'; export default GroundPolylineGeometry; }
+declare module "cesium/Source/Core/HeadingPitchRange" { import { HeadingPitchRange } from 'mars3d-cesium'; export default HeadingPitchRange; }
+declare module "cesium/Source/Core/HeadingPitchRoll" { import { HeadingPitchRoll } from 'mars3d-cesium'; export default HeadingPitchRoll; }
+declare module "cesium/Source/Core/HeightmapEncoding" { import { HeightmapEncoding } from 'mars3d-cesium'; export default HeightmapEncoding; }
+declare module "cesium/Source/Core/HeightmapTerrainData" { import { HeightmapTerrainData } from 'mars3d-cesium'; export default HeightmapTerrainData; }
+declare module "cesium/Source/Core/HermitePolynomialApproximation" { import { HermitePolynomialApproximation } from 'mars3d-cesium'; export default HermitePolynomialApproximation; }
+declare module "cesium/Source/Core/HermiteSpline" { import { HermiteSpline } from 'mars3d-cesium'; export default HermiteSpline; }
+declare module "cesium/Source/Core/HilbertOrder" { import { HilbertOrder } from 'mars3d-cesium'; export default HilbertOrder; }
+declare module "cesium/Source/Core/IndexDatatype" { import { IndexDatatype } from 'mars3d-cesium'; export default IndexDatatype; }
+declare module "cesium/Source/Core/InterpolationAlgorithm" { import { InterpolationAlgorithm } from 'mars3d-cesium'; export default InterpolationAlgorithm; }
+declare module "cesium/Source/Core/Intersect" { import { Intersect } from 'mars3d-cesium'; export default Intersect; }
+declare module "cesium/Source/Core/Intersections2D" { import { Intersections2D } from 'mars3d-cesium'; export default Intersections2D; }
+declare module "cesium/Source/Core/IntersectionTests" { import { IntersectionTests } from 'mars3d-cesium'; export default IntersectionTests; }
+declare module "cesium/Source/Core/Interval" { import { Interval } from 'mars3d-cesium'; export default Interval; }
+declare module "cesium/Source/Core/Ion" { import { Ion } from 'mars3d-cesium'; export default Ion; }
+declare module "cesium/Source/Core/IonGeocoderService" { import { IonGeocoderService } from 'mars3d-cesium'; export default IonGeocoderService; }
+declare module "cesium/Source/Core/IonResource" { import { IonResource } from 'mars3d-cesium'; export default IonResource; }
+declare module "cesium/Source/Core/isLeapYear" { import { isLeapYear } from 'mars3d-cesium'; export default isLeapYear; }
+declare module "cesium/Source/Core/Iso8601" { import { Iso8601 } from 'mars3d-cesium'; export default Iso8601; }
+declare module "cesium/Source/Core/JulianDate" { import { JulianDate } from 'mars3d-cesium'; export default JulianDate; }
+declare module "cesium/Source/Core/KeyboardEventModifier" { import { KeyboardEventModifier } from 'mars3d-cesium'; export default KeyboardEventModifier; }
+declare module "cesium/Source/Core/LagrangePolynomialApproximation" { import { LagrangePolynomialApproximation } from 'mars3d-cesium'; export default LagrangePolynomialApproximation; }
+declare module "cesium/Source/Core/LeapSecond" { import { LeapSecond } from 'mars3d-cesium'; export default LeapSecond; }
+declare module "cesium/Source/Core/LinearApproximation" { import { LinearApproximation } from 'mars3d-cesium'; export default LinearApproximation; }
+declare module "cesium/Source/Core/LinearSpline" { import { LinearSpline } from 'mars3d-cesium'; export default LinearSpline; }
+declare module "cesium/Source/Core/MapProjection" { import { MapProjection } from 'mars3d-cesium'; export default MapProjection; }
+declare module "cesium/Source/Core/Math" { import { Math } from 'mars3d-cesium'; export default Math; }
+declare module "cesium/Source/Core/Matrix2" { import { Matrix2 } from 'mars3d-cesium'; export default Matrix2; }
+declare module "cesium/Source/Core/Matrix3" { import { Matrix3 } from 'mars3d-cesium'; export default Matrix3; }
+declare module "cesium/Source/Core/Matrix4" { import { Matrix4 } from 'mars3d-cesium'; export default Matrix4; }
+declare module "cesium/Source/Core/mergeSort" { import { mergeSort } from 'mars3d-cesium'; export default mergeSort; }
+declare module "cesium/Source/Core/NearFarScalar" { import { NearFarScalar } from 'mars3d-cesium'; export default NearFarScalar; }
+declare module "cesium/Source/Core/objectToQuery" { import { objectToQuery } from 'mars3d-cesium'; export default objectToQuery; }
+declare module "cesium/Source/Core/Occluder" { import { Occluder } from 'mars3d-cesium'; export default Occluder; }
+declare module "cesium/Source/Core/OpenCageGeocoderService" { import { OpenCageGeocoderService } from 'mars3d-cesium'; export default OpenCageGeocoderService; }
+declare module "cesium/Source/Core/OrientedBoundingBox" { import { OrientedBoundingBox } from 'mars3d-cesium'; export default OrientedBoundingBox; }
+declare module "cesium/Source/Core/OrthographicFrustum" { import { OrthographicFrustum } from 'mars3d-cesium'; export default OrthographicFrustum; }
+declare module "cesium/Source/Core/OrthographicOffCenterFrustum" { import { OrthographicOffCenterFrustum } from 'mars3d-cesium'; export default OrthographicOffCenterFrustum; }
+declare module "cesium/Source/Core/Packable" { import { Packable } from 'mars3d-cesium'; export default Packable; }
+declare module "cesium/Source/Core/PackableForInterpolation" { import { PackableForInterpolation } from 'mars3d-cesium'; export default PackableForInterpolation; }
+declare module "cesium/Source/Core/PeliasGeocoderService" { import { PeliasGeocoderService } from 'mars3d-cesium'; export default PeliasGeocoderService; }
+declare module "cesium/Source/Core/PerspectiveFrustum" { import { PerspectiveFrustum } from 'mars3d-cesium'; export default PerspectiveFrustum; }
+declare module "cesium/Source/Core/PerspectiveOffCenterFrustum" { import { PerspectiveOffCenterFrustum } from 'mars3d-cesium'; export default PerspectiveOffCenterFrustum; }
+declare module "cesium/Source/Core/PinBuilder" { import { PinBuilder } from 'mars3d-cesium'; export default PinBuilder; }
+declare module "cesium/Source/Core/PixelFormat" { import { PixelFormat } from 'mars3d-cesium'; export default PixelFormat; }
+declare module "cesium/Source/Core/Plane" { import { Plane } from 'mars3d-cesium'; export default Plane; }
+declare module "cesium/Source/Core/PlaneGeometry" { import { PlaneGeometry } from 'mars3d-cesium'; export default PlaneGeometry; }
+declare module "cesium/Source/Core/PlaneOutlineGeometry" { import { PlaneOutlineGeometry } from 'mars3d-cesium'; export default PlaneOutlineGeometry; }
+declare module "cesium/Source/Core/pointInsideTriangle" { import { pointInsideTriangle } from 'mars3d-cesium'; export default pointInsideTriangle; }
+declare module "cesium/Source/Core/PolygonGeometry" { import { PolygonGeometry } from 'mars3d-cesium'; export default PolygonGeometry; }
+declare module "cesium/Source/Core/PolygonHierarchy" { import { PolygonHierarchy } from 'mars3d-cesium'; export default PolygonHierarchy; }
+declare module "cesium/Source/Core/PolygonOutlineGeometry" { import { PolygonOutlineGeometry } from 'mars3d-cesium'; export default PolygonOutlineGeometry; }
+declare module "cesium/Source/Core/PolylineGeometry" { import { PolylineGeometry } from 'mars3d-cesium'; export default PolylineGeometry; }
+declare module "cesium/Source/Core/PolylineVolumeGeometry" { import { PolylineVolumeGeometry } from 'mars3d-cesium'; export default PolylineVolumeGeometry; }
+declare module "cesium/Source/Core/PolylineVolumeOutlineGeometry" { import { PolylineVolumeOutlineGeometry } from 'mars3d-cesium'; export default PolylineVolumeOutlineGeometry; }
+declare module "cesium/Source/Core/PrimitiveType" { import { PrimitiveType } from 'mars3d-cesium'; export default PrimitiveType; }
+declare module "cesium/Source/Core/Proxy" { import { Proxy } from 'mars3d-cesium'; export default Proxy; }
+declare module "cesium/Source/Core/QuadraticRealPolynomial" { import { QuadraticRealPolynomial } from 'mars3d-cesium'; export default QuadraticRealPolynomial; }
+declare module "cesium/Source/Core/QuantizedMeshTerrainData" { import { QuantizedMeshTerrainData } from 'mars3d-cesium'; export default QuantizedMeshTerrainData; }
+declare module "cesium/Source/Core/QuarticRealPolynomial" { import { QuarticRealPolynomial } from 'mars3d-cesium'; export default QuarticRealPolynomial; }
+declare module "cesium/Source/Core/Quaternion" { import { Quaternion } from 'mars3d-cesium'; export default Quaternion; }
+declare module "cesium/Source/Core/QuaternionSpline" { import { QuaternionSpline } from 'mars3d-cesium'; export default QuaternionSpline; }
+declare module "cesium/Source/Core/queryToObject" { import { queryToObject } from 'mars3d-cesium'; export default queryToObject; }
+declare module "cesium/Source/Core/Queue" { import { Queue } from 'mars3d-cesium'; export default Queue; }
+declare module "cesium/Source/Core/Ray" { import { Ray } from 'mars3d-cesium'; export default Ray; }
+declare module "cesium/Source/Core/Rectangle" { import { Rectangle } from 'mars3d-cesium'; export default Rectangle; }
+declare module "cesium/Source/Core/RectangleGeometry" { import { RectangleGeometry } from 'mars3d-cesium'; export default RectangleGeometry; }
+declare module "cesium/Source/Core/RectangleOutlineGeometry" { import { RectangleOutlineGeometry } from 'mars3d-cesium'; export default RectangleOutlineGeometry; }
+declare module "cesium/Source/Core/ReferenceFrame" { import { ReferenceFrame } from 'mars3d-cesium'; export default ReferenceFrame; }
+declare module "cesium/Source/Core/Request" { import { Request } from 'mars3d-cesium'; export default Request; }
+declare module "cesium/Source/Core/requestAnimationFrame" { import { requestAnimationFrame } from 'mars3d-cesium'; export default requestAnimationFrame; }
+declare module "cesium/Source/Core/RequestErrorEvent" { import { RequestErrorEvent } from 'mars3d-cesium'; export default RequestErrorEvent; }
+declare module "cesium/Source/Core/RequestScheduler" { import { RequestScheduler } from 'mars3d-cesium'; export default RequestScheduler; }
+declare module "cesium/Source/Core/RequestState" { import { RequestState } from 'mars3d-cesium'; export default RequestState; }
+declare module "cesium/Source/Core/RequestType" { import { RequestType } from 'mars3d-cesium'; export default RequestType; }
+declare module "cesium/Source/Core/Resource" { import { Resource } from 'mars3d-cesium'; export default Resource; }
+declare module "cesium/Source/Core/RuntimeError" { import { RuntimeError } from 'mars3d-cesium'; export default RuntimeError; }
+declare module "cesium/Source/Core/sampleTerrain" { import { sampleTerrain } from 'mars3d-cesium'; export default sampleTerrain; }
+declare module "cesium/Source/Core/sampleTerrainMostDetailed" { import { sampleTerrainMostDetailed } from 'mars3d-cesium'; export default sampleTerrainMostDetailed; }
+declare module "cesium/Source/Core/ScreenSpaceEventHandler" { import { ScreenSpaceEventHandler } from 'mars3d-cesium'; export default ScreenSpaceEventHandler; }
+declare module "cesium/Source/Core/ScreenSpaceEventType" { import { ScreenSpaceEventType } from 'mars3d-cesium'; export default ScreenSpaceEventType; }
+declare module "cesium/Source/Core/ShowGeometryInstanceAttribute" { import { ShowGeometryInstanceAttribute } from 'mars3d-cesium'; export default ShowGeometryInstanceAttribute; }
+declare module "cesium/Source/Core/Simon1994PlanetaryPositions" { import { Simon1994PlanetaryPositions } from 'mars3d-cesium'; export default Simon1994PlanetaryPositions; }
+declare module "cesium/Source/Core/SimplePolylineGeometry" { import { SimplePolylineGeometry } from 'mars3d-cesium'; export default SimplePolylineGeometry; }
+declare module "cesium/Source/Core/SphereGeometry" { import { SphereGeometry } from 'mars3d-cesium'; export default SphereGeometry; }
+declare module "cesium/Source/Core/SphereOutlineGeometry" { import { SphereOutlineGeometry } from 'mars3d-cesium'; export default SphereOutlineGeometry; }
+declare module "cesium/Source/Core/Spherical" { import { Spherical } from 'mars3d-cesium'; export default Spherical; }
+declare module "cesium/Source/Core/Spline" { import { Spline } from 'mars3d-cesium'; export default Spline; }
+declare module "cesium/Source/Core/subdivideArray" { import { subdivideArray } from 'mars3d-cesium'; export default subdivideArray; }
+declare module "cesium/Source/Core/TaskProcessor" { import { TaskProcessor } from 'mars3d-cesium'; export default TaskProcessor; }
+declare module "cesium/Source/Core/TerrainData" { import { TerrainData } from 'mars3d-cesium'; export default TerrainData; }
+declare module "cesium/Source/Core/TerrainProvider" { import { TerrainProvider } from 'mars3d-cesium'; export default TerrainProvider; }
+declare module "cesium/Source/Core/TileAvailability" { import { TileAvailability } from 'mars3d-cesium'; export default TileAvailability; }
+declare module "cesium/Source/Core/TileProviderError" { import { TileProviderError } from 'mars3d-cesium'; export default TileProviderError; }
+declare module "cesium/Source/Core/TilingScheme" { import { TilingScheme } from 'mars3d-cesium'; export default TilingScheme; }
+declare module "cesium/Source/Core/TimeInterval" { import { TimeInterval } from 'mars3d-cesium'; export default TimeInterval; }
+declare module "cesium/Source/Core/TimeIntervalCollection" { import { TimeIntervalCollection } from 'mars3d-cesium'; export default TimeIntervalCollection; }
+declare module "cesium/Source/Core/TimeStandard" { import { TimeStandard } from 'mars3d-cesium'; export default TimeStandard; }
+declare module "cesium/Source/Core/Transforms" { import { Transforms } from 'mars3d-cesium'; export default Transforms; }
+declare module "cesium/Source/Core/TranslationRotationScale" { import { TranslationRotationScale } from 'mars3d-cesium'; export default TranslationRotationScale; }
+declare module "cesium/Source/Core/TridiagonalSystemSolver" { import { TridiagonalSystemSolver } from 'mars3d-cesium'; export default TridiagonalSystemSolver; }
+declare module "cesium/Source/Core/TrustedServers" { import { TrustedServers } from 'mars3d-cesium'; export default TrustedServers; }
+declare module "cesium/Source/Core/VertexFormat" { import { VertexFormat } from 'mars3d-cesium'; export default VertexFormat; }
+declare module "cesium/Source/Core/VideoSynchronizer" { import { VideoSynchronizer } from 'mars3d-cesium'; export default VideoSynchronizer; }
+declare module "cesium/Source/Core/Visibility" { import { Visibility } from 'mars3d-cesium'; export default Visibility; }
+declare module "cesium/Source/Core/VRTheWorldTerrainProvider" { import { VRTheWorldTerrainProvider } from 'mars3d-cesium'; export default VRTheWorldTerrainProvider; }
+declare module "cesium/Source/Core/WallGeometry" { import { WallGeometry } from 'mars3d-cesium'; export default WallGeometry; }
+declare module "cesium/Source/Core/WallOutlineGeometry" { import { WallOutlineGeometry } from 'mars3d-cesium'; export default WallOutlineGeometry; }
+declare module "cesium/Source/Core/WebGLConstants" { import { WebGLConstants } from 'mars3d-cesium'; export default WebGLConstants; }
+declare module "cesium/Source/Core/WebMercatorProjection" { import { WebMercatorProjection } from 'mars3d-cesium'; export default WebMercatorProjection; }
+declare module "cesium/Source/Core/WebMercatorTilingScheme" { import { WebMercatorTilingScheme } from 'mars3d-cesium'; export default WebMercatorTilingScheme; }
+declare module "cesium/Source/Core/WeightSpline" { import { WeightSpline } from 'mars3d-cesium'; export default WeightSpline; }
+declare module "cesium/Source/Core/WindingOrder" { import { WindingOrder } from 'mars3d-cesium'; export default WindingOrder; }
+declare module "cesium/Source/Core/writeTextToCanvas" { import { writeTextToCanvas } from 'mars3d-cesium'; export default writeTextToCanvas; }
+declare module "cesium/Source/DataSources/BillboardGraphics" { import { BillboardGraphics } from 'mars3d-cesium'; export default BillboardGraphics; }
+declare module "cesium/Source/DataSources/BillboardVisualizer" { import { BillboardVisualizer } from 'mars3d-cesium'; export default BillboardVisualizer; }
+declare module "cesium/Source/DataSources/BoxGeometryUpdater" { import { BoxGeometryUpdater } from 'mars3d-cesium'; export default BoxGeometryUpdater; }
+declare module "cesium/Source/DataSources/BoxGraphics" { import { BoxGraphics } from 'mars3d-cesium'; export default BoxGraphics; }
+declare module "cesium/Source/DataSources/CallbackProperty" { import { CallbackProperty } from 'mars3d-cesium'; export default CallbackProperty; }
+declare module "cesium/Source/DataSources/Cesium3DTilesetGraphics" { import { Cesium3DTilesetGraphics } from 'mars3d-cesium'; export default Cesium3DTilesetGraphics; }
+declare module "cesium/Source/DataSources/Cesium3DTilesetVisualizer" { import { Cesium3DTilesetVisualizer } from 'mars3d-cesium'; export default Cesium3DTilesetVisualizer; }
+declare module "cesium/Source/DataSources/CheckerboardMaterialProperty" { import { CheckerboardMaterialProperty } from 'mars3d-cesium'; export default CheckerboardMaterialProperty; }
+declare module "cesium/Source/DataSources/ColorMaterialProperty" { import { ColorMaterialProperty } from 'mars3d-cesium'; export default ColorMaterialProperty; }
+declare module "cesium/Source/DataSources/CompositeEntityCollection" { import { CompositeEntityCollection } from 'mars3d-cesium'; export default CompositeEntityCollection; }
+declare module "cesium/Source/DataSources/CompositeMaterialProperty" { import { CompositeMaterialProperty } from 'mars3d-cesium'; export default CompositeMaterialProperty; }
+declare module "cesium/Source/DataSources/CompositePositionProperty" { import { CompositePositionProperty } from 'mars3d-cesium'; export default CompositePositionProperty; }
+declare module "cesium/Source/DataSources/CompositeProperty" { import { CompositeProperty } from 'mars3d-cesium'; export default CompositeProperty; }
+declare module "cesium/Source/DataSources/ConstantPositionProperty" { import { ConstantPositionProperty } from 'mars3d-cesium'; export default ConstantPositionProperty; }
+declare module "cesium/Source/DataSources/ConstantProperty" { import { ConstantProperty } from 'mars3d-cesium'; export default ConstantProperty; }
+declare module "cesium/Source/DataSources/CorridorGeometryUpdater" { import { CorridorGeometryUpdater } from 'mars3d-cesium'; export default CorridorGeometryUpdater; }
+declare module "cesium/Source/DataSources/CorridorGraphics" { import { CorridorGraphics } from 'mars3d-cesium'; export default CorridorGraphics; }
+declare module "cesium/Source/DataSources/CustomDataSource" { import { CustomDataSource } from 'mars3d-cesium'; export default CustomDataSource; }
+declare module "cesium/Source/DataSources/CylinderGeometryUpdater" { import { CylinderGeometryUpdater } from 'mars3d-cesium'; export default CylinderGeometryUpdater; }
+declare module "cesium/Source/DataSources/CylinderGraphics" { import { CylinderGraphics } from 'mars3d-cesium'; export default CylinderGraphics; }
+declare module "cesium/Source/DataSources/CzmlDataSource" { import { CzmlDataSource } from 'mars3d-cesium'; export default CzmlDataSource; }
+declare module "cesium/Source/DataSources/DataSource" { import { DataSource } from 'mars3d-cesium'; export default DataSource; }
+declare module "cesium/Source/DataSources/DataSourceClock" { import { DataSourceClock } from 'mars3d-cesium'; export default DataSourceClock; }
+declare module "cesium/Source/DataSources/DataSourceCollection" { import { DataSourceCollection } from 'mars3d-cesium'; export default DataSourceCollection; }
+declare module "cesium/Source/DataSources/DataSourceDisplay" { import { DataSourceDisplay } from 'mars3d-cesium'; export default DataSourceDisplay; }
+declare module "cesium/Source/DataSources/EllipseGeometryUpdater" { import { EllipseGeometryUpdater } from 'mars3d-cesium'; export default EllipseGeometryUpdater; }
+declare module "cesium/Source/DataSources/EllipseGraphics" { import { EllipseGraphics } from 'mars3d-cesium'; export default EllipseGraphics; }
+declare module "cesium/Source/DataSources/EllipsoidGeometryUpdater" { import { EllipsoidGeometryUpdater } from 'mars3d-cesium'; export default EllipsoidGeometryUpdater; }
+declare module "cesium/Source/DataSources/EllipsoidGraphics" { import { EllipsoidGraphics } from 'mars3d-cesium'; export default EllipsoidGraphics; }
+declare module "cesium/Source/DataSources/Entity" { import { Entity } from 'mars3d-cesium'; export default Entity; }
+declare module "cesium/Source/DataSources/EntityCluster" { import { EntityCluster } from 'mars3d-cesium'; export default EntityCluster; }
+declare module "cesium/Source/DataSources/EntityCollection" { import { EntityCollection } from 'mars3d-cesium'; export default EntityCollection; }
+declare module "cesium/Source/DataSources/EntityView" { import { EntityView } from 'mars3d-cesium'; export default EntityView; }
+declare module "cesium/Source/DataSources/exportKml" { import { exportKml } from 'mars3d-cesium'; export default exportKml; }
+declare module "cesium/Source/DataSources/GeoJsonDataSource" { import { GeoJsonDataSource } from 'mars3d-cesium'; export default GeoJsonDataSource; }
+declare module "cesium/Source/DataSources/GeometryUpdater" { import { GeometryUpdater } from 'mars3d-cesium'; export default GeometryUpdater; }
+declare module "cesium/Source/DataSources/GeometryVisualizer" { import { GeometryVisualizer } from 'mars3d-cesium'; export default GeometryVisualizer; }
+declare module "cesium/Source/DataSources/GridMaterialProperty" { import { GridMaterialProperty } from 'mars3d-cesium'; export default GridMaterialProperty; }
+declare module "cesium/Source/DataSources/GroundGeometryUpdater" { import { GroundGeometryUpdater } from 'mars3d-cesium'; export default GroundGeometryUpdater; }
+declare module "cesium/Source/DataSources/ImageMaterialProperty" { import { ImageMaterialProperty } from 'mars3d-cesium'; export default ImageMaterialProperty; }
+declare module "cesium/Source/DataSources/KmlCamera" { import { KmlCamera } from 'mars3d-cesium'; export default KmlCamera; }
+declare module "cesium/Source/DataSources/KmlDataSource" { import { KmlDataSource } from 'mars3d-cesium'; export default KmlDataSource; }
+declare module "cesium/Source/DataSources/KmlLookAt" { import { KmlLookAt } from 'mars3d-cesium'; export default KmlLookAt; }
+declare module "cesium/Source/DataSources/KmlTour" { import { KmlTour } from 'mars3d-cesium'; export default KmlTour; }
+declare module "cesium/Source/DataSources/KmlTourFlyTo" { import { KmlTourFlyTo } from 'mars3d-cesium'; export default KmlTourFlyTo; }
+declare module "cesium/Source/DataSources/KmlTourWait" { import { KmlTourWait } from 'mars3d-cesium'; export default KmlTourWait; }
+declare module "cesium/Source/DataSources/LabelGraphics" { import { LabelGraphics } from 'mars3d-cesium'; export default LabelGraphics; }
+declare module "cesium/Source/DataSources/LabelVisualizer" { import { LabelVisualizer } from 'mars3d-cesium'; export default LabelVisualizer; }
+declare module "cesium/Source/DataSources/MaterialProperty" { import { MaterialProperty } from 'mars3d-cesium'; export default MaterialProperty; }
+declare module "cesium/Source/DataSources/ModelGraphics" { import { ModelGraphics } from 'mars3d-cesium'; export default ModelGraphics; }
+declare module "cesium/Source/DataSources/ModelVisualizer" { import { ModelVisualizer } from 'mars3d-cesium'; export default ModelVisualizer; }
+declare module "cesium/Source/DataSources/NodeTransformationProperty" { import { NodeTransformationProperty } from 'mars3d-cesium'; export default NodeTransformationProperty; }
+declare module "cesium/Source/DataSources/PathGraphics" { import { PathGraphics } from 'mars3d-cesium'; export default PathGraphics; }
+declare module "cesium/Source/DataSources/PathVisualizer" { import { PathVisualizer } from 'mars3d-cesium'; export default PathVisualizer; }
+declare module "cesium/Source/DataSources/PlaneGeometryUpdater" { import { PlaneGeometryUpdater } from 'mars3d-cesium'; export default PlaneGeometryUpdater; }
+declare module "cesium/Source/DataSources/PlaneGraphics" { import { PlaneGraphics } from 'mars3d-cesium'; export default PlaneGraphics; }
+declare module "cesium/Source/DataSources/PointGraphics" { import { PointGraphics } from 'mars3d-cesium'; export default PointGraphics; }
+declare module "cesium/Source/DataSources/PointVisualizer" { import { PointVisualizer } from 'mars3d-cesium'; export default PointVisualizer; }
+declare module "cesium/Source/DataSources/PolygonGeometryUpdater" { import { PolygonGeometryUpdater } from 'mars3d-cesium'; export default PolygonGeometryUpdater; }
+declare module "cesium/Source/DataSources/PolygonGraphics" { import { PolygonGraphics } from 'mars3d-cesium'; export default PolygonGraphics; }
+declare module "cesium/Source/DataSources/PolylineArrowMaterialProperty" { import { PolylineArrowMaterialProperty } from 'mars3d-cesium'; export default PolylineArrowMaterialProperty; }
+declare module "cesium/Source/DataSources/PolylineDashMaterialProperty" { import { PolylineDashMaterialProperty } from 'mars3d-cesium'; export default PolylineDashMaterialProperty; }
+declare module "cesium/Source/DataSources/PolylineGeometryUpdater" { import { PolylineGeometryUpdater } from 'mars3d-cesium'; export default PolylineGeometryUpdater; }
+declare module "cesium/Source/DataSources/PolylineGlowMaterialProperty" { import { PolylineGlowMaterialProperty } from 'mars3d-cesium'; export default PolylineGlowMaterialProperty; }
+declare module "cesium/Source/DataSources/PolylineGraphics" { import { PolylineGraphics } from 'mars3d-cesium'; export default PolylineGraphics; }
+declare module "cesium/Source/DataSources/PolylineOutlineMaterialProperty" { import { PolylineOutlineMaterialProperty } from 'mars3d-cesium'; export default PolylineOutlineMaterialProperty; }
+declare module "cesium/Source/DataSources/PolylineVisualizer" { import { PolylineVisualizer } from 'mars3d-cesium'; export default PolylineVisualizer; }
+declare module "cesium/Source/DataSources/PolylineVolumeGeometryUpdater" { import { PolylineVolumeGeometryUpdater } from 'mars3d-cesium'; export default PolylineVolumeGeometryUpdater; }
+declare module "cesium/Source/DataSources/PolylineVolumeGraphics" { import { PolylineVolumeGraphics } from 'mars3d-cesium'; export default PolylineVolumeGraphics; }
+declare module "cesium/Source/DataSources/PositionProperty" { import { PositionProperty } from 'mars3d-cesium'; export default PositionProperty; }
+declare module "cesium/Source/DataSources/PositionPropertyArray" { import { PositionPropertyArray } from 'mars3d-cesium'; export default PositionPropertyArray; }
+declare module "cesium/Source/DataSources/Property" { import { Property } from 'mars3d-cesium'; export default Property; }
+declare module "cesium/Source/DataSources/PropertyArray" { import { PropertyArray } from 'mars3d-cesium'; export default PropertyArray; }
+declare module "cesium/Source/DataSources/PropertyBag" { import { PropertyBag } from 'mars3d-cesium'; export default PropertyBag; }
+declare module "cesium/Source/DataSources/RectangleGeometryUpdater" { import { RectangleGeometryUpdater } from 'mars3d-cesium'; export default RectangleGeometryUpdater; }
+declare module "cesium/Source/DataSources/RectangleGraphics" { import { RectangleGraphics } from 'mars3d-cesium'; export default RectangleGraphics; }
+declare module "cesium/Source/DataSources/ReferenceProperty" { import { ReferenceProperty } from 'mars3d-cesium'; export default ReferenceProperty; }
+declare module "cesium/Source/DataSources/Rotation" { import { Rotation } from 'mars3d-cesium'; export default Rotation; }
+declare module "cesium/Source/DataSources/SampledPositionProperty" { import { SampledPositionProperty } from 'mars3d-cesium'; export default SampledPositionProperty; }
+declare module "cesium/Source/DataSources/SampledProperty" { import { SampledProperty } from 'mars3d-cesium'; export default SampledProperty; }
+declare module "cesium/Source/DataSources/StripeMaterialProperty" { import { StripeMaterialProperty } from 'mars3d-cesium'; export default StripeMaterialProperty; }
+declare module "cesium/Source/DataSources/StripeOrientation" { import { StripeOrientation } from 'mars3d-cesium'; export default StripeOrientation; }
+declare module "cesium/Source/DataSources/TimeIntervalCollectionPositionProperty" { import { TimeIntervalCollectionPositionProperty } from 'mars3d-cesium'; export default TimeIntervalCollectionPositionProperty; }
+declare module "cesium/Source/DataSources/TimeIntervalCollectionProperty" { import { TimeIntervalCollectionProperty } from 'mars3d-cesium'; export default TimeIntervalCollectionProperty; }
+declare module "cesium/Source/DataSources/VelocityOrientationProperty" { import { VelocityOrientationProperty } from 'mars3d-cesium'; export default VelocityOrientationProperty; }
+declare module "cesium/Source/DataSources/VelocityVectorProperty" { import { VelocityVectorProperty } from 'mars3d-cesium'; export default VelocityVectorProperty; }
+declare module "cesium/Source/DataSources/Visualizer" { import { Visualizer } from 'mars3d-cesium'; export default Visualizer; }
+declare module "cesium/Source/DataSources/WallGeometryUpdater" { import { WallGeometryUpdater } from 'mars3d-cesium'; export default WallGeometryUpdater; }
+declare module "cesium/Source/DataSources/WallGraphics" { import { WallGraphics } from 'mars3d-cesium'; export default WallGraphics; }
+declare module "cesium/Source/Renderer/PixelDatatype" { import { PixelDatatype } from 'mars3d-cesium'; export default PixelDatatype; }
+declare module "cesium/Source/Renderer/TextureMagnificationFilter" { import { TextureMagnificationFilter } from 'mars3d-cesium'; export default TextureMagnificationFilter; }
+declare module "cesium/Source/Renderer/TextureMinificationFilter" { import { TextureMinificationFilter } from 'mars3d-cesium'; export default TextureMinificationFilter; }
+declare module "cesium/Source/Scene/Appearance" { import { Appearance } from 'mars3d-cesium'; export default Appearance; }
+declare module "cesium/Source/Scene/ArcGisMapServerImageryProvider" { import { ArcGisMapServerImageryProvider } from 'mars3d-cesium'; export default ArcGisMapServerImageryProvider; }
+declare module "cesium/Source/Scene/Axis" { import { Axis } from 'mars3d-cesium'; export default Axis; }
+declare module "cesium/Source/Scene/Billboard" { import { Billboard } from 'mars3d-cesium'; export default Billboard; }
+declare module "cesium/Source/Scene/BillboardCollection" { import { BillboardCollection } from 'mars3d-cesium'; export default BillboardCollection; }
+declare module "cesium/Source/Scene/BingMapsImageryProvider" { import { BingMapsImageryProvider } from 'mars3d-cesium'; export default BingMapsImageryProvider; }
+declare module "cesium/Source/Scene/BingMapsStyle" { import { BingMapsStyle } from 'mars3d-cesium'; export default BingMapsStyle; }
+declare module "cesium/Source/Scene/BlendEquation" { import { BlendEquation } from 'mars3d-cesium'; export default BlendEquation; }
+declare module "cesium/Source/Scene/BlendFunction" { import { BlendFunction } from 'mars3d-cesium'; export default BlendFunction; }
+declare module "cesium/Source/Scene/BlendingState" { import { BlendingState } from 'mars3d-cesium'; export default BlendingState; }
+declare module "cesium/Source/Scene/BlendOption" { import { BlendOption } from 'mars3d-cesium'; export default BlendOption; }
+declare module "cesium/Source/Scene/BoxEmitter" { import { BoxEmitter } from 'mars3d-cesium'; export default BoxEmitter; }
+declare module "cesium/Source/Scene/Camera" { import { Camera } from 'mars3d-cesium'; export default Camera; }
+declare module "cesium/Source/Scene/CameraEventAggregator" { import { CameraEventAggregator } from 'mars3d-cesium'; export default CameraEventAggregator; }
+declare module "cesium/Source/Scene/CameraEventType" { import { CameraEventType } from 'mars3d-cesium'; export default CameraEventType; }
+declare module "cesium/Source/Scene/Cesium3DTile" { import { Cesium3DTile } from 'mars3d-cesium'; export default Cesium3DTile; }
+declare module "cesium/Source/Scene/Cesium3DTileColorBlendMode" { import { Cesium3DTileColorBlendMode } from 'mars3d-cesium'; export default Cesium3DTileColorBlendMode; }
+declare module "cesium/Source/Scene/Cesium3DTileContent" { import { Cesium3DTileContent } from 'mars3d-cesium'; export default Cesium3DTileContent; }
+declare module "cesium/Source/Scene/Cesium3DTileFeature" { import { Cesium3DTileFeature } from 'mars3d-cesium'; export default Cesium3DTileFeature; }
+declare module "cesium/Source/Scene/Cesium3DTilePointFeature" { import { Cesium3DTilePointFeature } from 'mars3d-cesium'; export default Cesium3DTilePointFeature; }
+declare module "cesium/Source/Scene/Cesium3DTileset" { import { Cesium3DTileset } from 'mars3d-cesium'; export default Cesium3DTileset; }
+declare module "cesium/Source/Scene/Cesium3DTileStyle" { import { Cesium3DTileStyle } from 'mars3d-cesium'; export default Cesium3DTileStyle; }
+declare module "cesium/Source/Scene/CircleEmitter" { import { CircleEmitter } from 'mars3d-cesium'; export default CircleEmitter; }
+declare module "cesium/Source/Scene/ClassificationPrimitive" { import { ClassificationPrimitive } from 'mars3d-cesium'; export default ClassificationPrimitive; }
+declare module "cesium/Source/Scene/ClassificationType" { import { ClassificationType } from 'mars3d-cesium'; export default ClassificationType; }
+declare module "cesium/Source/Scene/ClippingPlane" { import { ClippingPlane } from 'mars3d-cesium'; export default ClippingPlane; }
+declare module "cesium/Source/Scene/ClippingPlaneCollection" { import { ClippingPlaneCollection } from 'mars3d-cesium'; export default ClippingPlaneCollection; }
+declare module "cesium/Source/Scene/CloudCollection" { import { CloudCollection } from 'mars3d-cesium'; export default CloudCollection; }
+declare module "cesium/Source/Scene/CloudType" { import { CloudType } from 'mars3d-cesium'; export default CloudType; }
+declare module "cesium/Source/Scene/ColorBlendMode" { import { ColorBlendMode } from 'mars3d-cesium'; export default ColorBlendMode; }
+declare module "cesium/Source/Scene/ConditionsExpression" { import { ConditionsExpression } from 'mars3d-cesium'; export default ConditionsExpression; }
+declare module "cesium/Source/Scene/ConeEmitter" { import { ConeEmitter } from 'mars3d-cesium'; export default ConeEmitter; }
+declare module "cesium/Source/Scene/createElevationBandMaterial" { import { createElevationBandMaterial } from 'mars3d-cesium'; export default createElevationBandMaterial; }
+declare module "cesium/Source/Scene/createOsmBuildings" { import { createOsmBuildings } from 'mars3d-cesium'; export default createOsmBuildings; }
+declare module "cesium/Source/Scene/createTangentSpaceDebugPrimitive" { import { createTangentSpaceDebugPrimitive } from 'mars3d-cesium'; export default createTangentSpaceDebugPrimitive; }
+declare module "cesium/Source/Scene/createWorldImagery" { import { createWorldImagery } from 'mars3d-cesium'; export default createWorldImagery; }
+declare module "cesium/Source/Scene/CreditDisplay" { import { CreditDisplay } from 'mars3d-cesium'; export default CreditDisplay; }
+declare module "cesium/Source/Scene/CullFace" { import { CullFace } from 'mars3d-cesium'; export default CullFace; }
+declare module "cesium/Source/Scene/CumulusCloud" { import { CumulusCloud } from 'mars3d-cesium'; export default CumulusCloud; }
+declare module "cesium/Source/Scene/DebugAppearance" { import { DebugAppearance } from 'mars3d-cesium'; export default DebugAppearance; }
+declare module "cesium/Source/Scene/DebugCameraPrimitive" { import { DebugCameraPrimitive } from 'mars3d-cesium'; export default DebugCameraPrimitive; }
+declare module "cesium/Source/Scene/DebugModelMatrixPrimitive" { import { DebugModelMatrixPrimitive } from 'mars3d-cesium'; export default DebugModelMatrixPrimitive; }
+declare module "cesium/Source/Scene/DepthFunction" { import { DepthFunction } from 'mars3d-cesium'; export default DepthFunction; }
+declare module "cesium/Source/Scene/DirectionalLight" { import { DirectionalLight } from 'mars3d-cesium'; export default DirectionalLight; }
+declare module "cesium/Source/Scene/DiscardEmptyTileImagePolicy" { import { DiscardEmptyTileImagePolicy } from 'mars3d-cesium'; export default DiscardEmptyTileImagePolicy; }
+declare module "cesium/Source/Scene/DiscardMissingTileImagePolicy" { import { DiscardMissingTileImagePolicy } from 'mars3d-cesium'; export default DiscardMissingTileImagePolicy; }
+declare module "cesium/Source/Scene/EllipsoidSurfaceAppearance" { import { EllipsoidSurfaceAppearance } from 'mars3d-cesium'; export default EllipsoidSurfaceAppearance; }
+declare module "cesium/Source/Scene/Expression" { import { Expression } from 'mars3d-cesium'; export default Expression; }
+declare module "cesium/Source/Scene/Fog" { import { Fog } from 'mars3d-cesium'; export default Fog; }
+declare module "cesium/Source/Scene/FrameRateMonitor" { import { FrameRateMonitor } from 'mars3d-cesium'; export default FrameRateMonitor; }
+declare module "cesium/Source/Scene/GetFeatureInfoFormat" { import { GetFeatureInfoFormat } from 'mars3d-cesium'; export default GetFeatureInfoFormat; }
+declare module "cesium/Source/Scene/Globe" { import { Globe } from 'mars3d-cesium'; export default Globe; }
+declare module "cesium/Source/Scene/GlobeTranslucency" { import { GlobeTranslucency } from 'mars3d-cesium'; export default GlobeTranslucency; }
+declare module "cesium/Source/Scene/GoogleEarthEnterpriseImageryProvider" { import { GoogleEarthEnterpriseImageryProvider } from 'mars3d-cesium'; export default GoogleEarthEnterpriseImageryProvider; }
+declare module "cesium/Source/Scene/GoogleEarthEnterpriseMapsProvider" { import { GoogleEarthEnterpriseMapsProvider } from 'mars3d-cesium'; export default GoogleEarthEnterpriseMapsProvider; }
+declare module "cesium/Source/Scene/GridImageryProvider" { import { GridImageryProvider } from 'mars3d-cesium'; export default GridImageryProvider; }
+declare module "cesium/Source/Scene/GroundPolylinePrimitive" { import { GroundPolylinePrimitive } from 'mars3d-cesium'; export default GroundPolylinePrimitive; }
+declare module "cesium/Source/Scene/GroundPrimitive" { import { GroundPrimitive } from 'mars3d-cesium'; export default GroundPrimitive; }
+declare module "cesium/Source/Scene/HeightReference" { import { HeightReference } from 'mars3d-cesium'; export default HeightReference; }
+declare module "cesium/Source/Scene/HorizontalOrigin" { import { HorizontalOrigin } from 'mars3d-cesium'; export default HorizontalOrigin; }
+declare module "cesium/Source/Scene/ImageryLayer" { import { ImageryLayer } from 'mars3d-cesium'; export default ImageryLayer; }
+declare module "cesium/Source/Scene/ImageryLayerCollection" { import { ImageryLayerCollection } from 'mars3d-cesium'; export default ImageryLayerCollection; }
+declare module "cesium/Source/Scene/ImageryLayerFeatureInfo" { import { ImageryLayerFeatureInfo } from 'mars3d-cesium'; export default ImageryLayerFeatureInfo; }
+declare module "cesium/Source/Scene/ImageryProvider" { import { ImageryProvider } from 'mars3d-cesium'; export default ImageryProvider; }
+declare module "cesium/Source/Scene/ImagerySplitDirection" { import { ImagerySplitDirection } from 'mars3d-cesium'; export default ImagerySplitDirection; }
+declare module "cesium/Source/Scene/IonImageryProvider" { import { IonImageryProvider } from 'mars3d-cesium'; export default IonImageryProvider; }
+declare module "cesium/Source/Scene/IonWorldImageryStyle" { import { IonWorldImageryStyle } from 'mars3d-cesium'; export default IonWorldImageryStyle; }
+declare module "cesium/Source/Scene/Label" { import { Label } from 'mars3d-cesium'; export default Label; }
+declare module "cesium/Source/Scene/LabelCollection" { import { LabelCollection } from 'mars3d-cesium'; export default LabelCollection; }
+declare module "cesium/Source/Scene/LabelStyle" { import { LabelStyle } from 'mars3d-cesium'; export default LabelStyle; }
+declare module "cesium/Source/Scene/Light" { import { Light } from 'mars3d-cesium'; export default Light; }
+declare module "cesium/Source/Scene/MapboxImageryProvider" { import { MapboxImageryProvider } from 'mars3d-cesium'; export default MapboxImageryProvider; }
+declare module "cesium/Source/Scene/MapboxStyleImageryProvider" { import { MapboxStyleImageryProvider } from 'mars3d-cesium'; export default MapboxStyleImageryProvider; }
+declare module "cesium/Source/Scene/MapMode2D" { import { MapMode2D } from 'mars3d-cesium'; export default MapMode2D; }
+declare module "cesium/Source/Scene/Material" { import { Material } from 'mars3d-cesium'; export default Material; }
+declare module "cesium/Source/Scene/MaterialAppearance" { import { MaterialAppearance } from 'mars3d-cesium'; export default MaterialAppearance; }
+declare module "cesium/Source/Scene/Model" { import { Model } from 'mars3d-cesium'; export default Model; }
+declare module "cesium/Source/Scene/ModelAnimation" { import { ModelAnimation } from 'mars3d-cesium'; export default ModelAnimation; }
+declare module "cesium/Source/Scene/ModelAnimationCollection" { import { ModelAnimationCollection } from 'mars3d-cesium'; export default ModelAnimationCollection; }
+declare module "cesium/Source/Scene/ModelAnimationLoop" { import { ModelAnimationLoop } from 'mars3d-cesium'; export default ModelAnimationLoop; }
+declare module "cesium/Source/Scene/ModelMaterial" { import { ModelMaterial } from 'mars3d-cesium'; export default ModelMaterial; }
+declare module "cesium/Source/Scene/ModelMesh" { import { ModelMesh } from 'mars3d-cesium'; export default ModelMesh; }
+declare module "cesium/Source/Scene/ModelNode" { import { ModelNode } from 'mars3d-cesium'; export default ModelNode; }
+declare module "cesium/Source/Scene/Moon" { import { Moon } from 'mars3d-cesium'; export default Moon; }
+declare module "cesium/Source/Scene/NeverTileDiscardPolicy" { import { NeverTileDiscardPolicy } from 'mars3d-cesium'; export default NeverTileDiscardPolicy; }
+declare module "cesium/Source/Scene/OpenStreetMapImageryProvider" { import { OpenStreetMapImageryProvider } from 'mars3d-cesium'; export default OpenStreetMapImageryProvider; }
+declare module "cesium/Source/Scene/Particle" { import { Particle } from 'mars3d-cesium'; export default Particle; }
+declare module "cesium/Source/Scene/ParticleBurst" { import { ParticleBurst } from 'mars3d-cesium'; export default ParticleBurst; }
+declare module "cesium/Source/Scene/ParticleEmitter" { import { ParticleEmitter } from 'mars3d-cesium'; export default ParticleEmitter; }
+declare module "cesium/Source/Scene/ParticleSystem" { import { ParticleSystem } from 'mars3d-cesium'; export default ParticleSystem; }
+declare module "cesium/Source/Scene/PerInstanceColorAppearance" { import { PerInstanceColorAppearance } from 'mars3d-cesium'; export default PerInstanceColorAppearance; }
+declare module "cesium/Source/Scene/PointCloudShading" { import { PointCloudShading } from 'mars3d-cesium'; export default PointCloudShading; }
+declare module "cesium/Source/Scene/PointPrimitive" { import { PointPrimitive } from 'mars3d-cesium'; export default PointPrimitive; }
+declare module "cesium/Source/Scene/PointPrimitiveCollection" { import { PointPrimitiveCollection } from 'mars3d-cesium'; export default PointPrimitiveCollection; }
+declare module "cesium/Source/Scene/Polyline" { import { Polyline } from 'mars3d-cesium'; export default Polyline; }
+declare module "cesium/Source/Scene/PolylineCollection" { import { PolylineCollection } from 'mars3d-cesium'; export default PolylineCollection; }
+declare module "cesium/Source/Scene/PolylineColorAppearance" { import { PolylineColorAppearance } from 'mars3d-cesium'; export default PolylineColorAppearance; }
+declare module "cesium/Source/Scene/PolylineMaterialAppearance" { import { PolylineMaterialAppearance } from 'mars3d-cesium'; export default PolylineMaterialAppearance; }
+declare module "cesium/Source/Scene/PostProcessStage" { import { PostProcessStage } from 'mars3d-cesium'; export default PostProcessStage; }
+declare module "cesium/Source/Scene/PostProcessStageCollection" { import { PostProcessStageCollection } from 'mars3d-cesium'; export default PostProcessStageCollection; }
+declare module "cesium/Source/Scene/PostProcessStageComposite" { import { PostProcessStageComposite } from 'mars3d-cesium'; export default PostProcessStageComposite; }
+declare module "cesium/Source/Scene/PostProcessStageLibrary" { import { PostProcessStageLibrary } from 'mars3d-cesium'; export default PostProcessStageLibrary; }
+declare module "cesium/Source/Scene/PostProcessStageSampleMode" { import { PostProcessStageSampleMode } from 'mars3d-cesium'; export default PostProcessStageSampleMode; }
+declare module "cesium/Source/Scene/Primitive" { import { Primitive } from 'mars3d-cesium'; export default Primitive; }
+declare module "cesium/Source/Scene/PrimitiveCollection" { import { PrimitiveCollection } from 'mars3d-cesium'; export default PrimitiveCollection; }
+declare module "cesium/Source/Scene/Scene" { import { Scene } from 'mars3d-cesium'; export default Scene; }
+declare module "cesium/Source/Scene/SceneMode" { import { SceneMode } from 'mars3d-cesium'; export default SceneMode; }
+declare module "cesium/Source/Scene/SceneTransforms" { import { SceneTransforms } from 'mars3d-cesium'; export default SceneTransforms; }
+declare module "cesium/Source/Scene/ScreenSpaceCameraController" { import { ScreenSpaceCameraController } from 'mars3d-cesium'; export default ScreenSpaceCameraController; }
+declare module "cesium/Source/Scene/ShadowMap" { import { ShadowMap } from 'mars3d-cesium'; export default ShadowMap; }
+declare module "cesium/Source/Scene/ShadowMode" { import { ShadowMode } from 'mars3d-cesium'; export default ShadowMode; }
+declare module "cesium/Source/Scene/SingleTileImageryProvider" { import { SingleTileImageryProvider } from 'mars3d-cesium'; export default SingleTileImageryProvider; }
+declare module "cesium/Source/Scene/SkyAtmosphere" { import { SkyAtmosphere } from 'mars3d-cesium'; export default SkyAtmosphere; }
+declare module "cesium/Source/Scene/SkyBox" { import { SkyBox } from 'mars3d-cesium'; export default SkyBox; }
+declare module "cesium/Source/Scene/SphereEmitter" { import { SphereEmitter } from 'mars3d-cesium'; export default SphereEmitter; }
+declare module "cesium/Source/Scene/StencilFunction" { import { StencilFunction } from 'mars3d-cesium'; export default StencilFunction; }
+declare module "cesium/Source/Scene/StencilOperation" { import { StencilOperation } from 'mars3d-cesium'; export default StencilOperation; }
+declare module "cesium/Source/Scene/StyleExpression" { import { StyleExpression } from 'mars3d-cesium'; export default StyleExpression; }
+declare module "cesium/Source/Scene/Sun" { import { Sun } from 'mars3d-cesium'; export default Sun; }
+declare module "cesium/Source/Scene/SunLight" { import { SunLight } from 'mars3d-cesium'; export default SunLight; }
+declare module "cesium/Source/Scene/TileCoordinatesImageryProvider" { import { TileCoordinatesImageryProvider } from 'mars3d-cesium'; export default TileCoordinatesImageryProvider; }
+declare module "cesium/Source/Scene/TileDiscardPolicy" { import { TileDiscardPolicy } from 'mars3d-cesium'; export default TileDiscardPolicy; }
+declare module "cesium/Source/Scene/TileMapServiceImageryProvider" { import { TileMapServiceImageryProvider } from 'mars3d-cesium'; export default TileMapServiceImageryProvider; }
+declare module "cesium/Source/Scene/TimeDynamicImagery" { import { TimeDynamicImagery } from 'mars3d-cesium'; export default TimeDynamicImagery; }
+declare module "cesium/Source/Scene/TimeDynamicPointCloud" { import { TimeDynamicPointCloud } from 'mars3d-cesium'; export default TimeDynamicPointCloud; }
+declare module "cesium/Source/Scene/UrlTemplateImageryProvider" { import { UrlTemplateImageryProvider } from 'mars3d-cesium'; export default UrlTemplateImageryProvider; }
+declare module "cesium/Source/Scene/VerticalOrigin" { import { VerticalOrigin } from 'mars3d-cesium'; export default VerticalOrigin; }
+declare module "cesium/Source/Scene/ViewportQuad" { import { ViewportQuad } from 'mars3d-cesium'; export default ViewportQuad; }
+declare module "cesium/Source/Scene/WebMapServiceImageryProvider" { import { WebMapServiceImageryProvider } from 'mars3d-cesium'; export default WebMapServiceImageryProvider; }
+declare module "cesium/Source/Scene/WebMapTileServiceImageryProvider" { import { WebMapTileServiceImageryProvider } from 'mars3d-cesium'; export default WebMapTileServiceImageryProvider; }
+declare module "cesium/Source/Widgets/ClockViewModel" { import { ClockViewModel } from 'mars3d-cesium'; export default ClockViewModel; }
+declare module "cesium/Source/Widgets/Command" { import { Command } from 'mars3d-cesium'; export default Command; }
+declare module "cesium/Source/Widgets/createCommand" { import { createCommand } from 'mars3d-cesium'; export default createCommand; }
+declare module "cesium/Source/Widgets/SvgPathBindingHandler" { import { SvgPathBindingHandler } from 'mars3d-cesium'; export default SvgPathBindingHandler; }
+declare module "cesium/Source/Widgets/ToggleButtonViewModel" { import { ToggleButtonViewModel } from 'mars3d-cesium'; export default ToggleButtonViewModel; }
+declare module "cesium/Source/Scene/ModelExperimental/CustomShader" { import { CustomShader } from 'mars3d-cesium'; export default CustomShader; }
+declare module "cesium/Source/Scene/ModelExperimental/CustomShaderMode" { import { CustomShaderMode } from 'mars3d-cesium'; export default CustomShaderMode; }
+declare module "cesium/Source/Scene/ModelExperimental/LightingModel" { import { LightingModel } from 'mars3d-cesium'; export default LightingModel; }
+declare module "cesium/Source/Scene/ModelExperimental/ModelExperimental" { import { ModelExperimental } from 'mars3d-cesium'; export default ModelExperimental; }
+declare module "cesium/Source/Scene/ModelExperimental/ModelFeature" { import { ModelFeature } from 'mars3d-cesium'; export default ModelFeature; }
+declare module "cesium/Source/Scene/ModelExperimental/TextureUniform" { import { TextureUniform } from 'mars3d-cesium'; export default TextureUniform; }
+declare module "cesium/Source/Scene/ModelExperimental/UniformType" { import { UniformType } from 'mars3d-cesium'; export default UniformType; }
+declare module "cesium/Source/Scene/ModelExperimental/VaryingType" { import { VaryingType } from 'mars3d-cesium'; export default VaryingType; }
+declare module "cesium/Source/Widgets/Animation/Animation" { import { Animation } from 'mars3d-cesium'; export default Animation; }
+declare module "cesium/Source/Widgets/Animation/AnimationViewModel" { import { AnimationViewModel } from 'mars3d-cesium'; export default AnimationViewModel; }
+declare module "cesium/Source/Widgets/BaseLayerPicker/BaseLayerPicker" { import { BaseLayerPicker } from 'mars3d-cesium'; export default BaseLayerPicker; }
+declare module "cesium/Source/Widgets/BaseLayerPicker/BaseLayerPickerViewModel" { import { BaseLayerPickerViewModel } from 'mars3d-cesium'; export default BaseLayerPickerViewModel; }
+declare module "cesium/Source/Widgets/BaseLayerPicker/ProviderViewModel" { import { ProviderViewModel } from 'mars3d-cesium'; export default ProviderViewModel; }
+declare module "cesium/Source/Widgets/Cesium3DTilesInspector/Cesium3DTilesInspector" { import { Cesium3DTilesInspector } from 'mars3d-cesium'; export default Cesium3DTilesInspector; }
+declare module "cesium/Source/Widgets/Cesium3DTilesInspector/Cesium3DTilesInspectorViewModel" { import { Cesium3DTilesInspectorViewModel } from 'mars3d-cesium'; export default Cesium3DTilesInspectorViewModel; }
+declare module "cesium/Source/Widgets/CesiumInspector/CesiumInspector" { import { CesiumInspector } from 'mars3d-cesium'; export default CesiumInspector; }
+declare module "cesium/Source/Widgets/CesiumInspector/CesiumInspectorViewModel" { import { CesiumInspectorViewModel } from 'mars3d-cesium'; export default CesiumInspectorViewModel; }
+declare module "cesium/Source/Widgets/CesiumWidget/CesiumWidget" { import { CesiumWidget } from 'mars3d-cesium'; export default CesiumWidget; }
+declare module "cesium/Source/Widgets/FullscreenButton/FullscreenButton" { import { FullscreenButton } from 'mars3d-cesium'; export default FullscreenButton; }
+declare module "cesium/Source/Widgets/FullscreenButton/FullscreenButtonViewModel" { import { FullscreenButtonViewModel } from 'mars3d-cesium'; export default FullscreenButtonViewModel; }
+declare module "cesium/Source/Widgets/Geocoder/Geocoder" { import { Geocoder } from 'mars3d-cesium'; export default Geocoder; }
+declare module "cesium/Source/Widgets/Geocoder/GeocoderViewModel" { import { GeocoderViewModel } from 'mars3d-cesium'; export default GeocoderViewModel; }
+declare module "cesium/Source/Widgets/HomeButton/HomeButton" { import { HomeButton } from 'mars3d-cesium'; export default HomeButton; }
+declare module "cesium/Source/Widgets/HomeButton/HomeButtonViewModel" { import { HomeButtonViewModel } from 'mars3d-cesium'; export default HomeButtonViewModel; }
+declare module "cesium/Source/Widgets/InfoBox/InfoBox" { import { InfoBox } from 'mars3d-cesium'; export default InfoBox; }
+declare module "cesium/Source/Widgets/InfoBox/InfoBoxViewModel" { import { InfoBoxViewModel } from 'mars3d-cesium'; export default InfoBoxViewModel; }
+declare module "cesium/Source/Widgets/NavigationHelpButton/NavigationHelpButton" { import { NavigationHelpButton } from 'mars3d-cesium'; export default NavigationHelpButton; }
+declare module "cesium/Source/Widgets/NavigationHelpButton/NavigationHelpButtonViewModel" { import { NavigationHelpButtonViewModel } from 'mars3d-cesium'; export default NavigationHelpButtonViewModel; }
+declare module "cesium/Source/Widgets/PerformanceWatchdog/PerformanceWatchdog" { import { PerformanceWatchdog } from 'mars3d-cesium'; export default PerformanceWatchdog; }
+declare module "cesium/Source/Widgets/PerformanceWatchdog/PerformanceWatchdogViewModel" { import { PerformanceWatchdogViewModel } from 'mars3d-cesium'; export default PerformanceWatchdogViewModel; }
+declare module "cesium/Source/Widgets/ProjectionPicker/ProjectionPicker" { import { ProjectionPicker } from 'mars3d-cesium'; export default ProjectionPicker; }
+declare module "cesium/Source/Widgets/ProjectionPicker/ProjectionPickerViewModel" { import { ProjectionPickerViewModel } from 'mars3d-cesium'; export default ProjectionPickerViewModel; }
+declare module "cesium/Source/Widgets/SceneModePicker/SceneModePicker" { import { SceneModePicker } from 'mars3d-cesium'; export default SceneModePicker; }
+declare module "cesium/Source/Widgets/SceneModePicker/SceneModePickerViewModel" { import { SceneModePickerViewModel } from 'mars3d-cesium'; export default SceneModePickerViewModel; }
+declare module "cesium/Source/Widgets/SelectionIndicator/SelectionIndicator" { import { SelectionIndicator } from 'mars3d-cesium'; export default SelectionIndicator; }
+declare module "cesium/Source/Widgets/SelectionIndicator/SelectionIndicatorViewModel" { import { SelectionIndicatorViewModel } from 'mars3d-cesium'; export default SelectionIndicatorViewModel; }
+declare module "cesium/Source/Widgets/Timeline/Timeline" { import { Timeline } from 'mars3d-cesium'; export default Timeline; }
+declare module "cesium/Source/Widgets/Viewer/Viewer" { import { Viewer } from 'mars3d-cesium'; export default Viewer; }
+declare module "cesium/Source/Widgets/Viewer/viewerCesium3DTilesInspectorMixin" { import { viewerCesium3DTilesInspectorMixin } from 'mars3d-cesium'; export default viewerCesium3DTilesInspectorMixin; }
+declare module "cesium/Source/Widgets/Viewer/viewerCesiumInspectorMixin" { import { viewerCesiumInspectorMixin } from 'mars3d-cesium'; export default viewerCesiumInspectorMixin; }
+declare module "cesium/Source/Widgets/Viewer/viewerDragDropMixin" { import { viewerDragDropMixin } from 'mars3d-cesium'; export default viewerDragDropMixin; }
+declare module "cesium/Source/Widgets/Viewer/viewerPerformanceWatchdogMixin" { import { viewerPerformanceWatchdogMixin } from 'mars3d-cesium'; export default viewerPerformanceWatchdogMixin; }
+declare module "cesium/Source/Widgets/VRButton/VRButton" { import { VRButton } from 'mars3d-cesium'; export default VRButton; }
+declare module "cesium/Source/Widgets/VRButton/VRButtonViewModel" { import { VRButtonViewModel } from 'mars3d-cesium'; export default VRButtonViewModel; }
