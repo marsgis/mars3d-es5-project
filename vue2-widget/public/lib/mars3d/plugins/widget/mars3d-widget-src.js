@@ -3,7 +3,7 @@
  * 版本信息：v3.1.17, hash值: 90d3bc1335d8a33b2b81
  * 编译日期：2021-12-20 13:39:27
  * 版权所有：Copyright by 火星科技 http://mars3d.cn
- * 
+ *
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -620,7 +620,7 @@ var removeKeys = ["_class"];
  * @return {void}  无
  * @example
 let widgetCfg ={
-  "version": "20210803",
+  "version": "20220120",
   "defaultOptions": {
     "style": "dark",
     "windowOptions": {

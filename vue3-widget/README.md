@@ -237,7 +237,7 @@ widget激活后页面执行流程:
 ```json
 {
   "debugger":true,
-  "version": "20210803",
+  "version": "20220120",
   "defaultOptions": {
     "style": "dark",
     "windowOptions": {

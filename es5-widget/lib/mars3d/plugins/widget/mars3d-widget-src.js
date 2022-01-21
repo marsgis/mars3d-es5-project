@@ -620,7 +620,7 @@ var removeKeys = ["_class"];
  * @return {void}  无
  * @example
 let widgetCfg ={
-  "version": "20210803",
+  "version": "20220120",
   "defaultOptions": {
     "style": "dark",
     "windowOptions": {

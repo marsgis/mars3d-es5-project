@@ -18,6 +18,7 @@
               bottom: 0,
               left: 0,
             },
+            show: true,
           },
         },
         {
@@ -33,6 +34,7 @@
               bottom: 0,
               right: 0,
             },
+            show: true,
           },
         },
       ];
