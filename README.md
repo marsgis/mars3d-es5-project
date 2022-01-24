@@ -26,8 +26,8 @@
 | 目录  | 技术栈  |   说明  | 
 |  ----  |---- | ----  |
 |[es5-widget](./es5-widget/README.md)	| 原生JS | 可以与jsp、asp.net、php、原生js等技术下面结合使用，不依赖任何框架| 
-|[vue2-widget](./vue2-widget/README.md)	| vue2.x | 可以vue2.x技术下面结合使用| 
-|[vue3-widget](./vue3-widget/README.md)	| vue3.x | 可以vue3.x技术下面结合使用| 
+|[es5-project-link-vue2](./es5-project-link-vue2/README.md)	| vue2.x | 可以vue2.x技术下面结合使用| 
+|[es5-project-link-vue3](./es5-project-link-vue3/README.md)	| vue3.x | 可以vue3.x技术下面结合使用| 
 
 
 
