@@ -77,8 +77,8 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 ### 2.1 下载代码
 目前我们已经开源了基础项目的基础框架和一些部分widget。可以从下面链接下载代码：
  
-1. 国外Github:[https://github.com/marsgis/mars3d-widget-project](https://github.com/marsgis/mars3d-widget-project)
-2. 国内Gitee [https://gitee.com/marsgis/mars3d-widget-project](https://gitee.com/marsgis/mars3d-widget-project)
+1. 国外Github:[https://github.com/marsgis/mars3d-es5-project](https://github.com/marsgis/mars3d-es5-project)
+2. 国内Gitee [https://gitee.com/marsgis/mars3d-es5-project](https://gitee.com/marsgis/mars3d-es5-project)
 
 
 在任意开发编辑器（如vscode等）或http服务器(如node、nginx、tomcat、IIS等)下直接运行浏览index.html即可

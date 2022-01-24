@@ -35,10 +35,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/marsgis/mars3d-widget-project.git"
+    "url": "https://github.com/marsgis/mars3d-es5-project.git"
   },
   "bugs": {
-    "url": "https://github.com/marsgis/mars3d-widget-project/issues",
+    "url": "https://github.com/marsgis/mars3d-es5-project/issues",
     "email": "wh@marsgis.cn"
   },
   "keywords": [
