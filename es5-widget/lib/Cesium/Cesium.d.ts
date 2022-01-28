@@ -10167,11 +10167,11 @@ export class Matrix3 implements ArrayLike<number> {
     var column1Row0Index = Cesium.Matrix3.getElementIndex(1, 0);
     var column1Row0 = myMatrix[column1Row0Index]
     myMatrix[column1Row0Index] = 10.0;
-     * @param row - The zero-based index of the row.
      * @param column - The zero-based index of the column.
+     * @param row - The zero-based index of the row.
      * @returns The index of the element at the provided row and column.
      */
-    static getElementIndex(row: number, column: number): number;
+    static getElementIndex(column: number, row: number): number;
     /**
      * Retrieves a copy of the matrix column at the provided index as a Cartesian3 instance.
      * @param matrix - The matrix to use.
@@ -26820,6 +26820,12 @@ export class Cesium3DTileFeature {
      */
     readonly primitive: Cesium3DTileset;
     /**
+     * Get the feature ID associated with this feature. For 3D Tiles 1.0, the
+    batch ID is returned. For EXT_mesh_features, this is the feature ID from
+    the selected feature ID set.
+     */
+    readonly featureId: number;
+    /**
      * Returns whether the feature contains this property. This includes properties from this feature's
     class and inherited classes when using a batch table hierarchy.
      * @param name - The case-sensitive name of the property.
@@ -27383,10 +27389,6 @@ export class Cesium3DTileset {
      */
     colorBlendAmount: number;
     /**
-     * Options for controlling point size based on geometric error and eye dome lighting.
-     */
-    pointCloudShading: PointCloudShading;
-    /**
      * The event fired to indicate progress of loading new tiles.  This event is fired when a new tile
     is requested, when a requested tile is finished downloading, and when a downloaded tile has been
     processed and is ready to render.
@@ -27838,6 +27840,10 @@ export class Cesium3DTileset {
     </p>
      */
     maximumMemoryUsage: number;
+    /**
+     * Options for controlling point size based on geometric error and eye dome lighting.
+     */
+    pointCloudShading: PointCloudShading;
     /**
      * The root tile.
      */
@@ -33974,14 +33980,6 @@ export class Material {
      */
     static readonly ElevationRampType: string;
     /**
-     * Gets the name of the yanmo material.
-     */
-    static readonly YanMoType: string;
-    /**
-     * Gets the name of the yanmo material.
-     */
-    static readonly WaJueType: string;
-    /**
      * Gets the name of the slope ramp material.
      */
     static readonly SlopeRampMaterialType: string;
@@ -34149,56 +34147,56 @@ export namespace MaterialAppearance {
 
 /**
  * A 3D model based on glTF, the runtime asset format for WebGL, OpenGL ES, and OpenGL.
-<p>
-Cesium includes support for geometry and materials, glTF animations, and glTF skinning.
-In addition, individual glTF nodes are pickable with {@link Scene#pick} and animatable
-with {@link Model#getNode}.  glTF cameras and lights are not currently supported.
-</p>
-<p>
-An external glTF asset is created with {@link Model.fromGltf}.  glTF JSON can also be
-created at runtime and passed to this constructor function.  In either case, the
-{@link Model#readyPromise} is resolved when the model is ready to render, i.e.,
-when the external binary, image, and shader files are downloaded and the WebGL
-resources are created.
-</p>
-<p>
-Cesium supports glTF assets with the following extensions:
-<ul>
-<li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
-</li><li>
-{@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu|KHR_texture_basisu}
-</li>
-</ul>
-</p>
-<p>
-Note: for models with compressed textures using the KHR_texture_basisu extension, we recommend power of 2 textures in both dimensions
-for maximum compatibility. This is because some samplers require power of 2 textures ({@link https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL|Using textures in WebGL})
-and KHR_texture_basisu requires multiple of 4 dimensions ({@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md#additional-requirements|KHR_texture_basisu additional requirements}).
-</p>
-<p>
-For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
-CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
-relative to a local origin.
-</p>
+ * <p>
+ * Cesium includes support for geometry and materials, glTF animations, and glTF skinning.
+ * In addition, individual glTF nodes are pickable with {@link Scene#pick} and animatable
+ * with {@link Model#getNode}.  glTF cameras and lights are not currently supported.
+ * </p>
+ * <p>
+ * An external glTF asset is created with {@link Model.fromGltf}.  glTF JSON can also be
+ * created at runtime and passed to this constructor function.  In either case, the
+ * {@link Model#readyPromise} is resolved when the model is ready to render, i.e.,
+ * when the external binary, image, and shader files are downloaded and the WebGL
+ * resources are created.
+ * </p>
+ * <p>
+ * Cesium supports glTF assets with the following extensions:
+ * <ul>
+ * <li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
+ * </li><li>
+ * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu|KHR_texture_basisu}
+ * </li>
+ * </ul>
+ * </p>
+ * <p>
+ * Note: for models with compressed textures using the KHR_texture_basisu extension, we recommend power of 2 textures in both dimensions
+ * for maximum compatibility. This is because some samplers require power of 2 textures ({@link https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL|Using textures in WebGL})
+ * and KHR_texture_basisu requires multiple of 4 dimensions ({@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md#additional-requirements|KHR_texture_basisu additional requirements}).
+ * </p>
+ * <p>
+ * For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
+ * CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
+ * relative to a local origin.
+ * </p>
  * @param [options] - Object with the following properties:
  * @param [options.gltf] - A glTF JSON object, or a binary glTF buffer.
  * @param [options.basePath = ''] - The base path that paths in the glTF JSON are relative to.
@@ -34284,30 +34282,30 @@ export class Model {
     silhouetteSize: number;
     /**
      * The 4x4 transformation matrix that transforms the model from model to world coordinates.
-    When this is the identity matrix, the model is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
-    Local reference frames can be used by providing a different transformation matrix, like that returned
-    by {@link Transforms.eastNorthUpToFixedFrame}.
+     * When this is the identity matrix, the model is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
+     * Local reference frames can be used by providing a different transformation matrix, like that returned
+     * by {@link Transforms.eastNorthUpToFixedFrame}.
      * @example
      * var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-    m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+     * m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
      */
     modelMatrix: Matrix4;
     /**
      * A uniform scale applied to this model before the {@link Model#modelMatrix}.
-    Values greater than <code>1.0</code> increase the size of the model; values
-    less than <code>1.0</code> decrease.
+     * Values greater than <code>1.0</code> increase the size of the model; values
+     * less than <code>1.0</code> decrease.
      */
     scale: number;
     /**
      * The approximate minimum pixel size of the model regardless of zoom.
-    This can be used to ensure that a model is visible even when the viewer
-    zooms out.  When <code>0.0</code>, no minimum size is enforced.
+     * This can be used to ensure that a model is visible even when the viewer
+     * zooms out.  When <code>0.0</code>, no minimum size is enforced.
      */
     minimumPixelSize: number;
     /**
      * The maximum scale size for a model. This can be used to give
-    an upper limit to the {@link Model#minimumPixelSize}, ensuring that the model
-    is never an unreasonable scale.
+     * an upper limit to the {@link Model#minimumPixelSize}, ensuring that the model
+     * is never an unreasonable scale.
      */
     maximumScale: number;
     /**
@@ -34340,85 +34338,85 @@ export class Model {
     colorBlendMode: ColorBlendMode;
     /**
      * Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>.
-    A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with
-    any value in-between resulting in a mix of the two.
+     * A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with
+     * any value in-between resulting in a mix of the two.
      */
     colorBlendAmount: number;
     /**
      * Whether to cull back-facing geometry. When true, back face culling is
-    determined by the material's doubleSided property; when false, back face
-    culling is disabled. Back faces are not culled if {@link Model#color} is
-    translucent or {@link Model#silhouetteSize} is greater than 0.0.
+     * determined by the material's doubleSided property; when false, back face
+     * culling is disabled. Back faces are not culled if {@link Model#color} is
+     * translucent or {@link Model#silhouetteSize} is greater than 0.0.
      */
     backFaceCulling: boolean;
     /**
      * Whether to display the outline for models using the
-    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension.
-    When true, outlines are displayed. When false, outlines are not displayed.
+     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension.
+     * When true, outlines are displayed. When false, outlines are not displayed.
      */
     readonly showOutline: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-    <p>
-    Draws the bounding sphere for each draw command in the model.  A glTF primitive corresponds
-    to one draw command.  A glTF mesh has an array of primitives, often of length one.
-    </p>
+     * <p>
+     * Draws the bounding sphere for each draw command in the model.  A glTF primitive corresponds
+     * to one draw command.  A glTF mesh has an array of primitives, often of length one.
+     * </p>
      */
     debugShowBoundingVolume: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-    <p>
-    Draws the model in wireframe.
-    </p>
+     * <p>
+     * Draws the model in wireframe.
+     * </p>
      */
     debugWireframe: boolean;
     /**
      * The object for the glTF JSON, including properties with default values omitted
-    from the JSON provided to this model.
+     * from the JSON provided to this model.
      */
     readonly gltf: any;
     /**
      * The base path that paths in the glTF JSON are relative to.  The base
-    path is the same path as the path containing the .gltf file
-    minus the .gltf file, when binary, image, and shader files are
-    in the same directory as the .gltf.  When this is <code>''</code>,
-    the app's base path is used.
+     * path is the same path as the path containing the .gltf file
+     * minus the .gltf file, when binary, image, and shader files are
+     * in the same directory as the .gltf.  When this is <code>''</code>,
+     * the app's base path is used.
      */
     readonly basePath: string;
     /**
      * The model's bounding sphere in its local coordinate system.  This does not take into
-    account glTF animations and skins nor does it take into account {@link Model#minimumPixelSize}.
+     * account glTF animations and skins nor does it take into account {@link Model#minimumPixelSize}.
      * @example
      * // Center in WGS84 coordinates
-    var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
+     * var center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
      */
     readonly boundingSphere: BoundingSphere;
     /**
      * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
-    and shader files were downloaded and the WebGL resources were created.  This is set to
-    <code>true</code> right before {@link Model#readyPromise} is resolved.
+     * and shader files were downloaded and the WebGL resources were created.  This is set to
+     * <code>true</code> right before {@link Model#readyPromise} is resolved.
      */
     readonly ready: boolean;
     /**
      * Gets the promise that will be resolved when this model is ready to render, i.e., when the external binary, image,
-    and shader files were downloaded and the WebGL resources were created.
-    <p>
-    This promise is resolved at the end of the frame before the first frame the model is rendered in.
-    </p>
+     * and shader files were downloaded and the WebGL resources were created.
+     * <p>
+     * This promise is resolved at the end of the frame before the first frame the model is rendered in.
+     * </p>
      * @example
      * // Play all animations at half-speed when the model is ready to render
-    Cesium.when(model.readyPromise).then(function(model) {
-      model.activeAnimations.addAll({
-        multiplier : 0.5
-      });
-    }).otherwise(function(error){
-      window.alert(error);
-    });
+     * Cesium.when(model.readyPromise).then(function(model) {
+     *   model.activeAnimations.addAll({
+     *     multiplier : 0.5
+     *   });
+     * }).otherwise(function(error){
+     *   window.alert(error);
+     * });
      */
     readonly readyPromise: Promise<Model>;
     /**
      * Determines if model WebGL resource creation will be spread out over several frames or
-    block until completion once all glTF files are loaded.
+     * block until completion once all glTF files are loaded.
      */
     readonly asynchronous: boolean;
     /**
@@ -34443,33 +34441,33 @@ export class Model {
     clippingPlanes: ClippingPlaneCollection;
     /**
      * Cesium adds lighting from the earth, sky, atmosphere, and star skybox. This cartesian is used to scale the final
-    diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
+     * diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
      */
     imageBasedLightingFactor: Cartesian2;
     /**
      * The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
-    <p>
-    For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cesium.Cartesian2(0.0, 0.0)</code> will make the
-    model much darker. Here, increasing the intensity of the light source will make the model brighter.
-    </p>
+     * <p>
+     * For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cesium.Cartesian2(0.0, 0.0)</code> will make the
+     * model much darker. Here, increasing the intensity of the light source will make the model brighter.
+     * </p>
      */
     lightColor: Cartesian3;
     /**
      * The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
-    This is used when {@link Model#specularEnvironmentMaps} and {@link Model#sphericalHarmonicCoefficients} are not defined.
+     * This is used when {@link Model#specularEnvironmentMaps} and {@link Model#sphericalHarmonicCoefficients} are not defined.
      */
     luminanceAtZenith: number;
     /**
      * The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. When <code>undefined</code>, a diffuse irradiance
-    computed from the atmosphere color is used.
-    <p>
-    There are nine <code>Cartesian3</code> coefficients.
-    The order of the coefficients is: L<sub>00</sub>, L<sub>1-1</sub>, L<sub>10</sub>, L<sub>11</sub>, L<sub>2-2</sub>, L<sub>2-1</sub>, L<sub>20</sub>, L<sub>21</sub>, L<sub>22</sub>
-    </p>
-    
-    These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
-    {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
-    supplied to {@link Model#specularEnvironmentMaps}.
+     * computed from the atmosphere color is used.
+     * <p>
+     * There are nine <code>Cartesian3</code> coefficients.
+     * The order of the coefficients is: L<sub>00</sub>, L<sub>1-1</sub>, L<sub>10</sub>, L<sub>11</sub>, L<sub>2-2</sub>, L<sub>2-1</sub>, L<sub>20</sub>, L<sub>21</sub>, L<sub>22</sub>
+     * </p>
+     *
+     * These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
+     * {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
+     * supplied to {@link Model#specularEnvironmentMaps}.
      */
     sphericalHarmonicCoefficients: Cartesian3[];
     /**
@@ -34488,71 +34486,71 @@ export class Model {
     static silhouetteSupported(scene: Scene): boolean;
     /**
      * <p>
-    Creates a model from a glTF asset.  When the model is ready to render, i.e., when the external binary, image,
-    and shader files are downloaded and the WebGL resources are created, the {@link Model#readyPromise} is resolved.
-    </p>
-    <p>
-    The model can be a traditional glTF asset with a .gltf extension or a Binary glTF using the .glb extension.
-    </p>
-    <p>
-    Cesium supports glTF assets with the following extensions:
-    <ul>
-    <li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
-    </li><li>
-    {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md|KHR_texture_basisu}
-    </li>
-    </ul>
-    </p>
-    <p>
-    For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
-    CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
-    relative to a local origin.
-    </p>
+     * Creates a model from a glTF asset.  When the model is ready to render, i.e., when the external binary, image,
+     * and shader files are downloaded and the WebGL resources are created, the {@link Model#readyPromise} is resolved.
+     * </p>
+     * <p>
+     * The model can be a traditional glTF asset with a .gltf extension or a Binary glTF using the .glb extension.
+     * </p>
+     * <p>
+     * Cesium supports glTF assets with the following extensions:
+     * <ul>
+     * <li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_binary_glTF/README.md|KHR_binary_glTF (glTF 1.0)}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Khronos/KHR_materials_common/README.md|KHR_materials_common (glTF 1.0)}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/WEB3D_quantized_attributes/README.md|WEB3D_quantized_attributes (glTF 1.0)}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/AGI_articulations/README.md|AGI_articulations}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/pull/1302|KHR_blend (draft)}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md|KHR_draco_mesh_compression}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/README.md|KHR_materials_pbrSpecularGlossiness}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit/README.md|KHR_materials_unlit}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_techniques_webgl/README.md|KHR_techniques_webgl}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_transform/README.md|KHR_texture_transform}
+     * </li><li>
+     * {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_texture_basisu/README.md|KHR_texture_basisu}
+     * </li>
+     * </ul>
+     * </p>
+     * <p>
+     * For high-precision rendering, Cesium supports the {@link https://github.com/KhronosGroup/glTF/blob/master/extensions/1.0/Vendor/CESIUM_RTC/README.md|CESIUM_RTC} extension, which introduces the
+     * CESIUM_RTC_MODELVIEW parameter semantic that says the node is in WGS84 coordinates translated
+     * relative to a local origin.
+     * </p>
      * @example
      * // Example 1. Create a model from a glTF asset
-    var model = scene.primitives.add(Cesium.Model.fromGltf({
-      url : './duck/duck.gltf'
-    }));
+     * var model = scene.primitives.add(Cesium.Model.fromGltf({
+     *   url : './duck/duck.gltf'
+     * }));
      * @example
      * // Example 2. Create model and provide all properties and events
-    var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
-    
-    var model = scene.primitives.add(Cesium.Model.fromGltf({
-      url : './duck/duck.gltf',
-      show : true,                     // default
-      modelMatrix : modelMatrix,
-      scale : 2.0,                     // double size
-      minimumPixelSize : 128,          // never smaller than 128 pixels
-      maximumScale: 20000,             // never larger than 20000 * model size (overrides minimumPixelSize)
-      allowPicking : false,            // not pickable
-      debugShowBoundingVolume : false, // default
-      debugWireframe : false
-    }));
-    
-    model.readyPromise.then(function(model) {
-      // Play all animations when the model is ready to render
-      model.activeAnimations.addAll();
-    });
+     * var origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
+     * var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+     *
+     * var model = scene.primitives.add(Cesium.Model.fromGltf({
+     *   url : './duck/duck.gltf',
+     *   show : true,                     // default
+     *   modelMatrix : modelMatrix,
+     *   scale : 2.0,                     // double size
+     *   minimumPixelSize : 128,          // never smaller than 128 pixels
+     *   maximumScale: 20000,             // never larger than 20000 * model size (overrides minimumPixelSize)
+     *   allowPicking : false,            // not pickable
+     *   debugShowBoundingVolume : false, // default
+     *   debugWireframe : false
+     * }));
+     *
+     * model.readyPromise.then(function(model) {
+     *   // Play all animations when the model is ready to render
+     *   model.activeAnimations.addAll();
+     * });
      * @param options - Object with the following properties:
      * @param options.url - The url to the .gltf file.
      * @param [options.basePath] - The base path that paths in the glTF JSON are relative to.
@@ -34616,11 +34614,11 @@ export class Model {
     }): Model;
     /**
      * Returns the glTF node with the given <code>name</code> property.  This is used to
-    modify a node's transform for animation outside of glTF animations.
+     * modify a node's transform for animation outside of glTF animations.
      * @example
      * // Apply non-uniform scale to node LOD3sp
-    var node = model.getNode('LOD3sp');
-    node.matrix = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(5.0, 1.0, 1.0), node.matrix);
+     * var node = model.getNode('LOD3sp');
+     * node.matrix = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(5.0, 1.0, 1.0), node.matrix);
      * @param name - The glTF name of the node.
      * @returns The node or <code>undefined</code> if no node with <code>name</code> exists.
      */
@@ -34639,40 +34637,40 @@ export class Model {
     getMaterial(name: string): ModelMaterial;
     /**
      * Sets the current value of an articulation stage.  After setting one or multiple stage values, call
-    Model.applyArticulations() to cause the node matrices to be recalculated.
+     * Model.applyArticulations() to cause the node matrices to be recalculated.
      * @param articulationStageKey - The name of the articulation, a space, and the name of the stage.
      * @param value - The numeric value of this stage of the articulation.
      */
     setArticulationStage(articulationStageKey: string, value: number): void;
     /**
      * Applies any modified articulation stages to the matrix of each node that participates
-    in any articulation.  Note that this will overwrite any nodeTransformations on participating nodes.
+     * in any articulation.  Note that this will overwrite any nodeTransformations on participating nodes.
      */
     applyArticulations(): void;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
-    get the draw commands needed to render this primitive.
-    <p>
-    Do not call this function directly.  This is documented just to
-    list the exceptions that may be propagated when the scene is rendered:
-    </p>
+     * get the draw commands needed to render this primitive.
+     * <p>
+     * Do not call this function directly.  This is documented just to
+     * list the exceptions that may be propagated when the scene is rendered:
+     * </p>
      */
     update(): void;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-    <br /><br />
-    If this object was destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * <br /><br />
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
      * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-    <br /><br />
-    Once an object is destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-    assign the return value (<code>undefined</code>) to the object as done in the example.
+     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+     * <br /><br />
+     * Once an object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
      * @example
      * model = model && model.destroy();
      */
@@ -35150,6 +35148,7 @@ the Model from your source data type.
  * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
  * @param [options.featureIdAttributeIndex = 0] - The index of the feature ID attribute to use for picking features per-instance or per-primitive.
  * @param [options.featureIdTextureIndex = 0] - The index of the feature ID texture to use for picking features per-primitive.
+ * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation based on geometric error and lighting.
  */
 export class ModelExperimental {
     constructor(options: {
@@ -35167,6 +35166,7 @@ export class ModelExperimental {
         colorBlendAmount?: number;
         featureIdAttributeIndex?: number;
         featureIdTextureIndex?: number;
+        pointCloudShading?: any;
     });
     /**
      * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
@@ -35182,6 +35182,12 @@ export class ModelExperimental {
     </p>
      */
     readonly readyPromise: Promise<ModelExperimental>;
+    /**
+     * Point cloud shading settings for controlling point cloud attenuation
+    and lighting. For 3D Tiles, this is inherited from the
+    {@link Cesium3DTileset}.
+     */
+    pointCloudShading: PointCloudShading;
     /**
      * The model's custom shader, if it exists. Using custom shaders with a {@link Cesium3DTileStyle}
     may lead to undefined behavior.
@@ -35277,6 +35283,7 @@ export class ModelExperimental {
      * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
      * @param [options.featureIdAttributeIndex = 0] - The index of the feature ID attribute to use for picking features per-instance or per-primitive.
      * @param [options.featureIdTextureIndex = 0] - The index of the feature ID texture to use for picking features per-primitive.
+     * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation and lighting.
      * @returns The newly created model.
      */
     static fromGltf(options: {
@@ -35299,13 +35306,9 @@ export class ModelExperimental {
         colorBlendAmount?: number;
         featureIdAttributeIndex?: number;
         featureIdTextureIndex?: number;
+        pointCloudShading?: any;
     }): ModelExperimental;
 }
-
-/**
- * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
- */
-export var style: Cesium3DTileStyle;
 
 /**
  * The 4x4 transformation matrix that transforms the model from model to world coordinates.
@@ -35317,6 +35320,31 @@ by {@link Transforms.eastNorthUpToFixedFrame}.
 m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
  */
 export var modelMatrix: Matrix4;
+
+/**
+ * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
+ */
+export var style: Cesium3DTileStyle;
+
+/**
+ * Update stages to apply to this primitive.
+ */
+export var updateStages: any;
+
+/**
+ * The indices of the children of this node in the scene graph.
+ */
+export const children: number[];
+
+/**
+ * Update stages to apply to this primitive.
+ */
+export var updateStages: any;
+
+/**
+ * Update stages to across the model.
+ */
+export var _updateStages: any;
 
 /**
  * A feature of a {@link ModelExperimental}.
@@ -35357,6 +35385,12 @@ export class ModelFeature {
     when a style's color is evaluated.
      */
     color: Color;
+    /**
+     * Get the feature ID associated with this feature. For 3D Tiles 1.0, the
+    batch ID is returned. For EXT_mesh_features, this is the feature ID from
+    the selected feature ID set.
+     */
+    readonly featureId: number;
     /**
      * Returns whether the feature contains this property.
      * @param name - The case-sensitive name of the property.
@@ -38249,8 +38283,7 @@ export class Scene {
      * When <code>true</code>, enables picking translucent geometry using the depth buffer. Note that {@link Scene#useDepthPicking} must also be true for enabling this to work.
     
     <p>
-    Render must be called between picks.
-    <br>There is a decrease in performance when enabled. There are extra draw calls to write depth for
+    There is a decrease in performance when enabled. There are extra draw calls to write depth for
     translucent geometry.
     </p>
      * @example
@@ -38261,7 +38294,6 @@ export class Scene {
              // nothing picked
              return;
          }
-         viewer.scene.render();
          var worldPosition = viewer.scene.pickPosition(movement.position);
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
      */

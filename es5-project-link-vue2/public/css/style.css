@@ -428,6 +428,9 @@ html {
   scrollbar-highlight-color: #f4f7fc;
   scrollbar-darkshadow-color: #f4f7fc;
 }
+*{ 
+  scrollbar-width: thin;
+}
 
 ::-webkit-scrollbar-button {
   height: 0;

@@ -89,14 +89,53 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 ::: 
 
 
+
+
+### 运行方式1：使用vscode及其插件
+
+在任意开发编辑器（如vscode等）或http服务器(如node、nginx、tomcat、IIS等)下直接运行浏览`index.html`或对应示例页面即可 ，
+
+建议使用VScode工具打开代码目录（请参考上一章节安装好VScode 及 Live Server插件）。
+
+- 推荐使用 vscode，安装参考[开发环境搭建教程](guide/start/env.html)
+- 安装 vscode 插件，推荐安装 Live Server
+
+ 参考下图通过Live Server访问各页面
+
+ ![image](http://mars3d.cn/dev/img/guide/start-example-run.jpg) 
+
+
+### 运行方式2：运行npm命令
+
+#### 首次运行前安装依赖
+```
+npm install
+
+//或使用代理
+npm i --registry=http://registry.taobao.org
+```
+
+#### 启动开发环境
+```
+npm run serve
+```
+
+#### 编译构建
+```
+npm run build //编译后生成在dist目录，拷贝出去发布即可
+npm run serve:dist  //测试dist运行状态
+```
+
+
+
+
 #### mars3d-widget插件
  为了更容易理解内部逻辑，您可以下载[mars3d-widget插件源码](https://gitee.com/marsgis/mars3d-plugin) 进行查阅。
 
 #### 下载最新lib
  建议从[http://mars3d.cn/download](http://mars3d.cn/download)下载最新mars3d类库后覆盖至`lib/`目录下即可。
 
-#### 压缩及混淆
- build整站压缩及混淆：[https://github.com/muyao1987/web-dist-pro](https://github.com/muyao1987/web-dist-pro)
+
 
 
 ### 2.2 include-lib.js文件说明 

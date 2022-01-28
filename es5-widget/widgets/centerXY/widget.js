@@ -54,7 +54,7 @@
     onMapClick(event) {
       var cartesian = event.cartesian;
       if (cartesian) {
-        var point = mars3d.LatLngPoint.fromCartesian(cartesian);
+        var point = mars3d.LngLatPoint.fromCartesian(cartesian);
 
         point.format();
         currJD = point.lng;
@@ -115,7 +115,7 @@
           haoutil.alert("请输入有效的纬度值！");
           return;
         }
-        let point = new mars3d.LatLngPoint(Number(currJD), Number(currWD), Number(currGD));
+        let point = new mars3d.LngLatPoint(Number(currJD), Number(currWD), Number(currGD));
 
         this.updateMarker(point, true);
       });
