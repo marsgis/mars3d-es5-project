@@ -5,7 +5,7 @@
  * Mars3D三维可视化平台
  *
  * 版本信息：v3.2.1，
- * 编译日期：2022-02-09 20:50:28
+ * 编译日期：2022-02-13 13:29:01
  *
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  *
@@ -507,6 +507,14 @@ export const enum EventType {
      * 地形变化  事件
      */
     terrainChange = "terrainChange",
+    /**
+     * 地形初始化加载layer.json失败 事件
+     */
+    terrainLoadError = "terrainLoadError",
+    /**
+     * 地形初始化加载layer.json完成  事件
+     */
+    terrainLoadSuccess = "terrainLoadSuccess",
     /**
      * 地图中瓦片加载进度变化  事件
      */
@@ -16148,7 +16156,6 @@ export class CzmGeoJsonLayer extends BaseGraphicLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url] - CZML文件或服务url地址
  * @param [options.data] - CZML格式规范数据对象，与url二选一即可。
- * @param [options.format] - 可以对加载的CZML数据进行格式化或转换操作
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
@@ -16185,7 +16192,6 @@ export class CzmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
         url?: string;
         data?: any;
-        format?: (...params: any[]) => any;
         zIndex?: number;
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -16252,7 +16258,6 @@ export class CzmlLayer extends CzmGeoJsonLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url] - KML文件或服务url地址
  * @param [options.data] - 已解析的KML文档或包含二进制KMZ数据或已解析的KML文档的Blob，与url二选一即可。
- * @param [options.format] - 可以对加载的KML数据进行格式化或转换操作
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
  * @param [options.symbol] - 矢量数据的style样式
@@ -16295,7 +16300,6 @@ export class KmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
         url?: string;
         data?: Document | Blob;
-        format?: (...params: any[]) => any;
         zIndex?: number;
         opacity?: number;
         symbol?: {
@@ -22728,6 +22732,11 @@ export class Map extends BaseClass {
      */
     getOptions(): any;
     /**
+     * 获取地图的当前实时状态对应的配置参数。
+     * @returns 地图的配置参数
+     */
+    getCurrentOptions(): any;
+    /**
      * 获取平台内置的右键菜单
      * @returns 右键菜单
      */
@@ -22856,12 +22865,14 @@ export class Map extends BaseClass {
      * @param [options.basemaps = false] - 是否包含basemps中配置的所有图层
      * @param [options.layers = false] - 是否包含layers中配置的所有图层
      * @param [options.filter = false] - 是否排除layers和baseps的图层
+     * @param [options.filterBasemaps = false] - 是否只排除baseps的图层
      * @returns 图层数组
      */
     getLayers(options?: {
         basemaps?: boolean;
         layers?: boolean;
         filter?: boolean;
+        filterBasemaps?: boolean;
     }): BaseLayer[] | any[];
     /**
      * 获取所有basemps底图图层
@@ -23550,6 +23561,7 @@ export class CircleScanMaterialProperty extends BaseMaterialProperty {
  * @param [options] - 参数对象，包括以下：
  * @param [options.color = Mars3dCesium.Color.YELLOW] - 颜色
  * @param [options.speed = 10] - 速度
+ * @param [options.duration] - 播放总时长，单位：秒 （会覆盖speed参数）
  * @param [options.count = 1] - 圆圈个数
  * @param [options.gradient = 0.1] - 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
  */
@@ -23557,6 +23569,7 @@ export class CircleWaveMaterialProperty extends BaseMaterialProperty {
     constructor(options?: {
         color?: string | Mars3dCesium.Color;
         speed?: number;
+        duration?: number;
         count?: number;
         gradient?: number;
     });
@@ -24179,7 +24192,8 @@ export class ScanLineMaterialProperty extends BaseMaterialProperty {
  * @param [options.font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
  * @param [options.font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
  * @param [options.fill = true] - 是否填充
- * @param [options.color = "#ffff00"] - 文本颜色
+ * @param [options.fillColor = "#ffff00"] - 文本颜色
+ * @param [options.color = "#ffff00"] - 文本颜色，同fillColor（别名）
  * @param [options.stroke = true] - 是否描边文本。
  * @param [options.strokeColor = new Mars3dCesium.Color(1.0, 1.0, 1.0, 0.8)] - 描边的颜色。
  * @param [options.strokeWidth = 2] - 描边的宽度。
@@ -24199,6 +24213,7 @@ export class TextMaterialProperty extends Image2MaterialProperty {
         font_style?: string;
         font?: string;
         fill?: boolean;
+        fillColor?: string;
         color?: string;
         stroke?: boolean;
         strokeColor?: Mars3dCesium.Color;
@@ -24367,7 +24382,7 @@ export class CylinderWaveMaterial extends Mars3dCesium.Material {
  *     diffHeight: 5,
  *     material: new mars3d.material.TextMaterial({
  *       text: "火星科技",
- *       fillColor: "#3388cc",
+ *       color: "#3388cc",
  *       outlineWidth: 4,
  *     }),
  *   },
@@ -24381,13 +24396,14 @@ export class CylinderWaveMaterial extends Mars3dCesium.Material {
  * @param [options.font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
  * @param [options.font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
  * @param [options.fill = true] - 是否填充
- * @param [options.fillColor = new Mars3dCesium.Color(1.0, 1.0, 0.0, 1.0)] - 填充颜色。
+ * @param [options.fillColor = new Mars3dCesium.Color(1.0, 1.0, 0.0, 1.0)] - 文本颜色
+ * @param [options.color] - 文本颜色，同fillColor（别名）
  * @param [options.stroke = true] - 是否描边文本。
  * @param [options.strokeColor = new Mars3dCesium.Color(1.0, 1.0, 1.0, 0.8)] - 描边的颜色。
  * @param [options.strokeWidth = 2] - 描边的宽度。
  * @param [options.backgroundColor = new Mars3dCesium.Color(1.0, 1.0, 1.0, 0.1)] - 画布的背景色。
  * @param [options.outlineWidth] - 边框的宽度。
- * @param [options.outlineColor = fillColor] - 矩形边框的颜色。
+ * @param [options.outlineColor = color] - 矩形边框的颜色。
  * @param [options.padding = 10] - 要在文本周围添加的填充的像素大小。
  * @param [options.textBaseline = 'top'] - 文本的基线。
  */
@@ -24400,7 +24416,8 @@ export class TextMaterial extends Mars3dCesium.Material {
         font_style?: string;
         font?: string;
         fill?: boolean;
-        fillColor?: Mars3dCesium.Color;
+        fillColor?: string;
+        color?: Mars3dCesium.Color;
         stroke?: boolean;
         strokeColor?: Mars3dCesium.Color;
         strokeWidth?: number;
@@ -24712,7 +24729,7 @@ export class EchartsLayer extends BaseLayer {
  */
 export class HeatLayer extends BaseLayer {
     constructor(options: {
-        positions?: LngLatPoint[] | Mars3dCesium.Cartesian3[] | any;
+        positions?: LatLngPoint[] | Mars3dCesium.Cartesian3[] | any;
         heatStyle?: {
             maxOpacity?: number;
             minOpacity?: number;
@@ -24761,7 +24778,7 @@ export class HeatLayer extends BaseLayer {
     /**
      * 数据位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
      */
-    positions: Mars3dCesium.Cartesian3[] | LngLatPoint[];
+    positions: Mars3dCesium.Cartesian3[] | LatLngPoint[];
     /**
      * 位置坐标(数组对象)，示例 [ [123.123456,32.654321,198.7], [111.123456,22.654321,50.7] ]
      */
@@ -24775,7 +24792,7 @@ export class HeatLayer extends BaseLayer {
      * @param item - 坐标点（含热力值）
      * @returns 无
      */
-    addPosition(item: Mars3dCesium.Cartesian3 | LngLatPoint): void;
+    addPosition(item: Mars3dCesium.Cartesian3 | LatLngPoint): void;
     /**
      * 清除矢量对象
      * @returns 无
@@ -24796,6 +24813,7 @@ export class HeatLayer extends BaseLayer {
  * MapV图层
  * 【需要引入 heatmap.js 库 和 mars3d-heatmap 插件库】
  * @param options - 图层参数，包括：
+ * @param [options.data] - new mapv.DataSet(data)的data值，如有传入时可以用于替代dataSet参数
  * @param [options.depthTest = true] - 是否进行计算深度判断，在地球背面或被遮挡时不显示（大数据时，需要关闭）
  * @param [options.fixedHeight = 0] - 点的固定的海拔高度
  * @param [options.clampToGround = false] - 点是否贴地
@@ -24814,10 +24832,11 @@ export class HeatLayer extends BaseLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, 0-360
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, 0-360
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
- * @param dataSet - mapv.DataSet数据集,可以参考[ MapV数据集对象说明]{@link https://github.com/huiyan-fe/mapv/blob/master/src/data/DataSet.md}
+ * @param [dataSet] - mapv.DataSet数据集,可以参考[ MapV数据集对象说明]{@link https://github.com/huiyan-fe/mapv/blob/master/src/data/DataSet.md}
  */
 export class MapVLayer extends BaseLayer {
     constructor(options: {
+        data?: any;
         depthTest?: boolean;
         fixedHeight?: number;
         clampToGround?: boolean;
@@ -24837,7 +24856,7 @@ export class MapVLayer extends BaseLayer {
             roll?: number;
         };
         flyTo?: boolean;
-    }|any, dataSet: any);
+    }, dataSet?: any);
     /**
      * 图层对应的Canvas对象
      */
@@ -25059,14 +25078,14 @@ export class Tle {
      * @param datetime - 指定的时间
      * @returns 卫星当前经纬度位置
      */
-    getPoint(datetime: Date | Mars3dCesium.JulianDate | number): LngLatPoint | undefined;
+    getPoint(datetime: Date | Mars3dCesium.JulianDate | number): LatLngPoint | undefined;
     /**
      * 获取 地面地点 对卫星的 天文观测值
      * @param point - 地面地点经纬度坐标
      * @param datetime - 指定的时间
      * @returns 观测值
      */
-    getLookAngles(point: LngLatPoint, datetime: Date | Mars3dCesium.JulianDate | number): Tle.LookAngles;
+    getLookAngles(point: LatLngPoint, datetime: Date | Mars3dCesium.JulianDate | number): Tle.LookAngles;
     /**
      * 计算卫星指定时间所在的 经纬度位置
      * @param tle1 - 卫星TLE的第一行
@@ -25074,7 +25093,7 @@ export class Tle {
      * @param datetime - 指定的时间
      * @returns 卫星当前经纬度位置
      */
-    static getPoint(tle1: string, tle2: string, datetime: Date | Mars3dCesium.JulianDate | number): LngLatPoint | undefined;
+    static getPoint(tle1: string, tle2: string, datetime: Date | Mars3dCesium.JulianDate | number): LatLngPoint | undefined;
     /**
      * 获取卫星指定时间所在的 ECEF坐标
      * @param tle1 - 卫星TLE的第一行
@@ -25095,7 +25114,7 @@ export class Tle {
      * @param datetime - 指定时间, number时请传入格林尼治恒星时(GMST)时间
      * @returns 经纬度坐标
      */
-    static eciToGeodetic(positionEci: Mars3dCesium.Cartesian3, datetime: Date | Mars3dCesium.JulianDate | number): LngLatPoint;
+    static eciToGeodetic(positionEci: Mars3dCesium.Cartesian3, datetime: Date | Mars3dCesium.JulianDate | number): LatLngPoint;
     /**
      * ECI坐标 转换为 ECEF坐标
      * @param positionEci - ECI(地心惯性坐标系)坐标
@@ -25182,7 +25201,7 @@ export namespace CamberRadar {
  */
 export class CamberRadar extends BasePointPrimitive {
     constructor(options: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: CamberRadar.StyleOptions;
         attr?: any;
         id?: string | number;
@@ -25282,7 +25301,7 @@ export namespace ConicSensor {
  */
 export class ConicSensor extends BasePointPrimitive {
     constructor(options: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: ConicSensor.StyleOptions;
         attr?: any;
         lookAt?: Mars3dCesium.Cartesian3 | Mars3dCesium.PositionProperty;
@@ -25442,7 +25461,7 @@ export namespace RectSensor {
  */
 export class RectSensor extends BasePointPrimitive {
     constructor(options: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: RectSensor.StyleOptions;
         attr?: any;
         lookAt?: Mars3dCesium.Cartesian3 | Mars3dCesium.PositionProperty;
@@ -25791,7 +25810,7 @@ export namespace SatelliteSensor {
  */
 export class SatelliteSensor extends BasePointPrimitive {
     constructor(options?: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: SatelliteSensor.StyleOptions;
         attr?: any;
         lookAt?: Mars3dCesium.Cartesian3 | Mars3dCesium.PositionProperty;
@@ -26808,7 +26827,6 @@ export namespace WindLayer {
      * @property vdata - V值一维数组, 数组长度应该是 rows*cols。
      * @property [vmin] - 最小v值
      * @property [vmax] - 最大v值
-     * @property [colors = ["rgb(206,255,255)"]] - 颜色色带数组
      */
     type DataOptions = {
         rows: number;
@@ -26823,7 +26841,6 @@ export namespace WindLayer {
         vdata: number[];
         vmin?: number;
         vmax?: number;
-        colors?: string[];
     };
 }
 
@@ -26839,6 +26856,7 @@ export namespace WindLayer {
  * @param [options.speedFactor = 0.5] - 速度系数
  * @param [options.lineWidth = 2.0] - 线宽度
  * @param [options.fixedHeight = 0] - 粒子点的固定的海拔高度
+ * @param [options.colors = ["rgb(206,255,255)"]] - 颜色色带数组
  * @param [options.id = uuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26863,6 +26881,7 @@ export class WindLayer extends BaseLayer {
         speedFactor?: number;
         lineWidth?: number;
         fixedHeight?: number;
+        colors?: string[];
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -26887,17 +26906,15 @@ export class WindLayer extends BaseLayer {
      */
     data: WindLayer.DataOptions;
     /**
+     * 颜色色带数组
+     */
+    colors: string[];
+    /**
      * 设置 风场数据
      * @param data - 风场数据
      * @returns 无
      */
     setData(data: WindLayer.DataOptions): void;
-    /**
-     * 重新赋值参数，同构造方法参数一致。
-     * @param options - 参数,与类的构造方法参数相同
-     * @returns 当前对象本身，可以链式调用
-     */
-    setOptions(options: any): WindLayer;
 }
 
 /**
@@ -30078,6 +30095,12 @@ namespace Log {
  */
 namespace MaterialUtil {
     /**
+     * 注册自定义的材质
+     * @param type - 类型名称
+     * @param materialTemplate - 材质模版
+     */
+    function register(type: string, materialTemplate: any): void;
+    /**
      * 创建 材质属性（用于Entity）
      * @param type - 材质类型
      * @param options - 创建参数,具体对照{@link MaterialType}的注释说明
@@ -31279,10 +31302,10 @@ namespace Util {
      * 获取Cesium颜色对象
      * @param color - Cesium的类名，方便识别判断
      * @param [defval] - 默认值
-     * @param [event] - 是回调方法时传入回调的参数
+     * @param [time = Mars3dCesium.JulianDate.now()] - 如果具有时间属于时，取指定的时间的值
      * @returns 颜色值
      */
-    function getCesiumColor(color: string | Mars3dCesium.Color | ((...params: any[]) => any), defval?: Mars3dCesium.Color, event?: any): Mars3dCesium.Color;
+    function getCesiumColor(color: string | Mars3dCesium.Color | ((...params: any[]) => any), defval?: Mars3dCesium.Color, time?: Mars3dCesium.JulianDate): Mars3dCesium.Color;
     /**
      * 根据配置信息获取Cesium颜色对象
      * @param style - 配置信息
@@ -31800,6 +31823,12 @@ namespace Util {
     export { Video3D }
     export { DynamicRoamLine }
     export { RoamLine }
+
+    export { CamberRadar }
+    export { ConicSensor }
+    export { RectSensor }
+    export { Satellite }
+    export { SatelliteSensor }
   }
 
   /**

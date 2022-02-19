@@ -141,7 +141,16 @@
     activate() {
       this.map.addLayer(this.graphicLayer);
 
-      $(".mars3d-locationbar").append('<div id="queryAddress" class="mars3d-locationbar-content" style="margin-right: 50px;"></div>');
+      // 下侧状态栏提示
+      const locationBar = this.map.controls.locationBar?.container;
+      if (locationBar) {
+        this.queryAddressDOM = mars3d.DomUtil.create(
+          "div",
+          "mars3d-locationbar-content mars3d-locationbar-autohide",
+          this.map.controls.locationBar.container
+        );
+        this.queryAddressDOM.style.marginRight = "50px";
+      }
 
       //单击地图事件
       this.map.on(mars3d.EventType.clickMap, this.onMapClick, this);
@@ -156,7 +165,10 @@
       this.map.off(mars3d.EventType.clickMap, this.onMapClick, this);
       this.map.off(mars3d.EventType.cameraChanged, this.onMapCameraChanged, this);
 
-      $("#queryAddress").remove();
+      if (this.queryAddressDOM) {
+        mars3d.DomUtil.remove(this.queryAddressDOM);
+        delete this.queryAddressDOM;
+      }
 
       this.hideAllQueryBarView();
       this.clearLayers();
@@ -172,7 +184,7 @@
       let radius = this.map.camera.positionCartographic.height; //单位：米
       if (radius > 100000) {
         this.address = null;
-        $("#queryAddress").html("");
+        this.queryAddressDOM.innerHTML = "";
         return;
       }
 
@@ -181,8 +193,7 @@
         success: (result) => {
           // console.log("地址", result);
           this.address = result;
-
-          $("#queryAddress").html("地址：" + result.address);
+          this.queryAddressDOM.innerHTML = "地址：" + result.address;
         },
       });
     }

@@ -4,8 +4,8 @@
 /**
  * Mars3D三维可视化平台
  *
- * 版本信息：v3.2.0，
- * 编译日期：2022-01-28 15:06:54
+ * 版本信息：v3.2.1，
+ * 编译日期：2022-02-13 13:29:01
  *
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  *
@@ -507,6 +507,14 @@ export const enum EventType {
      * 地形变化  事件
      */
     terrainChange = "terrainChange",
+    /**
+     * 地形初始化加载layer.json失败 事件
+     */
+    terrainLoadError = "terrainLoadError",
+    /**
+     * 地形初始化加载layer.json完成  事件
+     */
+    terrainLoadSuccess = "terrainLoadSuccess",
     /**
      * 地图中瓦片加载进度变化  事件
      */
@@ -3092,6 +3100,7 @@ export class BaseCombine extends BasePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class BasePolyCombine extends BaseCombine {
     constructor(options: {
@@ -3125,6 +3134,7 @@ export class BasePolyCombine extends BaseCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 样式信息
@@ -3174,7 +3184,8 @@ export class BasePolyCombine extends BaseCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BoxCombine extends BasePolyCombine {
     constructor(options: {
@@ -3207,7 +3218,8 @@ export class BoxCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3241,7 +3253,8 @@ export class BoxCombine extends BasePolyCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CircleCombine extends BasePolyCombine {
     constructor(options: {
@@ -3274,7 +3287,8 @@ export class CircleCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3307,6 +3321,7 @@ export class CircleCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class CorridorCombine extends BasePolyCombine {
     constructor(options: {
@@ -3337,6 +3352,7 @@ export class CorridorCombine extends BasePolyCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3370,7 +3386,8 @@ export class CorridorCombine extends BasePolyCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CylinderCombine extends BasePolyCombine {
     constructor(options: {
@@ -3403,7 +3420,8 @@ export class CylinderCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3437,7 +3455,8 @@ export class CylinderCombine extends BasePolyCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class EllipsoidCombine extends BasePolyCombine {
     constructor(options: {
@@ -3470,7 +3489,8 @@ export class EllipsoidCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3501,6 +3521,7 @@ export namespace FlatBillboard {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class FlatBillboard extends BaseCombine {
     constructor(options: {
@@ -3515,6 +3536,7 @@ export class FlatBillboard extends BaseCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 指定数据将显示在与摄像机的多大距离
@@ -3567,7 +3589,8 @@ export class FlatBillboard extends BaseCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class FrustumCombine extends BasePolyCombine {
     constructor(options: {
@@ -3600,7 +3623,8 @@ export class FrustumCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3691,6 +3715,7 @@ export namespace ModelCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class ModelCombine extends BaseCombine {
     constructor(options: {
@@ -3728,6 +3753,7 @@ export class ModelCombine extends BaseCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3761,7 +3787,8 @@ export class ModelCombine extends BaseCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PlaneCombine extends BasePolyCombine {
     constructor(options: {
@@ -3794,7 +3821,8 @@ export class PlaneCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3829,6 +3857,7 @@ export class PlaneCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class PolygonCombine extends BasePolyCombine {
     constructor(options: {
@@ -3862,6 +3891,7 @@ export class PolygonCombine extends BasePolyCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3894,6 +3924,7 @@ export class PolygonCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class PolylineCombine extends BasePolyCombine {
     constructor(options: {
@@ -3924,6 +3955,7 @@ export class PolylineCombine extends BasePolyCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -3956,6 +3988,7 @@ export class PolylineCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class PolylineVolumeCombine extends BasePolyCombine {
     constructor(options: {
@@ -3986,6 +4019,7 @@ export class PolylineVolumeCombine extends BasePolyCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -4019,7 +4053,8 @@ export class PolylineVolumeCombine extends BasePolyCombine {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
- * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class RectangleCombine extends BasePolyCombine {
     constructor(options: {
@@ -4052,7 +4087,8 @@ export class RectangleCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
-        stopPropagation?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -4085,6 +4121,7 @@ export class RectangleCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class WallCombine extends BasePolyCombine {
     constructor(options: {
@@ -4115,6 +4152,7 @@ export class WallCombine extends BasePolyCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -4149,6 +4187,7 @@ export class WallCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
  */
 export class WaterCombine extends PolygonCombine {
     constructor(options: {
@@ -4182,6 +4221,7 @@ export class WaterCombine extends PolygonCombine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -5529,6 +5569,7 @@ export namespace BaseEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BaseEntity extends BaseGraphic {
     constructor(options: {
@@ -5550,6 +5591,7 @@ export class BaseEntity extends BaseGraphic {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 加载Entity数据的内部Cesium容器
@@ -5677,6 +5719,7 @@ export class BaseEntity extends BaseGraphic {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BasePointEntity extends BaseEntity {
     constructor(options: {
@@ -5707,6 +5750,7 @@ export class BasePointEntity extends BaseEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 编辑处理类
@@ -5841,6 +5885,7 @@ export class BasePointEntity extends BaseEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BasePolyEntity extends BaseEntity {
     constructor(options: {
@@ -5867,6 +5912,7 @@ export class BasePolyEntity extends BaseEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 编辑时，是否可以整体平移
@@ -6057,6 +6103,7 @@ export namespace BillboardEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BillboardEntity extends BasePointEntity {
     constructor(options: {
@@ -6079,6 +6126,7 @@ export class BillboardEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -6208,6 +6256,7 @@ export namespace BoxEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BoxEntity extends BasePointEntity {
     constructor(options: {
@@ -6231,6 +6280,7 @@ export class BoxEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -6348,6 +6398,7 @@ export namespace CircleEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CircleEntity extends BasePointEntity {
     constructor(options: {
@@ -6371,6 +6422,7 @@ export class CircleEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -6580,6 +6632,7 @@ export namespace ConeTrack {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class ConeTrack extends CylinderEntity {
     constructor(options: {
@@ -6601,6 +6654,7 @@ export class ConeTrack extends CylinderEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 追踪的目标位置(确定了方向和距离)
@@ -6737,6 +6791,7 @@ export namespace CorridorEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CorridorEntity extends BasePolyEntity {
     constructor(options: {
@@ -6763,6 +6818,7 @@ export class CorridorEntity extends BasePolyEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -6811,6 +6867,7 @@ export class CorridorEntity extends BasePolyEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CurveEntity extends PolylineEntity {
     constructor(options: {
@@ -6837,6 +6894,7 @@ export class CurveEntity extends PolylineEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -6934,6 +6992,7 @@ export namespace CylinderEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CylinderEntity extends BasePointEntity {
     constructor(options: {
@@ -6957,6 +7016,7 @@ export class CylinderEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -7082,6 +7142,7 @@ export namespace DivBillboardEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DivBillboardEntity extends BillboardEntity {
     constructor(options: {
@@ -7104,6 +7165,7 @@ export class DivBillboardEntity extends BillboardEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -7317,6 +7379,7 @@ export namespace EllipseEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class EllipseEntity extends CircleEntity {
     constructor(options: {
@@ -7339,6 +7402,7 @@ export class EllipseEntity extends CircleEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -7479,6 +7543,7 @@ export namespace EllipsoidEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class EllipsoidEntity extends BasePointEntity {
     constructor(options: {
@@ -7503,6 +7568,7 @@ export class EllipsoidEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -7647,6 +7713,7 @@ export namespace FontBillboardEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class FontBillboardEntity extends BasePointEntity {
     constructor(options: {
@@ -7669,6 +7736,7 @@ export class FontBillboardEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -7791,6 +7859,7 @@ export namespace LabelEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class LabelEntity extends BasePointEntity {
     constructor(options: {
@@ -7813,6 +7882,7 @@ export class LabelEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8007,6 +8077,7 @@ export namespace ModelEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class ModelEntity extends BasePointEntity {
     constructor(options: {
@@ -8035,6 +8106,7 @@ export class ModelEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8203,6 +8275,7 @@ export namespace PathEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PathEntity extends BasePointEntity {
     constructor(options: {
@@ -8228,6 +8301,7 @@ export class PathEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8379,6 +8453,7 @@ export namespace PlaneEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PlaneEntity extends BasePointEntity {
     constructor(options: {
@@ -8402,6 +8477,7 @@ export class PlaneEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8498,6 +8574,7 @@ export namespace PointEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PointEntity extends BasePointEntity {
     constructor(options: {
@@ -8520,6 +8597,7 @@ export class PointEntity extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8647,6 +8725,7 @@ export namespace PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolygonEntity extends BasePolyEntity {
     constructor(options: {
@@ -8673,6 +8752,7 @@ export class PolygonEntity extends BasePolyEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8828,6 +8908,7 @@ export namespace PolylineEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolylineEntity extends BasePolyEntity {
     constructor(options: {
@@ -8854,6 +8935,7 @@ export class PolylineEntity extends BasePolyEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -8948,6 +9030,7 @@ export namespace PolylineVolumeEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolylineVolumeEntity extends BasePolyEntity {
     constructor(options: {
@@ -8974,6 +9057,7 @@ export class PolylineVolumeEntity extends BasePolyEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -9097,6 +9181,7 @@ export namespace RectangleEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class RectangleEntity extends BasePolyEntity {
     constructor(options: {
@@ -9124,6 +9209,7 @@ export class RectangleEntity extends BasePolyEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -9347,6 +9433,7 @@ export namespace RectangularSensor {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class RectangularSensor extends BasePointEntity {
     constructor(options: {
@@ -9370,6 +9457,7 @@ export class RectangularSensor extends BasePointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -9456,6 +9544,7 @@ export namespace Video2D {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Video2D extends PolygonEntity {
     constructor(options: {
@@ -9472,6 +9561,7 @@ export class Video2D extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
@@ -9640,6 +9730,7 @@ export namespace WallEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class WallEntity extends BasePolyEntity {
     constructor(options: {
@@ -9666,6 +9757,7 @@ export class WallEntity extends BasePolyEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
@@ -9710,6 +9802,7 @@ export class WallEntity extends BasePolyEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class AttackArrow extends PolygonEntity {
     constructor(options: {
@@ -9732,6 +9825,7 @@ export class AttackArrow extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -9764,6 +9858,7 @@ export class AttackArrow extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class AttackArrowPW extends PolygonEntity {
     constructor(options: {
@@ -9786,6 +9881,7 @@ export class AttackArrowPW extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -9818,6 +9914,7 @@ export class AttackArrowPW extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class AttackArrowYW extends PolygonEntity {
     constructor(options: {
@@ -9840,6 +9937,7 @@ export class AttackArrowYW extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -9872,6 +9970,7 @@ export class AttackArrowYW extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CloseVurve extends PolygonEntity {
     constructor(options: {
@@ -9894,6 +9993,7 @@ export class CloseVurve extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -9926,6 +10026,7 @@ export class CloseVurve extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DoubleArrow extends PolygonEntity {
     constructor(options: {
@@ -9948,6 +10049,7 @@ export class DoubleArrow extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -9992,6 +10094,7 @@ export class EditSector extends EditPolygon {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class FineArrow extends PolygonEntity {
     constructor(options: {
@@ -10014,6 +10117,7 @@ export class FineArrow extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10046,6 +10150,7 @@ export class FineArrow extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class FineArrowYW extends PolygonEntity {
     constructor(options: {
@@ -10068,6 +10173,7 @@ export class FineArrowYW extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10100,6 +10206,7 @@ export class FineArrowYW extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class GatheringPlace extends PolygonEntity {
     constructor(options: {
@@ -10122,6 +10229,7 @@ export class GatheringPlace extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10154,6 +10262,7 @@ export class GatheringPlace extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class IsosTriangle extends PolygonEntity {
     constructor(options: {
@@ -10176,6 +10285,7 @@ export class IsosTriangle extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10208,6 +10318,7 @@ export class IsosTriangle extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Lune extends PolygonEntity {
     constructor(options: {
@@ -10230,6 +10341,7 @@ export class Lune extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10265,6 +10377,7 @@ export class Lune extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Regular extends PolygonEntity {
     constructor(options: {
@@ -10291,6 +10404,7 @@ export class Regular extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 编辑处理类
@@ -10334,6 +10448,7 @@ export class Regular extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Sector extends PolygonEntity {
     constructor(options: {
@@ -10360,6 +10475,7 @@ export class Sector extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 编辑处理类
@@ -10400,6 +10516,7 @@ export class Sector extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class StraightArrow extends PolygonEntity {
     constructor(options: {
@@ -10422,6 +10539,7 @@ export class StraightArrow extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10460,6 +10578,7 @@ export class StraightArrow extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class AngleMeasure extends PolylineEntity {
     constructor(options: {
@@ -10487,6 +10606,7 @@ export class AngleMeasure extends PolylineEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 测量结果
@@ -10535,6 +10655,7 @@ export class AngleMeasure extends PolylineEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class AreaMeasure extends PolygonEntity {
     constructor(options: {
@@ -10562,6 +10683,7 @@ export class AreaMeasure extends PolygonEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 测量结果
@@ -10616,6 +10738,7 @@ export class AreaMeasure extends PolygonEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class AreaSurfaceMeasure extends AreaMeasure {
     constructor(options: {
@@ -10643,6 +10766,7 @@ export class AreaSurfaceMeasure extends AreaMeasure {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10681,6 +10805,7 @@ export class AreaSurfaceMeasure extends AreaMeasure {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DistanceMeasure extends PolylineEntity {
     constructor(options: {
@@ -10708,6 +10833,7 @@ export class DistanceMeasure extends PolylineEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 测量结果
@@ -10756,6 +10882,7 @@ export class DistanceMeasure extends PolylineEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DistanceSurfaceMeasure extends DistanceMeasure {
     constructor(options: {
@@ -10783,6 +10910,7 @@ export class DistanceSurfaceMeasure extends DistanceMeasure {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -10821,6 +10949,7 @@ export class DistanceSurfaceMeasure extends DistanceMeasure {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class HeightMeasure extends PolylineEntity {
     constructor(options: {
@@ -10848,6 +10977,7 @@ export class HeightMeasure extends PolylineEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 测量结果
@@ -10896,6 +11026,7 @@ export class HeightMeasure extends PolylineEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class HeightTriangleMeasure extends HeightMeasure {
     constructor(options: {
@@ -10923,6 +11054,7 @@ export class HeightTriangleMeasure extends HeightMeasure {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 更新测量结果的文本
@@ -10962,6 +11094,7 @@ export class HeightTriangleMeasure extends HeightMeasure {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PointMeasure extends PointEntity {
     constructor(options: {
@@ -10984,6 +11117,7 @@ export class PointMeasure extends PointEntity {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -11022,6 +11156,7 @@ export class PointMeasure extends PointEntity {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class SectionMeasure extends DistanceMeasure {
     constructor(options: {
@@ -11049,6 +11184,7 @@ export class SectionMeasure extends DistanceMeasure {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 通过标绘 来创建矢量对象
@@ -11077,6 +11213,7 @@ export class SectionMeasure extends DistanceMeasure {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class VolumeMeasure extends AreaMeasure {
     constructor(options: {
@@ -11091,6 +11228,7 @@ export class VolumeMeasure extends AreaMeasure {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 面内的最高地表高度
@@ -11161,6 +11299,7 @@ export class VolumeMeasure extends AreaMeasure {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BasePointPrimitive extends BasePrimitive {
     constructor(options: {
@@ -11189,6 +11328,7 @@ export class BasePointPrimitive extends BasePrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
@@ -11297,6 +11437,7 @@ export class BasePointPrimitive extends BasePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BasePolyPrimitive extends BasePrimitive {
     constructor(options: {
@@ -11324,6 +11465,7 @@ export class BasePolyPrimitive extends BasePrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 中心点坐标 （笛卡尔坐标）
@@ -11469,6 +11611,7 @@ export namespace BasePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BasePrimitive extends BaseGraphic {
     constructor(options: {
@@ -11497,6 +11640,7 @@ export class BasePrimitive extends BaseGraphic {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 当加载primitive数据的内部Cesium容器
@@ -11568,6 +11712,7 @@ export class BasePrimitive extends BaseGraphic {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BillboardPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -11583,6 +11728,7 @@ export class BillboardPrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 当加载primitive数据的内部Cesium容器
@@ -11685,6 +11831,8 @@ export namespace BoxPrimitive {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class BoxPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -11712,6 +11860,8 @@ export class BoxPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -11813,6 +11963,7 @@ export namespace CirclePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CirclePrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -11841,6 +11992,7 @@ export class CirclePrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 圆的半径（单位：米）
@@ -12166,6 +12318,7 @@ export namespace ConeTrackPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class ConeTrackPrimitive extends CylinderPrimitive {
     constructor(options: {
@@ -12194,6 +12347,7 @@ export class ConeTrackPrimitive extends CylinderPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 追踪的目标位置(确定了方向和距离)
@@ -12303,6 +12457,7 @@ export namespace CorridorPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CorridorPrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -12330,6 +12485,7 @@ export class CorridorPrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -12419,6 +12575,7 @@ export namespace CylinderPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class CylinderPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -12447,6 +12604,7 @@ export class CylinderPrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -12484,6 +12642,7 @@ export namespace DiffuseWall {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DiffuseWall extends BasePolyPrimitive {
     constructor(options: {
@@ -12500,6 +12659,7 @@ export class DiffuseWall extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 中心点坐标 （笛卡尔坐标）
@@ -12549,6 +12709,7 @@ export namespace DynamicRiver {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DynamicRiver extends BasePolyPrimitive {
     constructor(options: {
@@ -12559,6 +12720,7 @@ export class DynamicRiver extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 图片材质URL
@@ -12715,6 +12877,7 @@ export namespace EllipsoidPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class EllipsoidPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -12743,6 +12906,7 @@ export class EllipsoidPrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -12830,6 +12994,7 @@ export namespace FrustumPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class FrustumPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -12858,6 +13023,7 @@ export class FrustumPrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 圆锥追踪的目标(确定了方向和距离)
@@ -12926,6 +13092,8 @@ export namespace LabelPrimitive {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class LabelPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -12940,6 +13108,8 @@ export class LabelPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 当加载primitive数据的内部Cesium容器
@@ -12980,6 +13150,7 @@ export namespace LightCone {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class LightCone extends BasePointPrimitive {
     constructor(options: {
@@ -12995,6 +13166,7 @@ export class LightCone extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 颜色
@@ -13195,6 +13367,7 @@ export namespace ModelPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class ModelPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -13213,6 +13386,7 @@ export class ModelPrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 模型整体的缩放比例
@@ -13282,6 +13456,7 @@ export namespace Pit {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Pit extends BasePolyPrimitive {
     constructor(options: {
@@ -13309,6 +13484,7 @@ export class Pit extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 井下深度（单位：米）
@@ -13408,6 +13584,7 @@ export namespace PlanePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PlanePrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -13436,6 +13613,7 @@ export class PlanePrimitive extends BasePointPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 用于指定位置的矩阵
@@ -13508,6 +13686,8 @@ export namespace PointPrimitive {
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PointPrimitive extends BasePointPrimitive {
     constructor(options: {
@@ -13523,6 +13703,8 @@ export class PointPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 当加载primitive数据的内部Cesium容器
@@ -13644,6 +13826,7 @@ export namespace PolygonPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolygonPrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -13671,6 +13854,7 @@ export class PolygonPrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
@@ -13768,6 +13952,7 @@ export namespace PolylinePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolylinePrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -13795,6 +13980,7 @@ export class PolylinePrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -13825,6 +14011,7 @@ export class PolylinePrimitive extends BasePolyPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolylineSimplePrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -13852,6 +14039,7 @@ export class PolylineSimplePrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -13934,6 +14122,7 @@ export namespace PolylineVolumePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class PolylineVolumePrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -13961,6 +14150,7 @@ export class PolylineVolumePrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -14048,6 +14238,7 @@ export namespace RectanglePrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class RectanglePrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -14076,6 +14267,7 @@ export class RectanglePrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 坐标数据对应的矩形边界对象
@@ -14128,6 +14320,7 @@ export namespace Road {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Road extends DynamicRiver {
     constructor(options: {
@@ -14138,6 +14331,7 @@ export class Road extends DynamicRiver {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -14178,6 +14372,7 @@ export namespace ScrollWall {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class ScrollWall extends BasePolyPrimitive {
     constructor(options: {
@@ -14193,6 +14388,7 @@ export class ScrollWall extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 矢量数据对应的 Cesium内部对象 (不同子类中实现)
@@ -14284,6 +14480,7 @@ export namespace WallPrimitive {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class WallPrimitive extends BasePolyPrimitive {
     constructor(options: {
@@ -14311,6 +14508,7 @@ export class WallPrimitive extends BasePolyPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -14428,6 +14626,7 @@ export namespace Water {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class Water extends PolygonPrimitive {
     constructor(options: {
@@ -14452,6 +14651,7 @@ export class Water extends PolygonPrimitive {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
 }
 
@@ -14917,6 +15117,7 @@ export namespace DynamicRoamLine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class DynamicRoamLine extends BaseRoamLine {
     constructor(options: {
@@ -14961,6 +15162,7 @@ export class DynamicRoamLine extends BaseRoamLine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
@@ -15110,6 +15312,7 @@ export namespace RoamLine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 export class RoamLine extends BaseRoamLine {
     constructor(options: {
@@ -15171,6 +15374,7 @@ export class RoamLine extends BaseRoamLine {
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
      * 总时长 （单位：秒）
@@ -15952,7 +16156,6 @@ export class CzmGeoJsonLayer extends BaseGraphicLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url] - CZML文件或服务url地址
  * @param [options.data] - CZML格式规范数据对象，与url二选一即可。
- * @param [options.format] - 可以对加载的CZML数据进行格式化或转换操作
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
@@ -15989,7 +16192,6 @@ export class CzmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
         url?: string;
         data?: any;
-        format?: (...params: any[]) => any;
         zIndex?: number;
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -16056,7 +16258,6 @@ export class CzmlLayer extends CzmGeoJsonLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url] - KML文件或服务url地址
  * @param [options.data] - 已解析的KML文档或包含二进制KMZ数据或已解析的KML文档的Blob，与url二选一即可。
- * @param [options.format] - 可以对加载的KML数据进行格式化或转换操作
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
  * @param [options.symbol] - 矢量数据的style样式
@@ -16099,7 +16300,6 @@ export class KmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
         url?: string;
         data?: Document | Blob;
-        format?: (...params: any[]) => any;
         zIndex?: number;
         opacity?: number;
         symbol?: {
@@ -22178,7 +22378,7 @@ export namespace Map {
     /**
      * 鼠标操作相关配置 参数
      * @property [enabledMoveTarget = true] - 是否开启鼠标移动事件的拾取矢量数据
-     * @property [moveDelay = 50] - 鼠标移动事件的延迟毫秒数
+     * @property [moveDelay = 30] - 鼠标移动事件的延迟毫秒数
      * @property [pickWidth = 4] - 拾取时所选矩形的宽度，单位：像素
      * @property [pickHeight = 4] - 拾取时所选矩形的高度，单位：像素
      * @property [pickLimit = 9] - 在允许allowDrillPick穿透拾取时，限制拾取的对象个数。
@@ -22281,6 +22481,8 @@ export namespace Map {
      * })
      * @property addLayer - 添加图层
      * @property removeLayer - 移除图层
+     * @property terrainChange - 地形变化
+     * @property tileLoadProgress - 地图中瓦片加载进度变化
      * @property cameraMoveStart - 相机开启移动前 场景事件
      * @property cameraMoveEnd - 相机移动完成后 场景事件
      * @property cameraChanged - 相机位置完成 场景事件
@@ -22328,6 +22530,8 @@ export namespace Map {
     type EventType = {
         addLayer: string;
         removeLayer: string;
+        terrainChange: string;
+        tileLoadProgress: string;
         cameraMoveStart: string;
         cameraMoveEnd: string;
         cameraChanged: string;
@@ -22414,6 +22618,11 @@ export class Map extends BaseClass {
      * 获取地图DOM容器。
      */
     readonly container: HTMLDivElement;
+    /**
+     * 获取ToolBar控件DOM容器，
+     * 其样式为cesium-viewer-toolbar
+     */
+    readonly toolbar: HTMLDivElement;
     /**
      * 获取Canvas画布
      */
@@ -22523,6 +22732,11 @@ export class Map extends BaseClass {
      */
     getOptions(): any;
     /**
+     * 获取地图的当前实时状态对应的配置参数。
+     * @returns 地图的配置参数
+     */
+    getCurrentOptions(): any;
+    /**
      * 获取平台内置的右键菜单
      * @returns 右键菜单
      */
@@ -22609,9 +22823,9 @@ export class Map extends BaseClass {
      * 添加图层到地图上
      * @param layer - 图层对象
      * @param [showVal] - 如果传值，覆盖图层的show属性
-     * @returns 当前对象本身，可以链式调用
+     * @returns 图层加载完成承诺
      */
-    addLayer(layer: BaseLayer, showVal?: boolean): Map;
+    addLayer(layer: BaseLayer, showVal?: boolean): Promise<Boolean | any>;
     /**
      * 移除图层
      * @param layer - 需要移除的图层
@@ -22651,12 +22865,14 @@ export class Map extends BaseClass {
      * @param [options.basemaps = false] - 是否包含basemps中配置的所有图层
      * @param [options.layers = false] - 是否包含layers中配置的所有图层
      * @param [options.filter = false] - 是否排除layers和baseps的图层
+     * @param [options.filterBasemaps = false] - 是否只排除baseps的图层
      * @returns 图层数组
      */
     getLayers(options?: {
         basemaps?: boolean;
         layers?: boolean;
         filter?: boolean;
+        filterBasemaps?: boolean;
     }): BaseLayer[] | any[];
     /**
      * 获取所有basemps底图图层
@@ -23345,6 +23561,7 @@ export class CircleScanMaterialProperty extends BaseMaterialProperty {
  * @param [options] - 参数对象，包括以下：
  * @param [options.color = Mars3dCesium.Color.YELLOW] - 颜色
  * @param [options.speed = 10] - 速度
+ * @param [options.duration] - 播放总时长，单位：秒 （会覆盖speed参数）
  * @param [options.count = 1] - 圆圈个数
  * @param [options.gradient = 0.1] - 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
  */
@@ -23352,6 +23569,7 @@ export class CircleWaveMaterialProperty extends BaseMaterialProperty {
     constructor(options?: {
         color?: string | Mars3dCesium.Color;
         speed?: number;
+        duration?: number;
         count?: number;
         gradient?: number;
     });
@@ -23974,7 +24192,8 @@ export class ScanLineMaterialProperty extends BaseMaterialProperty {
  * @param [options.font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
  * @param [options.font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
  * @param [options.fill = true] - 是否填充
- * @param [options.color = "#ffff00"] - 文本颜色
+ * @param [options.fillColor = "#ffff00"] - 文本颜色
+ * @param [options.color = "#ffff00"] - 文本颜色，同fillColor（别名）
  * @param [options.stroke = true] - 是否描边文本。
  * @param [options.strokeColor = new Mars3dCesium.Color(1.0, 1.0, 1.0, 0.8)] - 描边的颜色。
  * @param [options.strokeWidth = 2] - 描边的宽度。
@@ -23994,6 +24213,7 @@ export class TextMaterialProperty extends Image2MaterialProperty {
         font_style?: string;
         font?: string;
         fill?: boolean;
+        fillColor?: string;
         color?: string;
         stroke?: boolean;
         strokeColor?: Mars3dCesium.Color;
@@ -24162,7 +24382,7 @@ export class CylinderWaveMaterial extends Mars3dCesium.Material {
  *     diffHeight: 5,
  *     material: new mars3d.material.TextMaterial({
  *       text: "火星科技",
- *       fillColor: "#3388cc",
+ *       color: "#3388cc",
  *       outlineWidth: 4,
  *     }),
  *   },
@@ -24176,13 +24396,14 @@ export class CylinderWaveMaterial extends Mars3dCesium.Material {
  * @param [options.font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
  * @param [options.font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
  * @param [options.fill = true] - 是否填充
- * @param [options.fillColor = new Mars3dCesium.Color(1.0, 1.0, 0.0, 1.0)] - 填充颜色。
+ * @param [options.fillColor = new Mars3dCesium.Color(1.0, 1.0, 0.0, 1.0)] - 文本颜色
+ * @param [options.color] - 文本颜色，同fillColor（别名）
  * @param [options.stroke = true] - 是否描边文本。
  * @param [options.strokeColor = new Mars3dCesium.Color(1.0, 1.0, 1.0, 0.8)] - 描边的颜色。
  * @param [options.strokeWidth = 2] - 描边的宽度。
  * @param [options.backgroundColor = new Mars3dCesium.Color(1.0, 1.0, 1.0, 0.1)] - 画布的背景色。
  * @param [options.outlineWidth] - 边框的宽度。
- * @param [options.outlineColor = fillColor] - 矩形边框的颜色。
+ * @param [options.outlineColor = color] - 矩形边框的颜色。
  * @param [options.padding = 10] - 要在文本周围添加的填充的像素大小。
  * @param [options.textBaseline = 'top'] - 文本的基线。
  */
@@ -24195,7 +24416,8 @@ export class TextMaterial extends Mars3dCesium.Material {
         font_style?: string;
         font?: string;
         fill?: boolean;
-        fillColor?: Mars3dCesium.Color;
+        fillColor?: string;
+        color?: Mars3dCesium.Color;
         stroke?: boolean;
         strokeColor?: Mars3dCesium.Color;
         strokeWidth?: number;
@@ -24210,24 +24432,24 @@ export class TextMaterial extends Mars3dCesium.Material {
 export namespace CanvasWindLayer {
     /**
      * Canvas风场图层， data数据结构
-     * @property [rows] - 行总数
-     * @property [cols] - 列总数
-     * @property [xmin] - 最小经度（度数，-180-180）
-     * @property [xmax] - 最大经度（度数，-180-180）
-     * @property [ymin] - 最小纬度（度数，-90-90）
-     * @property [ymax] - 最大纬度（度数，-90-90）
-     * @property [udata] - U值一维数组, 数组长度应该是 rows*cols 。也支持按rows行cols列构建好的二维数组。
-     * @property [vdata] - V值一维数组, 数组长度应该是 rows*cols 。也支持按rows行cols列构建好的二维数组。
+     * @property rows - 行总数
+     * @property cols - 列总数
+     * @property xmin - 最小经度（度数，-180-180）
+     * @property xmax - 最大经度（度数，-180-180）
+     * @property ymin - 最小纬度（度数，-90-90）
+     * @property ymax - 最大纬度（度数，-90-90）
+     * @property udata - U值一维数组, 数组长度应该是 rows*cols 。也支持按rows行cols列构建好的二维数组。
+     * @property vdata - V值一维数组, 数组长度应该是 rows*cols 。也支持按rows行cols列构建好的二维数组。
      */
     type DataOptions = {
-        rows?: number;
-        cols?: number;
-        xmin?: number;
-        xmax?: number;
-        ymin?: number;
-        ymax?: number;
-        udata?: number[] | any[][];
-        vdata?: number[] | any[][];
+        rows: number;
+        cols: number;
+        xmin: number;
+        xmax: number;
+        ymin: number;
+        ymax: number;
+        udata: number[] | any[][];
+        vdata: number[] | any[][];
     };
 }
 
@@ -24237,7 +24459,7 @@ export namespace CanvasWindLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.data] - 风场数据
  * @param [options.speedRate = 50] - 风前进速率，意思是将当前风场横向纵向分成100份，再乘以风速就能得到移动位置，无论地图缩放到哪一级别都是一样的速度，可以用该数值控制线流动的快慢，值越大，越慢，
- * @param [options.particlesnumber = 20000] - 初始粒子总数
+ * @param [options.particlesnumber = 4096] - 初始粒子总数
  * @param [options.maxAge = 120] - 每个粒子的最大生存周期
  * @param [options.frameRate = 10] - 每秒刷新次数，因为requestAnimationFrame固定每秒60次的渲染，所以如果不想这么快，就把该数值调小一些
  * @param [options.color = '#ffffff'] - 线颜色
@@ -24343,6 +24565,12 @@ export class CanvasWindLayer extends BaseLayer {
      * @returns 无
      */
     redraw(): void;
+    /**
+     * 设置 风场数据
+     * @param data - 风场数据
+     * @returns 无
+     */
+    setData(data: any): void;
     /**
      * 清除数据
      * @returns 无
@@ -24501,7 +24729,7 @@ export class EchartsLayer extends BaseLayer {
  */
 export class HeatLayer extends BaseLayer {
     constructor(options: {
-        positions?: LngLatPoint[] | Mars3dCesium.Cartesian3[] | any;
+        positions?: LatLngPoint[] | Mars3dCesium.Cartesian3[] | any;
         heatStyle?: {
             maxOpacity?: number;
             minOpacity?: number;
@@ -24550,7 +24778,7 @@ export class HeatLayer extends BaseLayer {
     /**
      * 数据位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
      */
-    positions: Mars3dCesium.Cartesian3[] | LngLatPoint[];
+    positions: Mars3dCesium.Cartesian3[] | LatLngPoint[];
     /**
      * 位置坐标(数组对象)，示例 [ [123.123456,32.654321,198.7], [111.123456,22.654321,50.7] ]
      */
@@ -24564,7 +24792,7 @@ export class HeatLayer extends BaseLayer {
      * @param item - 坐标点（含热力值）
      * @returns 无
      */
-    addPosition(item: Mars3dCesium.Cartesian3 | LngLatPoint): void;
+    addPosition(item: Mars3dCesium.Cartesian3 | LatLngPoint): void;
     /**
      * 清除矢量对象
      * @returns 无
@@ -24585,6 +24813,7 @@ export class HeatLayer extends BaseLayer {
  * MapV图层
  * 【需要引入 heatmap.js 库 和 mars3d-heatmap 插件库】
  * @param options - 图层参数，包括：
+ * @param [options.data] - new mapv.DataSet(data)的data值，如有传入时可以用于替代dataSet参数
  * @param [options.depthTest = true] - 是否进行计算深度判断，在地球背面或被遮挡时不显示（大数据时，需要关闭）
  * @param [options.fixedHeight = 0] - 点的固定的海拔高度
  * @param [options.clampToGround = false] - 点是否贴地
@@ -24603,10 +24832,11 @@ export class HeatLayer extends BaseLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, 0-360
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, 0-360
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
- * @param dataSet - mapv.DataSet数据集,可以参考[ MapV数据集对象说明]{@link https://github.com/huiyan-fe/mapv/blob/master/src/data/DataSet.md}
+ * @param [dataSet] - mapv.DataSet数据集,可以参考[ MapV数据集对象说明]{@link https://github.com/huiyan-fe/mapv/blob/master/src/data/DataSet.md}
  */
 export class MapVLayer extends BaseLayer {
     constructor(options: {
+        data?: any;
         depthTest?: boolean;
         fixedHeight?: number;
         clampToGround?: boolean;
@@ -24626,7 +24856,7 @@ export class MapVLayer extends BaseLayer {
             roll?: number;
         };
         flyTo?: boolean;
-    }|any, dataSet: any);
+    }, dataSet?: any);
     /**
      * 图层对应的Canvas对象
      */
@@ -24848,14 +25078,14 @@ export class Tle {
      * @param datetime - 指定的时间
      * @returns 卫星当前经纬度位置
      */
-    getPoint(datetime: Date | Mars3dCesium.JulianDate | number): LngLatPoint | undefined;
+    getPoint(datetime: Date | Mars3dCesium.JulianDate | number): LatLngPoint | undefined;
     /**
      * 获取 地面地点 对卫星的 天文观测值
      * @param point - 地面地点经纬度坐标
      * @param datetime - 指定的时间
      * @returns 观测值
      */
-    getLookAngles(point: LngLatPoint, datetime: Date | Mars3dCesium.JulianDate | number): Tle.LookAngles;
+    getLookAngles(point: LatLngPoint, datetime: Date | Mars3dCesium.JulianDate | number): Tle.LookAngles;
     /**
      * 计算卫星指定时间所在的 经纬度位置
      * @param tle1 - 卫星TLE的第一行
@@ -24863,7 +25093,7 @@ export class Tle {
      * @param datetime - 指定的时间
      * @returns 卫星当前经纬度位置
      */
-    static getPoint(tle1: string, tle2: string, datetime: Date | Mars3dCesium.JulianDate | number): LngLatPoint | undefined;
+    static getPoint(tle1: string, tle2: string, datetime: Date | Mars3dCesium.JulianDate | number): LatLngPoint | undefined;
     /**
      * 获取卫星指定时间所在的 ECEF坐标
      * @param tle1 - 卫星TLE的第一行
@@ -24884,7 +25114,7 @@ export class Tle {
      * @param datetime - 指定时间, number时请传入格林尼治恒星时(GMST)时间
      * @returns 经纬度坐标
      */
-    static eciToGeodetic(positionEci: Mars3dCesium.Cartesian3, datetime: Date | Mars3dCesium.JulianDate | number): LngLatPoint;
+    static eciToGeodetic(positionEci: Mars3dCesium.Cartesian3, datetime: Date | Mars3dCesium.JulianDate | number): LatLngPoint;
     /**
      * ECI坐标 转换为 ECEF坐标
      * @param positionEci - ECI(地心惯性坐标系)坐标
@@ -24971,7 +25201,7 @@ export namespace CamberRadar {
  */
 export class CamberRadar extends BasePointPrimitive {
     constructor(options: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: CamberRadar.StyleOptions;
         attr?: any;
         id?: string | number;
@@ -25071,7 +25301,7 @@ export namespace ConicSensor {
  */
 export class ConicSensor extends BasePointPrimitive {
     constructor(options: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: ConicSensor.StyleOptions;
         attr?: any;
         lookAt?: Mars3dCesium.Cartesian3 | Mars3dCesium.PositionProperty;
@@ -25231,7 +25461,7 @@ export namespace RectSensor {
  */
 export class RectSensor extends BasePointPrimitive {
     constructor(options: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: RectSensor.StyleOptions;
         attr?: any;
         lookAt?: Mars3dCesium.Cartesian3 | Mars3dCesium.PositionProperty;
@@ -25580,7 +25810,7 @@ export namespace SatelliteSensor {
  */
 export class SatelliteSensor extends BasePointPrimitive {
     constructor(options?: {
-        position: LngLatPoint | Mars3dCesium.Cartesian3 | number[];
+        position: LatLngPoint | Mars3dCesium.Cartesian3 | number[];
         style: SatelliteSensor.StyleOptions;
         attr?: any;
         lookAt?: Mars3dCesium.Cartesian3 | Mars3dCesium.PositionProperty;
@@ -26582,17 +26812,51 @@ namespace widget {
     function listens(type: WidgetEventType, propagate?: BaseClass): boolean;
 }
 
+export namespace WindLayer {
+    /**
+     * 风场图层， data数据结构
+     * @property rows - 行总数
+     * @property cols - 列总数
+     * @property xmin - 最小经度（度数，-180-180）
+     * @property xmax - 最大经度（度数，-180-180）
+     * @property ymin - 最小纬度（度数，-90-90）
+     * @property ymax - 最大纬度（度数，-90-90）
+     * @property udata - U值一维数组, 数组长度应该是 rows*cols。
+     * @property [umin] - 最小U值
+     * @property [umax] - 最大U值
+     * @property vdata - V值一维数组, 数组长度应该是 rows*cols。
+     * @property [vmin] - 最小v值
+     * @property [vmax] - 最大v值
+     */
+    type DataOptions = {
+        rows: number;
+        cols: number;
+        xmin: number;
+        xmax: number;
+        ymin: number;
+        ymax: number;
+        udata: number[];
+        umin?: number;
+        umax?: number;
+        vdata: number[];
+        vmin?: number;
+        vmax?: number;
+    };
+}
+
 /**
  * 风场图层，基于粒子实现，
  * 【需要引入 mars3d-wind 插件库】
  * @param [options] - 参数对象，包括以下：
- * @param [options.maxParticles = 4096] - 初始粒子总数
- * @param [options.particleHeight = 100] - 粒子的高度
+ * @param [options.data] - 风场数据
+ * @param [options.particlesnumber = 4096] - 初始粒子总数
  * @param [options.fadeOpacity = 0.996] - 消失不透明度
  * @param [options.dropRate = 0.003] - 下降率
  * @param [options.dropRateBump = 0.01] - 下降速度
  * @param [options.speedFactor = 0.5] - 速度系数
  * @param [options.lineWidth = 2.0] - 线宽度
+ * @param [options.fixedHeight = 0] - 粒子点的固定的海拔高度
+ * @param [options.colors = ["rgb(206,255,255)"]] - 颜色色带数组
  * @param [options.id = uuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26609,13 +26873,15 @@ namespace widget {
  */
 export class WindLayer extends BaseLayer {
     constructor(options?: {
-        maxParticles?: number;
-        particleHeight?: number;
+        data?: WindLayer.DataOptions;
+        particlesnumber?: number;
         fadeOpacity?: number;
         dropRate?: number;
         dropRateBump?: number;
         speedFactor?: number;
         lineWidth?: number;
+        fixedHeight?: number;
+        colors?: string[];
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -26636,17 +26902,19 @@ export class WindLayer extends BaseLayer {
      */
     readonly layer: Mars3dCesium.PrimitiveCollection;
     /**
+     * 风场数据，数据结构见类的构造方法说明
+     */
+    data: WindLayer.DataOptions;
+    /**
+     * 颜色色带数组
+     */
+    colors: string[];
+    /**
      * 设置 风场数据
      * @param data - 风场数据
      * @returns 无
      */
-    setData(data: any): void;
-    /**
-     * 重新赋值参数，同构造方法参数一致。
-     * @param options - 参数,与类的构造方法参数相同
-     * @returns 当前对象本身，可以链式调用
-     */
-    setOptions(options: any): WindLayer;
+    setData(data: WindLayer.DataOptions): void;
 }
 
 /**
@@ -28977,6 +29245,13 @@ export class BaseMaterialConver extends BaseOptsConver {
      * @returns json简单对象
      */
     static toJSON(czmVal: any, style?: any): any;
+    /**
+     * 转换为json简单对象，用于导出
+     * @param czmVal - Cesium属性值
+     * @param [style = {}] - json简单对象
+     * @returns json简单对象
+     */
+    toJSON(czmVal: any, style?: any): any;
 }
 
 /**
@@ -29819,6 +30094,12 @@ namespace Log {
  * 矢量数据材质
  */
 namespace MaterialUtil {
+    /**
+     * 注册自定义的材质
+     * @param type - 类型名称
+     * @param materialTemplate - 材质模版
+     */
+    function register(type: string, materialTemplate: any): void;
     /**
      * 创建 材质属性（用于Entity）
      * @param type - 材质类型
@@ -30880,6 +31161,13 @@ namespace Util {
      */
     function isObject(obj: any): boolean;
     /**
+     * 判断对象是否为纯粹的Object类型
+     * （所谓"纯粹的对象"，就是该对象是通过"{}"或"new Object"创建的）
+     * @param obj - 对象
+     * @returns 是否为Object类型
+     */
+    function isPlainObject(obj: any): boolean;
+    /**
      * 判断对象是否为function方法
      * @param val - 对象
      * @returns 是否为function方法
@@ -30892,9 +31180,9 @@ namespace Util {
      */
     function isSimpleType(value: any): boolean;
     /**
-     * 判断当前Cesium库是否mars3d修改后的版本(mars3d-cesium库)
+     * 判断当前Cesium库 是否mars3d修改后的版本(mars3d-cesium库)
      */
-    const isMars3DCesium: any;
+    const isMars3DCesium: boolean;
     /**
      * 格式化数字，返回指定小数位的数字
      * @param num - 数字
@@ -31014,10 +31302,10 @@ namespace Util {
      * 获取Cesium颜色对象
      * @param color - Cesium的类名，方便识别判断
      * @param [defval] - 默认值
-     * @param [event] - 是回调方法时传入回调的参数
+     * @param [time = Mars3dCesium.JulianDate.now()] - 如果具有时间属于时，取指定的时间的值
      * @returns 颜色值
      */
-    function getCesiumColor(color: string | Mars3dCesium.Color | ((...params: any[]) => any), defval?: Mars3dCesium.Color, event?: any): Mars3dCesium.Color;
+    function getCesiumColor(color: string | Mars3dCesium.Color | ((...params: any[]) => any), defval?: Mars3dCesium.Color, time?: Mars3dCesium.JulianDate): Mars3dCesium.Color;
     /**
      * 根据配置信息获取Cesium颜色对象
      * @param style - 配置信息
@@ -31302,6 +31590,12 @@ namespace Util {
      */
     function formatDate(date: Date, fmt: string): string;
     /**
+     * 格式化时长
+     * @param strtime - 时长
+     * @returns 格式化字符串，如XX小时XX分钟
+     */
+    function formatTime(strtime: number): string;
+    /**
      * 请求服务返回JSON结果
      * @param options - 请求参数
      * @param options.url - 服务URL地址
@@ -31529,6 +31823,12 @@ namespace Util {
     export { Video3D }
     export { DynamicRoamLine }
     export { RoamLine }
+
+    export { CamberRadar }
+    export { ConicSensor }
+    export { RectSensor }
+    export { Satellite }
+    export { SatelliteSensor }
   }
 
   /**

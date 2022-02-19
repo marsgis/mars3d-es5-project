@@ -58,7 +58,7 @@ ul, li {
 }
 
 .dark {
-  overflow: auto;
+  overflow: hidden;
   color: #ffffff;
 }
 

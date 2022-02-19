@@ -308,6 +308,7 @@
           config.area[0] +
           ";height:" +
           config.area[1] +
+          (config.show===false ? ";display:none":"") +
           ";position:" +
           (config.fixed ? "fixed;" : "absolute;") +
           '">' +

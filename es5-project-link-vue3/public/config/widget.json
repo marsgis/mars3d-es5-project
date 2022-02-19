@@ -78,7 +78,8 @@
           "top": 50,
           "bottom": 30,
           "right": 10
-        }
+        },
+        "show":true
       },
       "css": {
         "max-width": "300px"

@@ -11,7 +11,7 @@
           // noTitle: true,
           // closeBtn: 0,
           width: 250,
-          height: 500,
+          height: 500
         },
       };
     }
