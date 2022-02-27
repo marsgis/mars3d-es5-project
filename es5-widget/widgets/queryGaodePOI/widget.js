@@ -184,6 +184,7 @@
       let radius = this.map.camera.positionCartographic.height; //单位：米
       if (radius > 100000) {
         this.address = null;
+        if(this.queryAddressDOM)
         this.queryAddressDOM.innerHTML = "";
         return;
       }
@@ -193,6 +194,7 @@
         success: (result) => {
           // console.log("地址", result);
           this.address = result;
+          if(this.queryAddressDOM)
           this.queryAddressDOM.innerHTML = "地址：" + result.address;
         },
       });
