@@ -1,5 +1,9 @@
 //兼容不同版本cesium，补充官方删除更改的方法或类名 by mars3d.cn
 
+//兼容1.92（2022-4-1）删除的方法
+// Cesium.when = Promise.resolve //https://community.cesium.com/t/cesiumjs-is-switching-from-when-js-to-native-promises-which-will-be-a-breaking-change-in-1-92/17213
+
+
 //兼容1.87（2021-11-1）删除的方法
 Cesium.sprintf = function (format) {
   return format;

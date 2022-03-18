@@ -1,8 +1,8 @@
 ﻿"use script"; //开发环境建议开启严格模式
 
 //对应widget.js中MyWidget实例化后的对象
-var thisWidget;
-var $table;
+let thisWidget;
+let $table;
 
 function getHeight() {
   return $(window).height() - 50;
@@ -47,7 +47,7 @@ function initWidgetView(_thisWidget) {
       },
     ],
     onClickRow: function (rowData, $element, field) {
-      var location = rowData.data;
+      let location = rowData.data;
       thisWidget.showExtent(location);
     },
   });
@@ -61,8 +61,8 @@ function initWidgetView(_thisWidget) {
   initBookMarkList();
 }
 
-var storageName = "mars3d_bookmark";
-var arrBookmark = [];
+let storageName = "mars3d_bookmark";
+let arrBookmark = [];
 
 function initBookMarkList() {
   if (window.parent.hasServer) {
@@ -73,9 +73,9 @@ function initBookMarkList() {
       dataType: "json",
       contentType: "application/x-www-form-urlencoded",
       success: function (result) {
-        var arr = [];
-        for (var i = 0; i < result.length; i++) {
-          var itme = result[i];
+        let arr = [];
+        for (let i = 0; i < result.length; i++) {
+          let itme = result[i];
           if (!itme) {
             continue;
           }
@@ -108,12 +108,12 @@ function saveBookmark() {
     arrBookmark = [];
   }
 
-  var name = $.trim($("#txt_bookmark_name").val()).replace("'", "").replace('"', "");
+  let name = $.trim($("#txt_bookmark_name").val()).replace("'", "").replace('"', "");
   if (name.length == 0) {
     toastr.warning("请输入名称");
     return;
   }
-  for (var index = arrBookmark.length - 1; index >= 0; index--) {
+  for (let index = arrBookmark.length - 1; index >= 0; index--) {
     if (arrBookmark[index].name == name) {
       toastr.info("该名称已存在，请更换！");
       return;
@@ -153,7 +153,7 @@ function saveBookmark() {
       localforage.setItem(storageName, arrBookmark).then((value) => {
         $("#txt_bookmark_name").val("");
         initBookMarkList();
-      })
+      });
     }
   });
 }
@@ -167,7 +167,7 @@ function delBookMark(id) {
       dataType: "json",
       contentType: "application/json",
       success: function (result) {
-        for (var index = arrBookmark.length - 1; index >= 0; index--) {
+        for (let index = arrBookmark.length - 1; index >= 0; index--) {
           if (arrBookmark[index].id == id) {
             arrBookmark.splice(index, 1);
             showListData(arrBookmark);
@@ -177,7 +177,7 @@ function delBookMark(id) {
       },
     });
   } else {
-    for (var index = arrBookmark.length - 1; index >= 0; index--) {
+    for (let index = arrBookmark.length - 1; index >= 0; index--) {
       if (arrBookmark[index].id == id) {
         arrBookmark.splice(index, 1);
 
@@ -190,7 +190,7 @@ function delBookMark(id) {
 }
 
 function showListData(arr) {
-  var positon = $table.bootstrapTable("getScrollPosition");
+  let positon = $table.bootstrapTable("getScrollPosition");
   $table.bootstrapTable("load", arr);
   $table.bootstrapTable("scrollTo", positon);
 }

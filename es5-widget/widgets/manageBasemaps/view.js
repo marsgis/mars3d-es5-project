@@ -1,24 +1,24 @@
 ﻿"use script"; //开发环境建议开启严格模式
 
 //对应widget.js中MyWidget实例化后的对象
-var thisWidget;
+let thisWidget;
 
 //当前页面业务
 function initWidgetView(_thisWidget) {
   thisWidget = _thisWidget;
 
-  var arrBasemaps = thisWidget.getBasemaps();
+  let arrBasemaps = thisWidget.getBasemaps();
 
-  var inhtml = "";
-  for (var i = 0; i < arrBasemaps.length; i++) {
-    var layer = arrBasemaps[i];
+  let inhtml = "";
+  for (let i = 0; i < arrBasemaps.length; i++) {
+    let layer = arrBasemaps[i];
 
-    var vhtml = "";
+    let vhtml = "";
     if (layer.isAdded && layer.show) {
       vhtml = 'class="hover"';
     }
 
-    var imgsrc = layer.options.icon || "img/basemaps/bingAerial.png";
+    let imgsrc = layer.options.icon || "img/basemaps/bingAerial.png";
 
     inhtml += `<li ${vhtml} onclick="changeBaseMaps(this,'${layer.uuid}')">
       <div><img src="../../${imgsrc}" /></div><div>${layer.name}</div>
@@ -29,7 +29,7 @@ function initWidgetView(_thisWidget) {
   //地形开启控制
   $("#chkHasTerrain").prop("checked", thisWidget.map.hasTerrain);
   $("#chkHasTerrain").change(function () {
-    var isStkTerrain = $(this).is(":checked");
+    let isStkTerrain = $(this).is(":checked");
     thisWidget.map.hasTerrain = isStkTerrain;
   });
 }

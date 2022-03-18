@@ -1,7 +1,7 @@
 ﻿"use script"; //开发环境建议开启严格模式
 
 //对应widget.js中MyWidget实例化后的对象
-var thisWidget;
+let thisWidget;
 
 //当前页面业务
 function initWidgetView(_thisWidget) {

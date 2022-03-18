@@ -42,11 +42,16 @@ var configLibs = {
     //天地图三维
     "mars3d/plugins/tdt/mars3d-tdt.js",
   ],
+  "mars3d-supermap": [
+    //超图S3M服务
+    "mars3d/plugins/supermap/SuperMap3D.js", //s3m支持原生cesium的独立插件
+    "mars3d/plugins/supermap/mars3d-supermap.js",//mars3d-supermap简化调用封装
+  ],
   "mars3d-widget": [
     //项目widget模块插件
-    "mars3d/plugins/widget/mars3d-widget.css",
     "mars3d/plugins/widget/mars3d-widget.js",
   ],
+
 
   //////////////////////////cesium相关第3方插件////////////////////////
   "cesium-pbf": [
@@ -203,9 +208,6 @@ var configLibs = {
     "admin-lte/css/AdminLTE.min.css",
     "admin-lte/css/skins/skin-blue.min.css",
     "admin-lte/js/adminlte.min.js"
-  ],
-  'ace': [
-    "ace/ace.js"
   ],
   'highlight': [
     "highlight/styles/foundation.css",

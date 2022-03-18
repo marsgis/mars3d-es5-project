@@ -4,9 +4,9 @@
   class MyWidget extends mars3d.widget.BaseWidget {
     //弹窗配置
     get view() {
-      var index = this.getBasemaps().length;
+      let index = this.getBasemaps().length;
 
-      var width, height;
+      let width, height;
       if (index <= 4) {
         width = 190;
         height = Math.ceil(index / 2) * 100 + 70;

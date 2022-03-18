@@ -2,7 +2,7 @@
 <img src="https://muyao1987.gitee.io/cdn/mars3d.cn/logo.png" width="300px" />
 </p>
 
-<p align="center">基于 原生JS下widget模块 的 Mars3D🌎基础项目模板（ES5版）</p>
+<p align="center">基于 原生JS下widget模块 的 Mars3D基础项目系统（ES5版）</p>
 
 <p align="center">
 <a target="_black" href="https://github.com/marsgis/mars3d">

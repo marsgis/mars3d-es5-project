@@ -24,7 +24,7 @@
 
     //每个窗口创建完成后调用
     winCreateOK(opt, result) {
-      var point = this.map.getCenter();
+      let point = this.map.getCenter();
       point.format();
       currJD = point.lng;
       currWD = point.lat;
@@ -52,9 +52,9 @@
     }
 
     onMapClick(event) {
-      var cartesian = event.cartesian;
+      let cartesian = event.cartesian;
       if (cartesian) {
-        var point = mars3d.LngLatPoint.fromCartesian(cartesian);
+        let point = mars3d.LngLatPoint.fromCartesian(cartesian);
 
         point.format();
         currJD = point.lng;
@@ -191,7 +191,7 @@
 
     //更新：2000平面坐标三分度
     updata3GKZone() {
-      var zone3 = mars3d.PointTrans.proj4Trans([currJD, currWD], mars3d.CRS.EPSG4326, mars3d.CRS.CGCS2000_GK_Zone_3); //十进制转2000平面三分度
+      let zone3 = mars3d.PointTrans.proj4Trans([currJD, currWD], mars3d.CRS.EPSG4326, mars3d.CRS.CGCS2000_GK_Zone_3); //十进制转2000平面三分度
       $("#txtGk3X").val(mars3d.Util.formatNum(zone3[0], 1));
       $("#txtGk3Y").val(mars3d.Util.formatNum(zone3[1], 1));
       $("#txtGk3Alt").val(currGD);
@@ -201,7 +201,7 @@
     change3GKZone() {
       let jd = Number($("#txtGk3X").val()); //获取
       let wd = Number($("#txtGk3Y").val());
-      var gk3 = mars3d.PointTrans.proj4Trans([jd, wd], mars3d.CRS.CGCS2000_GK_Zone_3, mars3d.CRS.EPSG4326);
+      let gk3 = mars3d.PointTrans.proj4Trans([jd, wd], mars3d.CRS.CGCS2000_GK_Zone_3, mars3d.CRS.EPSG4326);
       currJD = gk3[0];
       currWD = gk3[1];
       currGD = Number($("#txtGk3Alt").val() || 0); //高度

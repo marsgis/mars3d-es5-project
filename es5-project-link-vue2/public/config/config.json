@@ -61,7 +61,7 @@
       }
     },
     "terrain": {
-      "url": "{dataServer}/terrain",
+      "url": "//data.mars3d.cn/terrain",
       "show": true
     },
     "basemaps": [

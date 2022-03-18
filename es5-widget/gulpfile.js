@@ -12,6 +12,13 @@ const header = require("gulp-header");
 const htmlmin = require("gulp-htmlmin");
 const cheerio = require("gulp-cheerio");
 const cssmin = require("gulp-clean-css");
+const obfuscator = require("javascript-obfuscator");
+
+const through2 = require("through2");
+const Vinyl = require("vinyl");
+const JavaScriptObfuscator = require("javascript-obfuscator");
+const PluginError = require("plugin-error");
+const applySourceMap = require("vinyl-sourcemaps-apply");
 
 const fs = require("fs");
 const path = require("path");
@@ -20,16 +27,21 @@ const path = require("path");
 const copyright = "版权所有 火星科技 http://marsgis.cn";
 
 //这个时间后修改的文件不处理（增量更新时使用）
-var lastTime;
+var lastTime; //   = new Date("2022-08-01 08:00:00")
 
 //排除不拷贝的文件类型后缀
 const noCopyFileType = [".psd", ".doc", ".docx", ".txt", ".md", ".zip", ".rar"];
+
+//定义不做压缩混淆直接拷贝的目录
+const noPipePathDef = ["lib"];
 
 //排除不拷贝的目录
 const noCopyPathDef = [
   ".svn",
   ".git",
+  "dist",
   "node_modules",
+  "CesiumUnminified",
   ".eslintrc",
   ".editorconfig",
   ".eslintignore",
@@ -42,8 +54,6 @@ const noCopyPathDef = [
   "-src.",
 ];
 
-//定义不做压缩混淆直接拷贝的目录
-const noPipePathDef = ["lib"];
 ////////////////////自定义设置////////////////////
 
 //需要压缩混淆的根目录
@@ -55,7 +65,30 @@ var distPath = "dist";
 var noPipePath = [];
 var noCopyPath = [];
 
-// lastTime = new Date("2022-08-01 08:00:00")
+//js高级混淆的参数,更多参数参考： https://github.com/javascript-obfuscator/javascript-obfuscator
+var optsObfuscator = {
+  compact: true, //压缩代码
+
+  controlFlowFlattening: true, //是否启用控制流扁平化(降低1.5倍的运行速度)
+  controlFlowFlatteningThreshold: 0.7, //应用概率0-1;在较大的代码库中，建议降低此值，因为大量的控制流转换可能会增加代码的大小并降低代码的速度。
+
+  deadCodeInjection: true, //随机的死代码块(增加了混淆代码的大小)
+  deadCodeInjectionThreshold: 0.4, //死代码块的影响概率
+
+  debugProtection: false, //是否禁止使用 F12开发者工具的控制台选项卡，可以用来在线代码的禁止别人调试
+  debugProtectionInterval: false, //如果选中，则会在“控制台”选项卡上使用间隔强制调试模式，从而更难使用“开发人员工具”的其他功能。
+  disableConsoleOutput: false, //是否禁止使用的console.log，console.info，console.error和console.warn。这使得调试器的使用更加困难。
+  domainLock: [], //锁定混淆的源代码，使其仅在特定域和/或子域上运行。这使得某人只需复制并粘贴您的源代码并在其他地方运行就变得非常困难。
+
+  identifierNamesGenerator: "hexadecimal", //设置标识符名称生成器。 hexadecimal(十六进制) mangled(短标识符)
+  selfDefending: false, //【如果报错，改为false】使输出代码可抵抗格式设置和变量重命名。如果尝试在混淆后的代码上使用JavaScript美化器，则该代码将无法再使用，从而使其难以理解和修改。
+
+  stringArray: true, //删除字符串文字并将它们放在一个特殊的数组中
+  stringArrayEncoding: "base64", //'rc4'  > 'base64'
+  stringArrayThreshold: 0.75,
+
+  transformObjectKeys: false, //启用对象键的转换
+};
 
 ////////////////////压缩混淆////////////////////
 
@@ -81,8 +114,15 @@ gulp.task("build", (done) => {
     let bannerData = { date: stat.mtime.format("yyyy-M-d HH:mm:ss") };
     let banner = "/* <%= date %> | " + copyright + " */\n";
     let bannerHtml = "<!-- <%= date %> | " + copyright + " -->\n";
+
+    // t.fileType='' //不加密
     switch (t.fileType) {
       case ".js":
+        if (stat.size > 102400) {
+          optsObfuscator.controlFlowFlattening = false; //大文件不建议为true，造成文件更大
+        } else {
+          optsObfuscator.controlFlowFlattening = true;
+        }
         gulp
           .src(srcFile, {
             base: srcPath,
@@ -114,6 +154,7 @@ gulp.task("build", (done) => {
               throwOnlyCopy(srcPath, srcFile, outFilePath, err);
             })
           )
+          .pipe(optsObfuscator.compact ? obfuscatorGulp(optsObfuscator) : header(banner, bannerData))
           .pipe(header(banner, bannerData))
           .pipe(gulp.dest(outFilePath));
         break;
@@ -150,7 +191,16 @@ gulp.task("build", (done) => {
                         sourceType: "script",
                         compact: false,
                       });
-                      script.text(result.code);
+
+                      if (optsObfuscator.compact) {
+                        //高级加密
+                        optsObfuscator.controlFlowFlattening = true;
+                        var obfuscationResult = obfuscator.obfuscate(result.code, optsObfuscator);
+                        script.text(obfuscationResult.getObfuscatedCode());
+                      } else {
+                        //普通加密
+                        script.text(result.code);
+                      }
                     }
                   } catch (err) {
                     console.log("转换html出错了", err);
@@ -274,6 +324,46 @@ function throwOnlyCopy(srcPath, pathname, outFilePath, message) {
       })
       .pipe(gulp.dest(outFilePath));
   }
+}
+
+function obfuscatorGulp(options = {}) {
+  return through2.obj(function (file, enc, cb) {
+    if (file.isNull()) {
+      return cb(null, file);
+    }
+    if (!file.isBuffer()) {
+      throw new PluginError("gulp-javascript-obfuscator", "Only Buffers are supported!");
+    }
+    if (file.sourceMap) {
+      options.sourceMap = true;
+      options.inputFileName = file.relative;
+      options.sourceMapMode = "separate";
+    }
+
+    try {
+      const obfuscationResult = JavaScriptObfuscator.obfuscate(String(file.contents), options);
+      file.contents = Buffer.from(obfuscationResult.getObfuscatedCode());
+      if (options.sourceMap && options.sourceMapMode !== "inline") {
+        if (file.sourceMap) {
+          const sourceMap = JSON.parse(obfuscationResult.getSourceMap());
+          sourceMap.file = file.sourceMap.file;
+          applySourceMap(file, sourceMap);
+        } else {
+          this.push(
+            new Vinyl({
+              cwd: file.cwd,
+              base: file.base,
+              path: file.path + ".map",
+              contents: Buffer.from(obfuscationResult.getSourceMap()),
+            })
+          );
+        }
+      }
+      return cb(null, file);
+    } catch (err) {
+      throw new PluginError("gulp-javascript-obfuscator", err);
+    }
+  });
 }
 
 // eslint-disable-next-line no-extend-native

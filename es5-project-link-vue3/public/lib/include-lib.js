@@ -30,7 +30,7 @@ var configLibs = {
   ],
   "mars3d-heatmap": [
     //heatmap热力图支持插件
-    "mars3d/plugins/heatmap/heatmap.min.js",
+    "mars3d/plugins/heatmap/heatmap.js",
     "mars3d/plugins/heatmap/mars3d-heatmap.js",
   ],
   "mars3d-wind": [
@@ -42,11 +42,16 @@ var configLibs = {
     //天地图三维
     "mars3d/plugins/tdt/mars3d-tdt.js",
   ],
+  "mars3d-supermap": [
+    //超图S3M服务
+    "mars3d/plugins/supermap/SuperMap3D.js", //s3m支持原生cesium的独立插件
+    "mars3d/plugins/supermap/mars3d-supermap.js",//mars3d-supermap简化调用封装
+  ],
   "mars3d-widget": [
     //项目widget模块插件
-    "mars3d/plugins/widget/mars3d-widget.css",
     "mars3d/plugins/widget/mars3d-widget.js",
   ],
+
 
   //////////////////////////cesium相关第3方插件////////////////////////
   "cesium-pbf": [
@@ -70,6 +75,10 @@ var configLibs = {
     "ammo/ex/geometries/ConvexGeometry.js", //仅convexBreak使用
     "mars3d/thirdParty/meshVisualizer/CesiumMeshVisualizer.js"
   ],
+  "cesium-sensorVolumes": [
+    //支持agi_conicSensor，agi_customPatternSensor和agi_rectangularSensor展示的czml插件
+    "mars3d/thirdParty/sensorVolumes/cesium-sensor-volumes.js"
+  ],
   'olcesium': [
     "ol/ol.css",
     "ol/ol.js",
@@ -78,11 +87,11 @@ var configLibs = {
 
   //////////////////////////mars2d及其插件////////////////////////
   'mars2d': [//地图 主库
-    "https://unpkg.com/leaflet/dist/leaflet.css",    //leaflet
+    "https://unpkg.com/leaflet/dist/leaflet.css", //leaflet
     "https://unpkg.com/leaflet/dist/leaflet.js",
-    "https://unpkg.com/mars2d/dist/mars2d.css", //mars2d
-    "https://unpkg.com/mars2d/dist/mars2d.js",
-    "https://unpkg.com/mars2d-esri/dist/mars2d-esri.js",
+    "http://mars2d.cn/lib/mars2d/mars2d.css", //mars2d
+    "http://mars2d.cn/lib/mars2d/mars2d.js",
+    "http://mars2d.cn/lib/mars2d/plugins/esri/mars2d-esri.js"
   ],
 
   //////////////////////////其他地图渲染相关库////////////////////////
@@ -199,9 +208,6 @@ var configLibs = {
     "admin-lte/css/AdminLTE.min.css",
     "admin-lte/css/skins/skin-blue.min.css",
     "admin-lte/js/adminlte.min.js"
-  ],
-  'ace': [
-    "ace/ace.js"
   ],
   'highlight': [
     "highlight/styles/foundation.css",

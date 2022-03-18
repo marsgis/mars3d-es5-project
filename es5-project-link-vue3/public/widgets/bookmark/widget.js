@@ -27,7 +27,7 @@
       console.log("视角定位：" + JSON.stringify(options));
     }
     getThisExtent(callback) {
-      var bookmark = this.map.getCameraView();
+      let bookmark = this.map.getCameraView();
 
       haoutil.loading.show();
       this.map.expImage({

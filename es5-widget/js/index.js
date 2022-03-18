@@ -153,7 +153,6 @@ function initWidget(map) {
         });
         map.flyHome({ duration: 0 });
       }
-
       //初始化widget管理器
       mars3d.widget.init(map, widgetCfg, "./"); //tip: 第3个参数支持定义widget目录的相对路径。
 
