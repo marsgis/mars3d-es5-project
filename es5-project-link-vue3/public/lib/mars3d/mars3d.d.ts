@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d-sdk
  *
  * 版本信息：v3.3.0
- * 编译日期：2022-03-16 18:50:42
+ * 编译日期：2022-03-18 17:22:33
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -5681,9 +5681,9 @@ declare class BaseEntity extends BaseGraphic {
     /**
      * 完成绘制和编辑，如有未完成的绘制会自动完成。
      * 在移动端需要调用此方法来类似PC端双击结束。
-     * @returns 无
+     * @returns 是否正常结束了矢量对象绘制
      */
-    endDraw(): void;
+    endDraw(): boolean;
     /**
      * 开始编辑对象
      * @returns 无
@@ -8882,6 +8882,7 @@ declare namespace PolylineEntity {
      * @property [addHeight = 0] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示，额外支持：
+     * @property [label.text = "文字"] - 文本内容，换行可以用换行符'\n'。
      * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
@@ -8915,6 +8916,7 @@ declare namespace PolylineEntity {
         addHeight?: number | number[];
         highlight?: PolylineEntity.StyleOptions;
         label?: {
+            text?: string;
             position?: string | LngLatPoint;
             showAll?: boolean;
         };
@@ -11241,7 +11243,7 @@ declare class SectionMeasure extends DistanceMeasure {
  * 1. 挖方量: 计算“基准面”到地表之间的凸出部分进行挖掉的体积。<br />
  * 2. 填方量：计算“基准面”与“墙底部”之间的缺少部分进行填平的体积。
  * @param options - 参数对象，包括以下：
- * @param options.style - 样式信息
+ * @param options.style - 基准面样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.polygonWallStyle] - 围墙面的样式
  * @param [options.label] - 测量结果文本的样式
@@ -17588,9 +17590,9 @@ declare class GraphicLayer extends BaseGraphicLayer {
     /**
      * 完成绘制和编辑，如有未完成的绘制会自动完成。
      * 在移动端需要调用此方法来类似PC端双击结束。
-     * @returns 当前对象本身,可以链式调用
+     * @returns 是否正常结束了矢量对象绘制
      */
-    endDraw(): GraphicLayer;
+    endDraw(): boolean;
     /**
      * 激活编辑，绑定相关处理，同 hasEdit=true
      * @returns 当前对象本身,可以链式调用
@@ -27813,7 +27815,7 @@ declare class Measure extends BaseThing {
     /**
      * 体积测量（方量分析）
      * @param [options] - 控制参数
-     * @param [options.style] - 路线的样式
+     * @param [options.style] - 基准面的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
@@ -27822,8 +27824,8 @@ declare class Measure extends BaseThing {
      * @param [options.height] - 可以指定基准面高度（单位：米），默认是绘制后的最低高度值
      * @param [options.heightLabel = true] - 是否显示各边界点高度值文本
      * @param [options.offsetLabel = false] - 是否显示各边界点高度差文本
-     * @param [options.polygon] - 面的样式
-     * @param [options.polygonJzmStyle] - 基准面的样式
+     * @param [options.showArea = true] - 是否显示横切面积
+     * @param [options.polygonWall] - 围合的墙样式
      * @param [options.labelHeight] - 各边界点高度结果文本的样式
      * @returns 体积测量控制类 对象
      */
@@ -27837,8 +27839,8 @@ declare class Measure extends BaseThing {
         height?: number;
         heightLabel?: boolean;
         offsetLabel?: boolean;
-        polygon?: PolygonEntity.StyleOptions;
-        polygonJzmStyle?: PolygonEntity.StyleOptions;
+        showArea?: boolean;
+        polygonWall?: PolygonEntity.StyleOptions;
         labelHeight?: LabelEntity.StyleOptions;
     }): VolumeMeasure;
     /**
