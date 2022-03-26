@@ -1,9 +1,9 @@
 
 /**
- * Mars3D三维可视化平台  mars3d-sdk
+ * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.0
- * 编译日期：2022-03-18 17:22:33
+ * 版本信息：v3.3.2
+ * 编译日期：2022-03-26 12:52:06
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -24,7 +24,7 @@ declare const provider: any
 /**
  * 国内偏移坐标系 枚举
  */
-declare const enum ChinaCRS {
+declare enum ChinaCRS {
     /**
      * 标准无偏坐标系
      */
@@ -42,7 +42,7 @@ declare const enum ChinaCRS {
 /**
  * 裁剪模型类型
  */
-declare const enum ClipType {
+declare enum ClipType {
     /**
      * z水平面, 切底部
      */
@@ -72,7 +72,7 @@ declare const enum ClipType {
 /**
  * 控件类型
  */
-declare const enum ControlType {
+declare enum ControlType {
     clockAnimate,
     compass,
     distanceLegend,
@@ -86,7 +86,7 @@ declare const enum ControlType {
 /**
  * 坐标系 枚举
  */
-declare const enum CRS {
+declare enum CRS {
     /**
      * Web墨卡托投影坐标系
      */
@@ -124,7 +124,7 @@ declare const enum CRS {
 /**
  * 特效类型
  */
-declare const enum EffectType {
+declare enum EffectType {
     blackAndWhite,
     bloom,
     brightness,
@@ -142,7 +142,7 @@ declare const enum EffectType {
 /**
  * 事件类型 枚举（所有事件统一的入口）
  */
-declare const enum EventType {
+declare enum EventType {
     /**
      * 添加对象
      */
@@ -522,7 +522,7 @@ declare const enum EventType {
 /**
  * 矢量数据类型
  */
-declare const enum GraphicType {
+declare enum GraphicType {
     label,
     labelP,
     point,
@@ -620,7 +620,7 @@ declare const enum GraphicType {
  * @example
  * mars3d.Lang["_单击开始绘制"][mars3d.LangType.ZH] ="新的中文提示语句";
  */
-declare const enum Lang {
+declare enum Lang {
     "_放大" = "[\"\u653E\u5927\",\"\u653E\u5927\",\"Zoom In\"]",
     "_缩小" = "[\"\u7F29\u5C0F\",\"\u7E2E\u5C0F\",\"Zoom Out\"]",
     "_查看此处坐标" = "[\"\u67E5\u770B\u6B64\u5904\u5750\u6807\",\"\u67E5\u770B\u6B64\u8655\u5750\u6A19\",\"Location info\"]",
@@ -740,7 +740,7 @@ declare const enum Lang {
 /**
  * 语言类型  枚举
  */
-declare const enum LangType {
+declare enum LangType {
     /**
      * 简体中文
      */
@@ -758,7 +758,7 @@ declare const enum LangType {
 /**
  * 图层类型
  */
-declare const enum LayerType {
+declare enum LayerType {
     tdt,
     baidu,
     gaode,
@@ -1105,7 +1105,7 @@ declare namespace MaterialType {
 /**
  * 相机旋转的类型
  */
-declare const enum MoveType {
+declare enum MoveType {
     /**
      * 向屏幕中心靠近
      */
@@ -1135,7 +1135,7 @@ declare const enum MoveType {
 /**
  * 状态 枚举
  */
-declare const enum State {
+declare enum State {
     /**
      * 初始化
      */
@@ -1157,7 +1157,7 @@ declare const enum State {
 /**
  * 地形类型
  */
-declare const enum TerrainType {
+declare enum TerrainType {
     /**
      * 无地形
      */
@@ -5722,6 +5722,8 @@ declare class BaseEntity extends BaseGraphic {
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateClamp = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -5754,6 +5756,8 @@ declare class BasePointEntity extends BaseEntity {
         clampToTileset?: boolean;
         frameRateClamp?: number;
         objectsToExclude?: any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -8092,6 +8096,8 @@ declare namespace ModelEntity {
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -8122,6 +8128,8 @@ declare class ModelEntity extends BasePointEntity {
         clampToTileset?: boolean;
         frameRateHeight?: number;
         objectsToExclude?: any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
@@ -11251,6 +11259,7 @@ declare class SectionMeasure extends DistanceMeasure {
  * @param [options.offsetLabel = false] - 是否显示各边界点高度差文本
  * @param [options.labelHeight] - 各边界点高度结果文本的样式
  * @param [options.showArea = true] - 是否显示横切面积
+ * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -11267,6 +11276,7 @@ declare class VolumeMeasure extends AreaMeasure {
         offsetLabel?: boolean;
         labelHeight?: LabelEntity.StyleOptions;
         showArea?: boolean;
+        has3dtiles?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -22317,6 +22327,7 @@ declare namespace Map {
      * @property [globe.enableLighting = false] - 是否显示昼夜区域
      * @property [globe.tileCacheSize = 100] - 地形图块缓存的大小，表示为图块数。任何其他只要不需要渲染，就会释放超出此数目的图块这个框架。较大的数字将消耗更多的内存，但显示细节更快例如，当缩小然后再放大时。
      * @property [globe.terrainExaggeration = 1.0] - 地形夸张倍率，用于放大地形的标量。请注意，地形夸张不会修改其他相对于椭球的图元。
+     * @property [globe.realAlt = false] - 地形夸张倍率，在测量高度和下侧提示的高度信息中是否转换为实际真实高度值。
      * @property [globe.terrainExaggerationRelativeHeight = 0.0] - 地形被夸大的高度。默认为0.0（相对于椭球表面缩放）。高于此高度的地形将向上缩放，低于此高度的地形将向下缩放。请注意，地形夸大不会修改任何其他图元，因为它们是相对于椭球体定位的。
      *
      * 以下是Cesium.ScreenSpaceCameraController对象相关参数
@@ -22386,6 +22397,7 @@ declare namespace Map {
             enableLighting?: boolean;
             tileCacheSize?: number;
             terrainExaggeration?: number;
+            realAlt?: number;
             terrainExaggerationRelativeHeight?: number;
         };
         cameraController?: {
@@ -22852,6 +22864,12 @@ declare class Map extends BaseClass {
         formatNum?: boolean;
         scale?: number;
     }): any;
+    /**
+     * 当存在地形夸张时，获取其实际的高度值
+     * @param alt - 鼠标拾取的高度值
+     * @returns 其实际的高度值
+     */
+    getRealAlt(alt: number): number;
     /**
      * 截图，导出地图场景图片
      * @param [options = {}] - 参数对象:
@@ -24612,6 +24630,7 @@ declare class EchartsLayer extends BaseLayer {
  * @param [options.style.arcRadiusScale = 1.5] - 曲面热力图时，radius扩大比例
  * @param [options.style.arcBlurScale = 1.5] - 曲面热力图时，blur扩大比例
  * @param [options.style.height = 0] - 高度，相对于椭球面的高度。
+ * @param [options.style.diffHeight] - 曲面的起伏差值高，默认根据数据范围的比例自动计算。
  * @param [options.style.多个参数] - rectangle矩形支持的样式
  * @param [options.maxCanvasSize = 5000] - Canvas最大尺寸（单位：像素），调大精度更高，但过大容易内存溢出
  * @param [options.minCanvasSize = 700] - Canvas最小尺寸（单位：像素）
@@ -24646,6 +24665,7 @@ declare class HeatLayer extends BaseLayer {
             arcRadiusScale?: boolean;
             arcBlurScale?: boolean;
             height?: number;
+            diffHeight?: number;
             多个参数?: RectanglePrimitive.StyleOptions;
         };
         maxCanvasSize?: number;
@@ -24826,7 +24846,7 @@ declare class MapVLayer extends BaseLayer {
 /**
  * 视锥体的类型
  */
-declare const enum SensorType {
+declare enum SensorType {
     /**
      * 四棱锥
      */
@@ -26486,7 +26506,7 @@ declare class BaseWidget extends BaseClass {
  * widget事件类型枚举, mars3d.widget.EventType
  * 【需要引入  mars3d-widget 插件库】
  */
-declare const enum WidgetEventType {
+declare enum WidgetEventType {
     /**
      * 在实例初始化之后、创建之前执行
      */
@@ -27818,7 +27838,7 @@ declare class Measure extends BaseThing {
      * @param [options.style] - 基准面的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数
-     * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.minHeight] - 可以指定最低高度（单位：米）
      * @param [options.maxHeight] - 可以指定最高高度（单位：米）
      * @param [options.height] - 可以指定基准面高度（单位：米），默认是绘制后的最低高度值
@@ -30360,6 +30380,12 @@ declare namespace MeasureUtil {
      */
     function getArea(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
     /**
+     * 求坐标数组的 横切平面的面积（基于turf.area）
+     * @param positions - 坐标数组
+     * @returns 距离（单位：米）
+     */
+    function getSurfaceArea(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
+    /**
      * 计算三角形面积（空间平面）
      * @param pos1 - 三角形顶点坐标1
      * @param pos2 - 三角形顶点坐标2
@@ -30916,7 +30942,7 @@ declare namespace PolyUtil {
      * @param options.callback - 异步计算高度完成后 的回调方法
      * @param [options.splitNum = 10] - 插值数，横纵等比分割的网格个数
      * @param [options.asyn = false] - 是否进行异步精确计算
-     * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.onlyPoint = false] - truea时，返回结果中只返回点，不返回三角网
      * @returns 仅 asyn:false 时返回计算结果值

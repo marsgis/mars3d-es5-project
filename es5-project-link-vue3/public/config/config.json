@@ -51,7 +51,7 @@
       "defaultContextMenu": true,
       "mouseDownView": true,
       "zoom": { "insertIndex": 1 },
-      "compass": { "bottom": "toolbar", "right": "5px" },
+      "compass": { "bottom": "toolbar", "left": "5px" },
       "distanceLegend": { "left": "100px", "bottom": "2px" },
       "locationBar": {
         "fps": false,
@@ -166,6 +166,20 @@
       {
         "id": 2017,
         "pid": 10,
+        "name": "暗色底图",
+        "type": "gaode",
+        "icon": "img/basemaps/blackMarble.png",
+        "layer": "vec",
+        "invertColor": true,
+        "filterColor": "#4e70a6",
+        "brightness": 0.6,
+        "contrast": 1.8,
+        "gamma": 0.3,
+        "hue": 1,
+        "saturation": 0
+      },
+      {
+        "pid": 10,
         "name": "蓝色底图",
         "icon": "img/basemaps/bd-c-midnight.png",
         "type": "xyz",
@@ -180,15 +194,6 @@
         "type": "tencent",
         "layer": "custom",
         "style": "4"
-      },
-      {
-        "pid": 10,
-        "name": "灰色底图",
-        "icon": "img/basemaps/bd-c-grayscale.png",
-        "type": "mapbox",
-        "username": "marsgis",
-        "styleId": "cki0a92b123qo1aluk0e5v7sb",
-        "scaleFactor": true
       },
       {
         "pid": 10,
@@ -252,6 +257,13 @@
         "minimumTerrainLevel": 4,
         "minimumLevel": 4,
         "proxy": "//server.mars3d.cn/proxy/",
+        "mapSplit": false
+      },
+      {
+        "pid": 50,
+        "name": "百度实时路况",
+        "type": "baidu",
+        "layer": "time",
         "mapSplit": false
       },
 
@@ -355,7 +367,7 @@
         "name": "主要道路",
         "url": "//server.mars3d.cn/arcgis/rest/services/mars/hefei/MapServer",
         "layers": "24",
-        "highlight": { "clampToGround": true },
+        "highlight": { "type": "polyline", "color": "#2deaf7", "width": 4, "clampToGround": true },
         "center": { "lat": 31.814176, "lng": 117.225362, "alt": 5105.3, "heading": 359.2, "pitch": -83.1 },
         "popup": "all",
         "onWidget": "widgets/manageLayers-tuli/heatmap.js",
@@ -578,7 +590,7 @@
         },
         "popup": [
           { "field": "NAME", "name": "名称" },
-          { "type": "details", "callback": "showPopupDetails", "field": "图片" }
+          { "type": "details", "callback": "showPopupDetails", "field": "图片", "className": "mars3d-popup-btn-custom" }
         ],
         "show": false,
         "flyTo": true
@@ -775,6 +787,7 @@
       },
       { "id": 3060, "pid": 30, "name": "CZML数据", "type": "group" },
       {
+        "id": 306010,
         "pid": 3060,
         "type": "czml",
         "name": "汽车",
@@ -1035,8 +1048,8 @@
         "type": "3dtiles",
         "url": "{dataServer}/3dtiles/qx-teh/tileset.json",
         "position": { "lng": 117.218434, "lat": 31.81807, "alt": 163 },
-        "maximumScreenSpaceError": 8,
-        "maximumMemoryUsage": 2024,
+        "maximumScreenSpaceError": 16,
+        "maximumMemoryUsage": 1024,
         "dynamicScreenSpaceError": true,
         "cullWithChildrenBounds": false,
         "skipLevelOfDetail": true,
