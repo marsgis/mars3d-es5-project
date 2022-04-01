@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.3.2
- * 编译日期：2022-03-26 12:52:06
+ * 编译日期：2022-04-01 18:07:42
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -1773,6 +1773,7 @@ declare class ToolButton extends BaseControl {
 /**
  * 放大缩小按钮控件
  * @param [options] - 参数对象，包括以下：
+ * @param [options.relativeAmount = 2] - 放大缩小的相对量（调整步长）
  * @param [options.zoomOutIcon] - 缩小按钮 图片url路径 或 字体图标class名
  * @param [options.zoomInIcon] - 放大按钮 图片url路径 或 字体图标class名
  * @param [options.id = uuid()] - 对象的id标识
@@ -1783,6 +1784,7 @@ declare class ToolButton extends BaseControl {
  */
 declare class Zoom extends BaseControl {
     constructor(options?: {
+        relativeAmount?: string;
         zoomOutIcon?: string;
         zoomInIcon?: string;
         id?: string | number;
@@ -9883,6 +9885,13 @@ declare class AttackArrow extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): AttackArrow;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -9939,6 +9948,13 @@ declare class AttackArrowPW extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): AttackArrowPW;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -9995,6 +10011,13 @@ declare class AttackArrowYW extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): AttackArrowYW;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10051,6 +10074,13 @@ declare class CloseVurve extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): CloseVurve;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10107,6 +10137,13 @@ declare class DoubleArrow extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): DoubleArrow;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10175,6 +10212,13 @@ declare class FineArrow extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): FineArrow;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10231,6 +10275,13 @@ declare class FineArrowYW extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): FineArrowYW;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10287,6 +10338,13 @@ declare class GatheringPlace extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): GatheringPlace;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10343,6 +10401,13 @@ declare class IsosTriangle extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): IsosTriangle;
+    /**
+     * 计算当前矢量对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: Cesium.Cartesian3[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10399,6 +10464,13 @@ declare class Lune extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): Lune;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -10466,6 +10538,20 @@ declare class Regular extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): Regular;
+    /**
+     * 计算当前矢量对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param options - 控制参数
+     * @param [options.border = 3] - 边数量
+     * @param options.radius - 区域的半径（单位：米）
+     * @param [options.startAngle = 0] - 区域的开始角度(正东方向为0,顺时针到360度)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: Cesium.Cartesian3[], options: {
+        border?: number;
+        radius: number;
+        startAngle?: number;
+    }): Cesium.Cartesian3[];
     /**
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象 或 Cesium.PolygonHierarchy
      */
@@ -10538,6 +10624,20 @@ declare class Sector extends PolygonEntity {
      */
     static fromDraw(layer: GraphicLayer, options: any): Sector;
     /**
+     * 计算当前矢量对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param options - 控制参数
+     * @param options.radius - 扇形区域的半径（单位：米）
+     * @param options.startAngle - 扇形区域的开始角度(正东方向为0,顺时针到360度)
+     * @param options.endAngle - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: Cesium.Cartesian3[], options: {
+        radius: number;
+        startAngle: number;
+        endAngle: number;
+    }): Cesium.Cartesian3[];
+    /**
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象 或 Cesium.PolygonHierarchy
      */
     positions: Cesium.Cartesian3[];
@@ -10597,6 +10697,13 @@ declare class StraightArrow extends PolygonEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): StraightArrow;
+    /**
+     * 计算当前军标对象的边界坐标点
+     * @param positions - 坐标位置
+     * @param [options] - 控制参数(预留)
+     * @returns 边界坐标点
+     */
+    static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
 }
 
 /**
@@ -11255,10 +11362,15 @@ declare class SectionMeasure extends DistanceMeasure {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.polygonWallStyle] - 围墙面的样式
  * @param [options.label] - 测量结果文本的样式
+ * @param [options.showFillVolume = true] - 是否显示填方体积结果文本
+ * @param [options.fillVolumeName = '填方体积'] - 填方体积结果的名称
+ * @param [options.showDigVolume = true] - 是否显示挖方体积结果文本
+ * @param [options.digVolumeName = '挖方体积'] - 挖方体积结果的名称
+ * @param [options.showArea = true] - 是否显示横切面积结果文本
+ * @param [options.areaName = '横切面积'] - 横切面积结果的名称
  * @param [options.heightLabel = true] - 是否显示各边界点高度值文本
  * @param [options.offsetLabel = false] - 是否显示各边界点高度差文本
  * @param [options.labelHeight] - 各边界点高度结果文本的样式
- * @param [options.showArea = true] - 是否显示横切面积
  * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
@@ -11272,10 +11384,15 @@ declare class VolumeMeasure extends AreaMeasure {
         attr?: any;
         polygonWallStyle?: PolygonEntity.StyleOptions;
         label?: LabelEntity.StyleOptions;
+        showFillVolume?: boolean;
+        fillVolumeName?: string;
+        showDigVolume?: boolean;
+        digVolumeName?: string;
+        showArea?: boolean;
+        areaName?: string;
         heightLabel?: boolean;
         offsetLabel?: boolean;
         labelHeight?: LabelEntity.StyleOptions;
-        showArea?: boolean;
         has3dtiles?: boolean;
         id?: string | number;
         name?: string;
@@ -16032,7 +16149,7 @@ declare namespace CzmGeoJsonLayer {
  * @param [options.url] - geojson文件或服务url地址
  * @param [options.data] - geojson格式规范数据对象，与url二选一即可。
  * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.opacity = 1] - 透明度，取值范围：0.0-1.0
  * @param [options.symbol] - 矢量数据的style样式
  * @param options.symbol.styleOptions - 数据的Style样式
@@ -17185,15 +17302,32 @@ declare class GraphicGroupLayer extends GroupLayer {
     getRectangle(isFormat?: boolean): Cesium.Rectangle | any;
     /**
      * 开始绘制矢量数据，绘制的数据会加载在当前图层。
-     * @param options - Graphic构造参数,包含：
+     * @param options - 绘制参数，包含：
      * @param options.type - 类型
      * @param [options.style] - 矢量数据样式，具体参考支持 {@link GraphicType}查询对应type的类
-     * @returns 创建完成的矢量数据对象
+     * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
+     * @param [options.success] - 绘制创建完成的回调方法，同drawCreated事件，例如： success: function (graphic){  }
+     * //以下为Entity支持的构造参数
+     * @param [options.name] - 矢量数据名称
+     * @param [options.maxPointNum] - 线面数据时限定的最大坐标个数
+     * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
+     * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
+     * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+     * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
+     * @returns 绘制创建完成的Promise,等价于success参数
      */
     startDraw(options: {
         type: GraphicType | string;
         style?: any;
-    }): BaseGraphic | any;
+        attr?: any;
+        success?: (...params: any[]) => any;
+        name?: string;
+        maxPointNum?: number;
+        drawShow?: boolean;
+        addHeight?: number;
+        availability?: Cesium.TimeIntervalCollection;
+        description?: Cesium.Property | string;
+    }): Promise<BaseGraphic | any>;
     /**
      * 停止绘制，如有未完成的绘制会自动删除
      * @returns 当前对象本身,可以链式调用
@@ -17287,7 +17421,7 @@ declare namespace GraphicLayer {
  * @param [options.isContinued = false] - 是否连续标绘,联系标绘状态下无法编辑已有对象。
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效，且只有贴地对象有效)。
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
@@ -17566,6 +17700,33 @@ declare class GraphicLayer extends BaseGraphicLayer {
     }): GraphicLayer;
     /**
      * 开始绘制矢量数据，绘制的数据会加载在当前图层。
+     * @example
+     * //写法一，使用Promise
+     *     graphicLayer.startDraw({
+     *       type: "point",
+     *       style: { pixelSize: 12, color: "#3388ff" },
+     *     })
+     *     .then(function (graphic) {
+     *       console.log("绘制矢量对象完成", graphic);
+     *     });
+     *
+     *     //写法二，使用success回调方法参数
+     *     graphicLayer.startDraw({
+     *       type: "point",
+     *       style: { pixelSize: 12, color: "#3388ff" },
+     *       success: function (graphic){
+     *         console.log("绘制矢量对象完成", graphic);
+     *       }
+     *     })
+     *
+     *     //写法三，在图层全局监听完成事件
+     *     graphicLayer.on(mars3d.EventType.drawCreated, function (e) {
+     *       console.log("绘制矢量对象完成", e);
+     *     });
+     *     graphicLayer.startDraw({
+     *       type: "point",
+     *       style: { pixelSize: 12, color: "#3388ff" }
+     *     })
      * @param options - 绘制参数，包含：
      * @param options.type - 类型
      * @param [options.style] - 矢量数据样式，具体参考支持 {@link GraphicType}查询对应type的类
@@ -17578,7 +17739,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
      * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
-     * @returns 创建完成的矢量数据对象
+     * @returns 绘制创建完成的Promise,等价于success参数
      */
     startDraw(options: {
         type: GraphicType | string;
@@ -17591,7 +17752,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         addHeight?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
-    }): BaseGraphic | any;
+    }): Promise<BaseGraphic | any>;
     /**
      * 停止绘制，如有未完成的绘制会自动删除
      * @returns 当前对象本身,可以链式调用
@@ -17954,7 +18115,7 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param [options.isAutoEditing = true] - 完成标绘时是否自动启动编辑(需要hasEdit:true时)
  * @param [options.isContinued = false] - 是否连续标绘
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
@@ -18960,7 +19121,7 @@ declare class TerrainLayer extends BaseLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -19119,7 +19280,7 @@ declare namespace ArcGisLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.enablePickFeatures = true] - 如果为true，则请求 单击坐标处服务中对应的矢量数据 并尝试解释响应中包含的功能。为false时不去服务请求。
@@ -19301,7 +19462,7 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -19442,7 +19603,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS = ChinaCRS.BAIDU] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
@@ -19605,7 +19766,7 @@ declare namespace BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -19855,7 +20016,7 @@ declare class BaseTileLayer extends BaseLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -20082,7 +20243,7 @@ declare class EmptyTileLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS = ChinaCRS.GCJ02] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
@@ -20212,7 +20373,7 @@ declare class GaodeLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -20349,7 +20510,7 @@ declare class GeeLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS = 'GCJ02'] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -20484,7 +20645,7 @@ declare class GoogleLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.opacity = 1.0] - 透明度，取值范围：0.0-1.0。
@@ -20597,7 +20758,7 @@ declare class GridLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -20723,7 +20884,7 @@ declare class ImageLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -20860,7 +21021,7 @@ declare class IonLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -20996,7 +21157,7 @@ declare class MapboxLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
@@ -21127,7 +21288,7 @@ declare class OsmLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影,也支持传入EPSG4490坐标系
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -21262,7 +21423,7 @@ declare class TdtLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS = ChinaCRS.GCJ02] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
@@ -21386,7 +21547,7 @@ declare class TencentLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.opacity = 1.0] - 透明度，取值范围：0.0-1.0。
  * @param [options.alpha = 1.0] - 同opacity。
  * @param [options.nightAlpha = 1.0] - 当 enableLighting 为 true 时 ，在地球的夜晚区域的透明度，取值范围：0.0-1.0。
@@ -21492,7 +21653,7 @@ declare class TileInfoLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -21648,7 +21809,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.opacity = 1.0] - 透明度，取值范围：0.0-1.0。
  * @param [options.alpha = 1.0] - 同opacity。
@@ -21831,7 +21992,7 @@ declare class WmsLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -22006,7 +22167,7 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -22890,7 +23051,7 @@ declare class Map extends BaseClass {
         type?: string;
         encoderOptions?: number;
         callback?: (...params: any[]) => any;
-    }): void;
+    }): Promise<any>;
     /**
      * 设置鼠标的默认状态样式
      * @param [val] - cursor样式
@@ -25946,7 +26107,7 @@ declare class S3MLayer extends BaseLayer {
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -27522,7 +27683,7 @@ declare class QueryArcServer extends BaseClass {
      * @param [queryOptions.page = true] - 是否分页查询,false时不分页，一次性查询返回
      * @param [queryOptions.success] - 查询完成的回调方法
      * @param [queryOptions.error] - 查询失败的回调方法
-     * @returns 当前对象本身，可以链式调用
+     * @returns 查询完成的Promise,等价于success参数
      */
     query(queryOptions: {
         text?: string;
@@ -27533,7 +27694,7 @@ declare class QueryArcServer extends BaseClass {
         page?: boolean;
         success?: (...params: any[]) => any;
         error?: (...params: any[]) => any;
-    }): QueryArcServer;
+    }): Promise<any>;
     /**
      * 清除
      * @returns 无
@@ -29090,6 +29251,77 @@ declare namespace ModelPlanClip {
 }
 
 /**
+ * 3dtiles模型box盒子裁剪，
+ * 基于clippingPlanes接口，只支持单个开挖。
+ * @param [options] - 参数对象，包括以下：
+ * @param options.layer - 需要裁剪的对象（3dtiles图层）
+ * @param options.position - 裁剪盒子中心坐标位置
+ * @param options.dimensions - 裁剪盒子区域的长度、宽度和高度
+ * @param [options.showBox = false] - 是否显示box盒子
+ * @param [options.boxStyle] - box盒子显示时的样式
+ * @param [options.clipOutSide = false] - 是否外裁剪
+ * @param [options.edgeWidth = 0] - 裁剪区域边线宽度，0时不显示
+ * @param [options.edgeColor = Cesium.Color.WHITE] - 裁剪区域边线颜色
+ * @param [options.id = uuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
+ */
+declare class TilesetBoxClip extends BaseThing {
+    constructor(options?: {
+        layer: TilesetLayer;
+        position: LngLatPoint | Cesium.Cartesian3;
+        dimensions: Cesium.Cartesian3;
+        showBox?: boolean;
+        boxStyle?: BoxEntity.StyleOptions;
+        clipOutSide?: boolean;
+        edgeWidth?: number;
+        edgeColor?: Cesium.Color;
+        id?: string | number;
+        enabled?: boolean;
+        eventParent?: BaseClass | boolean;
+    });
+    /**
+     * 需要裁剪的对象（3dtiles图层）
+     */
+    layer: TilesetLayer;
+    /**
+     * 裁剪面集合
+     */
+    readonly planes: Cesium.ClippingPlaneCollection;
+    /**
+     * 获取当前转换计算模型逆矩阵，
+     * 用于 局部坐标系 与 世界坐标系 的转换。
+     */
+    readonly inverseMatrix: Cesium.Matrix4;
+    /**
+     * 模型当前中心点坐标
+     */
+    readonly center: Cesium.Cartesian3;
+    /**
+     * 裁剪box中心点坐标
+     */
+    position: number[] | LngLatPoint | Cesium.Cartesian3;
+    /**
+     * 裁剪box的长宽高
+     */
+    dimensions: Cesium.Cartesian3;
+    /**
+     * 是否显示box盒子
+     */
+    showBox: boolean;
+    /**
+     * 重新绘制
+     * @returns 无
+     */
+    redraw(): void;
+    /**
+     * 清除裁剪面
+     * @returns 无
+     */
+    clear(): void;
+}
+
+/**
  * 3dtiles模型裁剪
  * @param [options] - 参数对象，包括以下：
  * @param options.layer - 需要裁剪的对象（3dtiles图层）
@@ -29325,6 +29557,7 @@ declare class TilesetFlood extends TilesetEditBase {
  * @param [options.edgeWidth = 0] - 裁剪区域边线宽度，0时不显示
  * @param [options.edgeColor = Cesium.Color.WHITE] - 裁剪区域边线颜色
  * @param [options.showPlane = false] - 是否显示裁剪平面
+ * @param [options.editPlane = false] - 是否可以拖拽裁剪平面进行编辑，需要showPlane：true时有效
  * @param [options.planeStyle] - 裁剪平面显示时的样式
  * @param [options.id = uuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -29341,6 +29574,7 @@ declare class TilesetPlanClip extends BaseThing {
         edgeWidth?: number;
         edgeColor?: Cesium.Color;
         showPlane?: boolean;
+        editPlane?: boolean;
         planeStyle?: PlaneEntity.StyleOptions;
         id?: string | number;
         enabled?: boolean;
@@ -29360,10 +29594,9 @@ declare class TilesetPlanClip extends BaseThing {
      */
     readonly inverseMatrix: Cesium.Matrix4;
     /**
-     * 获取当前转换计算模型逆矩阵，
-     * 用于 局部坐标系 与 世界坐标系 的转换。
+     * 模型当前中心点坐标
      */
-    readonly center: Cesium.Matrix4;
+    readonly center: Cesium.Cartesian3;
     /**
      * 更新最后一个面的 裁剪距离 (单位：米)
      */
@@ -32076,6 +32309,7 @@ declare namespace thing {
   export { LimitHeight }
   export { TilesetPlanClip }
   export { ModelPlanClip }
+  export { TilesetBoxClip }
 
   export { TilesetClip }
   export { TilesetFlat }
