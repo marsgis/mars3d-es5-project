@@ -1670,6 +1670,15 @@ export class Cartesian2 {
      */
     static maximumByComponent(first: Cartesian2, second: Cartesian2, result: Cartesian2): Cartesian2;
     /**
+     * Constrain a value to lie between two values.
+     * @param value - The value to clamp.
+     * @param min - The minimum bound.
+     * @param max - The maximum bound.
+     * @param result - The object into which to store the result.
+     * @returns The clamped value such that min <= result <= max.
+     */
+    static clamp(value: Cartesian2, min: Cartesian2, max: Cartesian2, result: Cartesian2): Cartesian2;
+    /**
      * Computes the provided Cartesian's squared magnitude.
      * @param cartesian - The Cartesian instance whose squared magnitude is to be computed.
      * @returns The squared magnitude.
@@ -2002,6 +2011,15 @@ export class Cartesian3 {
      * @returns A cartesian with the maximum components.
      */
     static maximumByComponent(first: Cartesian3, second: Cartesian3, result: Cartesian3): Cartesian3;
+    /**
+     * Constrain a value to lie between two values.
+     * @param cartesian - The value to clamp.
+     * @param min - The minimum bound.
+     * @param max - The maximum bound.
+     * @param result - The object into which to store the result.
+     * @returns The clamped value such that min <= value <= max.
+     */
+    static clamp(cartesian: Cartesian3, min: Cartesian3, max: Cartesian3, result: Cartesian3): Cartesian3;
     /**
      * Computes the provided Cartesian's squared magnitude.
      * @param cartesian - The Cartesian instance whose squared magnitude is to be computed.
@@ -2419,6 +2437,15 @@ export class Cartesian4 {
      * @returns A cartesian with the maximum components.
      */
     static maximumByComponent(first: Cartesian4, second: Cartesian4, result: Cartesian4): Cartesian4;
+    /**
+     * Constrain a value to lie between two values.
+     * @param value - The value to clamp.
+     * @param min - The minimum bound.
+     * @param max - The maximum bound.
+     * @param result - The object into which to store the result.
+     * @returns The clamped value such that min <= result <= max.
+     */
+    static clamp(value: Cartesian4, min: Cartesian4, max: Cartesian4, result: Cartesian4): Cartesian4;
     /**
      * Computes the provided Cartesian's squared magnitude.
      * @param cartesian - The Cartesian instance whose squared magnitude is to be computed.
@@ -8704,12 +8731,12 @@ export class IonResource extends Resource {
      * // load a single image asynchronously
     resource.fetchImage().then(function(image) {
         // use the loaded image
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
     
     // load several images in parallel
-    when.all([resource1.fetchImage(), resource2.fetchImage()]).then(function(images) {
+    Promise.all([resource1.fetchImage(), resource2.fetchImage()]).then(function(images) {
         // images is an array containing all the loaded images
     });
      * @param [options] - An object with the following properties.
@@ -9573,10 +9600,10 @@ export namespace Math {
     function previousPowerOfTwo(n: number): number;
     /**
      * Constraint a value to lie between two values.
-     * @param value - The value to constrain.
+     * @param value - The value to clamp.
      * @param min - The minimum value.
      * @param max - The maximum value.
-     * @returns The value clamped so that min <= value <= max.
+     * @returns The clamped value such that min <= result <= max.
      */
     function clamp(value: number, min: number, max: number): number;
     /**
@@ -14730,7 +14757,7 @@ export enum RequestType {
         resource.queryParameters.access_token = token;
         return true;
       })
-      .otherwise(function() {
+      .catch(function() {
         return false;
       });
   }
@@ -14910,7 +14937,7 @@ export class Resource {
      * // load a single URL asynchronously
     resource.fetchArrayBuffer().then(function(arrayBuffer) {
         // use the data
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
      * @returns a promise that will resolve to the requested data when loaded. Returns undefined if <code>request.throttle</code> is true and the request does not have high enough priority.
@@ -14948,7 +14975,7 @@ export class Resource {
      * // load a single URL asynchronously
     resource.fetchBlob().then(function(blob) {
         // use the data
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
      * @returns a promise that will resolve to the requested data when loaded. Returns undefined if <code>request.throttle</code> is true and the request does not have high enough priority.
@@ -14985,12 +15012,12 @@ export class Resource {
      * // load a single image asynchronously
     resource.fetchImage().then(function(image) {
         // use the loaded image
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
     
     // load several images in parallel
-    when.all([resource1.fetchImage(), resource2.fetchImage()]).then(function(images) {
+    Promise.all([resource1.fetchImage(), resource2.fetchImage()]).then(function(images) {
         // images is an array containing all the loaded images
     });
      * @param [options] - An object with the following properties.
@@ -15052,7 +15079,7 @@ export class Resource {
     });
     resource.fetchText().then(function(text) {
         // Do something with the text
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
      * @returns a promise that will resolve to the requested data when loaded. Returns undefined if <code>request.throttle</code> is true and the request does not have high enough priority.
@@ -15091,7 +15118,7 @@ export class Resource {
      * @example
      * resource.fetchJson().then(function(jsonData) {
         // Do something with the JSON object
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
      * @returns a promise that will resolve to the requested data when loaded. Returns undefined if <code>request.throttle</code> is true and the request does not have high enough priority.
@@ -15131,7 +15158,7 @@ export class Resource {
       'X-Custom-Header' : 'some value'
     }).then(function(document) {
         // Do something with the document
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
      * @returns a promise that will resolve to the requested data when loaded. Returns undefined if <code>request.throttle</code> is true and the request does not have high enough priority.
@@ -15166,7 +15193,7 @@ export class Resource {
      * // load a data asynchronously
     resource.fetchJsonp().then(function(data) {
         // use the loaded data
-    }).otherwise(function(error) {
+    }).catch(function(error) {
         // an error occurred
     });
      * @param [callbackParameterName = 'callback'] - The callback parameter name that the server expects.
@@ -15208,7 +15235,7 @@ export class Resource {
      * resource.fetch()
       .then(function(body) {
           // use the data
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param [options] - Object with the following properties:
@@ -15258,7 +15285,7 @@ export class Resource {
      * resource.delete()
       .then(function(body) {
           // use the data
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param [options] - Object with the following properties:
@@ -15310,7 +15337,7 @@ export class Resource {
      * resource.head()
       .then(function(headers) {
           // use the data
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param [options] - Object with the following properties:
@@ -15360,7 +15387,7 @@ export class Resource {
      * resource.options()
       .then(function(headers) {
           // use the data
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param [options] - Object with the following properties:
@@ -15410,7 +15437,7 @@ export class Resource {
      * resource.post(data)
       .then(function(result) {
           // use the result
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param data - Data that is posted with the resource.
@@ -15465,7 +15492,7 @@ export class Resource {
      * resource.put(data)
       .then(function(result) {
           // use the result
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param data - Data that is posted with the resource.
@@ -15518,7 +15545,7 @@ export class Resource {
      * resource.patch(data)
       .then(function(result) {
           // use the result
-      }).otherwise(function(error) {
+      }).catch(function(error) {
           // an error occurred
       });
      * @param data - Data that is posted with the resource.
@@ -15624,7 +15651,7 @@ const positions = [
     Cesium.Cartographic.fromDegrees(87.0, 28.0)
 ];
 const promise = Cesium.sampleTerrain(terrainProvider, 11, positions);
-Cesium.when(promise, function(updatedPositions) {
+Promise.resolve(promise).then(function(updatedPositions) {
     // positions[0].height and positions[1].height have been updated.
     // updatedPositions is just a reference to positions.
 });
@@ -15645,7 +15672,7 @@ const positions = [
     Cesium.Cartographic.fromDegrees(87.0, 28.0)
 ];
 const promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
-Cesium.when(promise, function(updatedPositions) {
+Promise.resolve(promise).then(function(updatedPositions) {
     // positions[0].height and positions[1].height have been updated.
     // updatedPositions is just a reference to positions.
 });
@@ -16169,7 +16196,7 @@ export class TaskProcessor {
     if (!Cesium.defined(promise)) {
         // too many active tasks - try again later
     } else {
-        Cesium.when(promise, function(result) {
+        promise.then(function(result) {
             // use the result of the task
         });
     }
@@ -17219,7 +17246,7 @@ export namespace Transforms {
     indicates that the preload has completed.
      * @example
      * const interval = new Cesium.TimeInterval(...);
-    when(Cesium.Transforms.preloadIcrfFixed(interval), function() {
+    Promise.resolve(Cesium.Transforms.preloadIcrfFixed(interval)).then(function() {
         // the data is now loaded
     });
      * @param timeInterval - The interval to preload.
@@ -21442,76 +21469,92 @@ export class KmlCamera {
 export namespace KmlDataSource {
     /**
      * Initialization options for the `load` method.
-     * @property camera - The camera that is used for viewRefreshModes and sending camera properties to network links.
-     * @property canvas - The canvas that is used for sending viewer properties to network links.
      * @property [sourceUri] - Overrides the url to use for resolving relative links and other KML network features.
      * @property [clampToGround = false] - true if we want the geometry features (Polygons, LineStrings and LinearRings) clamped to the ground.
      * @property [ellipsoid = Ellipsoid.WGS84] - The global ellipsoid used for geographical calculations.
-     * @property [credit] - A credit for the data source, which is displayed on the canvas.
      * @property [screenOverlayContainer] - A container for ScreenOverlay images.
      */
     type LoadOptions = {
-        camera: Camera;
-        canvas: HTMLCanvasElement;
         sourceUri?: string;
         clampToGround?: boolean;
         ellipsoid?: Ellipsoid;
+        screenOverlayContainer?: Element | string;
+    };
+    /**
+     * Options for constructing a new KmlDataSource, or calling the static `load` method.
+     * @property [camera] - The camera that is used for viewRefreshModes and sending camera properties to network links.
+     * @property [canvas] - The canvas that is used for sending viewer properties to network links.
+     * @property [credit] - A credit for the data source, which is displayed on the canvas.
+     * @property [sourceUri] - Overrides the url to use for resolving relative links and other KML network features.
+     * @property [clampToGround = false] - true if we want the geometry features (Polygons, LineStrings and LinearRings) clamped to the ground.
+     * @property [ellipsoid = Ellipsoid.WGS84] - The global ellipsoid used for geographical calculations.
+     * @property [screenOverlayContainer] - A container for ScreenOverlay images.
+     */
+    type ConstructorOptions = {
+        camera?: Camera;
+        canvas?: HTMLCanvasElement;
         credit?: Credit | string;
+        sourceUri?: string;
+        clampToGround?: boolean;
+        ellipsoid?: Ellipsoid;
         screenOverlayContainer?: Element | string;
     };
 }
 
 /**
  * A {@link DataSource} which processes Keyhole Markup Language 2.2 (KML).
-<p>
-KML support in Cesium is incomplete, but a large amount of the standard,
-as well as Google's <code>gx</code> extension namespace, is supported. See Github issue
-{@link https://github.com/CesiumGS/cesium/issues/873|#873} for a
-detailed list of what is and isn't supported. Cesium will also write information to the
-console when it encounters most unsupported features.
-</p>
-<p>
-Non visual feature data, such as <code>atom:author</code> and <code>ExtendedData</code>
-is exposed via an instance of {@link KmlFeatureData}, which is added to each {@link Entity}
-under the <code>kml</code> property.
-</p>
+ * <p>
+ * KML support in Cesium is incomplete, but a large amount of the standard,
+ * as well as Google's <code>gx</code> extension namespace, is supported. See Github issue
+ * {@link https://github.com/CesiumGS/cesium/issues/873|#873} for a
+ * detailed list of what is and isn't supported. Cesium will also write information to the
+ * console when it encounters most unsupported features.
+ * </p>
+ * <p>
+ * Non visual feature data, such as <code>atom:author</code> and <code>ExtendedData</code>
+ * is exposed via an instance of {@link KmlFeatureData}, which is added to each {@link Entity}
+ * under the <code>kml</code> property.
+ * </p>
  * @example
  * const viewer = new Cesium.Viewer('cesiumContainer');
-viewer.dataSources.add(Cesium.KmlDataSource.load('../../SampleData/facilities.kmz',
-     {
-          camera: viewer.scene.camera,
-          canvas: viewer.scene.canvas
-     })
-);
- * @param options - An object with the following properties:
- * @param options.camera - The camera that is used for viewRefreshModes and sending camera properties to network links.
- * @param options.canvas - The canvas that is used for sending viewer properties to network links.
- * @param [options.ellipsoid = Ellipsoid.WGS84] - The global ellipsoid used for geographical calculations.
- * @param [options.credit] - A credit for the data source, which is displayed on the canvas.
+ * viewer.dataSources.add(Cesium.KmlDataSource.load('../../SampleData/facilities.kmz',
+ *      {
+ *           camera: viewer.scene.camera,
+ *           canvas: viewer.scene.canvas
+ *      })
+ * );
+ * @param [options] - Object describing initialization options
  */
 export class KmlDataSource {
-    constructor(options: {
-        camera: Camera;
-        canvas: HTMLCanvasElement;
-        ellipsoid?: Ellipsoid;
-        credit?: Credit | string;
-    });
+    constructor(options?: KmlDataSource.ConstructorOptions);
+    /**
+     * The current size of this Canvas will be used to populate the Link parameters
+     * for client height and width.
+     */
+    canvas: HTMLCanvasElement | undefined;
+    /**
+     * The position and orientation of this {@link Camera} will be used to
+     * populate various camera parameters when making network requests.
+     * Camera movement will determine when to trigger NetworkLink refresh if
+     * <code>viewRefreshMode</code> is <code>onStop</code>.
+     */
+    camera: Camera | undefined;
     /**
      * Creates a Promise to a new instance loaded with the provided KML data.
      * @param data - A url, parsed KML document, or Blob containing binary KMZ data or a parsed KML document.
      * @param [options] - An object specifying configuration options
      * @returns A promise that will resolve to a new KmlDataSource instance once the KML is loaded.
      */
-    static load(data: Resource | string | Document | Blob, options?: KmlDataSource.LoadOptions): Promise<KmlDataSource>;
+    static load(data: Resource | string | Document | Blob, options?: KmlDataSource.ConstructorOptions): Promise<KmlDataSource>;
     /**
      * Gets or sets a human-readable name for this instance.
-    This will be automatically be set to the KML document name on load.
+     * This will be automatically be set to the KML document name on load.
      */
     name: string;
     /**
      * Gets the clock settings defined by the loaded KML. This represents the total
-    availability interval for all time-dynamic data. If the KML does not contain
-    time-dynamic data, this value is undefined.
+     * availability interval for all time-dynamic data. If the KML does not contain
+     * time-dynamic data, this value is undefined.
      */
     clock: DataSourceClock;
     /**
@@ -21561,19 +21604,10 @@ export class KmlDataSource {
     /**
      * Asynchronously loads the provided KML data, replacing any existing data.
      * @param data - A url, parsed KML document, or Blob containing binary KMZ data or a parsed KML document.
-     * @param [options] - An object with the following properties:
-     * @param [options.sourceUri] - Overrides the url to use for resolving relative links and other KML network features.
-     * @param [options.clampToGround = false] - true if we want the geometry features (Polygons, LineStrings and LinearRings) clamped to the ground. If true, lines will use corridors so use Entity.corridor instead of Entity.polyline.
-     * @param [options.ellipsoid = Ellipsoid.WGS84] - The global ellipsoid used for geographical calculations.
-     * @param [options.screenOverlayContainer] - A container for ScreenOverlay images.
+     * @param [options] - An object specifying configuration options
      * @returns A promise that will resolve to this instances once the KML is loaded.
      */
-    load(data: Resource | string | Document | Blob, options?: {
-        sourceUri?: Resource | string;
-        clampToGround?: boolean;
-        ellipsoid?: Ellipsoid;
-        screenOverlayContainer?: Element | string;
-    }): Promise<KmlDataSource>;
+    load(data: Resource | string | Document | Blob, options?: KmlDataSource.LoadOptions): Promise<KmlDataSource>;
     /**
      * Cleans up any non-entity elements created by the data source. Currently this only affects ScreenOverlay elements.
      */
@@ -21613,8 +21647,8 @@ export class KmlFeatureData {
     snippet: string;
     /**
      * Gets the extended data, parsed into a JSON object.
-    Currently only the <code>Data</code> property is supported.
-    <code>SchemaData</code> and custom data are ignored.
+     * Currently only the <code>Data</code> property is supported.
+     * <code>SchemaData</code> and custom data are ignored.
      */
     extendedData: string;
 }
@@ -22262,7 +22296,7 @@ export class ModelVisualizer {
     constructor(scene: Scene, entityCollection: EntityCollection);
     /**
      * Updates models created this visualizer to match their
-    Entity counterpart at the given time.
+     * Entity counterpart at the given time.
      * @param time - The time to update to.
      * @returns This function always returns true.
      */
@@ -25189,19 +25223,19 @@ export enum Axis {
 
 /**
  * A viewport-aligned image positioned in the 3D scene, that is created
-and rendered using a {@link BillboardCollection}.  A billboard is created and its initial
-properties are set by calling {@link BillboardCollection#add}.
-<br /><br />
-<div align='center'>
-<img src='Images/Billboard.png' width='400' height='300' /><br />
-Example billboards
-</div>
+ * and rendered using a {@link BillboardCollection}.  A billboard is created and its initial
+ * properties are set by calling {@link BillboardCollection#add}.
+ * <br /><br />
+ * <div align='center'>
+ * <img src='Images/Billboard.png' width='400' height='300' /><br />
+ * Example billboards
+ * </div>
  */
 export class Billboard {
     constructor();
     /**
      * Determines if this billboard will be shown.  Use this to hide or show a billboard, instead
-    of removing it and re-adding it to the collection.
+     * of removing it and re-adding it to the collection.
      */
     show: boolean;
     /**
@@ -25214,159 +25248,159 @@ export class Billboard {
     heightReference: HeightReference;
     /**
      * Gets or sets the pixel offset in screen space from the origin of this billboard.  This is commonly used
-    to align multiple billboards and labels at the same position, e.g., an image and text.  The
-    screen space origin is the top, left corner of the canvas; <code>x</code> increases from
-    left to right, and <code>y</code> increases from top to bottom.
-    <br /><br />
-    <div align='center'>
-    <table border='0' cellpadding='5'><tr>
-    <td align='center'><code>default</code><br/><img src='Images/Billboard.setPixelOffset.default.png' width='250' height='188' /></td>
-    <td align='center'><code>b.pixeloffset = new Cartesian2(50, 25);</code><br/><img src='Images/Billboard.setPixelOffset.x50y-25.png' width='250' height='188' /></td>
-    </tr></table>
-    The billboard's origin is indicated by the yellow point.
-    </div>
+     * to align multiple billboards and labels at the same position, e.g., an image and text.  The
+     * screen space origin is the top, left corner of the canvas; <code>x</code> increases from
+     * left to right, and <code>y</code> increases from top to bottom.
+     * <br /><br />
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'><code>default</code><br/><img src='Images/Billboard.setPixelOffset.default.png' width='250' height='188' /></td>
+     * <td align='center'><code>b.pixeloffset = new Cartesian2(50, 25);</code><br/><img src='Images/Billboard.setPixelOffset.x50y-25.png' width='250' height='188' /></td>
+     * </tr></table>
+     * The billboard's origin is indicated by the yellow point.
+     * </div>
      */
     pixelOffset: Cartesian2;
     /**
      * Gets or sets near and far scaling properties of a Billboard based on the billboard's distance from the camera.
-    A billboard's scale will interpolate between the {@link NearFarScalar#nearValue} and
-    {@link NearFarScalar#farValue} while the camera distance falls within the lower and upper bounds
-    of the specified {@link NearFarScalar#near} and {@link NearFarScalar#far}.
-    Outside of these ranges the billboard's scale remains clamped to the nearest bound.  If undefined,
-    scaleByDistance will be disabled.
+     * A billboard's scale will interpolate between the {@link NearFarScalar#nearValue} and
+     * {@link NearFarScalar#farValue} while the camera distance falls within the lower and upper bounds
+     * of the specified {@link NearFarScalar#near} and {@link NearFarScalar#far}.
+     * Outside of these ranges the billboard's scale remains clamped to the nearest bound.  If undefined,
+     * scaleByDistance will be disabled.
      * @example
      * // Example 1.
-    // Set a billboard's scaleByDistance to scale by 1.5 when the
-    // camera is 1500 meters from the billboard and disappear as
-    // the camera distance approaches 8.0e6 meters.
-    b.scaleByDistance = new Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
+     * // Set a billboard's scaleByDistance to scale by 1.5 when the
+     * // camera is 1500 meters from the billboard and disappear as
+     * // the camera distance approaches 8.0e6 meters.
+     * b.scaleByDistance = new Cesium.NearFarScalar(1.5e2, 1.5, 8.0e6, 0.0);
      * @example
      * // Example 2.
-    // disable scaling by distance
-    b.scaleByDistance = undefined;
+     * // disable scaling by distance
+     * b.scaleByDistance = undefined;
      */
     scaleByDistance: NearFarScalar;
     /**
      * Gets or sets near and far translucency properties of a Billboard based on the billboard's distance from the camera.
-    A billboard's translucency will interpolate between the {@link NearFarScalar#nearValue} and
-    {@link NearFarScalar#farValue} while the camera distance falls within the lower and upper bounds
-    of the specified {@link NearFarScalar#near} and {@link NearFarScalar#far}.
-    Outside of these ranges the billboard's translucency remains clamped to the nearest bound.  If undefined,
-    translucencyByDistance will be disabled.
+     * A billboard's translucency will interpolate between the {@link NearFarScalar#nearValue} and
+     * {@link NearFarScalar#farValue} while the camera distance falls within the lower and upper bounds
+     * of the specified {@link NearFarScalar#near} and {@link NearFarScalar#far}.
+     * Outside of these ranges the billboard's translucency remains clamped to the nearest bound.  If undefined,
+     * translucencyByDistance will be disabled.
      * @example
      * // Example 1.
-    // Set a billboard's translucency to 1.0 when the
-    // camera is 1500 meters from the billboard and disappear as
-    // the camera distance approaches 8.0e6 meters.
-    b.translucencyByDistance = new Cesium.NearFarScalar(1.5e2, 1.0, 8.0e6, 0.0);
+     * // Set a billboard's translucency to 1.0 when the
+     * // camera is 1500 meters from the billboard and disappear as
+     * // the camera distance approaches 8.0e6 meters.
+     * b.translucencyByDistance = new Cesium.NearFarScalar(1.5e2, 1.0, 8.0e6, 0.0);
      * @example
      * // Example 2.
-    // disable translucency by distance
-    b.translucencyByDistance = undefined;
+     * // disable translucency by distance
+     * b.translucencyByDistance = undefined;
      */
     translucencyByDistance: NearFarScalar;
     /**
      * Gets or sets near and far pixel offset scaling properties of a Billboard based on the billboard's distance from the camera.
-    A billboard's pixel offset will be scaled between the {@link NearFarScalar#nearValue} and
-    {@link NearFarScalar#farValue} while the camera distance falls within the lower and upper bounds
-    of the specified {@link NearFarScalar#near} and {@link NearFarScalar#far}.
-    Outside of these ranges the billboard's pixel offset scale remains clamped to the nearest bound.  If undefined,
-    pixelOffsetScaleByDistance will be disabled.
+     * A billboard's pixel offset will be scaled between the {@link NearFarScalar#nearValue} and
+     * {@link NearFarScalar#farValue} while the camera distance falls within the lower and upper bounds
+     * of the specified {@link NearFarScalar#near} and {@link NearFarScalar#far}.
+     * Outside of these ranges the billboard's pixel offset scale remains clamped to the nearest bound.  If undefined,
+     * pixelOffsetScaleByDistance will be disabled.
      * @example
      * // Example 1.
-    // Set a billboard's pixel offset scale to 0.0 when the
-    // camera is 1500 meters from the billboard and scale pixel offset to 10.0 pixels
-    // in the y direction the camera distance approaches 8.0e6 meters.
-    b.pixelOffset = new Cesium.Cartesian2(0.0, 1.0);
-    b.pixelOffsetScaleByDistance = new Cesium.NearFarScalar(1.5e2, 0.0, 8.0e6, 10.0);
+     * // Set a billboard's pixel offset scale to 0.0 when the
+     * // camera is 1500 meters from the billboard and scale pixel offset to 10.0 pixels
+     * // in the y direction the camera distance approaches 8.0e6 meters.
+     * b.pixelOffset = new Cesium.Cartesian2(0.0, 1.0);
+     * b.pixelOffsetScaleByDistance = new Cesium.NearFarScalar(1.5e2, 0.0, 8.0e6, 10.0);
      * @example
      * // Example 2.
-    // disable pixel offset by distance
-    b.pixelOffsetScaleByDistance = undefined;
+     * // disable pixel offset by distance
+     * b.pixelOffsetScaleByDistance = undefined;
      */
     pixelOffsetScaleByDistance: NearFarScalar;
     /**
      * Gets or sets the 3D Cartesian offset applied to this billboard in eye coordinates.  Eye coordinates is a left-handed
-    coordinate system, where <code>x</code> points towards the viewer's right, <code>y</code> points up, and
-    <code>z</code> points into the screen.  Eye coordinates use the same scale as world and model coordinates,
-    which is typically meters.
-    <br /><br />
-    An eye offset is commonly used to arrange multiple billboards or objects at the same position, e.g., to
-    arrange a billboard above its corresponding 3D model.
-    <br /><br />
-    Below, the billboard is positioned at the center of the Earth but an eye offset makes it always
-    appear on top of the Earth regardless of the viewer's or Earth's orientation.
-    <br /><br />
-    <div align='center'>
-    <table border='0' cellpadding='5'><tr>
-    <td align='center'><img src='Images/Billboard.setEyeOffset.one.png' width='250' height='188' /></td>
-    <td align='center'><img src='Images/Billboard.setEyeOffset.two.png' width='250' height='188' /></td>
-    </tr></table>
-    <code>b.eyeOffset = new Cartesian3(0.0, 8000000.0, 0.0);</code><br /><br />
-    </div>
+     * coordinate system, where <code>x</code> points towards the viewer's right, <code>y</code> points up, and
+     * <code>z</code> points into the screen.  Eye coordinates use the same scale as world and model coordinates,
+     * which is typically meters.
+     * <br /><br />
+     * An eye offset is commonly used to arrange multiple billboards or objects at the same position, e.g., to
+     * arrange a billboard above its corresponding 3D model.
+     * <br /><br />
+     * Below, the billboard is positioned at the center of the Earth but an eye offset makes it always
+     * appear on top of the Earth regardless of the viewer's or Earth's orientation.
+     * <br /><br />
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'><img src='Images/Billboard.setEyeOffset.one.png' width='250' height='188' /></td>
+     * <td align='center'><img src='Images/Billboard.setEyeOffset.two.png' width='250' height='188' /></td>
+     * </tr></table>
+     * <code>b.eyeOffset = new Cartesian3(0.0, 8000000.0, 0.0);</code><br /><br />
+     * </div>
      */
     eyeOffset: Cartesian3;
     /**
      * Gets or sets the horizontal origin of this billboard, which determines if the billboard is
-    to the left, center, or right of its anchor position.
-    <br /><br />
-    <div align='center'>
-    <img src='Images/Billboard.setHorizontalOrigin.png' width='648' height='196' /><br />
-    </div>
+     * to the left, center, or right of its anchor position.
+     * <br /><br />
+     * <div align='center'>
+     * <img src='Images/Billboard.setHorizontalOrigin.png' width='648' height='196' /><br />
+     * </div>
      * @example
      * // Use a bottom, left origin
-    b.horizontalOrigin = Cesium.HorizontalOrigin.LEFT;
-    b.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+     * b.horizontalOrigin = Cesium.HorizontalOrigin.LEFT;
+     * b.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
      */
     horizontalOrigin: HorizontalOrigin;
     /**
      * Gets or sets the vertical origin of this billboard, which determines if the billboard is
-    to the above, below, or at the center of its anchor position.
-    <br /><br />
-    <div align='center'>
-    <img src='Images/Billboard.setVerticalOrigin.png' width='695' height='175' /><br />
-    </div>
+     * to the above, below, or at the center of its anchor position.
+     * <br /><br />
+     * <div align='center'>
+     * <img src='Images/Billboard.setVerticalOrigin.png' width='695' height='175' /><br />
+     * </div>
      * @example
      * // Use a bottom, left origin
-    b.horizontalOrigin = Cesium.HorizontalOrigin.LEFT;
-    b.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
+     * b.horizontalOrigin = Cesium.HorizontalOrigin.LEFT;
+     * b.verticalOrigin = Cesium.VerticalOrigin.BOTTOM;
      */
     verticalOrigin: VerticalOrigin;
     /**
      * Gets or sets the uniform scale that is multiplied with the billboard's image size in pixels.
-    A scale of <code>1.0</code> does not change the size of the billboard; a scale greater than
-    <code>1.0</code> enlarges the billboard; a positive scale less than <code>1.0</code> shrinks
-    the billboard.
-    <br /><br />
-    <div align='center'>
-    <img src='Images/Billboard.setScale.png' width='400' height='300' /><br/>
-    From left to right in the above image, the scales are <code>0.5</code>, <code>1.0</code>,
-    and <code>2.0</code>.
-    </div>
+     * A scale of <code>1.0</code> does not change the size of the billboard; a scale greater than
+     * <code>1.0</code> enlarges the billboard; a positive scale less than <code>1.0</code> shrinks
+     * the billboard.
+     * <br /><br />
+     * <div align='center'>
+     * <img src='Images/Billboard.setScale.png' width='400' height='300' /><br/>
+     * From left to right in the above image, the scales are <code>0.5</code>, <code>1.0</code>,
+     * and <code>2.0</code>.
+     * </div>
      */
     scale: number;
     /**
      * Gets or sets the color that is multiplied with the billboard's texture.  This has two common use cases.  First,
-    the same white texture may be used by many different billboards, each with a different color, to create
-    colored billboards.  Second, the color's alpha component can be used to make the billboard translucent as shown below.
-    An alpha of <code>0.0</code> makes the billboard transparent, and <code>1.0</code> makes the billboard opaque.
-    <br /><br />
-    <div align='center'>
-    <table border='0' cellpadding='5'><tr>
-    <td align='center'><code>default</code><br/><img src='Images/Billboard.setColor.Alpha255.png' width='250' height='188' /></td>
-    <td align='center'><code>alpha : 0.5</code><br/><img src='Images/Billboard.setColor.Alpha127.png' width='250' height='188' /></td>
-    </tr></table>
-    </div>
-    <br />
-    The red, green, blue, and alpha values are indicated by <code>value</code>'s <code>red</code>, <code>green</code>,
-    <code>blue</code>, and <code>alpha</code> properties as shown in Example 1.  These components range from <code>0.0</code>
-    (no intensity) to <code>1.0</code> (full intensity).
+     * the same white texture may be used by many different billboards, each with a different color, to create
+     * colored billboards.  Second, the color's alpha component can be used to make the billboard translucent as shown below.
+     * An alpha of <code>0.0</code> makes the billboard transparent, and <code>1.0</code> makes the billboard opaque.
+     * <br /><br />
+     * <div align='center'>
+     * <table border='0' cellpadding='5'><tr>
+     * <td align='center'><code>default</code><br/><img src='Images/Billboard.setColor.Alpha255.png' width='250' height='188' /></td>
+     * <td align='center'><code>alpha : 0.5</code><br/><img src='Images/Billboard.setColor.Alpha127.png' width='250' height='188' /></td>
+     * </tr></table>
+     * </div>
+     * <br />
+     * The red, green, blue, and alpha values are indicated by <code>value</code>'s <code>red</code>, <code>green</code>,
+     * <code>blue</code>, and <code>alpha</code> properties as shown in Example 1.  These components range from <code>0.0</code>
+     * (no intensity) to <code>1.0</code> (full intensity).
      * @example
      * // Example 1. Assign yellow.
-    b.color = Cesium.Color.YELLOW;
+     * b.color = Cesium.Color.YELLOW;
      * @example
      * // Example 2. Make a billboard 50% translucent.
-    b.color = new Cesium.Color(1.0, 1.0, 1.0, 0.5);
+     * b.color = new Cesium.Color(1.0, 1.0, 1.0, 0.5);
      */
     color: Color;
     /**
@@ -25375,20 +25409,20 @@ export class Billboard {
     rotation: number;
     /**
      * Gets or sets the aligned axis in world space. The aligned axis is the unit vector that the billboard up vector points towards.
-    The default is the zero vector, which means the billboard is aligned to the screen up vector.
+     * The default is the zero vector, which means the billboard is aligned to the screen up vector.
      * @example
      * // Example 1.
-    // Have the billboard up vector point north
-    billboard.alignedAxis = Cesium.Cartesian3.UNIT_Z;
+     * // Have the billboard up vector point north
+     * billboard.alignedAxis = Cesium.Cartesian3.UNIT_Z;
      * @example
      * // Example 2.
-    // Have the billboard point east.
-    billboard.alignedAxis = Cesium.Cartesian3.UNIT_Z;
-    billboard.rotation = -Cesium.Math.PI_OVER_TWO;
+     * // Have the billboard point east.
+     * billboard.alignedAxis = Cesium.Cartesian3.UNIT_Z;
+     * billboard.rotation = -Cesium.Math.PI_OVER_TWO;
      * @example
      * // Example 3.
-    // Reset the aligned axis
-    billboard.alignedAxis = Cesium.Cartesian3.ZERO;
+     * // Reset the aligned axis
+     * billboard.alignedAxis = Cesium.Cartesian3.ZERO;
      */
     alignedAxis: Cartesian3;
     /**
@@ -25401,7 +25435,7 @@ export class Billboard {
     height: number;
     /**
      * Gets or sets if the billboard size is in meters or pixels. <code>true</code> to size the billboard in meters;
-    otherwise, the size is in pixels.
+     * otherwise, the size is in pixels.
      */
     sizeInMeters: boolean;
     /**
@@ -25410,7 +25444,7 @@ export class Billboard {
     distanceDisplayCondition: DistanceDisplayCondition;
     /**
      * Gets or sets the distance from the camera at which to disable the depth test to, for example, prevent clipping against terrain.
-    When set to zero, the depth test is always applied. When set to Number.POSITIVE_INFINITY, the depth test is never applied.
+     * When set to zero, the depth test is always applied. When set to Number.POSITIVE_INFINITY, the depth test is never applied.
      */
     disableDepthTestDistance: number;
     /**
@@ -25419,72 +25453,72 @@ export class Billboard {
     id: any;
     /**
      * <p>
-    Gets or sets the image to be used for this billboard.  If a texture has already been created for the
-    given image, the existing texture is used.
-    </p>
-    <p>
-    This property can be set to a loaded Image, a URL which will be loaded as an Image automatically,
-    a canvas, or another billboard's image property (from the same billboard collection).
-    </p>
+     * Gets or sets the image to be used for this billboard.  If a texture has already been created for the
+     * given image, the existing texture is used.
+     * </p>
+     * <p>
+     * This property can be set to a loaded Image, a URL which will be loaded as an Image automatically,
+     * a canvas, or another billboard's image property (from the same billboard collection).
+     * </p>
      * @example
      * // load an image from a URL
-    b.image = 'some/image/url.png';
-    
-    // assuming b1 and b2 are billboards in the same billboard collection,
-    // use the same image for both billboards.
-    b2.image = b1.image;
+     * b.image = 'some/image/url.png';
+     *
+     * // assuming b1 and b2 are billboards in the same billboard collection,
+     * // use the same image for both billboards.
+     * b2.image = b1.image;
      */
     image: string;
     /**
      * When <code>true</code>, this billboard is ready to render, i.e., the image
-    has been downloaded and the WebGL resources are created.
+     * has been downloaded and the WebGL resources are created.
      */
     readonly ready: boolean;
     /**
      * <p>
-    Sets the image to be used for this billboard.  If a texture has already been created for the
-    given id, the existing texture is used.
-    </p>
-    <p>
-    This function is useful for dynamically creating textures that are shared across many billboards.
-    Only the first billboard will actually call the function and create the texture, while subsequent
-    billboards created with the same id will simply re-use the existing texture.
-    </p>
-    <p>
-    To load an image from a URL, setting the {@link Billboard#image} property is more convenient.
-    </p>
+     * Sets the image to be used for this billboard.  If a texture has already been created for the
+     * given id, the existing texture is used.
+     * </p>
+     * <p>
+     * This function is useful for dynamically creating textures that are shared across many billboards.
+     * Only the first billboard will actually call the function and create the texture, while subsequent
+     * billboards created with the same id will simply re-use the existing texture.
+     * </p>
+     * <p>
+     * To load an image from a URL, setting the {@link Billboard#image} property is more convenient.
+     * </p>
      * @example
      * // create a billboard image dynamically
-    function drawImage(id) {
-      // create and draw an image using a canvas
-      const canvas = document.createElement('canvas');
-      const context2D = canvas.getContext('2d');
-      // ... draw image
-      return canvas;
-    }
-    // drawImage will be called to create the texture
-    b.setImage('myImage', drawImage);
-    
-    // subsequent billboards created in the same collection using the same id will use the existing
-    // texture, without the need to create the canvas or draw the image
-    b2.setImage('myImage', drawImage);
+     * function drawImage(id) {
+     *   // create and draw an image using a canvas
+     *   const canvas = document.createElement('canvas');
+     *   const context2D = canvas.getContext('2d');
+     *   // ... draw image
+     *   return canvas;
+     * }
+     * // drawImage will be called to create the texture
+     * b.setImage('myImage', drawImage);
+     *
+     * // subsequent billboards created in the same collection using the same id will use the existing
+     * // texture, without the need to create the canvas or draw the image
+     * b2.setImage('myImage', drawImage);
      * @param id - The id of the image.  This can be any string that uniquely identifies the image.
      * @param image - The image to load.  This parameter
-           can either be a loaded Image or Canvas, a URL which will be loaded as an Image automatically,
-           or a function which will be called to create the image if it hasn't been loaded already.
+     *        can either be a loaded Image or Canvas, a URL which will be loaded as an Image automatically,
+     *        or a function which will be called to create the image if it hasn't been loaded already.
      */
     setImage(id: string, image: HTMLImageElement | HTMLCanvasElement | string | Resource | Billboard.CreateImageCallback): void;
     /**
      * Uses a sub-region of the image with the given id as the image for this billboard,
-    measured in pixels from the bottom-left.
+     * measured in pixels from the bottom-left.
      * @param id - The id of the image to use.
      * @param subRegion - The sub-region of the image.
      */
     setImageSubRegion(id: string, subRegion: BoundingRectangle): void;
     /**
      * Computes the screen-space position of the billboard's origin, taking into account eye and pixel offsets.
-    The screen space origin is the top, left corner of the canvas; <code>x</code> increases from
-    left to right, and <code>y</code> increases from top to bottom.
+     * The screen space origin is the top, left corner of the canvas; <code>x</code> increases from
+     * left to right, and <code>y</code> increases from top to bottom.
      * @example
      * console.log(b.computeScreenSpacePosition(scene).toString());
      * @param scene - The scene.
@@ -25494,7 +25528,7 @@ export class Billboard {
     computeScreenSpacePosition(scene: Scene, result?: Cartesian2): Cartesian2;
     /**
      * Determines if this billboard equals another billboard.  Billboards are equal if all their properties
-    are equal.  Billboards in different collections can be equal.
+     * are equal.  Billboards in different collections can be equal.
      * @param other - The billboard to compare for equality.
      * @returns <code>true</code> if the billboards are equal; otherwise, <code>false</code>.
      */
@@ -27166,16 +27200,21 @@ export class Cesium3DTileFeature {
     getProperty(name: string): any;
     /**
      * Returns a copy of the feature's property with the given name, examining all
-    the metadata from 3D Tiles 1.0 formats, the EXT_mesh_features and legacy
-    EXT_feature_metadata glTF extensions, and the 3DTILES_metadata 3D Tiles
-    extension. Metadata is checked against name from most specific to most
-    general and the first match is returned. Metadata is checked in this order:
+    the metadata from 3D Tiles 1.0 formats, the EXT_structural_metadata and legacy
+    EXT_feature_metadata glTF extensions, and the metadata present either in the
+    tileset JSON (3D Tiles 1.1) or in the 3DTILES_metadata 3D Tiles extension.
+    Metadata is checked against name from most specific to most general and the
+    first match is returned. Metadata is checked in this order:
     
     <ol>
-      <li>Batch table (feature metadata) property by semantic</li>
-      <li>Batch table (feature metadata) property by property ID</li>
+      <li>Batch table (structural metadata) property by semantic</li>
+      <li>Batch table (structural metadata) property by property ID</li>
+      <li>Content metadata property by semantic</li>
+      <li>Content metadata property by property</li>
       <li>Tile metadata property by semantic</li>
       <li>Tile metadata property by property ID</li>
+      <li>Subtree metadata property by semantic</li>
+      <li>Subtree metadata property by property ID</li>
       <li>Group metadata property by semantic</li>
       <li>Group metadata property by property ID</li>
       <li>Tileset metadata property by semantic</li>
@@ -27184,7 +27223,7 @@ export class Cesium3DTileFeature {
     </ol>
     <p>
     For 3D Tiles Next details, see the {@link https://github.com/CesiumGS/3d-tiles/tree/main/extensions/3DTILES_metadata|3DTILES_metadata Extension}
-    for 3D Tiles, as well as the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_mesh_features|EXT_mesh_features Extension}
+    for 3D Tiles, as well as the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_structural_metadata|EXT_structural_metadata Extension}
     for glTF. For the legacy glTF extension, see {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_feature_metadata|EXT_feature_metadata Extension}
     </p>
      * @param content - The content for accessing the metadata
@@ -27517,18 +27556,20 @@ const tileset = scene.primitives.add(new Cesium.Cesium3DTileset({
  * @param [options.classificationType] - Determines whether terrain, 3D Tiles or both will be classified by this tileset. See {@link Cesium3DTileset#classificationType} for details about restrictions and limitations.
  * @param [options.ellipsoid = Ellipsoid.WGS84] - The ellipsoid determining the size and shape of the globe.
  * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation based on geometric error and lighting.
- * @param [options.imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - Scales the diffuse and specular image-based lighting from the earth, sky, atmosphere and star skybox.
  * @param [options.lightColor] - The light color when shading models. When <code>undefined</code> the scene's light color is used instead.
- * @param [options.luminanceAtZenith = 0.2] - The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
- * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting.
- * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
+ * @param [options.imageBasedLighting] - The properties for managing image-based lighting for this tileset.
+ * @param [options.imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - Scales the diffuse and specular image-based lighting from the earth, sky, atmosphere and star skybox. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+ * @param [options.luminanceAtZenith = 0.2] - The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+ * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+ * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
  * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the glTF material's doubleSided property; when false, back face culling is disabled.
  * @param [options.showOutline = true] - Whether to display the outline for models using the {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension. When true, outlines are displayed. When false, outlines are not displayed.
  * @param [options.vectorClassificationOnly = false] - Indicates that only the tileset's vector tiles should be used for classification.
  * @param [options.vectorKeepDecodedPositions = false] - Whether vector tiles should keep decoded positions in memory. This is used with {@link Cesium3DTileFeature.getPolylinePositions}.
- * @param [options.featureIdIndex = 0] - The index into the list of primitive feature IDs used for picking and styling. For EXT_feature_metadata, feature ID attributes are listed before feature ID textures. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
- * @param [options.instanceFeatureIdIndex = 0] - The index into the list of instance feature IDs used for picking and styling. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
  * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this tileset on screen.
+ * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this tileset.
  * @param [options.debugHeatmapTilePropertyName] - The tile variable to colorize as a heatmap. All rendered tiles will be colorized relative to each other's specified variable value.
  * @param [options.debugFreezeFrame = false] - For debugging only. Determines if only the tiles from last frame should be used for rendering.
  * @param [options.debugColorizeTiles = false] - For debugging only. When true, assigns a random color to each tile.
@@ -27575,8 +27616,9 @@ export class Cesium3DTileset {
         classificationType?: ClassificationType;
         ellipsoid?: Ellipsoid;
         pointCloudShading?: any;
-        imageBasedLightingFactor?: Cartesian2;
         lightColor?: Cartesian3;
+        imageBasedLighting?: ImageBasedLighting;
+        imageBasedLightingFactor?: Cartesian2;
         luminanceAtZenith?: number;
         sphericalHarmonicCoefficients?: Cartesian3[];
         specularEnvironmentMaps?: string;
@@ -27584,9 +27626,10 @@ export class Cesium3DTileset {
         showOutline?: boolean;
         vectorClassificationOnly?: boolean;
         vectorKeepDecodedPositions?: boolean;
-        featureIdIndex?: number;
-        instanceFeatureIdIndex?: number;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
         showCreditsOnScreen?: boolean;
+        splitDirection?: SplitDirection;
         debugHeatmapTilePropertyName?: string;
         debugFreezeFrame?: boolean;
         debugColorizeTiles?: boolean;
@@ -27794,7 +27837,7 @@ export class Cesium3DTileset {
     <li><code>message</code>: the error message.</li>
     </ul>
     <p>
-    If the <code>3DTILES_multiple_contents</code> extension is used, this event is raised once per inner content with errors.
+    If multiple contents are present, this event is raised once per inner content with errors.
     </p>
      * @example
      * tileset.tileFailed.addEventListener(function(error) {
@@ -27887,33 +27930,11 @@ export class Cesium3DTileset {
     /**
      * The light color when shading models. When <code>undefined</code> the scene's light color is used instead.
     <p>
-    For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cartesian2(0.0, 0.0)</code> will make the
+    For example, disabling additional light sources by setting <code>model.imageBasedLighting.imageBasedLightingFactor = new Cartesian2(0.0, 0.0)</code> will make the
     model much darker. Here, increasing the intensity of the light source will make the model brighter.
     </p>
      */
     lightColor: Cartesian3;
-    /**
-     * The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
-    This is used when {@link Cesium3DTileset#specularEnvironmentMaps} and {@link Cesium3DTileset#sphericalHarmonicCoefficients} are not defined.
-     */
-    luminanceAtZenith: number;
-    /**
-     * The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. When <code>undefined</code>, a diffuse irradiance
-    computed from the atmosphere color is used.
-    <p>
-    There are nine <code>Cartesian3</code> coefficients.
-    The order of the coefficients is: L<sub>00</sub>, L<sub>1-1</sub>, L<sub>10</sub>, L<sub>11</sub>, L<sub>2-2</sub>, L<sub>2-1</sub>, L<sub>20</sub>, L<sub>21</sub>, L<sub>22</sub>
-    </p>
-    
-    These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
-    {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
-    supplied to {@link Cesium3DTileset#specularEnvironmentMaps}.
-     */
-    sphericalHarmonicCoefficients: Cartesian3[];
-    /**
-     * A URL to a KTX file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
-     */
-    specularEnvironmentMaps: string;
     /**
      * Whether to cull back-facing geometry. When true, back face culling is determined
     by the glTF material's doubleSided property; when false, back face culling is disabled.
@@ -27925,6 +27946,10 @@ export class Cesium3DTileset {
     When true, outlines are displayed. When false, outlines are not displayed.
      */
     readonly showOutline: boolean;
+    /**
+     * The {@link SplitDirection} to apply to this tileset.
+     */
+    splitDirection: SplitDirection;
     /**
      * This property is for debugging only; it is not optimized for production use.
     <p>
@@ -28006,27 +28031,6 @@ export class Cesium3DTileset {
      * Function for examining vector lines as they are being streamed.
      */
     examineVectorLinesFunction: (...params: any[]) => any;
-    /**
-     * If true, {@link ModelExperimental} will be used instead of {@link Model}
-    for each tile with a glTF or 3D Tiles 1.0 content (where applicable).
-    <p>
-    The value defaults to {@link ExperimentalFeatures.enableModelExperimental}.
-    </p>
-     */
-    enableModelExperimental: boolean;
-    /**
-     * The index into the list of primitive feature IDs used for picking and
-    styling. For EXT_feature_metadata, feature ID attributes are listed before
-    feature ID textures. If both per-primitive and per-instance feature IDs are
-    present, the instance feature IDs take priority.
-     */
-    featureIdIndex: number;
-    /**
-     * The index into the list of instance feature IDs used for picking and
-    styling. If both per-primitive and per-instance feature IDs are present,
-    the instance feature IDs take priority.
-     */
-    instanceFeatureIdIndex: number;
     /**
      * Gets the tileset's asset object property, which contains metadata about the tileset.
     <p>
@@ -28254,10 +28258,36 @@ export class Cesium3DTileset {
      */
     readonly extras: any;
     /**
+     * The properties for managing image-based lighting on this tileset.
+     */
+    imageBasedLighting: ImageBasedLighting;
+    /**
      * Cesium adds lighting from the earth, sky, atmosphere, and star skybox. This cartesian is used to scale the final
     diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
      */
     imageBasedLightingFactor: Cartesian2;
+    /**
+     * The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
+    This is used when {@link Cesium3DTileset#specularEnvironmentMaps} and {@link Cesium3DTileset#sphericalHarmonicCoefficients} are not defined.
+     */
+    luminanceAtZenith: number;
+    /**
+     * The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. When <code>undefined</code>, a diffuse irradiance
+    computed from the atmosphere color is used.
+    <p>
+    There are nine <code>Cartesian3</code> coefficients.
+    The order of the coefficients is: L<sub>0,0</sub>, L<sub>1,-1</sub>, L<sub>1,0</sub>, L<sub>1,1</sub>, L<sub>2,-2</sub>, L<sub>2,-1</sub>, L<sub>2,0</sub>, L<sub>2,1</sub>, L<sub>2,2</sub>
+    </p>
+    
+    These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
+    {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
+    supplied to {@link Cesium3DTileset#specularEnvironmentMaps}.
+     */
+    sphericalHarmonicCoefficients: Cartesian3[];
+    /**
+     * A URL to a KTX file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
+     */
+    specularEnvironmentMaps: string;
     /**
      * Indicates that only the tileset's vector tiles should be used for classification.
      */
@@ -28271,6 +28301,34 @@ export class Cesium3DTileset {
      * Determines whether the credits of the tileset will be displayed on the screen
      */
     showCreditsOnScreen: boolean;
+    /**
+     * Label of the feature ID set to use for picking and styling.
+    <p>
+    For EXT_mesh_features, this is the feature ID's label property, or
+    "featureId_N" (where N is the index in the featureIds array) when not
+    specified. EXT_feature_metadata did not have a label field, so such
+    feature ID sets are always labeled "featureId_N" where N is the index in
+    the list of all feature Ids, where feature ID attributes are listed before
+    feature ID textures.
+    </p>
+    <p>
+    If featureIdLabel is set to an integer N, it is converted to
+    the string "featureId_N" automatically. If both per-primitive and
+    per-instance feature IDs are present, the instance feature IDs take
+    priority.
+    </p>
+     */
+    featureIdLabel: string;
+    /**
+     * Label of the instance feature ID set used for picking and styling.
+    <p>
+    If instanceFeatureIdLabel is set to an integer N, it is converted to
+    the string "instanceFeatureId_N" automatically.
+    If both per-primitive and per-instance feature IDs are present, the
+    instance feature IDs take priority.
+    </p>
+     */
+    instanceFeatureIdLabel: string;
     /**
      * Provides a hook to override the method used to request the tileset json
     useful when fetching tilesets from remote servers
@@ -30566,6 +30624,11 @@ export class Fog {
      */
     enabled: boolean;
     /**
+     * <code>true</code> if fog is renderable in shaders, <code>false</code> otherwise.
+    This allows to benefits from optimized tile loading strategy based on fog density without the actual visual rendering.
+     */
+    renderable: boolean;
+    /**
      * A scalar that determines the density of the fog. Terrain that is in full fog are culled.
     The density of the fog increases as this number approaches 1.0 and becomes less dense as it approaches zero.
     The more dense the fog is, the more aggressively the terrain is culled. For example, if the camera is a height of
@@ -31088,8 +31151,8 @@ export namespace GoogleEarthEnterpriseImageryProvider {
      * @property metadata - A metadata object that can be used to share metadata requests with a GoogleEarthEnterpriseTerrainProvider.
      * @property [ellipsoid] - The ellipsoid.  If not specified, the WGS84 ellipsoid is used.
      * @property [tileDiscardPolicy] - The policy that determines if a tile
-           is invalid and should be discarded. If this value is not specified, a default
-           is to discard tiles that fail to download.
+     *        is invalid and should be discarded. If this value is not specified, a default
+     *        is to discard tiles that fail to download.
      * @property [credit] - A credit for the data source, which is displayed on the canvas.
      */
     type ConstructorOptions = {
@@ -31103,41 +31166,41 @@ export namespace GoogleEarthEnterpriseImageryProvider {
 
 /**
  * Provides tiled imagery using the Google Earth Enterprise REST API.
-
-Notes: This provider is for use with the 3D Earth API of Google Earth Enterprise,
-       {@link GoogleEarthEnterpriseMapsProvider} should be used with 2D Maps API.
+ *
+ * Notes: This provider is for use with the 3D Earth API of Google Earth Enterprise,
+ *        {@link GoogleEarthEnterpriseMapsProvider} should be used with 2D Maps API.
  * @example
  * const geeMetadata = new GoogleEarthEnterpriseMetadata('http://www.earthenterprise.org/3d');
-const gee = new Cesium.GoogleEarthEnterpriseImageryProvider({
-    metadata : geeMetadata
-});
+ * const gee = new Cesium.GoogleEarthEnterpriseImageryProvider({
+ *     metadata : geeMetadata
+ * });
  * @param options - Object describing initialization options
  */
 export class GoogleEarthEnterpriseImageryProvider {
     constructor(options: GoogleEarthEnterpriseImageryProvider.ConstructorOptions);
     /**
      * The default alpha blending value of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultAlpha: number | undefined;
     /**
      * The default alpha blending value on the night side of the globe of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultNightAlpha: number | undefined;
     /**
      * The default alpha blending value on the day side of the globe of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultDayAlpha: number | undefined;
     /**
      * The default brightness of this provider.  1.0 uses the unmodified imagery color.  Less than 1.0
-    makes the imagery darker while greater than 1.0 makes it brighter.
+     * makes the imagery darker while greater than 1.0 makes it brighter.
      */
     defaultBrightness: number | undefined;
     /**
      * The default contrast of this provider.  1.0 uses the unmodified imagery color.  Less than 1.0 reduces
-    the contrast while greater than 1.0 increases it.
+     * the contrast while greater than 1.0 increases it.
      */
     defaultContrast: number | undefined;
     /**
@@ -31146,7 +31209,7 @@ export class GoogleEarthEnterpriseImageryProvider {
     defaultHue: number | undefined;
     /**
      * The default saturation of this provider. 1.0 uses the unmodified imagery color. Less than 1.0 reduces the
-    saturation while greater than 1.0 increases it.
+     * saturation while greater than 1.0 increases it.
      */
     defaultSaturation: number | undefined;
     /**
@@ -31171,45 +31234,45 @@ export class GoogleEarthEnterpriseImageryProvider {
     readonly proxy: Proxy;
     /**
      * Gets the width of each tile, in pixels. This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly tileWidth: number;
     /**
      * Gets the height of each tile, in pixels.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly tileHeight: number;
     /**
      * Gets the maximum level-of-detail that can be requested.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly maximumLevel: number | undefined;
     /**
      * Gets the minimum level-of-detail that can be requested.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly minimumLevel: number;
     /**
      * Gets the tiling scheme used by this provider.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly tilingScheme: TilingScheme;
     /**
      * Gets the rectangle, in radians, of the imagery provided by this instance.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly rectangle: Rectangle;
     /**
      * Gets the tile discard policy.  If not undefined, the discard policy is responsible
-    for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
-    returns undefined, no tiles are filtered.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
+     * returns undefined, no tiles are filtered.  This function should
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly tileDiscardPolicy: TileDiscardPolicy;
     /**
      * Gets an event that is raised when the imagery provider encounters an asynchronous error.  By subscribing
-    to the event, you will be notified of the error and can potentially recover from it.  Event listeners
-    are passed an instance of {@link TileProviderError}.
+     * to the event, you will be notified of the error and can potentially recover from it.  Event listeners
+     * are passed an instance of {@link TileProviderError}.
      */
     readonly errorEvent: Event;
     /**
@@ -31222,15 +31285,15 @@ export class GoogleEarthEnterpriseImageryProvider {
     readonly readyPromise: Promise<boolean>;
     /**
      * Gets the credit to display when this imagery provider is active.  Typically this is used to credit
-    the source of the imagery.  This function should not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * the source of the imagery.  This function should not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      */
     readonly credit: Credit;
     /**
      * Gets a value indicating whether or not the images provided by this imagery provider
-    include an alpha channel.  If this property is false, an alpha channel, if present, will
-    be ignored.  If this property is true, any images without an alpha channel will be treated
-    as if their alpha is 1.0 everywhere.  Setting this property to false reduces memory usage
-    and texture upload time.
+     * include an alpha channel.  If this property is false, an alpha channel, if present, will
+     * be ignored.  If this property is true, any images without an alpha channel will be treated
+     * as if their alpha is 1.0 everywhere.  Setting this property to false reduces memory usage
+     * and texture upload time.
      */
     readonly hasAlphaChannel: boolean;
     /**
@@ -31243,29 +31306,29 @@ export class GoogleEarthEnterpriseImageryProvider {
     getTileCredits(x: number, y: number, level: number): Credit[];
     /**
      * Requests the image for a given tile.  This function should
-    not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
+     * not be called before {@link GoogleEarthEnterpriseImageryProvider#ready} returns true.
      * @param x - The tile X coordinate.
      * @param y - The tile Y coordinate.
      * @param level - The tile level.
      * @param [request] - The request object. Intended for internal use only.
      * @returns A promise for the image that will resolve when the image is available, or
-             undefined if there are too many active requests to the server, and the request
-             should be retried later.  The resolved image may be either an
-             Image or a Canvas DOM object.
+     *          undefined if there are too many active requests to the server, and the request
+     *          should be retried later.  The resolved image may be either an
+     *          Image or a Canvas DOM object.
      */
     requestImage(x: number, y: number, level: number, request?: Request): Promise<HTMLImageElement | HTMLCanvasElement> | undefined;
     /**
      * Picking features is not currently supported by this imagery provider, so this function simply returns
-    undefined.
+     * undefined.
      * @param x - The tile X coordinate.
      * @param y - The tile Y coordinate.
      * @param level - The tile level.
      * @param longitude - The longitude at which to pick features.
      * @param latitude - The latitude at which to pick features.
      * @returns A promise for the picked features that will resolve when the asynchronous
-                      picking completes.  The resolved value is an array of {@link ImageryLayerFeatureInfo}
-                      instances.  The array may be empty if no features are found at the given location.
-                      It may also be undefined if picking is not supported.
+     *                   picking completes.  The resolved value is an array of {@link ImageryLayerFeatureInfo}
+     *                   instances.  The array may be empty if no features are found at the given location.
+     *                   It may also be undefined if picking is not supported.
      */
     pickFeatures(x: number, y: number, level: number, longitude: number, latitude: number): Promise<ImageryLayerFeatureInfo[]> | undefined;
 }
@@ -31515,8 +31578,8 @@ export namespace GridImageryProvider {
      * Initialization options for the GridImageryProvider constructor
      * @property [tilingScheme = new GeographicTilingScheme()] - The tiling scheme for which to draw tiles.
      * @property [ellipsoid] - The ellipsoid.  If the tilingScheme is specified,
-                       this parameter is ignored and the tiling scheme's ellipsoid is used instead. If neither
-                       parameter is specified, the WGS84 ellipsoid is used.
+     *                    this parameter is ignored and the tiling scheme's ellipsoid is used instead. If neither
+     *                    parameter is specified, the WGS84 ellipsoid is used.
      * @property [cells = 8] - The number of grids cells.
      * @property [color = Color(1.0, 1.0, 1.0, 0.4)] - The color to draw grid lines.
      * @property [glowColor = Color(0.0, 1.0, 0.0, 0.05)] - The color to draw glow for grid lines.
@@ -31542,34 +31605,34 @@ export namespace GridImageryProvider {
 
 /**
  * An {@link ImageryProvider} that draws a wireframe grid on every tile with controllable background and glow.
-May be useful for custom rendering effects or debugging terrain.
+ * May be useful for custom rendering effects or debugging terrain.
  * @param options - Object describing initialization options
  */
 export class GridImageryProvider {
     constructor(options: GridImageryProvider.ConstructorOptions);
     /**
      * The default alpha blending value of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultAlpha: number | undefined;
     /**
      * The default alpha blending value on the night side of the globe of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultNightAlpha: number | undefined;
     /**
      * The default alpha blending value on the day side of the globe of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultDayAlpha: number | undefined;
     /**
      * The default brightness of this provider.  1.0 uses the unmodified imagery color.  Less than 1.0
-    makes the imagery darker while greater than 1.0 makes it brighter.
+     * makes the imagery darker while greater than 1.0 makes it brighter.
      */
     defaultBrightness: number | undefined;
     /**
      * The default contrast of this provider.  1.0 uses the unmodified imagery color.  Less than 1.0 reduces
-    the contrast while greater than 1.0 increases it.
+     * the contrast while greater than 1.0 increases it.
      */
     defaultContrast: number | undefined;
     /**
@@ -31578,7 +31641,7 @@ export class GridImageryProvider {
     defaultHue: number | undefined;
     /**
      * The default saturation of this provider. 1.0 uses the unmodified imagery color. Less than 1.0 reduces the
-    saturation while greater than 1.0 increases it.
+     * saturation while greater than 1.0 increases it.
      */
     defaultSaturation: number | undefined;
     /**
@@ -31599,45 +31662,45 @@ export class GridImageryProvider {
     readonly proxy: Proxy;
     /**
      * Gets the width of each tile, in pixels. This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly tileWidth: number;
     /**
      * Gets the height of each tile, in pixels.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly tileHeight: number;
     /**
      * Gets the maximum level-of-detail that can be requested.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly maximumLevel: number | undefined;
     /**
      * Gets the minimum level-of-detail that can be requested.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly minimumLevel: number;
     /**
      * Gets the tiling scheme used by this provider.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly tilingScheme: TilingScheme;
     /**
      * Gets the rectangle, in radians, of the imagery provided by this instance.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly rectangle: Rectangle;
     /**
      * Gets the tile discard policy.  If not undefined, the discard policy is responsible
-    for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
-    returns undefined, no tiles are filtered.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
+     * returns undefined, no tiles are filtered.  This function should
+     * not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly tileDiscardPolicy: TileDiscardPolicy;
     /**
      * Gets an event that is raised when the imagery provider encounters an asynchronous error.  By subscribing
-    to the event, you will be notified of the error and can potentially recover from it.  Event listeners
-    are passed an instance of {@link TileProviderError}.
+     * to the event, you will be notified of the error and can potentially recover from it.  Event listeners
+     * are passed an instance of {@link TileProviderError}.
      */
     readonly errorEvent: Event;
     /**
@@ -31650,15 +31713,15 @@ export class GridImageryProvider {
     readonly readyPromise: Promise<boolean>;
     /**
      * Gets the credit to display when this imagery provider is active.  Typically this is used to credit
-    the source of the imagery.  This function should not be called before {@link GridImageryProvider#ready} returns true.
+     * the source of the imagery.  This function should not be called before {@link GridImageryProvider#ready} returns true.
      */
     readonly credit: Credit;
     /**
      * Gets a value indicating whether or not the images provided by this imagery provider
-    include an alpha channel.  If this property is false, an alpha channel, if present, will
-    be ignored.  If this property is true, any images without an alpha channel will be treated
-    as if their alpha is 1.0 everywhere.  When this property is false, memory usage
-    and texture upload time are reduced.
+     * include an alpha channel.  If this property is false, an alpha channel, if present, will
+     * be ignored.  If this property is true, any images without an alpha channel will be treated
+     * as if their alpha is 1.0 everywhere.  When this property is false, memory usage
+     * and texture upload time are reduced.
      */
     readonly hasAlphaChannel: boolean;
     /**
@@ -31679,29 +31742,29 @@ export class GridImageryProvider {
     getTileCredits(x: number, y: number, level: number): Credit[];
     /**
      * Requests the image for a given tile.  This function should
-    not be called before {@link GridImageryProvider#ready} returns true.
+     * not be called before {@link GridImageryProvider#ready} returns true.
      * @param x - The tile X coordinate.
      * @param y - The tile Y coordinate.
      * @param level - The tile level.
      * @param [request] - The request object. Intended for internal use only.
      * @returns A promise for the image that will resolve when the image is available, or
-             undefined if there are too many active requests to the server, and the request
-             should be retried later.  The resolved image may be either an
-             Image or a Canvas DOM object.
+     *          undefined if there are too many active requests to the server, and the request
+     *          should be retried later.  The resolved image may be either an
+     *          Image or a Canvas DOM object.
      */
     requestImage(x: number, y: number, level: number, request?: Request): Promise<HTMLImageElement | HTMLCanvasElement> | undefined;
     /**
      * Picking features is not currently supported by this imagery provider, so this function simply returns
-    undefined.
+     * undefined.
      * @param x - The tile X coordinate.
      * @param y - The tile Y coordinate.
      * @param level - The tile level.
      * @param longitude - The longitude at which to pick features.
      * @param latitude - The latitude at which to pick features.
      * @returns A promise for the picked features that will resolve when the asynchronous
-                      picking completes.  The resolved value is an array of {@link ImageryLayerFeatureInfo}
-                      instances.  The array may be empty if no features are found at the given location.
-                      It may also be undefined if picking is not supported.
+     *                   picking completes.  The resolved value is an array of {@link ImageryLayerFeatureInfo}
+     *                   instances.  The array may be empty if no features are found at the given location.
+     *                   It may also be undefined if picking is not supported.
      */
     pickFeatures(x: number, y: number, level: number, longitude: number, latitude: number): Promise<ImageryLayerFeatureInfo[]> | undefined;
 }
@@ -32171,86 +32234,135 @@ export enum HorizontalOrigin {
 }
 
 /**
+ * Properties for managing image-based lighting on tilesets and models.
+Also manages the necessary resources and textures.
+<p>
+If specular environment maps are used, {@link ImageBasedLighting#destroy} must be called
+when the image-based lighting is no longer needed to clean up GPU resources properly.
+If a model or tileset creates an instance of ImageBasedLighting, it will handle this.
+Otherwise, the application is responsible for calling destroy().
+</p>
+ * @param [options.imageBasedLightingFactor = Cartesian2(1.0, 1.0)] - Scales diffuse and specular image-based lighting from the earth, sky, atmosphere and star skybox.
+ * @param [options.luminanceAtZenith = 0.2] - The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
+ * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting.
+ * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
+ */
+export class ImageBasedLighting {
+    constructor();
+    /**
+     * Cesium adds lighting from the earth, sky, atmosphere, and star skybox.
+    This cartesian is used to scale the final diffuse and specular lighting
+    contribution from those sources to the final color. A value of 0.0 will
+    disable those light sources.
+     */
+    imageBasedLightingFactor: Cartesian2;
+    /**
+     * The sun's luminance at the zenith in kilo candela per meter squared
+    to use for this model's procedural environment map. This is used when
+    {@link ImageBasedLighting#specularEnvironmentMaps} and {@link ImageBasedLighting#sphericalHarmonicCoefficients}
+    are not defined.
+     */
+    luminanceAtZenith: number;
+    /**
+     * The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. When <code>undefined</code>, a diffuse irradiance
+    computed from the atmosphere color is used.
+    <p>
+    There are nine <code>Cartesian3</code> coefficients.
+    The order of the coefficients is: L<sub>0,0</sub>, L<sub>1,-1</sub>, L<sub>1,0</sub>, L<sub>1,1</sub>, L<sub>2,-2</sub>, L<sub>2,-1</sub>, L<sub>2,0</sub>, L<sub>2,1</sub>, L<sub>2,2</sub>
+    </p>
+    
+    These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
+    {@link https://github.com/google/filament/releases|Google's Filament project}. This will also generate a KTX file that can be
+    supplied to {@link Model#specularEnvironmentMaps}.
+     */
+    sphericalHarmonicCoefficients: Cartesian3[];
+    /**
+     * A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
+     */
+    specularEnvironmentMaps: string;
+}
+
+/**
  * An imagery layer that displays tiled image data from a single imagery provider
- * on a {@link Globe}.
+on a {@link Globe}.
  * @param imageryProvider - The imagery provider to use.
  * @param [options] - Object with the following properties:
  * @param [options.rectangle = imageryProvider.rectangle] - The rectangle of the layer.  This rectangle
- *        can limit the visible portion of the imagery provider.
+       can limit the visible portion of the imagery provider.
  * @param [options.alpha = 1.0] - The alpha blending value of this layer, from 0.0 to 1.0.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates of the
- *                          imagery tile for which the alpha is required, and it is expected to return
- *                          the alpha value to use for the tile.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates of the
+                         imagery tile for which the alpha is required, and it is expected to return
+                         the alpha value to use for the tile.
  * @param [options.nightAlpha = 1.0] - The alpha blending value of this layer on the night side of the globe, from 0.0 to 1.0.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates of the
- *                          imagery tile for which the alpha is required, and it is expected to return
- *                          the alpha value to use for the tile. This only takes effect when <code>enableLighting</code> is <code>true</code>.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates of the
+                         imagery tile for which the alpha is required, and it is expected to return
+                         the alpha value to use for the tile. This only takes effect when <code>enableLighting</code> is <code>true</code>.
  * @param [options.dayAlpha = 1.0] - The alpha blending value of this layer on the day side of the globe, from 0.0 to 1.0.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates of the
- *                          imagery tile for which the alpha is required, and it is expected to return
- *                          the alpha value to use for the tile. This only takes effect when <code>enableLighting</code> is <code>true</code>.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates of the
+                         imagery tile for which the alpha is required, and it is expected to return
+                         the alpha value to use for the tile. This only takes effect when <code>enableLighting</code> is <code>true</code>.
  * @param [options.brightness = 1.0] - The brightness of this layer.  1.0 uses the unmodified imagery
- *                          color.  Less than 1.0 makes the imagery darker while greater than 1.0 makes it brighter.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates of the
- *                          imagery tile for which the brightness is required, and it is expected to return
- *                          the brightness value to use for the tile.  The function is executed for every
- *                          frame and for every tile, so it must be fast.
+                         color.  Less than 1.0 makes the imagery darker while greater than 1.0 makes it brighter.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates of the
+                         imagery tile for which the brightness is required, and it is expected to return
+                         the brightness value to use for the tile.  The function is executed for every
+                         frame and for every tile, so it must be fast.
  * @param [options.contrast = 1.0] - The contrast of this layer.  1.0 uses the unmodified imagery color.
- *                          Less than 1.0 reduces the contrast while greater than 1.0 increases it.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates of the
- *                          imagery tile for which the contrast is required, and it is expected to return
- *                          the contrast value to use for the tile.  The function is executed for every
- *                          frame and for every tile, so it must be fast.
+                         Less than 1.0 reduces the contrast while greater than 1.0 increases it.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates of the
+                         imagery tile for which the contrast is required, and it is expected to return
+                         the contrast value to use for the tile.  The function is executed for every
+                         frame and for every tile, so it must be fast.
  * @param [options.hue = 0.0] - The hue of this layer.  0.0 uses the unmodified imagery color.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates
- *                          of the imagery tile for which the hue is required, and it is expected to return
- *                          the contrast value to use for the tile.  The function is executed for every
- *                          frame and for every tile, so it must be fast.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates
+                         of the imagery tile for which the hue is required, and it is expected to return
+                         the contrast value to use for the tile.  The function is executed for every
+                         frame and for every tile, so it must be fast.
  * @param [options.saturation = 1.0] - The saturation of this layer.  1.0 uses the unmodified imagery color.
- *                          Less than 1.0 reduces the saturation while greater than 1.0 increases it.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates
- *                          of the imagery tile for which the saturation is required, and it is expected to return
- *                          the contrast value to use for the tile.  The function is executed for every
- *                          frame and for every tile, so it must be fast.
+                         Less than 1.0 reduces the saturation while greater than 1.0 increases it.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates
+                         of the imagery tile for which the saturation is required, and it is expected to return
+                         the contrast value to use for the tile.  The function is executed for every
+                         frame and for every tile, so it must be fast.
  * @param [options.gamma = 1.0] - The gamma correction to apply to this layer.  1.0 uses the unmodified imagery color.
- *                          This can either be a simple number or a function with the signature
- *                          <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
- *                          current frame state, this layer, and the x, y, and level coordinates of the
- *                          imagery tile for which the gamma is required, and it is expected to return
- *                          the gamma value to use for the tile.  The function is executed for every
- *                          frame and for every tile, so it must be fast.
- * @param [options.splitDirection = ImagerySplitDirection.NONE] - The {@link ImagerySplitDirection} split to apply to this layer.
+                         This can either be a simple number or a function with the signature
+                         <code>function(frameState, layer, x, y, level)</code>.  The function is passed the
+                         current frame state, this layer, and the x, y, and level coordinates of the
+                         imagery tile for which the gamma is required, and it is expected to return
+                         the gamma value to use for the tile.  The function is executed for every
+                         frame and for every tile, so it must be fast.
+ * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this layer.
  * @param [options.minificationFilter = TextureMinificationFilter.LINEAR] - The
- *                                    texture minification filter to apply to this layer. Possible values
- *                                    are <code>TextureMinificationFilter.LINEAR</code> and
- *                                    <code>TextureMinificationFilter.NEAREST</code>.
+                                   texture minification filter to apply to this layer. Possible values
+                                   are <code>TextureMinificationFilter.LINEAR</code> and
+                                   <code>TextureMinificationFilter.NEAREST</code>.
  * @param [options.magnificationFilter = TextureMagnificationFilter.LINEAR] - The
- *                                     texture minification filter to apply to this layer. Possible values
- *                                     are <code>TextureMagnificationFilter.LINEAR</code> and
- *                                     <code>TextureMagnificationFilter.NEAREST</code>.
+                                    texture minification filter to apply to this layer. Possible values
+                                    are <code>TextureMagnificationFilter.LINEAR</code> and
+                                    <code>TextureMagnificationFilter.NEAREST</code>.
  * @param [options.show = true] - True if the layer is shown; otherwise, false.
  * @param [options.maximumAnisotropy = maximum supported] - The maximum anisotropy level to use
- *        for texture filtering.  If this parameter is not specified, the maximum anisotropy supported
- *        by the WebGL stack will be used.  Larger values make the imagery look better in horizon
- *        views.
+       for texture filtering.  If this parameter is not specified, the maximum anisotropy supported
+       by the WebGL stack will be used.  Larger values make the imagery look better in horizon
+       views.
  * @param [options.minimumTerrainLevel] - The minimum terrain level-of-detail at which to show this imagery layer,
- *                 or undefined to show it at all levels.  Level zero is the least-detailed level.
+                or undefined to show it at all levels.  Level zero is the least-detailed level.
  * @param [options.maximumTerrainLevel] - The maximum terrain level-of-detail at which to show this imagery layer,
- *                 or undefined to show it at all levels.  Level zero is the least-detailed level.
+                or undefined to show it at all levels.  Level zero is the least-detailed level.
  * @param [options.cutoutRectangle] - Cartographic rectangle for cutting out a portion of this ImageryLayer.
  * @param [options.colorToAlpha] - Color to be used as alpha.
  * @param [options.colorToAlphaThreshold = 0.004] - Threshold for color-to-alpha.
@@ -32266,7 +32378,7 @@ export class ImageryLayer {
         hue?: number | ((...params: any[]) => any);
         saturation?: number | ((...params: any[]) => any);
         gamma?: number | ((...params: any[]) => any);
-        splitDirection?: ImagerySplitDirection | ((...params: any[]) => any);
+        splitDirection?: SplitDirection | ((...params: any[]) => any);
         minificationFilter?: TextureMinificationFilter;
         magnificationFilter?: TextureMagnificationFilter;
         show?: boolean;
@@ -32279,27 +32391,27 @@ export class ImageryLayer {
     });
     /**
      * The alpha blending value of this layer, with 0.0 representing fully transparent and
-     * 1.0 representing fully opaque.
+    1.0 representing fully opaque.
      */
     alpha: number;
     /**
      * The alpha blending value of this layer on the night side of the globe, with 0.0 representing fully transparent and
-     * 1.0 representing fully opaque. This only takes effect when {@link Globe#enableLighting} is <code>true</code>.
+    1.0 representing fully opaque. This only takes effect when {@link Globe#enableLighting} is <code>true</code>.
      */
     nightAlpha: number;
     /**
      * The alpha blending value of this layer on the day side of the globe, with 0.0 representing fully transparent and
-     * 1.0 representing fully opaque. This only takes effect when {@link Globe#enableLighting} is <code>true</code>.
+    1.0 representing fully opaque. This only takes effect when {@link Globe#enableLighting} is <code>true</code>.
      */
     dayAlpha: number;
     /**
      * The brightness of this layer.  1.0 uses the unmodified imagery color.  Less than 1.0
-     * makes the imagery darker while greater than 1.0 makes it brighter.
+    makes the imagery darker while greater than 1.0 makes it brighter.
      */
     brightness: number;
     /**
      * The contrast of this layer.  1.0 uses the unmodified imagery color.  Less than 1.0 reduces
-     * the contrast while greater than 1.0 increases it.
+    the contrast while greater than 1.0 increases it.
      */
     contrast: number;
     /**
@@ -32308,7 +32420,7 @@ export class ImageryLayer {
     hue: number;
     /**
      * The saturation of this layer. 1.0 uses the unmodified imagery color. Less than 1.0 reduces the
-     * saturation while greater than 1.0 increases it.
+    saturation while greater than 1.0 increases it.
      */
     saturation: number;
     /**
@@ -32316,25 +32428,25 @@ export class ImageryLayer {
      */
     gamma: number;
     /**
-     * The {@link ImagerySplitDirection} to apply to this layer.
+     * The {@link SplitDirection} to apply to this layer.
      */
-    splitDirection: ImagerySplitDirection;
+    splitDirection: SplitDirection;
     /**
      * The {@link TextureMinificationFilter} to apply to this layer.
-     * Possible values are {@link TextureMinificationFilter.LINEAR} (the default)
-     * and {@link TextureMinificationFilter.NEAREST}.
-     *
-     * To take effect, this property must be set immediately after adding the imagery layer.
-     * Once a texture is loaded it won't be possible to change the texture filter used.
+    Possible values are {@link TextureMinificationFilter.LINEAR} (the default)
+    and {@link TextureMinificationFilter.NEAREST}.
+    
+    To take effect, this property must be set immediately after adding the imagery layer.
+    Once a texture is loaded it won't be possible to change the texture filter used.
      */
     minificationFilter: TextureMinificationFilter;
     /**
      * The {@link TextureMagnificationFilter} to apply to this layer.
-     * Possible values are {@link TextureMagnificationFilter.LINEAR} (the default)
-     * and {@link TextureMagnificationFilter.NEAREST}.
-     *
-     * To take effect, this property must be set immediately after adding the imagery layer.
-     * Once a texture is loaded it won't be possible to change the texture filter used.
+    Possible values are {@link TextureMagnificationFilter.LINEAR} (the default)
+    and {@link TextureMagnificationFilter.NEAREST}.
+    
+    To take effect, this property must be set immediately after adding the imagery layer.
+    Once a texture is loaded it won't be possible to change the texture filter used.
      */
     magnificationFilter: TextureMagnificationFilter;
     /**
@@ -32359,92 +32471,92 @@ export class ImageryLayer {
     readonly imageryProvider: ImageryProvider;
     /**
      * Gets the rectangle of this layer.  If this rectangle is smaller than the rectangle of the
-     * {@link ImageryProvider}, only a portion of the imagery provider is shown.
+    {@link ImageryProvider}, only a portion of the imagery provider is shown.
      */
     readonly rectangle: Rectangle;
     /**
      * This value is used as the default brightness for the imagery layer if one is not provided during construction
-     * or by the imagery provider. This value does not modify the brightness of the imagery.
+    or by the imagery provider. This value does not modify the brightness of the imagery.
      */
     static DEFAULT_BRIGHTNESS: number;
     /**
      * This value is used as the default contrast for the imagery layer if one is not provided during construction
-     * or by the imagery provider. This value does not modify the contrast of the imagery.
+    or by the imagery provider. This value does not modify the contrast of the imagery.
      */
     static DEFAULT_CONTRAST: number;
     /**
      * This value is used as the default hue for the imagery layer if one is not provided during construction
-     * or by the imagery provider. This value does not modify the hue of the imagery.
+    or by the imagery provider. This value does not modify the hue of the imagery.
      */
     static DEFAULT_HUE: number;
     /**
      * This value is used as the default saturation for the imagery layer if one is not provided during construction
-     * or by the imagery provider. This value does not modify the saturation of the imagery.
+    or by the imagery provider. This value does not modify the saturation of the imagery.
      */
     static DEFAULT_SATURATION: number;
     /**
      * This value is used as the default gamma for the imagery layer if one is not provided during construction
-     * or by the imagery provider. This value does not modify the gamma of the imagery.
+    or by the imagery provider. This value does not modify the gamma of the imagery.
      */
     static DEFAULT_GAMMA: number;
     /**
      * This value is used as the default split for the imagery layer if one is not provided during construction
-     * or by the imagery provider.
+    or by the imagery provider.
      */
-    static DEFAULT_SPLIT: ImagerySplitDirection;
+    static DEFAULT_SPLIT: SplitDirection;
     /**
      * This value is used as the default texture minification filter for the imagery layer if one is not provided
-     * during construction or by the imagery provider.
+    during construction or by the imagery provider.
      */
     static DEFAULT_MINIFICATION_FILTER: TextureMinificationFilter;
     /**
      * This value is used as the default texture magnification filter for the imagery layer if one is not provided
-     * during construction or by the imagery provider.
+    during construction or by the imagery provider.
      */
     static DEFAULT_MAGNIFICATION_FILTER: TextureMagnificationFilter;
     /**
      * This value is used as the default threshold for color-to-alpha if one is not provided
-     * during construction or by the imagery provider.
+    during construction or by the imagery provider.
      */
     static DEFAULT_APPLY_COLOR_TO_ALPHA_THRESHOLD: number;
     /**
      * Gets a value indicating whether this layer is the base layer in the
-     * {@link ImageryLayerCollection}.  The base layer is the one that underlies all
-     * others.  It is special in that it is treated as if it has global rectangle, even if
-     * it actually does not, by stretching the texels at the edges over the entire
-     * globe.
+    {@link ImageryLayerCollection}.  The base layer is the one that underlies all
+    others.  It is special in that it is treated as if it has global rectangle, even if
+    it actually does not, by stretching the texels at the edges over the entire
+    globe.
      * @returns true if this is the base layer; otherwise, false.
      */
     isBaseLayer(): boolean;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-     * <br /><br />
-     * If this object was destroyed, it should not be used; calling any function other than
-     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+    <br /><br />
+    If this object was destroyed, it should not be used; calling any function other than
+    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
      * @returns True if this object was destroyed; otherwise, false.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-     * <br /><br />
-     * Once an object is destroyed, it should not be used; calling any function other than
-     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-     * assign the return value (<code>undefined</code>) to the object as done in the example.
+    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+    <br /><br />
+    Once an object is destroyed, it should not be used; calling any function other than
+    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+    assign the return value (<code>undefined</code>) to the object as done in the example.
      * @example
      * imageryLayer = imageryLayer && imageryLayer.destroy();
      */
     destroy(): void;
     /**
      * Computes the intersection of this layer's rectangle with the imagery provider's availability rectangle,
-     * producing the overall bounds of imagery that can be produced by this layer.
+    producing the overall bounds of imagery that can be produced by this layer.
      * @example
      * // Zoom to an imagery layer.
-     * imageryLayer.getViewableRectangle().then(function (rectangle) {
-     *     return camera.flyTo({
-     *         destination: rectangle
-     *     });
-     * });
+    imageryLayer.getViewableRectangle().then(function (rectangle) {
+        return camera.flyTo({
+            destination: rectangle
+        });
+    });
      * @returns A promise to a rectangle which defines the overall bounds of imagery that can be produced by this layer.
      */
     getViewableRectangle(): Promise<Rectangle>;
@@ -32457,24 +32569,24 @@ export class ImageryLayerCollection {
     constructor();
     /**
      * An event that is raised when a layer is added to the collection.  Event handlers are passed the layer that
-    was added and the index at which it was added.
+     * was added and the index at which it was added.
      */
     layerAdded: Event;
     /**
      * An event that is raised when a layer is removed from the collection.  Event handlers are passed the layer that
-    was removed and the index from which it was removed.
+     * was removed and the index from which it was removed.
      */
     layerRemoved: Event;
     /**
      * An event that is raised when a layer changes position in the collection.  Event handlers are passed the layer that
-    was moved, its new index after the move, and its old index prior to the move.
+     * was moved, its new index after the move, and its old index prior to the move.
      */
     layerMoved: Event;
     /**
      * An event that is raised when a layer is shown or hidden by setting the
-    {@link ImageryLayer#show} property.  Event handlers are passed a reference to this layer,
-    the index of the layer in the collection, and a flag that is true if the layer is now
-    shown or false if it is now hidden.
+     * {@link ImageryLayer#show} property.  Event handlers are passed a reference to this layer,
+     * the index of the layer in the collection, and a flag that is true if the layer is now
+     * shown or false if it is now hidden.
      */
     layerShownOrHidden: Event;
     /**
@@ -32485,14 +32597,14 @@ export class ImageryLayerCollection {
      * Adds a layer to the collection.
      * @param layer - the layer to add.
      * @param [index] - the index to add the layer at.  If omitted, the layer will
-                            be added on top of all existing layers.
+     *                         be added on top of all existing layers.
      */
     add(layer: ImageryLayer, index?: number): void;
     /**
      * Creates a new layer using the given ImageryProvider and adds it to the collection.
      * @param imageryProvider - the imagery provider to create a new layer for.
      * @param [index] - the index to add the layer at.  If omitted, the layer will
-                            added on top of all existing layers.
+     *                         added on top of all existing layers.
      * @returns The newly created layer.
      */
     addImageryProvider(imageryProvider: ImageryProvider, index?: number): ImageryLayer;
@@ -32501,7 +32613,7 @@ export class ImageryLayerCollection {
      * @param layer - The layer to remove.
      * @param [destroy = true] - whether to destroy the layers in addition to removing them.
      * @returns true if the layer was in the collection and was removed,
-                       false if the layer was not in the collection.
+     *                    false if the layer was not in the collection.
      */
     remove(layer: ImageryLayer, destroy?: boolean): boolean;
     /**
@@ -32549,57 +32661,57 @@ export class ImageryLayerCollection {
     lowerToBottom(layer: ImageryLayer): void;
     /**
      * Determines the imagery layers that are intersected by a pick ray. To compute a pick ray from a
-    location on the screen, use {@link Camera.getPickRay}.
+     * location on the screen, use {@link Camera.getPickRay}.
      * @param ray - The ray to test for intersection.
      * @param scene - The scene.
      * @returns An array that includes all of
-                                    the layers that are intersected by a given pick ray. Undefined if
-                                    no layers are selected.
+     *                                 the layers that are intersected by a given pick ray. Undefined if
+     *                                 no layers are selected.
      */
     pickImageryLayers(ray: Ray, scene: Scene): ImageryLayer[] | undefined;
     /**
      * Asynchronously determines the imagery layer features that are intersected by a pick ray.  The intersected imagery
-    layer features are found by invoking {@link ImageryProvider#pickFeatures} for each imagery layer tile intersected
-    by the pick ray.  To compute a pick ray from a location on the screen, use {@link Camera.getPickRay}.
+     * layer features are found by invoking {@link ImageryProvider#pickFeatures} for each imagery layer tile intersected
+     * by the pick ray.  To compute a pick ray from a location on the screen, use {@link Camera.getPickRay}.
      * @example
      * const pickRay = viewer.camera.getPickRay(windowPosition);
-    const featuresPromise = viewer.imageryLayers.pickImageryLayerFeatures(pickRay, viewer.scene);
-    if (!Cesium.defined(featuresPromise)) {
-        console.log('No features picked.');
-    } else {
-        Cesium.when(featuresPromise, function(features) {
-            // This function is called asynchronously when the list if picked features is available.
-            console.log('Number of features: ' + features.length);
-            if (features.length > 0) {
-                console.log('First feature name: ' + features[0].name);
-            }
-        });
-    }
+     * const featuresPromise = viewer.imageryLayers.pickImageryLayerFeatures(pickRay, viewer.scene);
+     * if (!Cesium.defined(featuresPromise)) {
+     *     console.log('No features picked.');
+     * } else {
+     *     Promise.resolve(featuresPromise).then(function(features) {
+     *         // This function is called asynchronously when the list if picked features is available.
+     *         console.log('Number of features: ' + features.length);
+     *         if (features.length > 0) {
+     *             console.log('First feature name: ' + features[0].name);
+     *         }
+     *     });
+     * }
      * @param ray - The ray to test for intersection.
      * @param scene - The scene.
      * @returns A promise that resolves to an array of features intersected by the pick ray.
-                                                If it can be quickly determined that no features are intersected (for example,
-                                                because no active imagery providers support {@link ImageryProvider#pickFeatures}
-                                                or because the pick ray does not intersect the surface), this function will
-                                                return undefined.
+     *                                             If it can be quickly determined that no features are intersected (for example,
+     *                                             because no active imagery providers support {@link ImageryProvider#pickFeatures}
+     *                                             or because the pick ray does not intersect the surface), this function will
+     *                                             return undefined.
      */
     pickImageryLayerFeatures(ray: Ray, scene: Scene): Promise<ImageryLayerFeatureInfo[]> | undefined;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-    <br /><br />
-    If this object was destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * <br /><br />
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
      * @returns true if this object was destroyed; otherwise, false.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by all layers in this collection.  Explicitly destroying this
-    object allows for deterministic release of WebGL resources, instead of relying on the garbage
-    collector.
-    <br /><br />
-    Once this object is destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-    assign the return value (<code>undefined</code>) to the object as done in the example.
+     * object allows for deterministic release of WebGL resources, instead of relying on the garbage
+     * collector.
+     * <br /><br />
+     * Once this object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
      * @example
      * layerCollection = layerCollection && layerCollection.destroy();
      */
@@ -32824,21 +32936,9 @@ export class ImageryProvider {
 }
 
 /**
- * The direction to display an ImageryLayer relative to the {@link Scene#imagerySplitPosition}.
+ * This enumeration is deprecated. Use {@link SplitPosition} instead.
  */
 export enum ImagerySplitDirection {
-    /**
-     * Display the ImageryLayer to the left of the {@link Scene#imagerySplitPosition}.
-     */
-    LEFT = -1,
-    /**
-     * Always display the ImageryLayer.
-     */
-    NONE = 0,
-    /**
-     * Display the ImageryLayer to the right of the {@link Scene#imagerySplitPosition}.
-     */
-    RIGHT = 1
 }
 
 export namespace IonImageryProvider {
@@ -33303,33 +33403,33 @@ export class Label {
 
 /**
  * A renderable collection of labels.  Labels are viewport-aligned text positioned in the 3D scene.
-Each label can have a different font, color, scale, etc.
-<br /><br />
-<div align='center'>
-<img src='Images/Label.png' width='400' height='300' /><br />
-Example labels
-</div>
-<br /><br />
-Labels are added and removed from the collection using {@link LabelCollection#add}
-and {@link LabelCollection#remove}.
+ * Each label can have a different font, color, scale, etc.
+ * <br /><br />
+ * <div align='center'>
+ * <img src='Images/Label.png' width='400' height='300' /><br />
+ * Example labels
+ * </div>
+ * <br /><br />
+ * Labels are added and removed from the collection using {@link LabelCollection#add}
+ * and {@link LabelCollection#remove}.
  * @example
  * // Create a label collection with two labels
-const labels = scene.primitives.add(new Cesium.LabelCollection());
-labels.add({
-  position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
-  text : 'A label'
-});
-labels.add({
-  position : new Cesium.Cartesian3(4.0, 5.0, 6.0),
-  text : 'Another label'
-});
+ * const labels = scene.primitives.add(new Cesium.LabelCollection());
+ * labels.add({
+ *   position : new Cesium.Cartesian3(1.0, 2.0, 3.0),
+ *   text : 'A label'
+ * });
+ * labels.add({
+ *   position : new Cesium.Cartesian3(4.0, 5.0, 6.0),
+ *   text : 'Another label'
+ * });
  * @param [options] - Object with the following properties:
  * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms each label from model to world coordinates.
  * @param [options.debugShowBoundingVolume = false] - For debugging only. Determines if this primitive's commands' bounding spheres are shown.
  * @param [options.scene] - Must be passed in for labels that use the height reference property or will be depth tested against the globe.
  * @param [options.blendOption = BlendOption.OPAQUE_AND_TRANSLUCENT] - The label blending option. The default
-is used for rendering both opaque and translucent labels. However, if either all of the labels are completely opaque or all are completely translucent,
-setting the technique to BlendOption.OPAQUE or BlendOption.TRANSLUCENT can improve performance by up to 2x.
+ * is used for rendering both opaque and translucent labels. However, if either all of the labels are completely opaque or all are completely translucent,
+ * setting the technique to BlendOption.OPAQUE or BlendOption.TRANSLUCENT can improve performance by up to 2x.
  * @param [options.show = true] - Determines if the labels in the collection will be shown.
  */
 export class LabelCollection {
@@ -33346,85 +33446,85 @@ export class LabelCollection {
     show: boolean;
     /**
      * The 4x4 transformation matrix that transforms each label in this collection from model to world coordinates.
-    When this is the identity matrix, the labels are drawn in world coordinates, i.e., Earth's WGS84 coordinates.
-    Local reference frames can be used by providing a different transformation matrix, like that returned
-    by {@link Transforms.eastNorthUpToFixedFrame}.
+     * When this is the identity matrix, the labels are drawn in world coordinates, i.e., Earth's WGS84 coordinates.
+     * Local reference frames can be used by providing a different transformation matrix, like that returned
+     * by {@link Transforms.eastNorthUpToFixedFrame}.
      * @example
      * const center = Cesium.Cartesian3.fromDegrees(-75.59777, 40.03883);
-    labels.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
-    labels.add({
-      position : new Cesium.Cartesian3(0.0, 0.0, 0.0),
-      text     : 'Center'
-    });
-    labels.add({
-      position : new Cesium.Cartesian3(1000000.0, 0.0, 0.0),
-      text     : 'East'
-    });
-    labels.add({
-      position : new Cesium.Cartesian3(0.0, 1000000.0, 0.0),
-      text     : 'North'
-    });
-    labels.add({
-      position : new Cesium.Cartesian3(0.0, 0.0, 1000000.0),
-      text     : 'Up'
-    });
+     * labels.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(center);
+     * labels.add({
+     *   position : new Cesium.Cartesian3(0.0, 0.0, 0.0),
+     *   text     : 'Center'
+     * });
+     * labels.add({
+     *   position : new Cesium.Cartesian3(1000000.0, 0.0, 0.0),
+     *   text     : 'East'
+     * });
+     * labels.add({
+     *   position : new Cesium.Cartesian3(0.0, 1000000.0, 0.0),
+     *   text     : 'North'
+     * });
+     * labels.add({
+     *   position : new Cesium.Cartesian3(0.0, 0.0, 1000000.0),
+     *   text     : 'Up'
+     * });
      */
     modelMatrix: Matrix4;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-    <p>
-    Draws the bounding sphere for each draw command in the primitive.
-    </p>
+     * <p>
+     * Draws the bounding sphere for each draw command in the primitive.
+     * </p>
      */
     debugShowBoundingVolume: boolean;
     /**
      * The label blending option. The default is used for rendering both opaque and translucent labels.
-    However, if either all of the labels are completely opaque or all are completely translucent,
-    setting the technique to BlendOption.OPAQUE or BlendOption.TRANSLUCENT can improve
-    performance by up to 2x.
+     * However, if either all of the labels are completely opaque or all are completely translucent,
+     * setting the technique to BlendOption.OPAQUE or BlendOption.TRANSLUCENT can improve
+     * performance by up to 2x.
      */
     blendOption: BlendOption;
     /**
      * Returns the number of labels in this collection.  This is commonly used with
-    {@link LabelCollection#get} to iterate over all the labels
-    in the collection.
+     * {@link LabelCollection#get} to iterate over all the labels
+     * in the collection.
      */
     length: number;
     /**
      * Creates and adds a label with the specified initial properties to the collection.
-    The added label is returned so it can be modified or removed from the collection later.
+     * The added label is returned so it can be modified or removed from the collection later.
      * @example
      * // Example 1:  Add a label, specifying all the default values.
-    const l = labels.add({
-      show : true,
-      position : Cesium.Cartesian3.ZERO,
-      text : '',
-      font : '30px sans-serif',
-      fillColor : Cesium.Color.WHITE,
-      outlineColor : Cesium.Color.BLACK,
-      outlineWidth : 1.0,
-      showBackground : false,
-      backgroundColor : new Cesium.Color(0.165, 0.165, 0.165, 0.8),
-      backgroundPadding : new Cesium.Cartesian2(7, 5),
-      style : Cesium.LabelStyle.FILL,
-      pixelOffset : Cesium.Cartesian2.ZERO,
-      eyeOffset : Cesium.Cartesian3.ZERO,
-      horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
-      verticalOrigin : Cesium.VerticalOrigin.BASELINE,
-      scale : 1.0,
-      translucencyByDistance : undefined,
-      pixelOffsetScaleByDistance : undefined,
-      heightReference : HeightReference.NONE,
-      distanceDisplayCondition : undefined
-    });
+     * const l = labels.add({
+     *   show : true,
+     *   position : Cesium.Cartesian3.ZERO,
+     *   text : '',
+     *   font : '30px sans-serif',
+     *   fillColor : Cesium.Color.WHITE,
+     *   outlineColor : Cesium.Color.BLACK,
+     *   outlineWidth : 1.0,
+     *   showBackground : false,
+     *   backgroundColor : new Cesium.Color(0.165, 0.165, 0.165, 0.8),
+     *   backgroundPadding : new Cesium.Cartesian2(7, 5),
+     *   style : Cesium.LabelStyle.FILL,
+     *   pixelOffset : Cesium.Cartesian2.ZERO,
+     *   eyeOffset : Cesium.Cartesian3.ZERO,
+     *   horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
+     *   verticalOrigin : Cesium.VerticalOrigin.BASELINE,
+     *   scale : 1.0,
+     *   translucencyByDistance : undefined,
+     *   pixelOffsetScaleByDistance : undefined,
+     *   heightReference : HeightReference.NONE,
+     *   distanceDisplayCondition : undefined
+     * });
      * @example
      * // Example 2:  Specify only the label's cartographic position,
-    // text, and font.
-    const l = labels.add({
-      position : Cesium.Cartesian3.fromRadians(longitude, latitude, height),
-      text : 'Hello World',
-      font : '24px Helvetica',
-    });
+     * // text, and font.
+     * const l = labels.add({
+     *   position : Cesium.Cartesian3.fromRadians(longitude, latitude, height),
+     *   text : 'Hello World',
+     *   font : '24px Helvetica',
+     * });
      * @param [options] - A template describing the label's properties as shown in Example 1.
      * @returns The label that was added to the collection.
      */
@@ -33433,7 +33533,7 @@ export class LabelCollection {
      * Removes a label from the collection.  Once removed, a label is no longer usable.
      * @example
      * const l = labels.add(...);
-    labels.remove(l);  // Returns true
+     * labels.remove(l);  // Returns true
      * @param label - The label to remove.
      * @returns <code>true</code> if the label was removed; <code>false</code> if the label was not found in the collection.
      */
@@ -33442,8 +33542,8 @@ export class LabelCollection {
      * Removes all labels from the collection.
      * @example
      * labels.add(...);
-    labels.add(...);
-    labels.removeAll();
+     * labels.add(...);
+     * labels.removeAll();
      */
     removeAll(): void;
     /**
@@ -33454,36 +33554,36 @@ export class LabelCollection {
     contains(label: Label): boolean;
     /**
      * Returns the label in the collection at the specified index.  Indices are zero-based
-    and increase as labels are added.  Removing a label shifts all labels after
-    it to the left, changing their indices.  This function is commonly used with
-    {@link LabelCollection#length} to iterate over all the labels
-    in the collection.
+     * and increase as labels are added.  Removing a label shifts all labels after
+     * it to the left, changing their indices.  This function is commonly used with
+     * {@link LabelCollection#length} to iterate over all the labels
+     * in the collection.
      * @example
      * // Toggle the show property of every label in the collection
-    const len = labels.length;
-    for (let i = 0; i < len; ++i) {
-      const l = billboards.get(i);
-      l.show = !l.show;
-    }
+     * const len = labels.length;
+     * for (let i = 0; i < len; ++i) {
+     *   const l = billboards.get(i);
+     *   l.show = !l.show;
+     * }
      * @param index - The zero-based index of the billboard.
      * @returns The label at the specified index.
      */
     get(index: number): Label;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-    <br /><br />
-    If this object was destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * <br /><br />
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
      * @returns True if this object was destroyed; otherwise, false.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-    <br /><br />
-    Once an object is destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-    assign the return value (<code>undefined</code>) to the object as done in the example.
+     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+     * <br /><br />
+     * Once an object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
      * @example
      * labels = labels && labels.destroy();
      */
@@ -34556,15 +34656,17 @@ relative to a local origin.
  * @param [options.silhouetteSize = 0.0] - The size of the silhouette in pixels.
  * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
  * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models.
- * @param [options.imageBasedLightingFactor = Cartesian2(1.0, 1.0)] - Scales diffuse and specular image-based lighting from the earth, sky, atmosphere and star skybox.
  * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
- * @param [options.luminanceAtZenith = 0.2] - The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
- * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting.
- * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps.
+ * @param [options.imageBasedLighting] - The properties for managing image-based lighting on this model.
+ * @param [options.imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - Scales diffuse and specular image-based lighting from the earth, sky, atmosphere and star skybox. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+ * @param [options.luminanceAtZenith = 0.2] - The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+ * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+ * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
  * @param [options.credit] - A credit for the data source, which is displayed on the canvas.
  * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
  * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if {@link Model#color} is translucent or {@link Model#silhouetteSize} is greater than 0.0.
  * @param [options.showOutline = true] - Whether to display the outline for models using the {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension. When true, outlines are displayed. When false, outlines are not displayed.
+ * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
  */
 export class Model {
     constructor(options?: {
@@ -34593,8 +34695,9 @@ export class Model {
         silhouetteSize?: number;
         clippingPlanes?: ClippingPlaneCollection;
         dequantizeInShader?: boolean;
-        imageBasedLightingFactor?: Cartesian2;
         lightColor?: Cartesian3;
+        imageBasedLighting?: ImageBasedLighting;
+        imageBasedLightingFactor?: Cartesian2;
         luminanceAtZenith?: number;
         sphericalHarmonicCoefficients?: Cartesian3[];
         specularEnvironmentMaps?: string;
@@ -34602,6 +34705,7 @@ export class Model {
         showCreditsOnScreen?: boolean;
         backFaceCulling?: boolean;
         showOutline?: boolean;
+        splitDirection?: SplitDirection;
     });
     /**
      * Determines if the model primitive will be shown.
@@ -34691,6 +34795,10 @@ export class Model {
      */
     readonly showOutline: boolean;
     /**
+     * The {@link SplitDirection} to apply to this model.
+     */
+    splitDirection: SplitDirection;
+    /**
      * This property is for debugging only; it is not for production use nor is it optimized.
     <p>
     Draws the bounding sphere for each draw command in the model.  A glTF primitive corresponds
@@ -34740,11 +34848,11 @@ export class Model {
     </p>
      * @example
      * // Play all animations at half-speed when the model is ready to render
-    Cesium.when(model.readyPromise).then(function(model) {
+    Promise.resolve(model.readyPromise).then(function(model) {
       model.activeAnimations.addAll({
         multiplier : 0.5
       });
-    }).otherwise(function(error){
+    }).catch(function(error){
       window.alert(error);
     });
      */
@@ -34775,11 +34883,6 @@ export class Model {
      */
     clippingPlanes: ClippingPlaneCollection;
     /**
-     * Cesium adds lighting from the earth, sky, atmosphere, and star skybox. This cartesian is used to scale the final
-    diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
-     */
-    imageBasedLightingFactor: Cartesian2;
-    /**
      * The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
     <p>
     For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cesium.Cartesian2(0.0, 0.0)</code> will make the
@@ -34787,6 +34890,15 @@ export class Model {
     </p>
      */
     lightColor: Cartesian3;
+    /**
+     * The properties for managing image-based lighting on this model.
+     */
+    imageBasedLighting: ImageBasedLighting;
+    /**
+     * Cesium adds lighting from the earth, sky, atmosphere, and star skybox. This cartesian is used to scale the final
+    diffuse and specular lighting contribution from those sources to the final color. A value of 0.0 will disable those light sources.
+     */
+    imageBasedLightingFactor: Cartesian2;
     /**
      * The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
     This is used when {@link Model#specularEnvironmentMaps} and {@link Model#sphericalHarmonicCoefficients} are not defined.
@@ -34797,7 +34909,7 @@ export class Model {
     computed from the atmosphere color is used.
     <p>
     There are nine <code>Cartesian3</code> coefficients.
-    The order of the coefficients is: L<sub>00</sub>, L<sub>1-1</sub>, L<sub>10</sub>, L<sub>11</sub>, L<sub>2-2</sub>, L<sub>2-1</sub>, L<sub>20</sub>, L<sub>21</sub>, L<sub>22</sub>
+    The order of the coefficients is: L<sub>0,0</sub>, L<sub>1,-1</sub>, L<sub>1,0</sub>, L<sub>1,1</sub>, L<sub>2,-2</sub>, L<sub>2,-1</sub>, L<sub>2,0</sub>, L<sub>2,1</sub>, L<sub>2,2</sub>
     </p>
     
     These values can be obtained by preprocessing the environment map using the <code>cmgen</code> tool of
@@ -34916,6 +35028,12 @@ export class Model {
      * @param [options.silhouetteSize = 0.0] - The size of the silhouette in pixels.
      * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
      * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models.
+     * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
+     * @param [options.imageBasedLighting] - The properties for managing image-based lighting for this tileset.
+     * @param [options.imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - Scales diffuse and specular image-based lighting from the earth, sky, atmosphere and star skybox. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+     * @param [options.luminanceAtZenith = 0.2] - The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+     * @param [options.sphericalHarmonicCoefficients] - The third order spherical harmonic coefficients used for the diffuse color of image-based lighting. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
+     * @param [options.specularEnvironmentMaps] - A URL to a KTX2 file that contains a cube map of the specular lighting and the convoluted specular mipmaps. Deprecated in Cesium 1.92, will be removed in Cesium 1.94.
      * @param [options.credit] - A credit for the model, which is displayed on the canvas.
      * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
      * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if {@link Model#color} is translucent or {@link Model#silhouetteSize} is greater than 0.0.
@@ -34948,6 +35066,12 @@ export class Model {
         silhouetteSize?: number;
         clippingPlanes?: ClippingPlaneCollection;
         dequantizeInShader?: boolean;
+        lightColor?: Cartesian3;
+        imageBasedLighting?: ImageBasedLighting;
+        imageBasedLightingFactor?: Cartesian2;
+        luminanceAtZenith?: number;
+        sphericalHarmonicCoefficients?: Cartesian3[];
+        specularEnvironmentMaps?: string;
         credit?: Credit | string;
         showCreditsOnScreen?: boolean;
         backFaceCulling?: boolean;
@@ -35480,6 +35604,9 @@ the Model from your source data type.
  * @param options - Object with the following properties:
  * @param options.resource - The Resource to the 3D model.
  * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms the model from model to world coordinates.
+ * @param [options.scale = 1.0] - A uniform scale applied to this model.
+ * @param [options.minimumPixelSize = 0.0] - The approximate minimum pixel size of the model regardless of zoom.
+ * @param [options.maximumScale] - The maximum scale size of a model. An upper limit for minimumPixelSize.
  * @param [options.debugShowBoundingVolume = false] - For debugging only. Draws the bounding sphere for each draw command in the model.
  * @param [options.cull = true] - Whether or not to cull the model using frustum/horizon culling. If the model is part of a 3D Tiles tileset, this property will always be false, since the 3D Tiles culling system is used.
  * @param [options.opaquePass = Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
@@ -35490,17 +35617,24 @@ the Model from your source data type.
  * @param [options.color] - A color that blends with the model's rendered color.
  * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
  * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
- * @param [options.featureIdIndex = 0] - The index into the list of primitive feature IDs used for picking and styling. For EXT_feature_metadata, feature ID attributes are listed before feature ID textures. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
- * @param [options.instanceFeatureIdIndex = 0] - The index into the list of instance feature IDs used for picking and styling. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
  * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation based on geometric error and lighting.
+ * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
+ * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
+ * @param [options.imageBasedLighting] - The properties for managing image-based lighting on this model.
  * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if the model's color is translucent.
  * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
  * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
+ * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
  */
 export class ModelExperimental {
     constructor(options: {
         resource: Resource;
         modelMatrix?: Matrix4;
+        scale?: number;
+        minimumPixelSize?: number;
+        maximumScale?: number;
         debugShowBoundingVolume?: boolean;
         cull?: boolean;
         opaquePass?: boolean;
@@ -35511,12 +35645,16 @@ export class ModelExperimental {
         color?: Color;
         colorBlendMode?: ColorBlendMode;
         colorBlendAmount?: number;
-        featureIdIndex?: number;
-        instanceFeatureIdIndex?: number;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
         pointCloudShading?: any;
+        clippingPlanes?: ClippingPlaneCollection;
+        lightColor?: Cartesian3;
+        imageBasedLighting?: ImageBasedLighting;
         backFaceCulling?: boolean;
         shadows?: ShadowMode;
         showCreditsOnScreen?: boolean;
+        splitDirection?: SplitDirection;
     });
     /**
      * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
@@ -35571,22 +35709,86 @@ export class ModelExperimental {
      */
     show: boolean;
     /**
-     * The index into the list of primitive feature IDs used for picking and
-    styling. For EXT_feature_metadata, feature ID attributes are listed before
-    feature ID textures. If both per-primitive and per-instance feature IDs are
-    present, the instance feature IDs take priority.
+     * Label of the feature ID set to use for picking and styling.
+    <p>
+    For EXT_mesh_features, this is the feature ID's label property, or
+    "featureId_N" (where N is the index in the featureIds array) when not
+    specified. EXT_feature_metadata did not have a label field, so such
+    feature ID sets are always labeled "featureId_N" where N is the index in
+    the list of all feature Ids, where feature ID attributes are listed before
+    feature ID textures.
+    </p>
+    <p>
+    If featureIdLabel is set to an integer N, it is converted to
+    the string "featureId_N" automatically. If both per-primitive and
+    per-instance feature IDs are present, the instance feature IDs take
+    priority.
+    </p>
      */
-    readonly featureIdIndex: number;
+    featureIdLabel: string;
     /**
-     * The index into the list of instance feature IDs used for picking and
-    styling. If both per-primitive and per-instance feature IDs are present,
-    the instance feature IDs take priority.
+     * Label of the instance feature ID set used for picking and styling.
+    <p>
+    If instanceFeatureIdLabel is set to an integer N, it is converted to
+    the string "instanceFeatureId_N" automatically.
+    If both per-primitive and per-instance feature IDs are present, the
+    instance feature IDs take priority.
+    </p>
      */
-    instanceFeatureIdIndex: number;
+    instanceFeatureIdLabel: string;
+    /**
+     * The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
+     */
+    clippingPlanes: ClippingPlaneCollection;
+    /**
+     * The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
+    <p>
+    Disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cartesian2(0.0, 0.0)</code> will make the
+    model much darker. Here, increasing the intensity of the light source will make the model brighter.
+    </p>
+     */
+    lightColor: Cartesian3;
+    /**
+     * The properties for managing image-based lighting on this model.
+     */
+    imageBasedLighting: ImageBasedLighting;
+    /**
+     * Whether to cull back-facing geometry. When true, back face culling is
+    determined by the material's doubleSided property; when false, back face
+    culling is disabled. Back faces are not culled if the model's color is
+    translucent.
+     */
+    backFaceCulling: boolean;
+    /**
+     * A uniform scale applied to this model before the {@link Model#modelMatrix}.
+    Values greater than <code>1.0</code> increase the size of the model; values
+    less than <code>1.0</code> decrease.
+     */
+    scale: number;
+    /**
+     * The approximate minimum pixel size of the model regardless of zoom.
+    This can be used to ensure that a model is visible even when the viewer
+    zooms out.  When <code>0.0</code>, no minimum size is enforced.
+     */
+    minimumPixelSize: number;
+    /**
+     * The maximum scale size for a model. This can be used to give
+    an upper limit to the {@link Model#minimumPixelSize}, ensuring that the model
+    is never an unreasonable scale.
+     */
+    maximumScale: number;
+    /**
+     * Determines whether the model casts or receives shadows from light sources.
+     */
+    shadows: ShadowMode;
     /**
      * Gets or sets whether the credits of the model will be displayed on the screen
      */
     showCreditsOnScreen: boolean;
+    /**
+     * The {@link SplitDirection} to apply to this model.
+     */
+    splitDirection: SplitDirection;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
     get the draw commands needed to render this primitive.
@@ -35626,6 +35828,9 @@ export class ModelExperimental {
      * @param options.gltf - A Resource/URL to a glTF/glb file, a binary glTF buffer, or a JSON object containing the glTF contents
      * @param [options.basePath = ''] - The base path that paths in the glTF JSON are relative to.
      * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms the model from model to world coordinates.
+     * @param [options.scale = 1.0] - A uniform scale applied to this model.
+     * @param [options.minimumPixelSize = 0.0] - The approximate minimum pixel size of the model regardless of zoom.
+     * @param [options.maximumScale] - The maximum scale size of a model. An upper limit for minimumPixelSize.
      * @param [options.incrementallyLoadTextures = true] - Determine if textures may continue to stream in after the model is loaded.
      * @param [options.releaseGltfJson = false] - When true, the glTF JSON is released once the glTF is loaded. This is is especially useful for cases like 3D Tiles, where each .gltf model is unique and caching the glTF JSON is not effective.
      * @param [options.debugShowBoundingVolume = false] - For debugging only. Draws the bounding sphere for each draw command in the model.
@@ -35640,18 +35845,25 @@ export class ModelExperimental {
      * @param [options.color] - A color that blends with the model's rendered color.
      * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
      * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
-     * @param [options.featureIdIndex = 0] - The index into the list of primitive feature IDs used for picking and styling. For EXT_feature_metadata, feature ID attributes are listed before feature ID textures. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
-     * @param [options.instanceFeatureIdIndex = 0] - The index into the list of instance feature IDs used for picking and styling. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+     * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+     * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
      * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation and lighting.
+     * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
+     * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
+     * @param [options.imageBasedLighting] - The properties for managing image-based lighting on this model.
      * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if the model's color is translucent.
      * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
      * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
+     * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
      * @returns The newly created model.
      */
     static fromGltf(options: {
         gltf: string | Resource | Uint8Array | any;
         basePath?: string | Resource;
         modelMatrix?: Matrix4;
+        scale?: number;
+        minimumPixelSize?: number;
+        maximumScale?: number;
         incrementallyLoadTextures?: boolean;
         releaseGltfJson?: boolean;
         debugShowBoundingVolume?: boolean;
@@ -35666,12 +35878,16 @@ export class ModelExperimental {
         color?: Color;
         colorBlendMode?: ColorBlendMode;
         colorBlendAmount?: number;
-        featureIdIndex?: number;
-        instanceFeatureIdIndex?: number;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
         pointCloudShading?: any;
+        clippingPlanes?: ClippingPlaneCollection;
+        lightColor?: Cartesian3;
+        imageBasedLighting?: ImageBasedLighting;
         backFaceCulling?: boolean;
         shadows?: ShadowMode;
         showCreditsOnScreen?: boolean;
+        splitDirection?: SplitDirection;
     }): ModelExperimental;
 }
 
@@ -35690,19 +35906,6 @@ export var modelMatrix: Matrix4;
  * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
  */
 export var style: Cesium3DTileStyle;
-
-/**
- * Whether to cull back-facing geometry. When true, back face culling is
-determined by the material's doubleSided property; when false, back face
-culling is disabled. Back faces are not culled if the model's color is
-translucent.
- */
-export var backFaceCulling: boolean;
-
-/**
- * Determines whether the model casts or receives shadows from light sources.
- */
-export var shadows: ShadowMode;
 
 /**
  * The indices of the children of this node in the scene graph.
@@ -35781,15 +35984,15 @@ export class ModelFeature {
     getProperty(name: string): any;
     /**
      * Returns a copy of the feature's property with the given name, examining all
-    the metadata from the EXT_mesh_features and legacy EXT_feature_metadata glTF
+    the metadata from the EXT_structural_metadata and legacy EXT_feature_metadata glTF
     extensions. Metadata is checked against name from most specific to most
     general and the first match is returned. Metadata is checked in this order:
     <ol>
-      <li>Feature metadata property by semantic</li>
-      <li>Feature metadata property by property ID</li>
+      <li>structural metadata property by semantic</li>
+      <li>structural metadata property by property ID</li>
     </ol>
     <p>
-    See the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_mesh_features|EXT_mesh_features Extension} as well as the
+    See the {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_structural_metadata|EXT_structural_metadata Extension} as well as the
     previous {@link https://github.com/CesiumGS/glTF/tree/3d-tiles-next/extensions/2.0/Vendor/EXT_feature_metadata|EXT_feature_metadata Extension} for glTF.
     </p>
      * @param name - The semantic or property ID of the feature. Semantics are checked before property IDs in each granularity of metadata.
@@ -38027,88 +38230,88 @@ export enum PostProcessStageSampleMode {
 
 /**
  * A primitive represents geometry in the {@link Scene}.  The geometry can be from a single {@link GeometryInstance}
-as shown in example 1 below, or from an array of instances, even if the geometry is from different
-geometry types, e.g., an {@link RectangleGeometry} and an {@link EllipsoidGeometry} as shown in Code Example 2.
-<p>
-A primitive combines geometry instances with an {@link Appearance} that describes the full shading, including
-{@link Material} and {@link RenderState}.  Roughly, the geometry instance defines the structure and placement,
-and the appearance defines the visual characteristics.  Decoupling geometry and appearance allows us to mix
-and match most of them and add a new geometry or appearance independently of each other.
-</p>
-<p>
-Combining multiple instances into one primitive is called batching, and significantly improves performance for static data.
-Instances can be individually picked; {@link Scene#pick} returns their {@link GeometryInstance#id}.  Using
-per-instance appearances like {@link PerInstanceColorAppearance}, each instance can also have a unique color.
-</p>
-<p>
-{@link Geometry} can either be created and batched on a web worker or the main thread. The first two examples
-show geometry that will be created on a web worker by using the descriptions of the geometry. The third example
-shows how to create the geometry on the main thread by explicitly calling the <code>createGeometry</code> method.
-</p>
+ * as shown in example 1 below, or from an array of instances, even if the geometry is from different
+ * geometry types, e.g., an {@link RectangleGeometry} and an {@link EllipsoidGeometry} as shown in Code Example 2.
+ * <p>
+ * A primitive combines geometry instances with an {@link Appearance} that describes the full shading, including
+ * {@link Material} and {@link RenderState}.  Roughly, the geometry instance defines the structure and placement,
+ * and the appearance defines the visual characteristics.  Decoupling geometry and appearance allows us to mix
+ * and match most of them and add a new geometry or appearance independently of each other.
+ * </p>
+ * <p>
+ * Combining multiple instances into one primitive is called batching, and significantly improves performance for static data.
+ * Instances can be individually picked; {@link Scene#pick} returns their {@link GeometryInstance#id}.  Using
+ * per-instance appearances like {@link PerInstanceColorAppearance}, each instance can also have a unique color.
+ * </p>
+ * <p>
+ * {@link Geometry} can either be created and batched on a web worker or the main thread. The first two examples
+ * show geometry that will be created on a web worker by using the descriptions of the geometry. The third example
+ * shows how to create the geometry on the main thread by explicitly calling the <code>createGeometry</code> method.
+ * </p>
  * @example
  * // 1. Draw a translucent ellipse on the surface with a checkerboard pattern
-const instance = new Cesium.GeometryInstance({
-  geometry : new Cesium.EllipseGeometry({
-      center : Cesium.Cartesian3.fromDegrees(-100.0, 20.0),
-      semiMinorAxis : 500000.0,
-      semiMajorAxis : 1000000.0,
-      rotation : Cesium.Math.PI_OVER_FOUR,
-      vertexFormat : Cesium.VertexFormat.POSITION_AND_ST
-  }),
-  id : 'object returned when this instance is picked and to get/set per-instance attributes'
-});
-scene.primitives.add(new Cesium.Primitive({
-  geometryInstances : instance,
-  appearance : new Cesium.EllipsoidSurfaceAppearance({
-    material : Cesium.Material.fromType('Checkerboard')
-  })
-}));
+ * const instance = new Cesium.GeometryInstance({
+ *   geometry : new Cesium.EllipseGeometry({
+ *       center : Cesium.Cartesian3.fromDegrees(-100.0, 20.0),
+ *       semiMinorAxis : 500000.0,
+ *       semiMajorAxis : 1000000.0,
+ *       rotation : Cesium.Math.PI_OVER_FOUR,
+ *       vertexFormat : Cesium.VertexFormat.POSITION_AND_ST
+ *   }),
+ *   id : 'object returned when this instance is picked and to get/set per-instance attributes'
+ * });
+ * scene.primitives.add(new Cesium.Primitive({
+ *   geometryInstances : instance,
+ *   appearance : new Cesium.EllipsoidSurfaceAppearance({
+ *     material : Cesium.Material.fromType('Checkerboard')
+ *   })
+ * }));
  * @example
  * // 2. Draw different instances each with a unique color
-const rectangleInstance = new Cesium.GeometryInstance({
-  geometry : new Cesium.RectangleGeometry({
-    rectangle : Cesium.Rectangle.fromDegrees(-140.0, 30.0, -100.0, 40.0),
-    vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
-  }),
-  id : 'rectangle',
-  attributes : {
-    color : new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5)
-  }
-});
-const ellipsoidInstance = new Cesium.GeometryInstance({
-  geometry : new Cesium.EllipsoidGeometry({
-    radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
-    vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
-  }),
-  modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
-    Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
-  id : 'ellipsoid',
-  attributes : {
-    color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
-  }
-});
-scene.primitives.add(new Cesium.Primitive({
-  geometryInstances : [rectangleInstance, ellipsoidInstance],
-  appearance : new Cesium.PerInstanceColorAppearance()
-}));
+ * const rectangleInstance = new Cesium.GeometryInstance({
+ *   geometry : new Cesium.RectangleGeometry({
+ *     rectangle : Cesium.Rectangle.fromDegrees(-140.0, 30.0, -100.0, 40.0),
+ *     vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+ *   }),
+ *   id : 'rectangle',
+ *   attributes : {
+ *     color : new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5)
+ *   }
+ * });
+ * const ellipsoidInstance = new Cesium.GeometryInstance({
+ *   geometry : new Cesium.EllipsoidGeometry({
+ *     radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
+ *     vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
+ *   }),
+ *   modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
+ *     Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
+ *   id : 'ellipsoid',
+ *   attributes : {
+ *     color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
+ *   }
+ * });
+ * scene.primitives.add(new Cesium.Primitive({
+ *   geometryInstances : [rectangleInstance, ellipsoidInstance],
+ *   appearance : new Cesium.PerInstanceColorAppearance()
+ * }));
  * @example
  * // 3. Create the geometry on the main thread.
-scene.primitives.add(new Cesium.Primitive({
-  geometryInstances : new Cesium.GeometryInstance({
-    geometry : Cesium.EllipsoidGeometry.createGeometry(new Cesium.EllipsoidGeometry({
-      radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
-      vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
-    })),
-    modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
-      Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
-    id : 'ellipsoid',
-    attributes : {
-      color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
-    }
-  }),
-  appearance : new Cesium.PerInstanceColorAppearance(),
-  asynchronous : false
-}));
+ * scene.primitives.add(new Cesium.Primitive({
+ *   geometryInstances : new Cesium.GeometryInstance({
+ *     geometry : Cesium.EllipsoidGeometry.createGeometry(new Cesium.EllipsoidGeometry({
+ *       radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
+ *       vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
+ *     })),
+ *     modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
+ *       Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
+ *     id : 'ellipsoid',
+ *     attributes : {
+ *       color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
+ *     }
+ *   }),
+ *   appearance : new Cesium.PerInstanceColorAppearance(),
+ *   asynchronous : false
+ * }));
  * @param [options] - Object with the following properties:
  * @param [options.geometryInstances] - The geometry instances - or a single geometry instance - to render.
  * @param [options.appearance] - The appearance used to render the primitive.
@@ -38144,67 +38347,67 @@ export class Primitive {
     });
     /**
      * The geometry instances rendered with this primitive.  This may
-    be <code>undefined</code> if <code>options.releaseGeometryInstances</code>
-    is <code>true</code> when the primitive is constructed.
-    <p>
-    Changing this property after the primitive is rendered has no effect.
-    </p>
+     * be <code>undefined</code> if <code>options.releaseGeometryInstances</code>
+     * is <code>true</code> when the primitive is constructed.
+     * <p>
+     * Changing this property after the primitive is rendered has no effect.
+     * </p>
      */
     readonly geometryInstances: GeometryInstance[] | GeometryInstance;
     /**
      * The {@link Appearance} used to shade this primitive. Each geometry
-    instance is shaded with the same appearance.  Some appearances, like
-    {@link PerInstanceColorAppearance} allow giving each instance unique
-    properties.
+     * instance is shaded with the same appearance.  Some appearances, like
+     * {@link PerInstanceColorAppearance} allow giving each instance unique
+     * properties.
      */
     appearance: Appearance;
     /**
      * The {@link Appearance} used to shade this primitive when it fails the depth test. Each geometry
-    instance is shaded with the same appearance.  Some appearances, like
-    {@link PerInstanceColorAppearance} allow giving each instance unique
-    properties.
-    
-    <p>
-    When using an appearance that requires a color attribute, like PerInstanceColorAppearance,
-    add a depthFailColor per-instance attribute instead.
-    </p>
-    
-    <p>
-    Requires the EXT_frag_depth WebGL extension to render properly. If the extension is not supported,
-    there may be artifacts.
-    </p>
+     * instance is shaded with the same appearance.  Some appearances, like
+     * {@link PerInstanceColorAppearance} allow giving each instance unique
+     * properties.
+     *
+     * <p>
+     * When using an appearance that requires a color attribute, like PerInstanceColorAppearance,
+     * add a depthFailColor per-instance attribute instead.
+     * </p>
+     *
+     * <p>
+     * Requires the EXT_frag_depth WebGL extension to render properly. If the extension is not supported,
+     * there may be artifacts.
+     * </p>
      */
     depthFailAppearance: Appearance;
     /**
      * The 4x4 transformation matrix that transforms the primitive (all geometry instances) from model to world coordinates.
-    When this is the identity matrix, the primitive is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
-    Local reference frames can be used by providing a different transformation matrix, like that returned
-    by {@link Transforms.eastNorthUpToFixedFrame}.
-    
-    <p>
-    This property is only supported in 3D mode.
-    </p>
+     * When this is the identity matrix, the primitive is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
+     * Local reference frames can be used by providing a different transformation matrix, like that returned
+     * by {@link Transforms.eastNorthUpToFixedFrame}.
+     *
+     * <p>
+     * This property is only supported in 3D mode.
+     * </p>
      * @example
      * const origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-    p.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+     * p.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
      */
     modelMatrix: Matrix4;
     /**
      * Determines if the primitive will be shown.  This affects all geometry
-    instances in the primitive.
+     * instances in the primitive.
      */
     show: boolean;
     /**
      * When <code>true</code>, the renderer frustum culls and horizon culls the primitive's commands
-    based on their bounding volume.  Set this to <code>false</code> for a small performance gain
-    if you are manually culling the primitive.
+     * based on their bounding volume.  Set this to <code>false</code> for a small performance gain
+     * if you are manually culling the primitive.
      */
     cull: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-    <p>
-    Draws the bounding sphere for each draw command in the primitive.
-    </p>
+     * <p>
+     * Draws the bounding sphere for each draw command in the primitive.
+     * </p>
      */
     debugShowBoundingVolume: boolean;
     /**
@@ -38237,8 +38440,8 @@ export class Primitive {
     readonly compressVertices: boolean;
     /**
      * Determines if the primitive is complete and ready to render.  If this property is
-    true, the primitive will be rendered the next time that {@link Primitive#update}
-    is called.
+     * true, the primitive will be rendered the next time that {@link Primitive#update}
+     * is called.
      */
     readonly ready: boolean;
     /**
@@ -38247,42 +38450,42 @@ export class Primitive {
     readonly readyPromise: Promise<Primitive>;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
-    get the draw commands needed to render this primitive.
-    <p>
-    Do not call this function directly.  This is documented just to
-    list the exceptions that may be propagated when the scene is rendered:
-    </p>
+     * get the draw commands needed to render this primitive.
+     * <p>
+     * Do not call this function directly.  This is documented just to
+     * list the exceptions that may be propagated when the scene is rendered:
+     * </p>
      */
     update(): void;
     /**
      * Returns the modifiable per-instance attributes for a {@link GeometryInstance}.
      * @example
      * const attributes = primitive.getGeometryInstanceAttributes('an id');
-    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.AQUA);
-    attributes.show = Cesium.ShowGeometryInstanceAttribute.toValue(true);
-    attributes.distanceDisplayCondition = Cesium.DistanceDisplayConditionGeometryInstanceAttribute.toValue(100.0, 10000.0);
-    attributes.offset = Cesium.OffsetGeometryInstanceAttribute.toValue(Cartesian3.IDENTITY);
+     * attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.AQUA);
+     * attributes.show = Cesium.ShowGeometryInstanceAttribute.toValue(true);
+     * attributes.distanceDisplayCondition = Cesium.DistanceDisplayConditionGeometryInstanceAttribute.toValue(100.0, 10000.0);
+     * attributes.offset = Cesium.OffsetGeometryInstanceAttribute.toValue(Cartesian3.IDENTITY);
      * @param id - The id of the {@link GeometryInstance}.
      * @returns The typed array in the attribute's format or undefined if the is no instance with id.
      */
     getGeometryInstanceAttributes(id: any): any;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-    <p>
-    If this object was destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
-    </p>
+     * <p>
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * </p>
      * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-    <p>
-    Once an object is destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-    assign the return value (<code>undefined</code>) to the object as done in the example.
-    </p>
+     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+     * <p>
+     * Once an object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
+     * </p>
      * @example
      * e = e && e.destroy();
      */
@@ -38879,6 +39082,10 @@ export class Scene {
      */
     readonly mapMode2D: MapMode2D;
     /**
+     * Gets or sets the position of the splitter within the viewport.  Valid values are between 0.0 and 1.0.
+     */
+    splitPosition: number;
+    /**
      * Gets or sets the position of the Imagery splitter within the viewport.  Valid values are between 0.0 and 1.0.
      */
     imagerySplitPosition: number;
@@ -38913,7 +39120,7 @@ export class Scene {
     /**
      * The sample rate of multisample antialiasing (values greater than 1 enable MSAA).
      */
-    readonly msaaSamples: number;
+    msaaSamples: number;
     /**
      * Returns <code>true</code> if the Scene's context supports MSAA.
      */
@@ -39373,7 +39580,7 @@ export class ShadowMap {
         lightCamera: Camera;
         enabled?: boolean;
         isPointLight?: boolean;
-        pointLightRadius?: boolean;
+        pointLightRadius?: number;
         cascadesEnabled?: boolean;
         numberOfCascades?: number;
         maximumDistance?: number;
@@ -39757,6 +39964,24 @@ export class SphereEmitter {
 }
 
 /**
+ * The direction to display a primitive or ImageryLayer relative to the {@link Scene#splitPosition}.
+ */
+export enum SplitDirection {
+    /**
+     * Display the primitive or ImageryLayer to the left of the {@link Scene#splitPosition}.
+     */
+    LEFT = -1,
+    /**
+     * Always display the primitive or ImageryLayer.
+     */
+    NONE = 0,
+    /**
+     * Display the primitive or ImageryLayer to the right of the {@link Scene#splitPosition}.
+     */
+    RIGHT = 1
+}
+
+/**
  * Determines the function used to compare stencil values for the stencil test.
  */
 export enum StencilFunction {
@@ -39937,8 +40162,8 @@ export namespace TileCoordinatesImageryProvider {
      * Initialization options for the TileCoordinatesImageryProvider constructor
      * @property [tilingScheme = new GeographicTilingScheme()] - The tiling scheme for which to draw tiles.
      * @property [ellipsoid] - The ellipsoid.  If the tilingScheme is specified,
-                       this parameter is ignored and the tiling scheme's ellipsoid is used instead. If neither
-                       parameter is specified, the WGS84 ellipsoid is used.
+     *                    this parameter is ignored and the tiling scheme's ellipsoid is used instead. If neither
+     *                    parameter is specified, the WGS84 ellipsoid is used.
      * @property [color = Color.YELLOW] - The color to draw the tile box and label.
      * @property [tileWidth = 256] - The width of the tile for level-of-detail selection purposes.
      * @property [tileHeight = 256] - The height of the tile for level-of-detail selection purposes.
@@ -39954,35 +40179,35 @@ export namespace TileCoordinatesImageryProvider {
 
 /**
  * An {@link ImageryProvider} that draws a box around every rendered tile in the tiling scheme, and draws
-a label inside it indicating the X, Y, Level coordinates of the tile.  This is mostly useful for
-debugging terrain and imagery rendering problems.
+ * a label inside it indicating the X, Y, Level coordinates of the tile.  This is mostly useful for
+ * debugging terrain and imagery rendering problems.
  * @param [options] - Object describing initialization options
  */
 export class TileCoordinatesImageryProvider {
     constructor(options?: TileCoordinatesImageryProvider.ConstructorOptions);
     /**
      * The default alpha blending value of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultAlpha: number | undefined;
     /**
      * The default alpha blending value on the night side of the globe of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultNightAlpha: number | undefined;
     /**
      * The default alpha blending value on the day side of the globe of this provider, with 0.0 representing fully transparent and
-    1.0 representing fully opaque.
+     * 1.0 representing fully opaque.
      */
     defaultDayAlpha: number | undefined;
     /**
      * The default brightness of this provider.  1.0 uses the unmodified imagery color.  Less than 1.0
-    makes the imagery darker while greater than 1.0 makes it brighter.
+     * makes the imagery darker while greater than 1.0 makes it brighter.
      */
     defaultBrightness: number | undefined;
     /**
      * The default contrast of this provider.  1.0 uses the unmodified imagery color.  Less than 1.0 reduces
-    the contrast while greater than 1.0 increases it.
+     * the contrast while greater than 1.0 increases it.
      */
     defaultContrast: number | undefined;
     /**
@@ -39991,7 +40216,7 @@ export class TileCoordinatesImageryProvider {
     defaultHue: number | undefined;
     /**
      * The default saturation of this provider. 1.0 uses the unmodified imagery color. Less than 1.0 reduces the
-    saturation while greater than 1.0 increases it.
+     * saturation while greater than 1.0 increases it.
      */
     defaultSaturation: number | undefined;
     /**
@@ -40012,45 +40237,45 @@ export class TileCoordinatesImageryProvider {
     readonly proxy: Proxy;
     /**
      * Gets the width of each tile, in pixels. This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly tileWidth: number;
     /**
      * Gets the height of each tile, in pixels.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly tileHeight: number;
     /**
      * Gets the maximum level-of-detail that can be requested.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly maximumLevel: number | undefined;
     /**
      * Gets the minimum level-of-detail that can be requested.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly minimumLevel: number;
     /**
      * Gets the tiling scheme used by this provider.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly tilingScheme: TilingScheme;
     /**
      * Gets the rectangle, in radians, of the imagery provided by this instance.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly rectangle: Rectangle;
     /**
      * Gets the tile discard policy.  If not undefined, the discard policy is responsible
-    for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
-    returns undefined, no tiles are filtered.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * for filtering out "missing" tiles via its shouldDiscardImage function.  If this function
+     * returns undefined, no tiles are filtered.  This function should
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly tileDiscardPolicy: TileDiscardPolicy;
     /**
      * Gets an event that is raised when the imagery provider encounters an asynchronous error.  By subscribing
-    to the event, you will be notified of the error and can potentially recover from it.  Event listeners
-    are passed an instance of {@link TileProviderError}.
+     * to the event, you will be notified of the error and can potentially recover from it.  Event listeners
+     * are passed an instance of {@link TileProviderError}.
      */
     readonly errorEvent: Event;
     /**
@@ -40063,15 +40288,15 @@ export class TileCoordinatesImageryProvider {
     readonly readyPromise: Promise<boolean>;
     /**
      * Gets the credit to display when this imagery provider is active.  Typically this is used to credit
-    the source of the imagery.  This function should not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * the source of the imagery.  This function should not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      */
     readonly credit: Credit;
     /**
      * Gets a value indicating whether or not the images provided by this imagery provider
-    include an alpha channel.  If this property is false, an alpha channel, if present, will
-    be ignored.  If this property is true, any images without an alpha channel will be treated
-    as if their alpha is 1.0 everywhere.  Setting this property to false reduces memory usage
-    and texture upload time.
+     * include an alpha channel.  If this property is false, an alpha channel, if present, will
+     * be ignored.  If this property is true, any images without an alpha channel will be treated
+     * as if their alpha is 1.0 everywhere.  Setting this property to false reduces memory usage
+     * and texture upload time.
      */
     readonly hasAlphaChannel: boolean;
     /**
@@ -40084,29 +40309,29 @@ export class TileCoordinatesImageryProvider {
     getTileCredits(x: number, y: number, level: number): Credit[];
     /**
      * Requests the image for a given tile.  This function should
-    not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
+     * not be called before {@link TileCoordinatesImageryProvider#ready} returns true.
      * @param x - The tile X coordinate.
      * @param y - The tile Y coordinate.
      * @param level - The tile level.
      * @param [request] - The request object. Intended for internal use only.
      * @returns A promise for the image that will resolve when the image is available, or
-             undefined if there are too many active requests to the server, and the request
-             should be retried later.  The resolved image may be either an
-             Image or a Canvas DOM object.
+     *          undefined if there are too many active requests to the server, and the request
+     *          should be retried later.  The resolved image may be either an
+     *          Image or a Canvas DOM object.
      */
     requestImage(x: number, y: number, level: number, request?: Request): Promise<HTMLImageElement | HTMLCanvasElement> | undefined;
     /**
      * Picking features is not currently supported by this imagery provider, so this function simply returns
-    undefined.
+     * undefined.
      * @param x - The tile X coordinate.
      * @param y - The tile Y coordinate.
      * @param level - The tile level.
      * @param longitude - The longitude at which to pick features.
      * @param latitude - The latitude at which to pick features.
      * @returns A promise for the picked features that will resolve when the asynchronous
-                      picking completes.  The resolved value is an array of {@link ImageryLayerFeatureInfo}
-                      instances.  The array may be empty if no features are found at the given location.
-                      It may also be undefined if picking is not supported.
+     *                   picking completes.  The resolved value is an array of {@link ImageryLayerFeatureInfo}
+     *                   instances.  The array may be empty if no features are found at the given location.
+     *                   It may also be undefined if picking is not supported.
      */
     pickFeatures(x: number, y: number, level: number, longitude: number, latitude: number): Promise<ImageryLayerFeatureInfo[]> | undefined;
 }
@@ -44353,6 +44578,7 @@ declare module "cesium/Source/Scene/GoogleEarthEnterpriseMapsProvider" { import 
 declare module "cesium/Source/Scene/GridImageryProvider" { import { GridImageryProvider } from 'mars3d-cesium'; export default GridImageryProvider; }
 declare module "cesium/Source/Scene/GroundPolylinePrimitive" { import { GroundPolylinePrimitive } from 'mars3d-cesium'; export default GroundPolylinePrimitive; }
 declare module "cesium/Source/Scene/GroundPrimitive" { import { GroundPrimitive } from 'mars3d-cesium'; export default GroundPrimitive; }
+declare module "cesium/Source/Scene/ImageBasedLighting" { import { ImageBasedLighting } from 'mars3d-cesium'; export default ImageBasedLighting; }
 declare module "cesium/Source/Scene/ImageryLayer" { import { ImageryLayer } from 'mars3d-cesium'; export default ImageryLayer; }
 declare module "cesium/Source/Scene/ImageryLayerCollection" { import { ImageryLayerCollection } from 'mars3d-cesium'; export default ImageryLayerCollection; }
 declare module "cesium/Source/Scene/ImageryLayerFeatureInfo" { import { ImageryLayerFeatureInfo } from 'mars3d-cesium'; export default ImageryLayerFeatureInfo; }

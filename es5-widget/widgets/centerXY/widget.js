@@ -64,6 +64,8 @@
         this.updateMarker(point);
 
         this.updateTen();
+        this.updataDfm();
+        this.updata3GKZone();
       }
     }
     //点击地图坐标更新

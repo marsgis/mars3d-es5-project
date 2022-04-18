@@ -601,7 +601,7 @@
         that.offsetLeft = win.width() - area[0];
       } else if (config.offset === "rb") {
         //右下角
-        that.offsetTop = win.height() - area[1];
+        that.offsetTop = win.height() - (area[1] + 40);
         that.offsetLeft = win.width() - area[0];
       } else {
         that.offsetTop = config.offset;
