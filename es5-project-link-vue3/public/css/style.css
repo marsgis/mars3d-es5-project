@@ -270,53 +270,6 @@ li {
   background-color: #3f4854;
 }
 
-/**左下工具栏菜单*/
-.toolbar-dropdown-menu-div {
-  background: rgba(43, 44, 47, 0.8);
-  border: 1px solid #2b2c2f;
-
-  z-index: 991;
-  position: absolute;
-  right: 60px;
-  bottom: 40px;
-  display: none;
-}
-
-.toolbar-dropdown-menu {
-  min-width: 110px;
-  padding: 0;
-}
-.toolbar-dropdown-menu > li {
-  padding: 0 3px;
-  margin: 2px 0;
-}
-.toolbar-dropdown-menu > li > a {
-  color: #edffff;
-  display: block;
-  padding: 4px 10px;
-  clear: both;
-  font-weight: normal;
-  line-height: 1.6;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.toolbar-dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus {
-  color: #fff;
-  background-color: #444d59;
-}
-
-.toolbar-dropdown-menu > .active > a,
-.dropdown-menu > .active > a:hover,
-.dropdown-menu > .active > a:focus {
-  color: #fff;
-  background-color: #444d59;
-}
-
-.toolbar-dropdown-menu i {
-  padding-right: 5px;
-}
 
 /**infoview浮动面板*/
 .infoview {

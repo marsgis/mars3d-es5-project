@@ -34725,8 +34725,8 @@ export class Model {
     Local reference frames can be used by providing a different transformation matrix, like that returned
     by {@link Transforms.eastNorthUpToFixedFrame}.
      * @example
-     * const origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-    m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+     * const origin = Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
+    m.modelMatrix = Transforms.eastNorthUpToFixedFrame(origin);
      */
     modelMatrix: Matrix4;
     /**
@@ -34831,7 +34831,7 @@ export class Model {
     account glTF animations and skins nor does it take into account {@link Model#minimumPixelSize}.
      * @example
      * // Center in WGS84 coordinates
-    const center = Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cesium.Cartesian3());
+    const center = Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, new Cartesian3());
      */
     readonly boundingSphere: BoundingSphere;
     /**
@@ -34885,7 +34885,7 @@ export class Model {
     /**
      * The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
     <p>
-    For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cesium.Cartesian2(0.0, 0.0)</code> will make the
+    For example, disabling additional light sources by setting <code>model.imageBasedLightingFactor = new Cartesian2(0.0, 0.0)</code> will make the
     model much darker. Here, increasing the intensity of the light source will make the model brighter.
     </p>
      */
@@ -34978,15 +34978,15 @@ export class Model {
     </p>
      * @example
      * // Example 1. Create a model from a glTF asset
-    const model = scene.primitives.add(Cesium.Model.fromGltf({
+    const model = scene.primitives.add(Model.fromGltf({
       url : './duck/duck.gltf'
     }));
      * @example
      * // Example 2. Create model and provide all properties and events
-    const origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-    const modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+    const origin = Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
+    const modelMatrix = Transforms.eastNorthUpToFixedFrame(origin);
     
-    const model = scene.primitives.add(Cesium.Model.fromGltf({
+    const model = scene.primitives.add(Model.fromGltf({
       url : './duck/duck.gltf',
       show : true,                     // default
       modelMatrix : modelMatrix,
@@ -35083,7 +35083,7 @@ export class Model {
      * @example
      * // Apply non-uniform scale to node LOD3sp
     const node = model.getNode('LOD3sp');
-    node.matrix = Cesium.Matrix4.fromScale(new Cesium.Cartesian3(5.0, 1.0, 1.0), node.matrix);
+    node.matrix = Matrix4.fromScale(new Cartesian3(5.0, 1.0, 1.0), node.matrix);
      * @param name - The glTF name of the node.
      * @returns The node or <code>undefined</code> if no node with <code>name</code> exists.
      */

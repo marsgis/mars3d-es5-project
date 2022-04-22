@@ -81,25 +81,19 @@ function initMap(mapOptions) {
   }
 
   //针对不同终端的优化配置
-  if (haoutil.system.isPCBroswer()) {
-    // Cesium 1.61以后会默认关闭反走样，对于桌面端而言还是开启得好，
-    map.scene.postProcessStages.fxaa.enabled = true;
+  if (mars3d.Util.isPCBroswer()) {
+    map.zoomFactor = 2.0; // 鼠标滚轮放大的步长参数
 
-    //鼠标滚轮放大的步长参数
-    map.scene.screenSpaceCameraController._zoomFactor = 2.0;
-
-    //IE浏览器优化
+    // IE浏览器优化
     if (window.navigator.userAgent.toLowerCase().indexOf("msie") >= 0) {
-      map.viewer.targetFrameRate = 20; //限制帧率
-      map.viewer.requestRenderMode = true; //取消实时渲染
+      map.viewer.targetFrameRate = 20; // 限制帧率
+      map.scene.requestRenderMode = false; // 取消实时渲染
     }
   } else {
-    //鼠标滚轮放大的步长参数
-    map.scene.screenSpaceCameraController._zoomFactor = 5.0;
-    //map.scene.screenSpaceCameraController.enableTilt = false;
+    map.zoomFactor = 5.0; // 鼠标滚轮放大的步长参数
 
-    //移动设备上禁掉以下几个选项，可以相对更加流畅
-    map.viewer.requestRenderMode = true; //取消实时渲染
+    // 移动设备上禁掉以下几个选项，可以相对更加流畅
+    map.scene.requestRenderMode = false; // 取消实时渲染
     map.scene.fog.enabled = false;
     map.scene.skyAtmosphere.show = false;
     map.scene.globe.showGroundAtmosphere = false;
