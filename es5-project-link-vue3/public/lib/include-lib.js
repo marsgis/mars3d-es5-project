@@ -13,6 +13,11 @@ var configLibs = {
     "mars3d/mars3d.css", //mars3d
     "mars3d/mars3d.js",
   ],
+  "cesium-comp": [
+    //cesium版本间兼容处理
+    "mars3d/plugins/compatible/cesium-version.js",
+    "mars3d/plugins/compatible/cesium-when.js",
+  ],
   "mars3d-space": [
     //卫星插件
     "mars3d/plugins/space/mars3d-space.js",

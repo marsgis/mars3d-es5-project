@@ -1,12 +1,7 @@
 //兼容不同版本cesium，补充官方删除更改的方法或类名 by mars3d.cn
 
 //兼容1.92（2022-4-2）删除的方法
-if (!Cesium.when || !Cesium.when.defer) {
-  Cesium.when = Cesium.when || {};
-  Cesium.when.defer = Cesium.defer;
-}
-Promise.prototype.otherwise = Promise.prototype.catch;
-Promise.prototype.always = Promise.prototype.finally;
+//请引入cesium-when.js
 
 //兼容1.87（2021-11-1）删除的方法
 Cesium.sprintf = Cesium.sprintf || function (format) {

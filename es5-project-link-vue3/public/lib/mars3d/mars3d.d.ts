@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.6
- * 编译日期：2022-04-22 16:03:43
+ * 版本信息：v3.3.7
+ * 编译日期：2022-05-02 10:45:24
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -1218,15 +1218,30 @@ declare namespace Token {
      */
     const ion: string;
     /**
+     * 更新Cesium官方的Ion服务key
+     * @param item - token值
+     */
+    function updateIon(item: string): void;
+    /**
      * mapbox地图key，
      * 官网：{@link https://account.mapbox.com}
      */
     const mapbox: string;
     /**
+     * 更新mapbox地图key
+     * @param item - token值
+     */
+    function updateMapbox(item: string): void;
+    /**
      * 微软Bing地图key，
      * 官网： {@link https://www.bingmapsportal.com/Application}
      */
     const bing: string;
+    /**
+     * 更新微软Bing地图key
+     * @param item - token值
+     */
+    function updateBing(item: string): void;
     /**
      * 天地图key数组，
      * 官网： {@link https://console.tianditu.gov.cn/api/key}
@@ -1237,6 +1252,11 @@ declare namespace Token {
      */
     const tianditu: string;
     /**
+     * 更新天地图key
+     * @param item - token值
+     */
+    function updateTianditu(item: string | string[]): void;
+    /**
      * 高德key数组，
      * 官网： {@link https://console.amap.com/dev/key/app}
      */
@@ -1246,6 +1266,11 @@ declare namespace Token {
      */
     const gaode: string;
     /**
+     * 更新高德key
+     * @param item - token值
+     */
+    function updateGaode(item: string | string[]): void;
+    /**
      * 百度key数组，
      * 官网： {@link http://lbsyun.baidu.com/apiconsole/key#/home}
      */
@@ -1254,6 +1279,29 @@ declare namespace Token {
      * 百度key，
      */
     const baidu: string;
+    /**
+     * 更新百度key
+     * @param item - token值
+     */
+    function updateBaidu(item: string | string[]): void;
+    /**
+     * 更新所有SDK涉及的第3放Token值（如果具体使用类中传入时，已传入值优先）
+     * @param token - 集合
+     * @param [token.tianditu] - 天地图
+     * @param [token.gaode] - 高德
+     * @param [token.baidu] - 百度
+     * @param [token.ion] - Ion服务
+     * @param [token.mapbox] - mapbox地图
+     * @param [token.bing] - 微软Bing地图
+     */
+    function updateAll(token: {
+        tianditu?: string | string[];
+        gaode?: string | string[];
+        baidu?: string | string[];
+        ion?: string;
+        mapbox?: string;
+        bing?: string;
+    }): void;
 }
 
 /**
@@ -6586,6 +6634,235 @@ declare class BoxEntity extends BasePointEntity {
     static fromDraw(layer: GraphicLayer, options: any): BoxEntity;
 }
 
+declare namespace LabelEntity {
+    /**
+     * Canvas 文本点（label转图片） 支持的样式信息
+     * @property [text = "文字"] - 文本内容，换行可以用换行符'\n'。
+     * @property [scale = 1.0] - 指定缩放比例。
+     * @property [horizontalOrigin] - 横向方向的定位
+     * @property [verticalOrigin] - 垂直方向的定位
+     * @property [font_family = "楷体"] - 字体 ,可选项：微软雅黑,宋体,楷体,隶书,黑体 等
+     * @property [font_size = 30] - 字体大小
+     * @property [font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
+     * @property [font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
+     * @property [font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
+     * @property [textBaseline = 'bottom'] - 文本的基线。
+     * @property [fill = true] - 是否填充
+     * @property [color = "#ffffff"] - 文本颜色
+     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
+     * @property [stroke = false] - 是否衬色
+     * @property [strokeColor = "#000000"] - 衬色颜色
+     * @property [strokeWidth = 2.0] - 衬色宽度
+     * @property [outlineColor = "#000000"] - 矩形边框的颜色。
+     * @property [outlineWidth = 0.0] - 边框的宽度
+     * @property [background = false] - 是否背景
+     * @property [backgroundColor = "#000000"] - 背景颜色
+     * @property [backgroundPadding = 0] - 背景内边距，指定文字与填充边界内容之间的空间(以像素为单位)。
+     * @property [hasPixelOffset = false] - 是否存在偏移量
+     * @property [pixelOffsetX = 0] - 横向偏移像素
+     * @property [pixelOffsetY = 0] - 纵向偏移像素
+     * @property [pixelOffset = Cartesian2.ZERO] - 指定像素偏移量。
+     * @property [scaleByDistance = false] - 是否按视距缩放 或 设定基于与相机的距离设置比例。
+     * @property [scaleByDistance_far = 1000000] - 上限
+     * @property [scaleByDistance_farValue = 0.1] - 比例值
+     * @property [scaleByDistance_near = 1000] - 下限
+     * @property [scaleByDistance_nearValue = 1] - 比例值
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [clampToGround = false] - 是否贴地
+     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
+     * @property [visibleDepth = true] - 是否被遮挡
+     * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
+     * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
+     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     */
+    type StyleOptions = {
+        text?: string;
+        scale?: number;
+        horizontalOrigin?: Cesium.HorizontalOrigin;
+        verticalOrigin?: Cesium.VerticalOrigin;
+        font_family?: string;
+        font_size?: number;
+        font_weight?: string;
+        font_style?: string;
+        font?: string;
+        textBaseline?: string;
+        fill?: boolean;
+        color?: string | Cesium.Color;
+        opacity?: number;
+        stroke?: boolean;
+        strokeColor?: string | Cesium.Color;
+        strokeWidth?: number;
+        outlineColor?: string | Cesium.Color;
+        outlineWidth?: number;
+        background?: boolean;
+        backgroundColor?: string | Cesium.Color;
+        backgroundPadding?: number;
+        hasPixelOffset?: boolean;
+        pixelOffsetX?: number;
+        pixelOffsetY?: number;
+        pixelOffset?: Cesium.Cartesian2 | number[];
+        scaleByDistance?: boolean | Cesium.NearFarScalar;
+        scaleByDistance_far?: number;
+        scaleByDistance_farValue?: number;
+        scaleByDistance_near?: number;
+        scaleByDistance_nearValue?: number;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
+        distanceDisplayCondition_far?: number;
+        distanceDisplayCondition_near?: number;
+        clampToGround?: boolean;
+        heightReference?: Cesium.HeightReference;
+        visibleDepth?: boolean;
+        disableDepthTestDistance?: number;
+        translucencyByDistance?: Cesium.NearFarScalar;
+        setHeight?: number | string;
+        addHeight?: number | string;
+    };
+    /**
+     * Canvas 文本点（label转图片） 支持的样式信息
+     * @property [text = "文字"] - 文本内容，换行可以用换行符'\n'。
+     * @property [scale = 1.0] - 指定缩放比例。
+     * @property [horizontalOrigin] - 横向方向的定位
+     * @property [verticalOrigin] - 垂直方向的定位
+     * @property [font_family = "楷体"] - 字体 ,可选项：微软雅黑,宋体,楷体,隶书,黑体 等
+     * @property [font_size = 30] - 字体大小
+     * @property [font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
+     * @property [font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
+     * @property [font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
+     * @property [textBaseline = 'bottom'] - 文本的基线。
+     * @property [fill = true] - 是否填充
+     * @property [color = "#ffffff"] - 文本颜色
+     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
+     * @property [stroke = false] - 是否衬色
+     * @property [strokeColor = "#000000"] - 衬色颜色
+     * @property [strokeWidth = 2.0] - 衬色宽度
+     * @property [outlineColor = "#000000"] - 矩形边框的颜色。
+     * @property [outlineWidth = 0.0] - 边框的宽度
+     * @property [background = false] - 是否背景
+     * @property [backgroundColor = "#000000"] - 背景颜色
+     * @property [backgroundPadding = 0] - 背景内边距，指定文字与填充边界内容之间的空间(以像素为单位)。
+     * @property [hasPixelOffset = false] - 是否存在偏移量
+     * @property [pixelOffsetX = 0] - 横向偏移像素
+     * @property [pixelOffsetY = 0] - 纵向偏移像素
+     * @property [pixelOffset = Cartesian2.ZERO] - 指定像素偏移量。
+     * @property [scaleByDistance = false] - 是否按视距缩放 或 设定基于与相机的距离设置比例。
+     * @property [scaleByDistance_far = 1000000] - 上限
+     * @property [scaleByDistance_farValue = 0.1] - 比例值
+     * @property [scaleByDistance_near = 1000] - 下限
+     * @property [scaleByDistance_nearValue = 1] - 比例值
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [clampToGround = false] - 是否贴地
+     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
+     * @property [visibleDepth = true] - 是否被遮挡
+     * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
+     * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
+     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     */
+    type StyleOptions = {
+        text?: string;
+        scale?: number;
+        horizontalOrigin?: Cesium.HorizontalOrigin;
+        verticalOrigin?: Cesium.VerticalOrigin;
+        font_family?: string;
+        font_size?: number;
+        font_weight?: string;
+        font_style?: string;
+        font?: string;
+        textBaseline?: string;
+        fill?: boolean;
+        color?: string | Cesium.Color;
+        opacity?: number;
+        stroke?: boolean;
+        strokeColor?: string | Cesium.Color;
+        strokeWidth?: number;
+        outlineColor?: string | Cesium.Color;
+        outlineWidth?: number;
+        background?: boolean;
+        backgroundColor?: string | Cesium.Color;
+        backgroundPadding?: number;
+        hasPixelOffset?: boolean;
+        pixelOffsetX?: number;
+        pixelOffsetY?: number;
+        pixelOffset?: Cesium.Cartesian2 | number[];
+        scaleByDistance?: boolean | Cesium.NearFarScalar;
+        scaleByDistance_far?: number;
+        scaleByDistance_farValue?: number;
+        scaleByDistance_near?: number;
+        scaleByDistance_nearValue?: number;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
+        distanceDisplayCondition_far?: number;
+        distanceDisplayCondition_near?: number;
+        clampToGround?: boolean;
+        heightReference?: Cesium.HeightReference;
+        visibleDepth?: boolean;
+        disableDepthTestDistance?: number;
+        translucencyByDistance?: Cesium.NearFarScalar;
+        setHeight?: number | string;
+        addHeight?: number | string;
+    };
+}
+
+/**
+ * Canvas 文本点（label转图片）
+ * @param options - 参数对象，包括以下：
+ * @param options.position - 坐标位置
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
+ * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
+ * @param [options.parent] - 要与此实体关联的父实体。
+ * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
+ * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = uuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ */
+declare class CanvasLabelEntity extends BasePointEntity {
+    constructor(options: {
+        position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
+        style: LabelEntity.StyleOptions;
+        attr?: any;
+        availability?: Cesium.TimeIntervalCollection;
+        description?: Cesium.Property | string;
+        viewFrom?: Cesium.Property;
+        parent?: Cesium.Entity;
+        onBeforeCreate?: (...params: any[]) => any;
+        drawShow?: boolean;
+        addHeight?: number;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+    });
+    /**
+     * 通过标绘 来创建矢量对象
+     * @param layer - 图层
+     * @param options - 矢量对象的构造参数
+     * @returns 矢量对象
+     */
+    static fromDraw(layer: GraphicLayer, options: any): CanvasLabelEntity;
+}
+
 declare namespace CircleEntity {
     /**
      * 圆、圆柱 支持的样式信息
@@ -8032,96 +8309,6 @@ declare class FontBillboardEntity extends BasePointEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): FontBillboardEntity;
-}
-
-declare namespace LabelEntity {
-    /**
-     * 文本点 支持的样式信息
-     * @property [text = "文字"] - 文本内容，换行可以用换行符'\n'。
-     * @property [scale = 1.0] - 指定缩放比例。
-     * @property [horizontalOrigin] - 横向方向的定位
-     * @property [verticalOrigin] - 垂直方向的定位
-     * @property [font_family = "楷体"] - 字体 ,可选项：微软雅黑,宋体,楷体,隶书,黑体 等
-     * @property [font_size = 30] - 字体大小
-     * @property [font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
-     * @property [font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
-     * @property [font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
-     * @property [fill = true] - 是否填充
-     * @property [color = "#ffffff"] - 文本颜色
-     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
-     * @property [outline = false] - 是否衬色
-     * @property [outlineColor = "#000000"] - 衬色颜色
-     * @property [outlineOpacity = 0.6] - 衬色透明度
-     * @property [outlineWidth = 2.0] - 衬色宽度
-     * @property [background = false] - 是否背景
-     * @property [backgroundColor = "#000000"] - 背景颜色
-     * @property [backgroundOpacity = 0.5] - 背景透明度
-     * @property [backgroundPadding = new Cesium.Cartesian2(7, 5)] - 背景内边距，指定文字与填充边界内容之间的空间(以像素为单位)。
-     * @property [hasPixelOffset = false] - 是否存在偏移量
-     * @property [pixelOffsetX = 0] - 横向偏移像素
-     * @property [pixelOffsetY = 0] - 纵向偏移像素
-     * @property [pixelOffset = Cartesian2.ZERO] - A {@link Cartesian2} Property specifying the pixel offset.
-     * @property [pixelOffsetScaleByDistance] - A {@link NearFarScalar} Property used to set pixelOffset based on distance from the camera.
-     * @property [eyeOffset = Cartesian3.ZERO] - A {@link Cartesian3} Property specifying the eye offset.
-     * @property [scaleByDistance = false] - 是否按视距缩放 或 设定基于与相机的距离设置比例。
-     * @property [scaleByDistance_far = 1000000] - 上限
-     * @property [scaleByDistance_farValue = 0.1] - 比例值
-     * @property [scaleByDistance_near = 1000] - 下限
-     * @property [scaleByDistance_nearValue = 1] - 比例值
-     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
-     * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [clampToGround = false] - 是否贴地
-     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
-     * @property [visibleDepth = true] - 是否被遮挡
-     * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
-     * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
-     */
-    type StyleOptions = {
-        text?: string;
-        scale?: number;
-        horizontalOrigin?: Cesium.HorizontalOrigin;
-        verticalOrigin?: Cesium.VerticalOrigin;
-        font_family?: string;
-        font_size?: number;
-        font_weight?: string;
-        font_style?: string;
-        font?: string;
-        fill?: boolean;
-        color?: string | Cesium.Color;
-        opacity?: number;
-        outline?: boolean;
-        outlineColor?: string | Cesium.Color;
-        outlineOpacity?: number;
-        outlineWidth?: number;
-        background?: boolean;
-        backgroundColor?: string | Cesium.Color;
-        backgroundOpacity?: number;
-        backgroundPadding?: number | Cesium.Cartesian2;
-        hasPixelOffset?: boolean;
-        pixelOffsetX?: number;
-        pixelOffsetY?: number;
-        pixelOffset?: Cesium.Cartesian2 | number[];
-        pixelOffsetScaleByDistance?: Cesium.NearFarScalar;
-        eyeOffset?: Cesium.Cartesian3;
-        scaleByDistance?: boolean | Cesium.NearFarScalar;
-        scaleByDistance_far?: number;
-        scaleByDistance_farValue?: number;
-        scaleByDistance_near?: number;
-        scaleByDistance_nearValue?: number;
-        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
-        distanceDisplayCondition_far?: number;
-        distanceDisplayCondition_near?: number;
-        clampToGround?: boolean;
-        heightReference?: Cesium.HeightReference;
-        visibleDepth?: boolean;
-        disableDepthTestDistance?: number;
-        translucencyByDistance?: Cesium.NearFarScalar;
-        setHeight?: number | string;
-        addHeight?: number | string;
-    };
 }
 
 /**
@@ -18665,8 +18852,12 @@ declare namespace TilesetLayer {
  * 3dtiles 三维模型图层。
  * @param options - 参数对象， 构造参数建议从{@link http://mars3d.cn/editor.html?id=layer-tileset/manager/edit|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
  * @param options.url - tileset的主JSON文件的 url
- * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。数值加大，能让最终成像变模糊
- * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)。这个参数默认是512，也即是当几何体和纹理资源大于512MB的时候，Cesium就会淘汰掉当前帧中没有visited的所有块，这个值其实很小，也是cesium为了避免资源占用过高的一个保障，不过上述我们也估算过最差情况下，没有做纹理crn压缩的情况下，这个值很容易被超过，导致很多人误以为cesium的淘汰没有效果。这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。结论：这个参数要根据当前显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50 % 左右，比如我的显存是6G，这个可以设置到3000左右。那么既保证不超过显存限制，又可以最大利用显存缓存，配合crn压缩之后，这个几乎可以保证你第二次查看模型同一位置的时候，看不到加载过程，非常棒。
+ * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
+ * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
+ * 解释：
+ * 这个参数默认是512，也即是当几何体和纹理资源大于512MB的时候，cesium就会淘汰掉当前帧中没有visited的所有块，这个值其实很小，也是cesium为了避免资源占用过高的一个保障.<br />
+ * 这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。<br />
+ * 这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。<br />
  * @param [options.position] - 自定义新的中心点位置（移动模型）
  * @param options.position.lng - 经度值, 180 - 180
  * @param options.position.lat - 纬度值, -90 - 90
@@ -19566,7 +19757,7 @@ declare namespace ArcGisLayer {
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
- * @param [options.crs = CRS.EPSG:3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
+ * @param [options.crs = CRS.EPSG4326] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.enablePickFeatures = true] - 如果为true，则请求 单击坐标处服务中对应的矢量数据 并尝试解释响应中包含的功能。为false时不去服务请求。
  * @param [options.graphicConver] - 单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
@@ -19685,6 +19876,10 @@ declare class ArcGisLayer extends BaseTileLayer {
         flyTo?: boolean;
     });
     /**
+     * 坐标系
+     */
+    readonly crs: CRS | string;
+    /**
      * 是否存在Popup绑定
      * @returns 是否存在Popup绑定
      */
@@ -19718,6 +19913,12 @@ declare class ArcGisLayer extends BaseTileLayer {
      * @returns 创建完成的 ImageryProvider 对象
      */
     _createImageryProvider(options?: any): Cesium.UrlTemplateImageryProvider | any;
+    /**
+     * 对象添加到地图上的创建钩子方法，
+     * 每次add时都会调用
+     * @returns 无
+     */
+    _addedHook(): void;
 }
 
 /**
@@ -20158,6 +20359,10 @@ declare class BaseTileLayer extends BaseLayer {
      * 瓦片图层对应的内部ImageryProvider对象
      */
     readonly imageryProvider: Cesium.ImageryProvider;
+    /**
+     * 坐标系
+     */
+    readonly crs: CRS | string;
     /**
      * 透明度，同opacity。从0.0到1.0。
      */
@@ -21561,6 +21766,7 @@ declare class OsmLayer extends BaseTileLayer {
  *     <li><code>ter_z</code>: 地形渲染图注记</li>
  * </ul>
  * @param [options.key = mars3d.Token.tiandituArr] - 天地图服务Token，可以自行注册官网： {@link https://console.tianditu.gov.cn/api/key}
+ * @param [options.url] - 服务URL地址，同xyz服务
  * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
  * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
  * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
@@ -21616,6 +21822,7 @@ declare class TdtLayer extends BaseTileLayer {
     constructor(options?: {
         layer?: string;
         key?: string[];
+        url?: string;
         minimumLevel?: number;
         maximumLevel?: number;
         minimumTerrainLevel?: number;
@@ -22727,7 +22934,7 @@ declare namespace Map {
      * @property extent.ymin - 最小纬度值, -90 至 90
      * @property extent.ymax - 最大纬度值, -90 至 90
      * @property [removeDblClick = false] - 是否移除Cesium默认的双击事件
-     * @property [ionToken = null] - Cesium Ion服务的 Token令牌
+     * @property [ionToken] - Cesium Ion服务的 Token令牌
      * @property [resolutionScale = 1.0] - 获取或设置渲染分辨率的缩放比例。小于1.0的值可以改善性能不佳的设备上的性能，而值大于1.0则将以更高的速度呈现分辨率，然后缩小比例，从而提高视觉保真度。例如，如果窗口小部件的尺寸为640x480，则将此值设置为0.5将导致场景以320x240渲染，然后在设置时按比例放大设置为2.0将导致场景以1280x960渲染，然后按比例缩小。
      *
      * 以下是Cesium.Scene对象相关参数
@@ -22876,6 +23083,7 @@ declare namespace Map {
      * @property [infoBox = true] - 是否显示 点击要素之后显示的信息
      * @property [selectionIndicator = true] - 选择模型时，是否显示绿色框
      * @property [animation = true] - 是否创建 左下角仪表动画面板
+     * @property [animationTicks] - 左下角仪表动画面板 的可选步长
      * @property [timeline = true] - 是否创建 下侧时间线控件面板
      * @property [baseLayerPicker = true] - 是否显示 basemaps底图切换按钮
      * @property [fullscreenButton = true] - 是否显示 全屏按钮
@@ -22905,6 +23113,7 @@ declare namespace Map {
         infoBox?: boolean;
         selectionIndicator?: boolean;
         animation?: boolean;
+        animationTicks?: number[];
         timeline?: boolean;
         baseLayerPicker?: boolean;
         fullscreenButton?: boolean;
@@ -23014,6 +23223,23 @@ declare namespace Map {
         tooltip?: any;
         tooltipOptions?: Tooltip.StyleOptions;
         多个参数?: any;
+    };
+    /**
+     * 覆盖SDK内的{@link Token}所有第3方Token默认值
+     * @property [tianditu] - 天地图
+     * @property [gaode] - 高德
+     * @property [baidu] - 百度
+     * @property [ion] - Ion服务
+     * @property [mapbox] - mapbox地图
+     * @property [bing] - 微软Bing地图
+     */
+    type tokenOptions = {
+        tianditu?: string | string[];
+        gaode?: string | string[];
+        baidu?: string | string[];
+        ion?: string;
+        mapbox?: string;
+        bing?: string;
     };
     /**
      * Map支持的{@link EventType}事件类型
@@ -23135,6 +23361,7 @@ declare namespace Map {
  * @param [options.chinaCRS = ChinaCRS.WGS84] - 标识当前三维场景的国内坐标系（用于部分图层内对比判断来自动纠偏或加偏）
  * @param [options.lang] - 使用的语言（如中文、英文等）。
  * @param [options.templateValues] - 图层中统一的url模版，比如可以将服务url前缀统一使用模板，方便修改或动态配置。
+ * @param [options.token] - 覆盖SDK内的{@link Token}所有第3方Token默认值
  */
 declare class Map extends BaseClass {
     constructor(id: string | Cesium.Viewer, options?: {
@@ -23148,6 +23375,7 @@ declare class Map extends BaseClass {
         chinaCRS?: ChinaCRS;
         lang?: LangType;
         templateValues?: any;
+        token?: Map.tokenOptions;
     });
     /**
      * 当前类的构造参数
@@ -32396,14 +32624,14 @@ declare namespace Util {
      */
     function isPCBroswer(): boolean;
     /**
-     * 执行alert弹窗
+     * 执行alert弹窗（手动单击确定关闭窗口）
      * @param msg - 弹窗内的内容
      * @param title - 弹窗的标题
      * @returns 无
      */
     function alert(msg: string, title: string): void;
     /**
-     * 执行msg提示窗
+     * 执行msg提示窗（自动消失）
      * @param msg - 弹窗内的内容
      * @returns 无
      */
