@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.7
- * 编译日期：2022-05-02 10:45:24
+ * 版本信息：v3.3.8
+ * 编译日期：2022-05-04 11:40:37
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -6634,92 +6634,7 @@ declare class BoxEntity extends BasePointEntity {
     static fromDraw(layer: GraphicLayer, options: any): BoxEntity;
 }
 
-declare namespace LabelEntity {
-    /**
-     * Canvas 文本点（label转图片） 支持的样式信息
-     * @property [text = "文字"] - 文本内容，换行可以用换行符'\n'。
-     * @property [scale = 1.0] - 指定缩放比例。
-     * @property [horizontalOrigin] - 横向方向的定位
-     * @property [verticalOrigin] - 垂直方向的定位
-     * @property [font_family = "楷体"] - 字体 ,可选项：微软雅黑,宋体,楷体,隶书,黑体 等
-     * @property [font_size = 30] - 字体大小
-     * @property [font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
-     * @property [font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
-     * @property [font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
-     * @property [textBaseline = 'bottom'] - 文本的基线。
-     * @property [fill = true] - 是否填充
-     * @property [color = "#ffffff"] - 文本颜色
-     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
-     * @property [stroke = false] - 是否衬色
-     * @property [strokeColor = "#000000"] - 衬色颜色
-     * @property [strokeWidth = 2.0] - 衬色宽度
-     * @property [outlineColor = "#000000"] - 矩形边框的颜色。
-     * @property [outlineWidth = 0.0] - 边框的宽度
-     * @property [background = false] - 是否背景
-     * @property [backgroundColor = "#000000"] - 背景颜色
-     * @property [backgroundPadding = 0] - 背景内边距，指定文字与填充边界内容之间的空间(以像素为单位)。
-     * @property [hasPixelOffset = false] - 是否存在偏移量
-     * @property [pixelOffsetX = 0] - 横向偏移像素
-     * @property [pixelOffsetY = 0] - 纵向偏移像素
-     * @property [pixelOffset = Cartesian2.ZERO] - 指定像素偏移量。
-     * @property [scaleByDistance = false] - 是否按视距缩放 或 设定基于与相机的距离设置比例。
-     * @property [scaleByDistance_far = 1000000] - 上限
-     * @property [scaleByDistance_farValue = 0.1] - 比例值
-     * @property [scaleByDistance_near = 1000] - 下限
-     * @property [scaleByDistance_nearValue = 1] - 比例值
-     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
-     * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [clampToGround = false] - 是否贴地
-     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
-     * @property [visibleDepth = true] - 是否被遮挡
-     * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
-     * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
-     */
-    type StyleOptions = {
-        text?: string;
-        scale?: number;
-        horizontalOrigin?: Cesium.HorizontalOrigin;
-        verticalOrigin?: Cesium.VerticalOrigin;
-        font_family?: string;
-        font_size?: number;
-        font_weight?: string;
-        font_style?: string;
-        font?: string;
-        textBaseline?: string;
-        fill?: boolean;
-        color?: string | Cesium.Color;
-        opacity?: number;
-        stroke?: boolean;
-        strokeColor?: string | Cesium.Color;
-        strokeWidth?: number;
-        outlineColor?: string | Cesium.Color;
-        outlineWidth?: number;
-        background?: boolean;
-        backgroundColor?: string | Cesium.Color;
-        backgroundPadding?: number;
-        hasPixelOffset?: boolean;
-        pixelOffsetX?: number;
-        pixelOffsetY?: number;
-        pixelOffset?: Cesium.Cartesian2 | number[];
-        scaleByDistance?: boolean | Cesium.NearFarScalar;
-        scaleByDistance_far?: number;
-        scaleByDistance_farValue?: number;
-        scaleByDistance_near?: number;
-        scaleByDistance_nearValue?: number;
-        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
-        distanceDisplayCondition_far?: number;
-        distanceDisplayCondition_near?: number;
-        clampToGround?: boolean;
-        heightReference?: Cesium.HeightReference;
-        visibleDepth?: boolean;
-        disableDepthTestDistance?: number;
-        translucencyByDistance?: Cesium.NearFarScalar;
-        setHeight?: number | string;
-        addHeight?: number | string;
-    };
+declare namespace CanvasLabelEntity {
     /**
      * Canvas 文本点（label转图片） 支持的样式信息
      * @property [text = "文字"] - 文本内容，换行可以用换行符'\n'。
@@ -6834,7 +6749,7 @@ declare namespace LabelEntity {
 declare class CanvasLabelEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: LabelEntity.StyleOptions;
+        style: CanvasLabelEntity.StyleOptions;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -8309,6 +8224,96 @@ declare class FontBillboardEntity extends BasePointEntity {
      * @returns 矢量对象
      */
     static fromDraw(layer: GraphicLayer, options: any): FontBillboardEntity;
+}
+
+declare namespace LabelEntity {
+    /**
+     * 文本点 支持的样式信息
+     * @property [text = "文字"] - 文本内容，换行可以用换行符'\n'。
+     * @property [scale = 1.0] - 指定缩放比例。
+     * @property [horizontalOrigin] - 横向方向的定位
+     * @property [verticalOrigin] - 垂直方向的定位
+     * @property [font_family = "楷体"] - 字体 ,可选项：微软雅黑,宋体,楷体,隶书,黑体 等
+     * @property [font_size = 30] - 字体大小
+     * @property [font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
+     * @property [font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
+     * @property [font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
+     * @property [fill = true] - 是否填充
+     * @property [color = "#ffffff"] - 文本颜色
+     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
+     * @property [outline = false] - 是否衬色
+     * @property [outlineColor = "#000000"] - 衬色颜色
+     * @property [outlineOpacity = 0.6] - 衬色透明度
+     * @property [outlineWidth = 2.0] - 衬色宽度
+     * @property [background = false] - 是否背景
+     * @property [backgroundColor = "#000000"] - 背景颜色
+     * @property [backgroundOpacity = 0.5] - 背景透明度
+     * @property [backgroundPadding = new Cesium.Cartesian2(7, 5)] - 背景内边距，指定文字与填充边界内容之间的空间(以像素为单位)。
+     * @property [hasPixelOffset = false] - 是否存在偏移量
+     * @property [pixelOffsetX = 0] - 横向偏移像素
+     * @property [pixelOffsetY = 0] - 纵向偏移像素
+     * @property [pixelOffset = Cartesian2.ZERO] - A {@link Cartesian2} Property specifying the pixel offset.
+     * @property [pixelOffsetScaleByDistance] - A {@link NearFarScalar} Property used to set pixelOffset based on distance from the camera.
+     * @property [eyeOffset = Cartesian3.ZERO] - A {@link Cartesian3} Property specifying the eye offset.
+     * @property [scaleByDistance = false] - 是否按视距缩放 或 设定基于与相机的距离设置比例。
+     * @property [scaleByDistance_far = 1000000] - 上限
+     * @property [scaleByDistance_farValue = 0.1] - 比例值
+     * @property [scaleByDistance_near = 1000] - 下限
+     * @property [scaleByDistance_nearValue = 1] - 比例值
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [clampToGround = false] - 是否贴地
+     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
+     * @property [visibleDepth = true] - 是否被遮挡
+     * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
+     * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
+     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     */
+    type StyleOptions = {
+        text?: string;
+        scale?: number;
+        horizontalOrigin?: Cesium.HorizontalOrigin;
+        verticalOrigin?: Cesium.VerticalOrigin;
+        font_family?: string;
+        font_size?: number;
+        font_weight?: string;
+        font_style?: string;
+        font?: string;
+        fill?: boolean;
+        color?: string | Cesium.Color;
+        opacity?: number;
+        outline?: boolean;
+        outlineColor?: string | Cesium.Color;
+        outlineOpacity?: number;
+        outlineWidth?: number;
+        background?: boolean;
+        backgroundColor?: string | Cesium.Color;
+        backgroundOpacity?: number;
+        backgroundPadding?: number | Cesium.Cartesian2;
+        hasPixelOffset?: boolean;
+        pixelOffsetX?: number;
+        pixelOffsetY?: number;
+        pixelOffset?: Cesium.Cartesian2 | number[];
+        pixelOffsetScaleByDistance?: Cesium.NearFarScalar;
+        eyeOffset?: Cesium.Cartesian3;
+        scaleByDistance?: boolean | Cesium.NearFarScalar;
+        scaleByDistance_far?: number;
+        scaleByDistance_farValue?: number;
+        scaleByDistance_near?: number;
+        scaleByDistance_nearValue?: number;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
+        distanceDisplayCondition_far?: number;
+        distanceDisplayCondition_near?: number;
+        clampToGround?: boolean;
+        heightReference?: Cesium.HeightReference;
+        visibleDepth?: boolean;
+        disableDepthTestDistance?: number;
+        translucencyByDistance?: Cesium.NearFarScalar;
+        setHeight?: number | string;
+        addHeight?: number | string;
+    };
 }
 
 /**
@@ -32800,6 +32805,7 @@ declare namespace graphic {
   export { FontBillboardEntity }
   export { DivBillboardEntity }
   export { LabelEntity }
+  export { CanvasLabelEntity }
   export { ModelEntity }
   export { BoxEntity }
   export { PlaneEntity }
