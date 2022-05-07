@@ -1,7 +1,7 @@
 /**
  * UI v1.1.0
  * Copyright 2017-2018 Muyao
- * Licensed under the Muyao License 1.0 
+ * Licensed under the Muyao License 1.0
  */
 * {
 	-webkit-box-sizing: border-box;
@@ -463,11 +463,11 @@ pre code {
 	padding-left: 24px;
 }
 .table {
- 
+
 }
 .table > thead > tr > th, .table > tfoot > tr > th {
-	font-weight: 500; 
-	vertical-align: middle; 
+	font-weight: 500;
+	vertical-align: middle;
 }
 .table > thead > tr > th small, .table > tfoot > tr > th small {
 	font-weight: 300;

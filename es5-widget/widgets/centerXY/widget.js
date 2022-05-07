@@ -17,7 +17,7 @@
         url: "view.html",
         windowOptions: {
           width: 300,
-          height: 260,
+          height: 280,
         },
       };
     }
