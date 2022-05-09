@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.3.8
- * 编译日期：2022-05-04 11:40:37
+ * 编译日期：2022-05-09 21:17:41
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -612,6 +612,266 @@ declare enum GraphicType {
     rectSensor,
     satelliteSensor,
     satellite
+}
+
+/**
+ * SDK内部使用的一些图标配置，方便外部覆盖(建议Map构造前覆盖)。
+ * 如：默认右键菜单
+ */
+declare enum Icon {
+    /**
+     * 删除
+     */
+    Delete = "fa fa-trash-o",
+    /**
+     * 查看此处坐标
+     */
+    Coordinates = "fa fa-info-circle",
+    /**
+     * 查看当前视角
+     */
+    CameraInfo = "fa fa-camera-retro",
+    /**
+     * 视角切换
+     */
+    Camera = "fa fa-street-view",
+    /**
+     * 禁止进入地下
+     */
+    UndergroundNo = "fa fa-ban",
+    /**
+     * 允许进入地下
+     */
+    UndergroundYes = "fa fa-sort-amount-desc",
+    /**
+     * 绕此处环绕飞行
+     */
+    RotatePointStart = "fa fa-retweet",
+    /**
+     * 关闭环绕飞行
+     */
+    RotatePointStop = "fa fa-remove",
+    /**
+     * 移动到此处
+     */
+    FlyToPoint = "fa fa-send-o",
+    /**
+     * 第一视角站到此处
+     */
+    FirstPerspective = "fa fa-male",
+    /**
+     * 开启键盘漫游
+     */
+    KeyboardRoamYes = "fa fa-keyboard-o",
+    /**
+     * 关闭键盘漫游
+     */
+    KeyboardRoamNo = "fa fa-keyboard-o",
+    /**
+     * 取消锁定
+     */
+    TrackedEntityNo = "fa fa-unlock-alt",
+    /**
+     * 三维模型
+     */
+    Tileset = "fa fa-building-o",
+    /**
+     * 显示模型三角网
+     */
+    TilesetWireframeYes = "fa fa-connectdevelop",
+    /**
+     * 关闭模型三角网
+     */
+    TilesetWireframeNo = "fa fa-connectdevelop",
+    /**
+     * 显示模型包围盒
+     */
+    TilesetBoundingVolumeYes = "fa fa-codepen",
+    /**
+     * 关闭模型包围盒
+     */
+    TilesetBoundingVolumeNo = "fa fa-codepen",
+    /**
+     * 地形服务
+     */
+    Terrain = "fa fa-globe",
+    /**
+     * 开启地形
+     */
+    TerrainYes = "fa fa-medium",
+    /**
+     * 关闭地形
+     */
+    TerrainNo = "fa fa-medium",
+    /**
+     * 显示地形三角网
+     */
+    TerrainWireframeYes = "fa fa-connectdevelop",
+    /**
+     * 关闭地形三角网
+     */
+    TerrainWireframeNo = "fa fa-connectdevelop",
+    /**
+     * 图上量算
+     */
+    Measure = "fa fa-share-alt",
+    /**
+     * 距离
+     */
+    MeasureDistance = "fa fa-minus",
+    /**
+     * 面积
+     */
+    MeasureArea = "fa fa-medium",
+    /**
+     * 高度差
+     */
+    MeasureHeight = "fa fa-sort-amount-asc",
+    /**
+     * 角度
+     */
+    MeasureAngle = "fa fa-road",
+    /**
+     * 图上标记
+     */
+    Draw = "fa fa-eyedropper",
+    /**
+     * 标记点
+     */
+    DrawPoint = "fa fa-map-marker",
+    /**
+     * 标记线
+     */
+    DrawPolyline = "fa fa-reorder",
+    /**
+     * 标记面
+     */
+    DrawPolygon = "fa fa-medium",
+    /**
+     * 标记圆
+     */
+    DrawCircle = "fa fa-genderless",
+    /**
+     * 标记矩形
+     */
+    DrawRectangle = "fa fa-retweet",
+    /**
+     * 允许编辑
+     */
+    DrawEditYes = "fa fa-pencil",
+    /**
+     * 禁止编辑
+     */
+    DrawEditNo = "fa fa-pencil-square",
+    /**
+     * 导出GeoJSON
+     */
+    DrawDownJson = "fa fa-file-text-o",
+    /**
+     * 特效效果
+     */
+    Effect = "fa fa-rss",
+    /**
+     * 开启下雨
+     */
+    RainEffectYes = "fa fa-tint",
+    /**
+     * 关闭下雨
+     */
+    RainEffectNo = "fa fa-tint",
+    /**
+     * 开启下雪
+     */
+    SnowEffectYes = "fa fa-yelp",
+    SnowEffectNo = "fa fa-yelp",
+    /**
+     * 开启雾天气
+     */
+    FogEffectYes = "fa fa-spinner",
+    /**
+     * 关闭雾天气
+     */
+    FogEffectNo = "fa fa-spinner",
+    /**
+     * 开启泛光
+     */
+    BloomEffectYes = "fa fa-bullseye",
+    /**
+     * 关闭泛光
+     */
+    BloomEffectNo = "fa fa-bullseye",
+    /**
+     * 开启亮度
+     */
+    BrightnessEffectYes = "fa fa-trello",
+    /**
+     * 关闭亮度
+     */
+    BrightnessEffectNo = "fa fa-trello",
+    /**
+     * 开启夜视
+     */
+    NightVisionEffectYes = "fa fa-dashboard",
+    /**
+     * 关闭夜视
+     */
+    NightVisionEffectNo = "fa fa-dashboard",
+    /**
+     * 开启黑白
+     */
+    BlackAndWhiteEffectYes = "fa fa-star-half-full",
+    /**
+     * 关闭黑白
+     */
+    BlackAndWhiteEffectNo = "fa fa-star-half-full",
+    /**
+     * 开启拾取高亮
+     */
+    OutlineEffectYes = "fa fa-ticket",
+    /**
+     * 关闭拾取高亮
+     */
+    OutlineEffectNo = "fa fa-ticket",
+    /**
+     * 场景设置
+     */
+    Scene = "fa fa-gear",
+    /**
+     * 开启深度监测
+     */
+    DepthTestYes = "fa fa-eye-slash",
+    /**
+     * 关闭深度监测
+     */
+    DepthTestNo = "fa fa-eye",
+    /**
+     * 显示星空背景
+     */
+    SkyBoxYes = "fa fa-moon-o",
+    /**
+     * 关闭星空背景
+     */
+    SkyBoxNo = "fa fa-moon-o",
+    /**
+     * 开启日照阴影
+     */
+    ShadowYes = "fa fa-sun-o",
+    /**
+     * 关闭日照阴影
+     */
+    ShadowNo = "fa fa-sun-o",
+    /**
+     * 开启大气渲染
+     */
+    SkyAtmosphereYes = "fa fa-soundcloud",
+    /**
+     * 关闭大气渲染
+     */
+    SkyAtmosphereNo = "fa fa-soundcloud",
+    /**
+     * 场景出图
+     */
+    ExpImage = "fa fa-download"
 }
 
 /**
@@ -1816,7 +2076,7 @@ declare namespace ToolButton {
  * 工具栏 单个按钮控件
  * @param [options] - 参数对象，包括以下：
  * @param [options.title = ''] - 按钮标题
- * @param [options.icon] - 按钮字体图标  图片url路径 或 字体图标class名
+ * @param [options.icon] - 按钮图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
  * @param [options.click] - 按钮单击后的回调方法
  * @param [options.id = uuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -3253,7 +3513,7 @@ declare class BaseGraphic extends BaseClass {
      * graphic.bindContextMenu([
      *         {
      *           text: '删除对象',
-     *           iconCls: 'fa fa-trash-o',
+     *           icon: 'fa fa-trash-o',
      *           callback: function (e) {
      *             let graphic = e.graphic
      *             if (graphic) {
@@ -3264,7 +3524,7 @@ declare class BaseGraphic extends BaseClass {
      *       ])
      * @param content - 右键菜单配置数组，数组中每一项包括：
      * @param [content.text] - 菜单文字
-     * @param [content.iconCls] - 小图标css
+     * @param [content.icon] - 图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
      * @param [content.show] - 菜单项是否显示的回调方法
      * @param [content.callback] - 菜单项单击后的回调方法
      * @param [content.children] - 当有二级子菜单时，配置数组。
@@ -3275,7 +3535,7 @@ declare class BaseGraphic extends BaseClass {
      */
     bindContextMenu(content: {
         text?: string;
-        iconCls?: string;
+        icon?: string;
         show?: ((...params: any[]) => any) | boolean;
         callback?: (...params: any[]) => any;
         children?: any;
@@ -4149,7 +4409,7 @@ declare class PlaneCombine extends BasePolyCombine {
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
- * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取*
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  */
 declare class PolygonCombine extends BasePolyCombine {
     constructor(options: {
@@ -8090,7 +8350,7 @@ declare class EllipsoidEntity extends BasePointEntity {
 declare namespace FontBillboardEntity {
     /**
      * Font CSS字体点转图片后的图标点  Entity 支持的样式信息
-     * @property [iconClass = "fa fa-automobile"] - 字体css样式
+     * @property [iconClass = ""] - 字体css样式
      * @property [iconSize = 50] - 字体大小
      * @property [color = '#ff0000'] - 字体颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -13847,6 +14107,7 @@ declare namespace ModelPrimitive {
      * @property [heading = 0] - 方向角 （度数值，0-360度）
      * @property [pitch = 0] - 俯仰角（度数值，0-360度）
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [noPitchRoll] - 当addDynamicPosition时，设置为true时，可以设置模型只动态更改方向，内部固定模型的Pitch和Roll方向值为0
      * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑缩放。
      * @property [maximumScale] - 模型的最大比例尺寸。minimumPixelSize的上限。
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
@@ -13905,6 +14166,7 @@ declare namespace ModelPrimitive {
         heading?: number;
         pitch?: number;
         roll?: number;
+        noPitchRoll?: boolean;
         minimumPixelSize?: number;
         maximumScale?: number;
         fill?: boolean;
@@ -15464,7 +15726,7 @@ declare class BaseRoamLine extends BaseGraphic {
      */
     readonly groundPosition: Cesium.Cartesian3;
     /**
-     * 倍速
+     * 倍速，构造完成的对象，可以调用此属性调整速度。
      */
     multiplier: number;
     /**
@@ -16317,7 +16579,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      *       graphicLayer.bindContextMenu([
      *         {
      *           text: '删除对象',
-     *           iconCls: 'fa fa-trash-o',
+     *           icon: 'fa fa-trash-o',
      *           callback: function (e) {
      *             let graphic = e.graphic
      *             if (graphic) {
@@ -16327,7 +16589,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      *         },
      *         {
      *           text: '计算长度',
-     *           iconCls: 'fa fa-medium',
+     *           icon: 'fa fa-medium',
      *           show: function (e) {
      *             let graphic = e.graphic
      *             return graphic.type === 'polyline'
@@ -16341,7 +16603,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      *       ])
      * @param content - 右键菜单配置数组，数组中每一项包括：
      * @param [content.text] - 菜单文字
-     * @param [content.iconCls] - 小图标css
+     * @param [content.icon] - 图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
      * @param [content.show] - 菜单项是否显示的回调方法
      * @param [content.callback] - 菜单项单击后的回调方法
      * @param [content.children] - 当有二级子菜单时，配置数组。
@@ -16352,7 +16614,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      */
     bindContextMenu(content: {
         text?: string;
-        iconCls?: string;
+        icon?: string;
         show?: ((...params: any[]) => any) | boolean;
         callback?: (...params: any[]) => any;
         children?: any;
@@ -23513,7 +23775,7 @@ declare class Map extends BaseClass {
      */
     getCurrentOptions(): any;
     /**
-     * 获取平台内置的右键菜单
+     * 获取平台内置的右键菜单，图标可以覆盖 mars3d.Icon.* 值
      * @returns 右键菜单
      */
     getDefaultContextMenu(): any;
@@ -24196,7 +24458,7 @@ declare class Map extends BaseClass {
      *     map.bindContextMenu(defaultContextmenuItems)
      * @param content - 右键菜单配置数组，数组中每一项包括：
      * @param [content.text] - 菜单文字
-     * @param [content.iconCls] - 小图标css
+     * @param [content.icon] - 图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
      * @param [content.show] - 菜单项是否显示的回调方法
      * @param [content.callback] - 菜单项单击后的回调方法
      * @param [content.children] - 当有二级子菜单时，配置数组。
@@ -24207,7 +24469,7 @@ declare class Map extends BaseClass {
      */
     bindContextMenu(content: {
         text?: string;
-        iconCls?: string;
+        icon?: string;
         show?: ((...params: any[]) => any) | boolean;
         callback?: (...params: any[]) => any;
         children?: any;
@@ -25796,6 +26058,21 @@ declare class Tle {
      * @returns ECI(地心惯性坐标系)坐标
      */
     static ecfToEci(positionEcf: Cesium.Cartesian3, datetime: Date | Cesium.JulianDate | number): Cesium.Cartesian3;
+    /**
+     * 卫星开普勒六根数转换到两行轨道根数
+     * @param startYear - 开始年,比如2017年时传入17
+     * @param startTime - 开始时间，每年1月1日0点为0，后逐渐累积，整数部分为日，小数部分为时分秒
+     * @param six - 轨道六根数,顺序为:
+     *   Mean:平均运动（每日绕行圈数）必须小于100,
+     *   Eccentricity:离心率（小数,小于1）,
+     *   Inclination:轨道的交角（deg），不能是负数,
+     *   Argument of perigee :近地点角矩(deg)，不超过360,
+     *   RAAN :升交点赤经（deg），不超过360,
+     *   Mean :在轨圈数
+     * @param name - 卫星两位数编号，如01,最多五位数
+     * @returns 两行轨道根数
+     */
+    static coe2tle(startYear: number, startTime: number, six: number[], name: string): string[];
 }
 
 declare namespace Tle {
@@ -26246,14 +26523,14 @@ declare namespace Satellite {
  * @param [options.period] - 卫星运行周期（单位：分钟）, 未传值时自动在tle2中解析
  * @param options.position - 当没有tle时，自定义传入动态坐标位置（含时序的点集合）
  * @param [options.orientation] - 当没有tle时，自定义传入实体方向
- * @param [options.model] - 设置是否显示 gltf卫星模型 和对应的样式，属性还包含：
- * @param [options.model.autoHeading = true] - heading是否自动为轨道的方向
+ * @param [options.model] - 设置是否显示 gltf卫星模型 和对应的样式，属性还包含：<br />
+ * //  * @param {Boolean} [options.model.autoHeading=true]  heading是否自动为轨道的方向
  * @param [options.cone] - 设置是否显示 卫星视锥体 和对应的样式
  * @param [options.label] - 设置是否显示 文本 和对应的样式
  * @param [options.billboard] - 设置是否显示 图标点 和对应的样式
  * @param [options.point] - 设置是否显示 像素点 和对应的样式
- * @param [options.path] - 设置是否显示 卫星轨迹路线 和对应的样式，属性还包含：
- * @param [options.path.closure = false] - 是否闭合轨道圆
+ * @param [options.path] - 设置是否显示 卫星轨迹路线 和对应的样式，属性还包含：<br />
+ * //  * @param {Boolean} [options.path.closure=false]  是否闭合轨道圆
  * @param [options.shadingLine] - 设置是否显示 星下轨迹 和对应的样式
  * @param [options.fixedFrameTransform] - 参考系
  * @param [options.frameRate = 50] - 多少帧刷新1次，控制效率，如果卡顿就把该数值调大一些。
@@ -26268,16 +26545,12 @@ declare class Satellite extends BaseGraphic {
         period?: number;
         position: Cesium.SampledPositionProperty;
         orientation?: Cesium.Property;
-        model?: {
-            autoHeading?: boolean;
-        };
+        model?: ModelEntity.StyleOptions;
         cone?: SatelliteSensor.StyleOptions;
         label?: LabelEntity.StyleOptions;
         billboard?: BillboardEntity.StyleOptions;
         point?: PointEntity.StyleOptions;
-        path?: {
-            closure?: boolean;
-        };
+        path?: PolylineEntity.StyleOptions;
         shadingLine?: BillboardEntity.StyleOptions;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         frameRate?: number;
@@ -33035,7 +33308,7 @@ declare namespace thing {
 
 export {
   name, update, version, proj4,
-  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType,
+  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType, Icon,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
   material, graphic, provider, layer, thing, effect, control, query,

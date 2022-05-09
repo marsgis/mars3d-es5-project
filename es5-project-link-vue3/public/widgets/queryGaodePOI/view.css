@@ -32,6 +32,7 @@
   cursor: pointer;
   outline: none;
   background-color: rgba(35, 68, 117, 0.85);
+  color: #fff;
 }
 
 .querybar-sbox {

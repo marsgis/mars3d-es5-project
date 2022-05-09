@@ -1,7 +1,7 @@
 /**
  * UI v1.1.0
  * Copyright 2017-2018 Muyao
- * Licensed under the Muyao License 1.0 
+ * Licensed under the Muyao License 1.0
  */
 * {
 	-webkit-box-sizing: border-box;
@@ -1998,7 +1998,7 @@ button.input-search-close {
 }
 .dropdown-menu > li {
 	padding: 0 3px;
-	margin: 2px 0;
+	margin: 10px 0;
 }
 .dropdown-menu > li > a {
 	padding: 6px 10px;
@@ -2726,7 +2726,7 @@ button.input-search-close {
 	margin-top: -5px;
     font-size: 1.2em;
     font-weight: bold;
-    color: white; 
+    color: white;
 }
 .navbar-brand-logo img {
     max-height: 28px;

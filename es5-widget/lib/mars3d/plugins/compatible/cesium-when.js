@@ -769,6 +769,7 @@ var when = createCommonjsModule(function (module, exports) {
 });
 
 //兼容v1.92版本以前的cesium
+Cesium.when= Cesium.when||{}
 Cesium.when.defer = when.defer;
 Cesium.when = when
 Cesium.defer = when.defer;

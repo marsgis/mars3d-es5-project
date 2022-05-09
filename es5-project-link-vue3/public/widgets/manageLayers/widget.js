@@ -72,7 +72,9 @@
       if (show) {
         if (this.config.autoCenter && !layer.options.noCenter) {
           //在对应config.json图层节点配置 noCenter:true 可以不定位
-          layer.flyTo();
+          layer.readyPromise.then(function (layer) {
+            layer.flyTo();
+          });
         }
 
         //存在关联widget时

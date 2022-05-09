@@ -2,7 +2,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.3.8
- * 编译日期：2022-05-04 11:40:37
+ * 编译日期：2022-05-09 21:17:41
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -39,10 +39,12 @@
   padding: 0;
 }
 .mars3d-contextmenu-ul .contextmenu-icon {
-  padding-right: 10px;
-  min-width: 20px;
+  position: absolute;
+  left: 5px;
+  width: 20px;
+  height: 20px;
   text-align: center;
-  height: 100%;
+  overflow: hidden;
 }
 .mars3d-contextmenu-ul .contextmenu-arrow {
   position: absolute;
@@ -80,7 +82,7 @@
   border: 1px;
 }
 .mars3d-contextmenu-ul > li > a {
-  padding: 6px 10px;
+  padding: 6px 10px 6px 30px;
   -webkit-transition: background-color 0.25s;
   -o-transition: background-color 0.25s;
   transition: background-color 0.25s;

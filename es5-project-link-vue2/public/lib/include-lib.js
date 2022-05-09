@@ -125,7 +125,7 @@ var configLibs = {
 
   ////////////////////////// UI界面相关库////////////////////////
   'jquery': [
-    "jquery/jquery-2.1.4.min.js",
+    "jquery/jquery-3.6.0.min.js",
   ],
   'layer': [
     "layer/theme/default/layer.css",
@@ -165,8 +165,8 @@ var configLibs = {
     "jquery/lazyload/jquery.lazyload.min.js",
   ],
   'bootstrap': [
-    "bootstrap/bootstrap.css",
-    "bootstrap/bootstrap.min.js",
+    "bootstrap/css/bootstrap.css",
+    "bootstrap/js/bootstrap.bundle.min.js",
   ],
   'bootstrap-table': [
     "bootstrap/bootstrap-table/bootstrap-table.css",
@@ -176,6 +176,8 @@ var configLibs = {
   'bootstrap-select': [
     "bootstrap/bootstrap-select/bootstrap-select.css",
     "bootstrap/bootstrap-select/bootstrap-select.min.js",
+    "bootstrap/bootstrap-select/i18n/defaults-zh_CN.js",
+
   ],
   'bootstrap-checkbox': [
     "bootstrap/bootstrap-checkbox/awesome-bootstrap-checkbox.css",
