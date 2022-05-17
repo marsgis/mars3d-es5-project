@@ -2,7 +2,8 @@
 <img src="https://muyao1987.gitee.io/cdn/mars3d.cn/logo.png" width="300px" />
 </p>
 
-<p align="center">基于 原生JS下widget模块 的 Mars3D🌎基础项目模板（Vue2融合版）</p>
+<p align="center">基于 原生JS下widget模块 的 Mars3D基础项目系统（ES5版）</p>
+
 <p align="center">
 <a target="_black" href="https://github.com/marsgis/mars3d">
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/marsgis/mars3d?style=flat&logo=github">
@@ -15,9 +16,7 @@
 </a>
 </p>
 
- Mars3D平台在`Vue2.x + VueCli4.x 技术栈下`的外部资源融合方式使用widget模块的项目模版。
-     
-  
+  Mars3D平台在`Vue2.x + VueCli4.x 技术栈下`的外部资源融合方式使用widget模块的项目模版。
  
 ## 项目介绍
 
@@ -30,12 +29,10 @@ Mars3D基础项目 是基于[Mars3D平台](http://mars3d.cn)做的一个应用�
 
 
 
-
 ## 运行效果 
 访问[基础项目在线](http://mars3d.cn/project/jcxm/index.html)体验效果和功能
 
- ![image](https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/xm/jcxm/1.jpg)
-
+ ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
 
 
 
@@ -69,7 +66,7 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 - `widgets目录`为模块功能目录，也可以按业务分在多个目录中，比如`widgetsTS目录`
 
 
- ![image](https://cdn.jsdelivr.net/gh/muyao1987/cdn/mars3d.cn/xm/jcxm/1.jpg) 
+ ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg) 
 
 ### 2.1 下载代码
 目前我们已经开源了基础项目的基础框架和一些部分widget。可以从下面链接下载代码：
@@ -86,7 +83,54 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 ::: danger 
 如果需要所有功能模块的widget和其他一些项目模板，需要联系我们付费购买 项目源代码。
 ::: 
- 
+
+
+
+
+### 运行方式1：使用vscode及其插件
+
+在任意开发编辑器（如vscode等）或http服务器(如node、nginx、tomcat、IIS等)下直接运行浏览`index.html`或对应示例页面即可 ，
+
+建议使用VScode工具打开代码目录（请参考上一章节安装好VScode 及 Live Server插件）。
+
+- 推荐使用 vscode，安装参考[开发环境搭建教程](guide/start/env.html)
+- 安装 vscode 插件，推荐安装 Live Server
+
+ 参考下图通过Live Server访问各页面
+
+ ![image](http://mars3d.cn/dev/img/guide/start-example-run.jpg) 
+
+
+### 运行方式2：运行npm命令
+
+#### 首次运行前安装依赖
+```
+npm install
+
+//或使用代理
+npm i --registry=http://registry.taobao.org
+```
+
+#### 启动开发环境
+```
+npm run serve
+```
+
+#### 编译构建
+```
+npm run build //编译后生成在dist目录，拷贝出去发布即可
+npm run serve:dist  //测试dist运行状态
+```
+
+
+
+
+#### mars3d-widget插件
+ 为了更容易理解内部逻辑，您可以下载[mars3d-widget插件源码](https://gitee.com/marsgis/mars3d-plugin) 进行查阅。
+
+#### 下载最新lib
+ 建议从[http://mars3d.cn/download.html](http://mars3d.cn/download.html)下载最新mars3d类库后覆盖至`lib/`目录下即可。
+
 
 
 
@@ -94,9 +138,9 @@ widget模块化设计方式是我们在2016年设计的一种基于传统JS的�
 
 我们当前项目内的第三方类库及我们的sdk类库都存放在lib目录下，每个目录均有`README.md`文件说明该类库的github地址、官网和用途等信息。
 
- ![image](/dev/img/guide/start-includeLib-ml.jpg) 
+ ![image](http://mars3d.cn/dev/img/guide/start-includeLib-ml.jpg) 
 
-为了方便切换和引入第3方lib，我们编写了一个独立的js文件[include-lib.js](https://unpkg.com/marsgis-lib/lib//include-lib.js)来统一调用使用第3方lib,在需要的页面按下面方式引入lib：
+为了方便切换和引入第3方lib，我们编写了一个独立的js文件[include-lib.js](https://gitee.com/marsgis/mars3d-es5-example/blob/master/lib/include-lib.js)来统一调用使用第3方lib,在需要的页面按下面方式引入lib：
 ```html
 <!--第三方lib-->
 <script type="text/javascript" src="../lib/include-lib.js" libpath="../lib/"
@@ -190,6 +234,8 @@ get view() {
 }
  ```
 
+ > 此时的view.html和view.js是iframe的子页面，与地图所在的index.html是**父子关系**，相关js代码时需要注意这个层次才能更好的编码。
+
 #### divwindow时：
 此模式不用单独的js， view界面相关js逻辑全部写在widget.js中
 同样支持windowOptions参数配置。
@@ -235,7 +281,7 @@ widget激活后页面执行流程:
 ```json
 {
   "debugger":true,
-  "version": "20220120",
+  "version": "20170825",
   "defaultOptions": {
     "style": "dark",
     "windowOptions": {
@@ -253,7 +299,7 @@ widget激活后页面执行流程:
 }
 ```
 运行后效果：
-![image](/dev/img/guide/project-widget-testbar.jpg) 
+![image](http://mars3d.cn/dev/img/guide/project-widget-testbar.jpg) 
 
 
 ## 4.4 向widget传值示例
@@ -299,6 +345,13 @@ parent.mars3d.widget.on('centerXY', function (event) {
 
 ```
 
+下面演示在【POI查询栏】单击查询按钮后勾选【图层控制】面板中的文庙图层。
+
+ ![image](http://mars3d.cn/dev/img/guide/project-widget-fire.jpg) 
+
+
+
+
 ### A模块 持续更新B模块
 在roamFly模块中，动态去更新已打开的roamChars模块，更新显示数据
 ```js 
@@ -325,7 +378,7 @@ A、B两个都是iframe弹窗模式的widget模块时，在A模块中的view.htm
 > 【主页面】widget.js都在index.html主页面; 【iframe子页面】 2个view.html（含view.js）是iframe子页面。
  
 如果不用事件时，其调用流程是下图过程：
- ![image](/dev/img/guide/project-widget-2view.jpg) 
+ ![image](http://mars3d.cn/dev/img/guide/project-widget-2view.jpg) 
  
 
 如果通过事件方式可以下面的方式：
@@ -352,8 +405,7 @@ parent.mars3d.widget.on('widget2widget', function (event) {
 > _example模块 => 已有的widgets模块 => 编写全新的widget
  
 
- ![image](/dev/img/guide/project-widget-example.jpg) 
- 
+ ![image](http://mars3d.cn/dev/img/guide/project-widget-example.jpg) 
  
  
 

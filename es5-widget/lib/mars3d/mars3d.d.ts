@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.8
- * 编译日期：2022-05-09 21:17:41
+ * 版本信息：v3.3.9
+ * 编译日期：2022-05-17 11:14:55
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-02-01
  */
@@ -1975,7 +1975,7 @@ declare class OverviewMap extends BaseControl {
         basemap: Map.basemapOptions;
         layers?: Map.layerOptions[];
         scene?: Map.sceneOptions;
-        rectangle?: RectangleEntity.StyleOptions;
+        rectangle?: RectangleEntity.StyleOptions | any;
         style?: {
             top?: string;
             bottom?: string;
@@ -2757,6 +2757,18 @@ declare class BaseEffect extends BaseThing {
      * </p>
      */
     readonly uniforms: any;
+    /**
+     * 添加到地图上，同 map.addEffect
+     * @param map - 地图对象
+     * @returns 当前对象本身，可以链式调用
+     */
+    addTo(map: Map): BaseEffect;
+    /**
+     * 从地图上移除，同map.removeEffect
+     * @param [destroy] - 是否调用destroy释放
+     * @returns 无
+     */
+    remove(destroy?: boolean): void;
 }
 
 /**
@@ -2815,51 +2827,6 @@ declare class BloomEffect extends BaseEffect {
      * 步长,是下一个texel的距离
      */
     stepSize: number;
-}
-
-/**
- * 选中对象的 泛光效果。
- * @param [options] - 参数对象
- * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
- * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
- * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
- * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
- * @param [options.blurSamples = 32] - 模糊样本
- * @param [options.delta = 1.0] - 增量
- * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
- * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
- * @param [options.ratio = 2.0] - 亮度增强比例
- * @param [options.threshold = 0.0] - 亮度阈值
- * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
- * @param [options.enabled = true] - 对象的启用状态
- */
-declare class BloomTargetEffect extends BaseEffect {
-    constructor(options?: {
-        eventType?: EventType | boolean;
-        color?: Cesium.Color;
-        contrast?: number;
-        brightness?: number;
-        blurSamples?: number;
-        delta?: number;
-        sigma?: number;
-        stepSize?: number;
-        ratio?: number;
-        threshold?: number;
-        smoothWidth?: number;
-        enabled?: boolean;
-    });
-    /**
-     * 发光颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 高亮触发的事件类型，默认为单击。
-     */
-    eventType: EventType | string;
-    /**
-     * 选中对象
-     */
-    selected: any | any | undefined;
 }
 
 /**
@@ -3234,9 +3201,9 @@ declare class BaseGraphic extends BaseClass {
         style: any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -3445,7 +3412,7 @@ declare class BaseGraphic extends BaseClass {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions): BaseGraphic | any;
+    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions | any): BaseGraphic | any;
     /**
      * 解除绑定的鼠标单击对象后的弹窗。
      * @param [bubbling = false] - 单击事件中是否继续冒泡往上级查找
@@ -3476,7 +3443,7 @@ declare class BaseGraphic extends BaseClass {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindTooltip(content: string | ((...params: any[]) => any), options?: Tooltip.StyleOptions): BaseGraphic | any;
+    bindTooltip(content: string | ((...params: any[]) => any), options?: Tooltip.StyleOptions | any): BaseGraphic | any;
     /**
      * 解除绑定的鼠标移入对象后的弹窗。
      * @param [bubbling = false] - 单击事件中是否继续冒泡查找
@@ -3658,10 +3625,10 @@ declare class BasePolyCombine extends BaseCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PolygonPrimitive.StyleOptions;
+            style?: PolygonPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: PolygonPrimitive.StyleOptions;
+        style?: PolygonPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -3678,9 +3645,9 @@ declare class BasePolyCombine extends BaseCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -3743,10 +3710,10 @@ declare class BoxCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: BoxPrimitive.StyleOptions;
+            style?: BoxPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: BoxPrimitive.StyleOptions;
+        style?: BoxPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -3763,9 +3730,9 @@ declare class BoxCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -3812,10 +3779,10 @@ declare class CircleCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: CirclePrimitive.StyleOptions;
+            style?: CirclePrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: CirclePrimitive.StyleOptions;
+        style?: CirclePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -3832,9 +3799,9 @@ declare class CircleCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -3879,10 +3846,10 @@ declare class CorridorCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: CorridorPrimitive.StyleOptions;
+            style?: CorridorPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: CorridorPrimitive.StyleOptions;
+        style?: CorridorPrimitive.StyleOptions | any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -3896,9 +3863,9 @@ declare class CorridorCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -3945,10 +3912,10 @@ declare class CylinderCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: CylinderPrimitive.StyleOptions;
+            style?: CylinderPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: CylinderPrimitive.StyleOptions;
+        style?: CylinderPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -3965,9 +3932,9 @@ declare class CylinderCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4014,10 +3981,10 @@ declare class EllipsoidCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: EllipsoidPrimitive.StyleOptions;
+            style?: EllipsoidPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: EllipsoidPrimitive.StyleOptions;
+        style?: EllipsoidPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -4034,9 +4001,9 @@ declare class EllipsoidCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4148,10 +4115,10 @@ declare class FrustumCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: FrustumPrimitive.StyleOptions;
+            style?: FrustumPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: FrustumPrimitive.StyleOptions;
+        style?: FrustumPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -4168,9 +4135,9 @@ declare class FrustumCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4274,7 +4241,7 @@ declare class ModelCombine extends BaseCombine {
         url?: Cesium.Resource | string;
         instances?: {
             position: LngLatPoint | Cesium.Cartesian3 | number[];
-            style?: ModelPrimitive.StyleOptions;
+            style?: ModelPrimitive.StyleOptions | any;
             attr?: any;
         }[];
         batchTable?: any;
@@ -4346,10 +4313,10 @@ declare class PlaneCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PlanePrimitive.StyleOptions;
+            style?: PlanePrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: PlanePrimitive.StyleOptions;
+        style?: PlanePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -4366,9 +4333,9 @@ declare class PlaneCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4415,10 +4382,10 @@ declare class PolygonCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PolygonPrimitive.StyleOptions;
+            style?: PolygonPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: PolygonPrimitive.StyleOptions;
+        style?: PolygonPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -4435,9 +4402,9 @@ declare class PolygonCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4482,10 +4449,10 @@ declare class PolylineCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PolylinePrimitive.StyleOptions;
+            style?: PolylinePrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: PolylinePrimitive.StyleOptions;
+        style?: PolylinePrimitive.StyleOptions | any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -4499,9 +4466,9 @@ declare class PolylineCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4546,10 +4513,10 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PolylineVolumePrimitive.StyleOptions;
+            style?: PolylineVolumePrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: PolylineVolumePrimitive.StyleOptions;
+        style?: PolylineVolumePrimitive.StyleOptions | any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -4563,9 +4530,9 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4612,10 +4579,10 @@ declare class RectangleCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: RectanglePrimitive.StyleOptions;
+            style?: RectanglePrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: RectanglePrimitive.StyleOptions;
+        style?: RectanglePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -4632,9 +4599,9 @@ declare class RectangleCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4679,10 +4646,10 @@ declare class WallCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: WallPrimitive.StyleOptions;
+            style?: WallPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: WallPrimitive.StyleOptions;
+        style?: WallPrimitive.StyleOptions | any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -4696,9 +4663,9 @@ declare class WallCombine extends BasePolyCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4745,10 +4712,10 @@ declare class WaterCombine extends PolygonCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PolygonPrimitive.StyleOptions;
+            style?: PolygonPrimitive.StyleOptions | any;
             attr?: any;
         }[];
-        style?: PolygonPrimitive.StyleOptions;
+        style?: PolygonPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
         };
@@ -4765,9 +4732,9 @@ declare class WaterCombine extends PolygonCombine {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -4788,7 +4755,7 @@ declare namespace ArcFrustum {
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
      * @property [color = Cesium.Color.WHITE] - 颜色
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle?: number;
         angle2?: number;
         distance: number;
@@ -4816,7 +4783,7 @@ declare class ArcFrustum extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: ArcFrustum.StyleOptions;
+        style: ArcFrustum.StyleOptions | any;
         attr?: any;
         id?: string | number;
         name?: string;
@@ -4872,7 +4839,7 @@ declare namespace ParticleSystem {
      * @property [maximumMass] - 设置粒子的最大质量，单位为千克。一个粒子的实际质量将被选为低于这个值的随机数量。
      * @property [updateCallback] - 每一帧调用一个回调函数来更新一个粒子。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         image?: string;
         emitter?: Cesium.ParticleEmitter;
         emissionRate?: number;
@@ -4925,7 +4892,7 @@ declare class ParticleSystem extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: ParticleSystem.StyleOptions;
+        style: ParticleSystem.StyleOptions | any;
         attr?: any;
         gravity?: number;
         target?: Cesium.Cartesian3;
@@ -4979,7 +4946,7 @@ declare namespace Tetrahedron {
      * @property [moveDuration = 2] - 动画时，上下移动的单程总时长，单位：秒
      * @property [rotationAngle = 1] - 动画时，每帧旋转的角度值，单位：度
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         width?: number;
         height?: number;
         color?: string | Cesium.Color;
@@ -5006,7 +4973,7 @@ declare class Tetrahedron extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: Tetrahedron.StyleOptions;
+        style: Tetrahedron.StyleOptions | any;
         attr?: any;
         id?: string | number;
         name?: string;
@@ -5039,7 +5006,7 @@ declare namespace Video3D {
      * @property [hiddenAreaColor = new Cesium.Color(0, 0, 0, 0.5)] - 无视频投影区域的颜色
      * @property [showFrustum = false] - 是否显示视椎体框线
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         container?: HTMLVideoElement;
         url?: string;
         maskImage?: string;
@@ -5071,7 +5038,7 @@ declare class Video3D extends ViewShed {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: Video3D.StyleOptions;
+        style: Video3D.StyleOptions | any;
         attr?: any;
         id?: string | number;
         name?: string;
@@ -5114,7 +5081,7 @@ declare namespace ViewShed {
      * @property [addHeight] - 在坐标点增加的高度值，规避遮挡，效果更友好
      * @property [showFrustum = false] - 是否显示视椎体框线
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle?: number;
         angle2?: number;
         distance?: number;
@@ -5146,7 +5113,7 @@ declare class ViewShed extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: ViewShed.StyleOptions;
+        style: ViewShed.StyleOptions | any;
         attr?: any;
         terrain?: boolean;
         id?: string | number;
@@ -5248,7 +5215,7 @@ declare namespace DivBoderLabel {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         text: string;
         font_size?: number;
         font_family?: string;
@@ -5303,19 +5270,19 @@ declare namespace DivBoderLabel {
 declare class DivBoderLabel extends DivGraphic {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: DivBoderLabel.StyleOptions;
+        style: DivBoderLabel.StyleOptions | any;
         attr?: any;
         hasEdit?: boolean;
-        testPoint?: PointEntity.StyleOptions;
+        testPoint?: PointEntity.StyleOptions | any;
         pointerEvents?: boolean;
         hasZIndex?: boolean;
         zIndex?: number | string;
         depthTest?: boolean;
         hasCache?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -5356,7 +5323,7 @@ declare namespace DivGraphic {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         html: string | HTMLDivElement | ((...params: any[]) => any);
         horizontalOrigin?: Cesium.HorizontalOrigin;
         verticalOrigin?: Cesium.VerticalOrigin;
@@ -5466,10 +5433,10 @@ declare namespace DivGraphic {
 declare class DivGraphic extends BaseGraphic {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: DivGraphic.StyleOptions;
+        style: DivGraphic.StyleOptions | any;
         attr?: any;
         hasEdit?: boolean;
-        testPoint?: PointEntity.StyleOptions;
+        testPoint?: PointEntity.StyleOptions | any;
         pointerEvents?: boolean;
         hasZIndex?: boolean;
         zIndex?: number | string;
@@ -5477,9 +5444,9 @@ declare class DivGraphic extends BaseGraphic {
         hasCache?: boolean;
         parentContainer?: HTMLElement;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -5660,7 +5627,7 @@ declare namespace DivLightPoint {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         color?: string;
         horizontalOrigin?: Cesium.HorizontalOrigin;
         verticalOrigin?: Cesium.VerticalOrigin;
@@ -5709,19 +5676,19 @@ declare namespace DivLightPoint {
 declare class DivLightPoint extends DivGraphic {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: DivLightPoint.StyleOptions;
+        style: DivLightPoint.StyleOptions | any;
         attr?: any;
         hasEdit?: boolean;
-        testPoint?: PointEntity.StyleOptions;
+        testPoint?: PointEntity.StyleOptions | any;
         pointerEvents?: boolean;
         hasZIndex?: boolean;
         zIndex?: number | string;
         depthTest?: boolean;
         hasCache?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -5765,7 +5732,7 @@ declare namespace DivUpLabel {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         text: string;
         color?: string;
         font_size?: number;
@@ -5819,19 +5786,19 @@ declare namespace DivUpLabel {
 declare class DivUpLabel extends DivGraphic {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: DivUpLabel.StyleOptions;
+        style: DivUpLabel.StyleOptions | any;
         attr?: any;
         hasEdit?: boolean;
-        testPoint?: PointEntity.StyleOptions;
+        testPoint?: PointEntity.StyleOptions | any;
         pointerEvents?: boolean;
         hasZIndex?: boolean;
         zIndex?: number | string;
         depthTest?: boolean;
         hasCache?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -5896,7 +5863,7 @@ declare namespace Popup {
      * @property [minWidth = 50] - 弹窗的最小宽度，单位为像素
      * @property [maxHeight = 550] - 如果设置，如果内容超过此高度时，则在弹出窗口中显示滚动条。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         html?: string;
         template?: string;
         horizontalOrigin?: Cesium.HorizontalOrigin;
@@ -5942,10 +5909,10 @@ declare namespace Popup {
 declare class Popup extends DivGraphic {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: Popup.StyleOptions;
+        style: Popup.StyleOptions | any;
         attr?: any;
         animation?: boolean;
-        testPoint?: PointEntity.StyleOptions;
+        testPoint?: PointEntity.StyleOptions | any;
         pointerEvents?: boolean;
         hasZIndex?: boolean;
         zIndex?: number | string;
@@ -5991,7 +5958,7 @@ declare namespace Tooltip {
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         html?: string;
         template?: string | boolean;
         direction?: string;
@@ -6033,9 +6000,9 @@ declare namespace Tooltip {
 declare class Tooltip extends Popup {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: Tooltip.StyleOptions;
+        style: Tooltip.StyleOptions | any;
         attr?: any;
-        testPoint?: PointEntity.StyleOptions;
+        testPoint?: PointEntity.StyleOptions | any;
         pointerEvents?: boolean;
         hasZIndex?: boolean;
         zIndex?: number | string;
@@ -6160,9 +6127,9 @@ declare class BaseEntity extends BaseGraphic {
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -6325,9 +6292,9 @@ declare class BasePointEntity extends BaseEntity {
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -6487,9 +6454,9 @@ declare class BasePolyEntity extends BaseEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -6568,15 +6535,13 @@ declare class BasePolyEntity extends BaseEntity {
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
-     * @param options.callback - 异步计算高度完成后 的回调方法
-     * @returns 当前对象本身，可以链式调用
+     * @returns 异步计算完成的Promise
      */
     autoSurfaceHeight(options?: {
         has3dtiles?: boolean;
         objectsToExclude?: any;
         offset?: number;
-        callback: Globe.surfaceLineWork_callback;
-    }): BasePolyEntity;
+    }): Promise<any>;
     /**
      * 按Cesium.CallbackProperty的方式 更新坐标集合（更加平滑）
      * @param positions - 坐标数组
@@ -6624,7 +6589,7 @@ declare namespace BillboardEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         image?: string | HTMLCanvasElement;
         opacity?: number;
         scale?: number;
@@ -6659,8 +6624,8 @@ declare namespace BillboardEntity {
         imageSubRegion?: Cesium.BoundingRectangle;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: BillboardEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: BillboardEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -6688,6 +6653,10 @@ declare namespace BillboardEntity {
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.model] - 设置附加的 gltf模型 和对应的样式
+ * @param [options.point] - 设置附加的 像素点 和对应的样式
+ * @param [options.circle] - 设置附加的 圆 和对应的样式
+ * @param [options.path] - 设置附加的 轨迹路线 和对应的样式
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -6697,7 +6666,7 @@ declare namespace BillboardEntity {
 declare class BillboardEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: BillboardEntity.StyleOptions;
+        style: BillboardEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -6713,10 +6682,14 @@ declare class BillboardEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
+        model?: ModelEntity.StyleOptions | any | any;
+        point?: PointEntity.StyleOptions | any | any;
+        circle?: CircleEntity.StyleOptions | any | any;
+        path?: PathEntity.StyleOptions | any | any;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -6796,7 +6769,7 @@ declare namespace BoxEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         dimensions?: Cesium.Cartesian3 | Cesium.Property;
         dimensions_x?: number;
         dimensions_y?: number;
@@ -6823,8 +6796,8 @@ declare namespace BoxEntity {
         heightReference?: Cesium.HeightReference;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: BoxEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: BoxEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -6856,7 +6829,7 @@ declare namespace BoxEntity {
 declare class BoxEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: BoxEntity.StyleOptions;
+        style: BoxEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
         availability?: Cesium.TimeIntervalCollection;
@@ -6867,9 +6840,9 @@ declare class BoxEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -6938,7 +6911,7 @@ declare namespace CanvasLabelEntity {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         text?: string;
         scale?: number;
         horizontalOrigin?: Cesium.HorizontalOrigin;
@@ -7009,7 +6982,7 @@ declare namespace CanvasLabelEntity {
 declare class CanvasLabelEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: CanvasLabelEntity.StyleOptions;
+        style: CanvasLabelEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -7019,9 +6992,9 @@ declare class CanvasLabelEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -7076,7 +7049,7 @@ declare namespace CircleEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radius?: number;
         height?: number;
         heightReference?: Cesium.HeightReference;
@@ -7093,7 +7066,7 @@ declare namespace CircleEntity {
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylineEntity.StyleOptions;
+        outlineStyle?: PolylineEntity.StyleOptions | any;
         rotation?: number | Cesium.Property;
         rotationDegree?: number;
         stRotation?: number | Cesium.Property;
@@ -7109,8 +7082,8 @@ declare namespace CircleEntity {
         classificationType?: Cesium.ClassificationType;
         zIndex?: number;
         addHeight?: number | string;
-        highlight?: CircleEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CircleEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -7142,7 +7115,7 @@ declare namespace CircleEntity {
 declare class CircleEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: CircleEntity.StyleOptions;
+        style: CircleEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -7153,9 +7126,9 @@ declare class CircleEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -7318,7 +7291,7 @@ declare namespace ConeTrack {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle?: number;
         bottomRadius?: number;
         length?: number;
@@ -7345,8 +7318,8 @@ declare namespace ConeTrack {
         heightReference?: Cesium.HeightReference;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: CylinderEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CylinderEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -7377,7 +7350,7 @@ declare class ConeTrack extends CylinderEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: ConeTrack.StyleOptions;
+        style: ConeTrack.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -7385,9 +7358,9 @@ declare class ConeTrack extends CylinderEntity {
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -7470,7 +7443,7 @@ declare namespace CorridorEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         width?: number;
         cornerType?: string | Cesium.CornerType;
         height?: number | Cesium.Property;
@@ -7499,8 +7472,8 @@ declare namespace CorridorEntity {
         zIndex?: number;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: CorridorEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CorridorEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -7535,7 +7508,7 @@ declare namespace CorridorEntity {
 declare class CorridorEntity extends BasePolyEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: CorridorEntity.StyleOptions;
+        style: CorridorEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -7549,9 +7522,9 @@ declare class CorridorEntity extends BasePolyEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -7611,7 +7584,7 @@ declare class CorridorEntity extends BasePolyEntity {
 declare class CurveEntity extends PolylineEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -7625,9 +7598,9 @@ declare class CurveEntity extends PolylineEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -7676,7 +7649,7 @@ declare namespace CylinderEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         topRadius?: number;
         bottomRadius?: number;
         length?: number;
@@ -7703,8 +7676,8 @@ declare namespace CylinderEntity {
         heightReference?: Cesium.HeightReference;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: CylinderEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CylinderEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -7736,7 +7709,7 @@ declare namespace CylinderEntity {
 declare class CylinderEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: CylinderEntity.StyleOptions;
+        style: CylinderEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
         availability?: Cesium.TimeIntervalCollection;
@@ -7747,9 +7720,9 @@ declare class CylinderEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -7818,7 +7791,7 @@ declare namespace DivBillboardEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         html: string;
         opacity?: number;
         scale?: number;
@@ -7853,8 +7826,8 @@ declare namespace DivBillboardEntity {
         imageSubRegion?: Cesium.BoundingRectangle;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: BillboardEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: BillboardEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -7886,7 +7859,7 @@ declare namespace DivBillboardEntity {
 declare class DivBillboardEntity extends BillboardEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: DivBillboardEntity.StyleOptions;
+        style: DivBillboardEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -7896,9 +7869,9 @@ declare class DivBillboardEntity extends BillboardEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -8057,7 +8030,7 @@ declare namespace EllipseEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         semiMinorAxis?: number | Cesium.Property;
         semiMajorAxis?: number | Cesium.Property;
         height?: number;
@@ -8075,7 +8048,7 @@ declare namespace EllipseEntity {
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylineEntity.StyleOptions;
+        outlineStyle?: PolylineEntity.StyleOptions | any;
         rotation?: number;
         rotationDegree?: number;
         stRotation?: number;
@@ -8091,8 +8064,8 @@ declare namespace EllipseEntity {
         classificationType?: Cesium.ClassificationType;
         zIndex?: number;
         addHeight?: number | string;
-        highlight?: CircleEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CircleEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -8123,7 +8096,7 @@ declare namespace EllipseEntity {
 declare class EllipseEntity extends CircleEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: EllipseEntity.StyleOptions;
+        style: EllipseEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -8133,9 +8106,9 @@ declare class EllipseEntity extends CircleEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -8198,7 +8171,7 @@ declare namespace EllipsoidEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radii?: Cesium.Cartesian3;
         radii_x?: number;
         radii_y?: number;
@@ -8239,8 +8212,8 @@ declare namespace EllipsoidEntity {
         shadows?: Cesium.ShadowMode;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: EllipsoidEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: EllipsoidEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
     /**
      * 动态扫描面 参数
@@ -8253,7 +8226,7 @@ declare namespace EllipsoidEntity {
         planeOptions: {
             type?: string;
             step?: number;
-            style?: EllipsoidEntity.StyleOptions;
+            style?: EllipsoidEntity.StyleOptions | any;
         };
     };
 }
@@ -8287,7 +8260,7 @@ declare namespace EllipsoidEntity {
 declare class EllipsoidEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: EllipsoidEntity.StyleOptions;
+        style: EllipsoidEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
         scanPlane: EllipsoidEntity.ScanPlaneOptions | EllipsoidEntity.ScanPlaneOptions[];
@@ -8299,9 +8272,9 @@ declare class EllipsoidEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -8388,7 +8361,7 @@ declare namespace FontBillboardEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         iconClass?: string;
         iconSize?: number;
         color?: string;
@@ -8424,8 +8397,8 @@ declare namespace FontBillboardEntity {
         imageSubRegion?: Cesium.BoundingRectangle;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: BillboardEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: BillboardEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -8457,7 +8430,7 @@ declare namespace FontBillboardEntity {
 declare class FontBillboardEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: FontBillboardEntity.StyleOptions;
+        style: FontBillboardEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -8467,9 +8440,9 @@ declare class FontBillboardEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -8531,7 +8504,7 @@ declare namespace LabelEntity {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         text?: string;
         scale?: number;
         horizontalOrigin?: Cesium.HorizontalOrigin;
@@ -8603,7 +8576,7 @@ declare namespace LabelEntity {
 declare class LabelEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: LabelEntity.StyleOptions;
+        style: LabelEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -8613,9 +8586,9 @@ declare class LabelEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -8705,7 +8678,7 @@ declare namespace ModelEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         url?: string | Cesium.Resource;
         scale?: number;
         heading?: number;
@@ -8727,8 +8700,8 @@ declare namespace ModelEntity {
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_near?: number;
         distanceDisplayCondition_far?: number;
-        distanceDisplayPoint?: PointEntity.StyleOptions;
-        distanceDisplayBillboard?: BillboardEntity.StyleOptions;
+        distanceDisplayPoint?: PointEntity.StyleOptions | any;
+        distanceDisplayBillboard?: BillboardEntity.StyleOptions | any;
         hasShadows?: boolean;
         shadows?: Cesium.ShadowMode;
         clampToGround?: boolean;
@@ -8747,8 +8720,8 @@ declare namespace ModelEntity {
         clippingPlanes?: Cesium.ClippingPlaneCollection;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: ModelEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: ModelEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
     /**
      * 当前类支持的{@link EventType}事件类型
@@ -8815,6 +8788,10 @@ declare namespace ModelEntity {
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.billboard] - 设置附加的 图标 和对应的样式。
+ * @param [options.point] - 设置附加的 像素点 和对应的样式
+ * @param [options.circle] - 设置附加的 圆 和对应的样式
+ * @param [options.path] - 设置附加的 轨迹路线 和对应的样式
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -8824,7 +8801,7 @@ declare namespace ModelEntity {
 declare class ModelEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: ModelEntity.StyleOptions;
+        style: ModelEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
         availability?: Cesium.TimeIntervalCollection;
@@ -8843,10 +8820,14 @@ declare class ModelEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
+        billboard?: BillboardEntity.StyleOptions | any | any;
+        point?: PointEntity.StyleOptions | any | any;
+        circle?: CircleEntity.StyleOptions | any | any;
+        path?: PathEntity.StyleOptions | any | any;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -8978,7 +8959,7 @@ declare namespace PathEntity {
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         width?: number;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -8991,7 +8972,7 @@ declare namespace PathEntity {
         distanceDisplayCondition_near?: number;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -9002,10 +8983,6 @@ declare namespace PathEntity {
  * @param [options.orientation] - 实体方向
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.label] - 设置是否显示 文本 和对应的样式
- * @param [options.model] - 设置是否显示 gltf模型 和对应的样式
- * @param [options.point] - 设置是否显示 像素点 和对应的样式，如果不设置gltf模型时，可以选择该项。
- * @param [options.billboard] - 设置是否显示 图标 和对应的样式，如果不设置gltf模型时，可以选择该项。
  * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
@@ -9016,6 +8993,11 @@ declare namespace PathEntity {
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.label] - 设置是否显示 文本 和对应的样式
+ * @param [options.model] - 设置附加的 gltf模型 和对应的样式
+ * @param [options.billboard] - 设置附加的 图标 和对应的样式。
+ * @param [options.point] - 设置附加的 像素点 和对应的样式
+ * @param [options.circle] - 设置附加的 圆 和对应的样式
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -9026,22 +9008,23 @@ declare class PathEntity extends BasePointEntity {
     constructor(options: {
         position: Cesium.SampledPositionProperty;
         orientation?: Cesium.Property;
-        style: PathEntity.StyleOptions;
+        style: PathEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
-        model?: ModelEntity.StyleOptions;
-        point?: PointEntity.StyleOptions;
-        billboard?: BillboardEntity.StyleOptions;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
+        label?: LabelEntity.StyleOptions | any;
+        model?: ModelEntity.StyleOptions | any | any;
+        billboard?: BillboardEntity.StyleOptions | any | any;
+        point?: PointEntity.StyleOptions | any | any;
+        circle?: CircleEntity.StyleOptions | any | any;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -9142,7 +9125,7 @@ declare namespace PlaneEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         dimensions?: Cesium.Cartesian2;
         dimensions_x?: number;
         dimensions_y?: number;
@@ -9170,8 +9153,8 @@ declare namespace PlaneEntity {
         shadows?: Cesium.ShadowMode;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: PlaneEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: PlaneEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -9203,7 +9186,7 @@ declare namespace PlaneEntity {
 declare class PlaneEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: PlaneEntity.StyleOptions;
+        style: PlaneEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
         availability?: Cesium.TimeIntervalCollection;
@@ -9214,9 +9197,9 @@ declare class PlaneEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -9269,7 +9252,7 @@ declare namespace PointEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         pixelSize?: number;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -9292,8 +9275,8 @@ declare namespace PointEntity {
         heightReference?: Cesium.HeightReference;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: PointEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: PointEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -9321,6 +9304,10 @@ declare namespace PointEntity {
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.model] - 设置附加的 gltf模型 和对应的样式
+ * @param [options.billboard] - 设置附加的 图标 和对应的样式
+ * @param [options.circle] - 设置附加的 圆 和对应的样式
+ * @param [options.path] - 设置附加的 轨迹路线 和对应的样式
  * @param [options.id = uuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -9330,7 +9317,7 @@ declare namespace PointEntity {
 declare class PointEntity extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: PointEntity.StyleOptions;
+        style: PointEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -9346,10 +9333,14 @@ declare class PointEntity extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
+        model?: ModelEntity.StyleOptions | any | any;
+        billboard?: BillboardEntity.StyleOptions | any | any;
+        circle?: CircleEntity.StyleOptions | any | any;
+        path?: PathEntity.StyleOptions | any | any;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -9408,11 +9399,11 @@ declare namespace PolygonEntity {
      * @property [setHeight = 0] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
      * @property [addHeight = 0] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示，额外支持：
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示，额外支持：<br />
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         fill?: boolean;
         materialType?: string;
         material的多个参数?: any;
@@ -9426,7 +9417,7 @@ declare namespace PolygonEntity {
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylineEntity.StyleOptions;
+        outlineStyle?: PolylineEntity.StyleOptions | any;
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
@@ -9448,11 +9439,8 @@ declare namespace PolygonEntity {
         buffer?: number;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        highlight?: PolygonEntity.StyleOptions;
-        label?: {
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: PolygonEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -9487,7 +9475,7 @@ declare namespace PolygonEntity {
 declare class PolygonEntity extends BasePolyEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -9501,9 +9489,9 @@ declare class PolygonEntity extends BasePolyEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -9599,12 +9587,12 @@ declare namespace PolylineEntity {
      * @property [setHeight = 0] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
      * @property [addHeight = 0] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示，额外支持：
-     * @property [label.text = "文字"] - 文本内容，换行可以用换行符'\n'。
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示，额外支持：<br />
+     * //  * @property {String} [label.text = "文字"] 文本内容，换行可以用换行符'\n'。
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         materialType?: string;
         material的多个参数?: any;
         material?: Cesium.MaterialProperty | BaseMaterialProperty | Cesium.Color;
@@ -9632,12 +9620,8 @@ declare namespace PolylineEntity {
         zIndex?: number;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        highlight?: PolylineEntity.StyleOptions;
-        label?: {
-            text?: string;
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -9672,7 +9656,7 @@ declare namespace PolylineEntity {
 declare class PolylineEntity extends BasePolyEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -9686,9 +9670,9 @@ declare class PolylineEntity extends BasePolyEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -9738,7 +9722,7 @@ declare namespace PolylineVolumeEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radius?: number;
         shape?: string | Cesium.Cartesian2[];
         fill?: boolean;
@@ -9758,8 +9742,8 @@ declare namespace PolylineVolumeEntity {
         shadows?: Cesium.ShadowMode;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        highlight?: PolylineVolumeEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: PolylineVolumeEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -9794,7 +9778,7 @@ declare namespace PolylineVolumeEntity {
 declare class PolylineVolumeEntity extends BasePolyEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineVolumeEntity.StyleOptions;
+        style: PolylineVolumeEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -9808,9 +9792,9 @@ declare class PolylineVolumeEntity extends BasePolyEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -9876,7 +9860,7 @@ declare namespace RectangleEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         fill?: boolean;
         materialType?: string;
         material的多个参数?: any;
@@ -9887,7 +9871,7 @@ declare namespace RectangleEntity {
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylineEntity.StyleOptions;
+        outlineStyle?: PolylineEntity.StyleOptions | any;
         height?: number;
         heightReference?: Cesium.HeightReference;
         diffHeight?: number;
@@ -9908,8 +9892,8 @@ declare namespace RectangleEntity {
         zIndex?: number;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: RectangleEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: RectangleEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -9946,7 +9930,7 @@ declare class RectangleEntity extends BasePolyEntity {
     constructor(options: {
         positions?: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         rectangle?: Cesium.Rectangle | Cesium.PositionProperty;
-        style: RectangleEntity.StyleOptions;
+        style: RectangleEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -9960,9 +9944,9 @@ declare class RectangleEntity extends BasePolyEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10135,7 +10119,7 @@ declare namespace RectangularSensor {
      * @property [slice = 32] - 切分程度
      * @property [depthTest = true] - 是否被遮挡
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radius: number;
         xHalfAngle?: number;
         xHalfAngleDegree?: number;
@@ -10197,7 +10181,7 @@ declare namespace RectangularSensor {
 declare class RectangularSensor extends BasePointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: RectangularSensor.StyleOptions;
+        style: RectangularSensor.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
         availability?: Cesium.TimeIntervalCollection;
@@ -10208,9 +10192,9 @@ declare class RectangularSensor extends BasePointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10261,7 +10245,7 @@ declare namespace Video2D {
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定多边形是投射还是接收来自光源的阴影。
      * @property [showFrustum = false] - 是否显示视椎体框线
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle: number;
         angle2: number;
         distance: number;
@@ -10276,7 +10260,7 @@ declare namespace Video2D {
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylineEntity.StyleOptions;
+        outlineStyle?: PolylineEntity.StyleOptions | any;
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
@@ -10309,12 +10293,12 @@ declare class Video2D extends PolygonEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: Video2D.StyleOptions;
+        style: Video2D.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10428,11 +10412,11 @@ declare namespace WallEntity {
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示，额外支持：
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示，额外支持：<br />
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         diffHeight?: number;
         minimumHeights?: number[];
         maximumHeights?: number[];
@@ -10455,11 +10439,8 @@ declare namespace WallEntity {
         granularity?: number;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: WallEntity.StyleOptions;
-        label?: {
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: WallEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -10494,7 +10475,7 @@ declare namespace WallEntity {
 declare class WallEntity extends BasePolyEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: WallEntity.StyleOptions;
+        style: WallEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10508,9 +10489,9 @@ declare class WallEntity extends BasePolyEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10566,7 +10547,7 @@ declare class WallEntity extends BasePolyEntity {
 declare class AttackArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10576,9 +10557,9 @@ declare class AttackArrow extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10629,7 +10610,7 @@ declare class AttackArrow extends PolygonEntity {
 declare class AttackArrowPW extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10639,9 +10620,9 @@ declare class AttackArrowPW extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10692,7 +10673,7 @@ declare class AttackArrowPW extends PolygonEntity {
 declare class AttackArrowYW extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10702,9 +10683,9 @@ declare class AttackArrowYW extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10755,7 +10736,7 @@ declare class AttackArrowYW extends PolygonEntity {
 declare class CloseVurve extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10765,9 +10746,9 @@ declare class CloseVurve extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10818,7 +10799,7 @@ declare class CloseVurve extends PolygonEntity {
 declare class DoubleArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10828,9 +10809,9 @@ declare class DoubleArrow extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10893,7 +10874,7 @@ declare class EditSector extends EditPolygon {
 declare class FineArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10903,9 +10884,9 @@ declare class FineArrow extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -10956,7 +10937,7 @@ declare class FineArrow extends PolygonEntity {
 declare class FineArrowYW extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -10966,9 +10947,9 @@ declare class FineArrowYW extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11019,7 +11000,7 @@ declare class FineArrowYW extends PolygonEntity {
 declare class GatheringPlace extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11029,9 +11010,9 @@ declare class GatheringPlace extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11082,7 +11063,7 @@ declare class GatheringPlace extends PolygonEntity {
 declare class IsosTriangle extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11092,9 +11073,9 @@ declare class IsosTriangle extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11145,7 +11126,7 @@ declare class IsosTriangle extends PolygonEntity {
 declare class Lune extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11155,9 +11136,9 @@ declare class Lune extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11225,9 +11206,9 @@ declare class Regular extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11310,9 +11291,9 @@ declare class Sector extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11378,7 +11359,7 @@ declare class Sector extends PolygonEntity {
 declare class StraightArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11388,9 +11369,9 @@ declare class StraightArrow extends PolygonEntity {
         hasMoveEdit?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11449,9 +11430,9 @@ declare class StraightArrow extends PolygonEntity {
 declare class AngleMeasure extends PolylineEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         angleDecimal?: number;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
@@ -11466,9 +11447,9 @@ declare class AngleMeasure extends PolylineEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11529,9 +11510,9 @@ declare class AngleMeasure extends PolylineEntity {
 declare class AreaMeasure extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11545,9 +11526,9 @@ declare class AreaMeasure extends PolygonEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11614,9 +11595,9 @@ declare class AreaMeasure extends PolygonEntity {
 declare class AreaSurfaceMeasure extends AreaMeasure {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11630,9 +11611,9 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11683,9 +11664,9 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
 declare class DistanceMeasure extends PolylineEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11699,9 +11680,9 @@ declare class DistanceMeasure extends PolylineEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11762,9 +11743,9 @@ declare class DistanceMeasure extends PolylineEntity {
 declare class DistanceSurfaceMeasure extends DistanceMeasure {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11778,9 +11759,9 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11831,9 +11812,9 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
 declare class HeightMeasure extends PolylineEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11847,9 +11828,9 @@ declare class HeightMeasure extends PolylineEntity {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11910,9 +11891,9 @@ declare class HeightMeasure extends PolylineEntity {
 declare class HeightTriangleMeasure extends HeightMeasure {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11926,9 +11907,9 @@ declare class HeightTriangleMeasure extends HeightMeasure {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -11979,7 +11960,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
 declare class PointMeasure extends PointEntity {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
-        style: PointEntity.StyleOptions;
+        style: PointEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -11989,9 +11970,9 @@ declare class PointMeasure extends PointEntity {
         drawShow?: boolean;
         addHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12042,9 +12023,9 @@ declare class PointMeasure extends PointEntity {
 declare class SectionMeasure extends DistanceMeasure {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolylineEntity.StyleOptions;
+        style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
@@ -12058,9 +12039,9 @@ declare class SectionMeasure extends DistanceMeasure {
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12107,10 +12088,10 @@ declare class SectionMeasure extends DistanceMeasure {
  */
 declare class VolumeMeasure extends AreaMeasure {
     constructor(options: {
-        style: PolygonEntity.StyleOptions;
+        style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        polygonWallStyle?: PolygonEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        polygonWallStyle?: PolygonEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
         showFillVolume?: boolean;
         fillVolumeName?: string;
         showDigVolume?: boolean;
@@ -12119,7 +12100,7 @@ declare class VolumeMeasure extends AreaMeasure {
         areaName?: string;
         heightLabel?: boolean;
         offsetLabel?: boolean;
-        labelHeight?: LabelEntity.StyleOptions;
+        labelHeight?: LabelEntity.StyleOptions | any;
         decimal?: number;
         has3dtiles?: boolean;
         id?: string | number;
@@ -12156,10 +12137,10 @@ declare class VolumeMeasure extends AreaMeasure {
     updateText(unit: string): void;
     /**
      * 通过鼠标拾取高度，赋值给基准面
-     * @param callback - 拾取完成后的回调方法
-     * @returns 无
+     * @param [callback] - 拾取完成后的回调方法
+     * @returns 拾取完成后的回调,与callback 2选1
      */
-    selecteHeight(callback: (...params: any[]) => any): void;
+    selecteHeight(callback?: (...params: any[]) => any): Promise<number>;
     /**
      * 通过标绘 来创建矢量对象
      * @param layer - 图层
@@ -12232,9 +12213,9 @@ declare class BasePointPrimitive extends BasePrimitive {
         frameRateHeight?: number;
         objectsToExclude?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12373,9 +12354,9 @@ declare class BasePolyPrimitive extends BasePrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12441,15 +12422,13 @@ declare class BasePolyPrimitive extends BasePrimitive {
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
-     * @param options.callback - 异步计算高度完成后 的回调方法
-     * @returns 当前对象本身，可以链式调用
+     * @returns 异步计算完成的Promise
      */
     autoSurfaceHeight(options?: {
         has3dtiles?: boolean;
         objectsToExclude?: any;
         offset?: number;
-        callback: Globe.surfaceLineWork_callback;
-    }): BasePolyPrimitive;
+    }): Promise<any>;
 }
 
 declare namespace BasePrimitive {
@@ -12548,9 +12527,9 @@ declare class BasePrimitive extends BaseGraphic {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12633,12 +12612,12 @@ declare class BasePrimitive extends BaseGraphic {
 declare class BillboardPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: BillboardEntity.StyleOptions;
+        style: BillboardEntity.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12689,7 +12668,7 @@ declare namespace BoxPrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         dimensions?: Cesium.Cartesian3;
         dimensions_x?: number;
         dimensions_y?: number;
@@ -12715,8 +12694,8 @@ declare namespace BoxPrimitive {
         renderState?: any;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: BoxPrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: BoxPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -12754,7 +12733,7 @@ declare class BoxPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: BoxPrimitive.StyleOptions;
+        style: BoxPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -12769,9 +12748,9 @@ declare class BoxPrimitive extends BasePointPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -12818,7 +12797,7 @@ declare namespace CirclePrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radius?: number;
         height?: number;
         diffHeight?: number;
@@ -12834,7 +12813,7 @@ declare namespace CirclePrimitive {
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylinePrimitive.StyleOptions;
+        outlineStyle?: PolylinePrimitive.StyleOptions | any;
         materialSupport?: Cesium.MaterialAppearance.MaterialSupportType;
         clampToGround?: boolean;
         classificationType?: Cesium.ClassificationType;
@@ -12848,8 +12827,8 @@ declare namespace CirclePrimitive {
         renderState?: any;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: CirclePrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CirclePrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -12887,7 +12866,7 @@ declare class CirclePrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: CirclePrimitive.StyleOptions;
+        style: CirclePrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -12902,9 +12881,9 @@ declare class CirclePrimitive extends BasePointPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13001,7 +12980,7 @@ declare namespace CloudPrimitive {
      * @property slice - 云的“切片”，即为广告牌外观选择的云的特定横截面。给定一个介于 0 和 1 之间的值，切片根据其在 z 方向上的最大尺寸指定与云相交的深度。
      * @property [brightness = 1.0] - 亮度
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         scale: Cesium.Cartesian2;
         maximumSize: Cesium.Cartesian3;
         slice: number;
@@ -13032,12 +13011,12 @@ declare namespace CloudPrimitive {
 declare class CloudPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: CloudPrimitive.StyleOptions;
+        style: CloudPrimitive.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13178,7 +13157,7 @@ declare namespace ConeTrackPrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle?: number;
         bottomRadius?: number;
         length?: number;
@@ -13203,8 +13182,8 @@ declare namespace ConeTrackPrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        highlight?: CylinderPrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CylinderPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -13242,7 +13221,7 @@ declare class ConeTrackPrimitive extends CylinderPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: ConeTrackPrimitive.StyleOptions;
+        style: ConeTrackPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -13257,9 +13236,9 @@ declare class ConeTrackPrimitive extends CylinderPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13316,7 +13295,7 @@ declare namespace CorridorPrimitive {
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         width?: number;
         cornerType?: string | Cesium.CornerType;
         materialType?: string;
@@ -13344,7 +13323,7 @@ declare namespace CorridorPrimitive {
         renderState?: any;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelPrimitive.StyleOptions;
+        label?: LabelPrimitive.StyleOptions | any;
     };
 }
 
@@ -13380,7 +13359,7 @@ declare namespace CorridorPrimitive {
 declare class CorridorPrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: CorridorPrimitive.StyleOptions;
+        style: CorridorPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -13395,9 +13374,9 @@ declare class CorridorPrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13436,7 +13415,7 @@ declare namespace CylinderPrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         topRadius?: number;
         bottomRadius?: number;
         length?: number;
@@ -13460,8 +13439,8 @@ declare namespace CylinderPrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        highlight?: CylinderPrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: CylinderPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -13499,7 +13478,7 @@ declare class CylinderPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: CylinderPrimitive.StyleOptions;
+        style: CylinderPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -13514,9 +13493,9 @@ declare class CylinderPrimitive extends BasePointPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13535,7 +13514,7 @@ declare namespace DiffuseWall {
      * @property [speed = 10] - 扩散的速度，值越大越快
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         diffHeight?: number;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -13566,12 +13545,12 @@ declare class DiffuseWall extends BasePolyPrimitive {
     constructor(options: {
         positions?: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         position?: LngLatPoint | Cesium.Cartesian3 | number[];
-        style?: DiffuseWall.StyleOptions;
+        style?: DiffuseWall.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13605,7 +13584,7 @@ declare namespace DynamicRiver {
      * @property [move = true] - 是否开启流动效果
      * @property [direction = true] - 设置流动方向
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         image: string;
         opacity?: number;
         width?: number;
@@ -13632,7 +13611,7 @@ declare namespace DynamicRiver {
 declare class DynamicRiver extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: DynamicRiver.StyleOptions;
+        style: DynamicRiver.StyleOptions | any;
         attr?: any;
         id?: string | number;
         name?: string;
@@ -13727,7 +13706,7 @@ declare namespace EllipsoidPrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radii?: Cesium.Cartesian3;
         radii_x?: number;
         radii_y?: number;
@@ -13762,8 +13741,8 @@ declare namespace EllipsoidPrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        highlight?: EllipsoidPrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: EllipsoidPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -13801,7 +13780,7 @@ declare class EllipsoidPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: EllipsoidPrimitive.StyleOptions;
+        style: EllipsoidPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -13816,9 +13795,9 @@ declare class EllipsoidPrimitive extends BasePointPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13856,7 +13835,7 @@ declare namespace FrustumPrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle?: number;
         angle2?: number;
         length?: number;
@@ -13879,8 +13858,8 @@ declare namespace FrustumPrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        highlight?: FrustumPrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: FrustumPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -13918,7 +13897,7 @@ declare class FrustumPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: FrustumPrimitive.StyleOptions;
+        style: FrustumPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -13933,9 +13912,9 @@ declare class FrustumPrimitive extends BasePointPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -13991,8 +13970,8 @@ declare namespace LabelPrimitive {
      * 文字 支持的样式信息（与LabelEntity相同）
      * @property [所有] - 与LabelEntity相同
      */
-    type StyleOptions = {
-        所有?: LabelEntity.StyleOptions;
+    type StyleOptions = any | {
+        所有?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -14016,12 +13995,12 @@ declare namespace LabelPrimitive {
 declare class LabelPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: LabelPrimitive.StyleOptions;
+        style: LabelPrimitive.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14046,7 +14025,7 @@ declare namespace LightCone {
      * @property [radius = 100] - 锥体底部半径。(单位：米)
      * @property [height = 1000] - 锥体高度，相对于椭球面的高度。(单位：米)
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         color?: string | Cesium.Color;
         radius?: number;
         height?: number;
@@ -14073,12 +14052,12 @@ declare namespace LightCone {
 declare class LightCone extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: LightCone.StyleOptions;
+        style: LightCone.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14157,7 +14136,7 @@ declare namespace ModelPrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         url?: string | Cesium.Resource;
         scale?: number;
         scaleX?: number;
@@ -14181,8 +14160,8 @@ declare namespace ModelPrimitive {
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_near?: number;
         distanceDisplayCondition_far?: number;
-        distanceDisplayPoint?: PointEntity.StyleOptions;
-        distanceDisplayBillboard?: BillboardEntity.StyleOptions;
+        distanceDisplayPoint?: PointEntity.StyleOptions | any;
+        distanceDisplayBillboard?: BillboardEntity.StyleOptions | any;
         customShader?: Cesium.CustomShader;
         hasShadows?: boolean;
         shadows?: Cesium.ShadowMode;
@@ -14215,8 +14194,8 @@ declare namespace ModelPrimitive {
         loop?: Cesium.ModelAnimationLoop;
         setHeight?: number | string;
         addHeight?: number | string;
-        highlight?: ModelPrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: ModelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
     /**
      * 当前类支持的{@link EventType}事件类型
@@ -14296,7 +14275,7 @@ declare class ModelPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: ModelPrimitive.StyleOptions;
+        style: ModelPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -14307,9 +14286,9 @@ declare class ModelPrimitive extends BasePointPrimitive {
         frameRateHeight?: number;
         objectsToExclude?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14348,12 +14327,12 @@ declare namespace Pit {
      * @property [splitNum = 50] - 井墙面每两点之间插值个数
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         image: string;
         imageBottom: string;
         diffHeight: number;
         splitNum?: number;
-        label?: LabelPrimitive.StyleOptions;
+        label?: LabelPrimitive.StyleOptions | any;
     };
 }
 
@@ -14390,7 +14369,7 @@ declare namespace Pit {
 declare class Pit extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: Pit.StyleOptions;
+        style: Pit.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -14405,9 +14384,9 @@ declare class Pit extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14456,7 +14435,7 @@ declare namespace PlanePrimitive {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         dimensions?: Cesium.Cartesian2;
         dimensions_x?: number;
         dimensions_y?: number;
@@ -14480,8 +14459,8 @@ declare namespace PlanePrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        highlight?: PlanePrimitive.StyleOptions;
-        label?: LabelEntity.StyleOptions;
+        highlight?: PlanePrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -14519,7 +14498,7 @@ declare class PlanePrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         modelMatrix?: Cesium.Matrix4;
-        style: PlanePrimitive.StyleOptions;
+        style: PlanePrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -14534,9 +14513,9 @@ declare class PlanePrimitive extends BasePointPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14575,7 +14554,7 @@ declare namespace PointPrimitive {
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         pixelSize?: number;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -14596,7 +14575,7 @@ declare namespace PointPrimitive {
         translucencyByDistance?: Cesium.NearFarScalar;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelPrimitive.StyleOptions;
+        label?: LabelPrimitive.StyleOptions | any;
     };
 }
 
@@ -14621,13 +14600,13 @@ declare namespace PointPrimitive {
 declare class PointPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: PointPrimitive.StyleOptions;
+        style: PointPrimitive.StyleOptions | any;
         attr?: any;
         frameRate?: number;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14682,11 +14661,11 @@ declare namespace PolygonPrimitive {
      * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
      * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示 ，额外支持：
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示 ，额外支持：<br />
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         materialType?: string;
         material的多个参数?: any;
         material?: Cesium.Material;
@@ -14699,7 +14678,7 @@ declare namespace PolygonPrimitive {
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylinePrimitive.StyleOptions;
+        outlineStyle?: PolylinePrimitive.StyleOptions | any;
         height?: number;
         diffHeight?: number;
         extrudedHeight?: number;
@@ -14722,11 +14701,8 @@ declare namespace PolygonPrimitive {
         buffer?: number;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        highlight?: PolygonPrimitive.StyleOptions;
-        label?: {
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: PolygonPrimitive.StyleOptions | any;
+        label?: LabelPrimitive.StyleOptions | any | any;
     };
 }
 
@@ -14762,7 +14738,7 @@ declare namespace PolygonPrimitive {
 declare class PolygonPrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: PolygonPrimitive.StyleOptions;
+        style: PolygonPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -14777,9 +14753,9 @@ declare class PolygonPrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14825,11 +14801,11 @@ declare namespace PolylinePrimitive {
      * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
      * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示 ，额外支持：
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示 ，额外支持：<br />
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         width?: number;
         materialType?: string;
         material的多个参数?: any;
@@ -14854,11 +14830,8 @@ declare namespace PolylinePrimitive {
         classificationType?: Cesium.ClassificationType;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        highlight?: PolylinePrimitive.StyleOptions;
-        label?: {
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: PolylinePrimitive.StyleOptions | any;
+        label?: LabelPrimitive.StyleOptions | any | any;
     };
 }
 
@@ -14894,7 +14867,7 @@ declare namespace PolylinePrimitive {
 declare class PolylinePrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: PolylinePrimitive.StyleOptions;
+        style: PolylinePrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -14909,9 +14882,9 @@ declare class PolylinePrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -14953,7 +14926,7 @@ declare class PolylinePrimitive extends BasePolyPrimitive {
 declare class PolylineSimplePrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: PolylinePrimitive.StyleOptions;
+        style: PolylinePrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -14968,9 +14941,9 @@ declare class PolylineSimplePrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15007,7 +14980,7 @@ declare namespace PolylineVolumePrimitive {
      * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         radius?: number;
         shape?: string | Cesium.Cartesian2[];
         materialType?: string;
@@ -15028,7 +15001,7 @@ declare namespace PolylineVolumePrimitive {
         renderState?: any;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        label?: LabelPrimitive.StyleOptions;
+        label?: LabelPrimitive.StyleOptions | any;
     };
 }
 
@@ -15064,7 +15037,7 @@ declare namespace PolylineVolumePrimitive {
 declare class PolylineVolumePrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: PolylineVolumePrimitive.StyleOptions;
+        style: PolylineVolumePrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -15079,9 +15052,9 @@ declare class PolylineVolumePrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15120,7 +15093,7 @@ declare namespace RectanglePrimitive {
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         materialType?: string;
         material的多个参数?: any;
         material?: Cesium.Material;
@@ -15130,7 +15103,7 @@ declare namespace RectanglePrimitive {
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
-        outlineStyle?: PolylinePrimitive.StyleOptions;
+        outlineStyle?: PolylinePrimitive.StyleOptions | any;
         height?: number;
         diffHeight?: number;
         extrudedHeight?: number;
@@ -15145,7 +15118,7 @@ declare namespace RectanglePrimitive {
         classification?: boolean;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelPrimitive.StyleOptions;
+        label?: LabelPrimitive.StyleOptions | any;
     };
 }
 
@@ -15183,7 +15156,7 @@ declare class RectanglePrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions?: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         rectangle?: Cesium.Rectangle | Cesium.PositionProperty;
-        style: RectanglePrimitive.StyleOptions;
+        style: RectanglePrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -15198,9 +15171,9 @@ declare class RectanglePrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15241,7 +15214,7 @@ declare namespace Road {
      * @property [height = 0] - 道路 高度，相对于椭球面的高度。(单位：米)
      * @property [axisY = true] - 是否uv交换（图片横竖切换）
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         image: string;
         width?: number;
         height?: number;
@@ -15264,7 +15237,7 @@ declare namespace Road {
 declare class Road extends DynamicRiver {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: Road.StyleOptions;
+        style: Road.StyleOptions | any;
         attr?: any;
         id?: string | number;
         name?: string;
@@ -15285,7 +15258,7 @@ declare namespace ScrollWall {
      * @property [style = 1] - 样式，可选值：1、2
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         diffHeight?: number;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -15316,12 +15289,12 @@ declare namespace ScrollWall {
 declare class ScrollWall extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: ScrollWall.StyleOptions;
+        style: ScrollWall.StyleOptions | any;
         attr?: any;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15360,11 +15333,11 @@ declare namespace WallPrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示 ，额外支持：
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示 ，额外支持：<br />
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         diffHeight?: number;
         materialType?: string;
         material的多个参数?: any;
@@ -15384,11 +15357,8 @@ declare namespace WallPrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        highlight?: WallPrimitive.StyleOptions;
-        label?: {
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: WallPrimitive.StyleOptions | any;
+        label?: LabelPrimitive.StyleOptions | any | any;
     };
 }
 
@@ -15424,7 +15394,7 @@ declare namespace WallPrimitive {
 declare class WallPrimitive extends BasePolyPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: WallPrimitive.StyleOptions;
+        style: WallPrimitive.StyleOptions | any;
         attr?: any;
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -15439,9 +15409,9 @@ declare class WallPrimitive extends BasePolyPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15493,11 +15463,11 @@ declare namespace Water {
      * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
      * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
-     * @property [label] - 支持附带文字的显示 ，额外支持：
-     * @property [label.position] - 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
-     * @property [label.showAll] - MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
+     * @property [label] - 支持附带文字的显示 ，额外支持：<br />
+     * //  * @property {String|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
+     * //  * @property {Boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         baseWaterColor?: string;
         blendColor?: string;
         specularMap?: string;
@@ -15533,11 +15503,8 @@ declare namespace Water {
         renderState?: any;
         setHeight?: number | number[];
         addHeight?: number | number[];
-        highlight?: PolygonPrimitive.StyleOptions;
-        label?: {
-            position?: string | LngLatPoint;
-            showAll?: boolean;
-        };
+        highlight?: PolygonPrimitive.StyleOptions | any;
+        label?: LabelPrimitive.StyleOptions | any | any;
     };
 }
 
@@ -15570,7 +15537,7 @@ declare namespace Water {
 declare class Water extends PolygonPrimitive {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-        style: Water.StyleOptions;
+        style: Water.StyleOptions | any;
         attr?: any;
         vertexCacheOptimize?: boolean;
         interleave?: boolean;
@@ -15582,9 +15549,9 @@ declare class Water extends PolygonPrimitive {
         debugShowBoundingVolume?: boolean;
         debugShowShadowVolume?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15604,7 +15571,7 @@ declare namespace BaseRoamLine {
      */
     type WallShadingOptions = {
         type?: string;
-        通用参数?: WallEntity.StyleOptions;
+        通用参数?: WallEntity.StyleOptions | any;
         maxDistance?: number;
     };
     /**
@@ -15615,7 +15582,7 @@ declare namespace BaseRoamLine {
      */
     type CylinderShadingOptions = {
         type?: string;
-        通用参数?: CylinderEntity.StyleOptions;
+        通用参数?: CylinderEntity.StyleOptions | any;
     };
     /**
      * circle 类型shading 支持的参数，
@@ -15625,7 +15592,7 @@ declare namespace BaseRoamLine {
      */
     type CircleShadingOptions = {
         type?: string;
-        通用参数?: CircleEntity.StyleOptions;
+        通用参数?: CircleEntity.StyleOptions | any;
     };
     /**
      * polyline 类型shading  支持的参数，
@@ -15636,7 +15603,7 @@ declare namespace BaseRoamLine {
      */
     type PolylineShadingOptions = {
         type?: string;
-        通用参数?: PolylineEntity.StyleOptions;
+        通用参数?: PolylineEntity.StyleOptions | any;
         maxDistance?: number;
     };
     /**
@@ -15647,7 +15614,7 @@ declare namespace BaseRoamLine {
      */
     type PolylineGoingShadingOptions = {
         type?: string;
-        通用参数?: PolylineEntity.StyleOptions;
+        通用参数?: PolylineEntity.StyleOptions | any;
     };
 }
 
@@ -16015,6 +15982,8 @@ declare namespace DynamicRoamLine {
 /**
  * 动态漫游路线管理类 【动态传入的数据】
  * @param options - 参数对象，包括以下：
+ * @param [options.model] - 设置是否显示 gltf模型 和对应的样式, 还额外包括：<br />
+ * //  * @param {Boolean} [options.model.noPitchRoll] 设置为true时，可以设置模型只动态更改方向，内部固定模型的Pitch和Roll方向值为0
  * @param [options.model] - 设置是否显示 gltf模型 和对应的样式
  * @param [options.label] - 设置是否显示 文本 和对应的样式
  * @param [options.billboard] - 设置是否显示 图标 和对应的样式，如果不设置gltf模型时，可以选择该项。
@@ -16060,11 +16029,12 @@ declare namespace DynamicRoamLine {
  */
 declare class DynamicRoamLine extends BaseRoamLine {
     constructor(options: {
-        model?: ModelEntity.StyleOptions;
-        label?: LabelEntity.StyleOptions;
-        billboard?: BillboardEntity.StyleOptions;
-        point?: PointEntity.StyleOptions;
-        circle?: CircleEntity.StyleOptions;
+        model?: ModelEntity.StyleOptions | any;
+        model?: ModelEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
+        billboard?: BillboardEntity.StyleOptions | any;
+        point?: PointEntity.StyleOptions | any;
+        circle?: CircleEntity.StyleOptions | any;
         attr?: any;
         hasCache?: boolean;
         maxCacheCount?: number;
@@ -16093,9 +16063,9 @@ declare class DynamicRoamLine extends BaseRoamLine {
             offsetZ?: number;
         };
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -16196,10 +16166,11 @@ declare namespace RoamLine {
  * @param options.positions - 轨迹的 坐标数组
  * @param options.speed - 轨迹的 速度( 单位：千米/小时)
  * @param [options.timeField = 'time'] - 当points数组中已有时间值，请传入该值的字段名称，同时speed将失效，已实际传入时间字段为准。
- * @param [options.model] - 设置是否显示 gltf模型 和对应的样式
+ * @param [options.model] - 设置是否显示 gltf模型 和对应的样式还额外包括：<br />
+ * //* @param {Boolean} [options.model.noPitchRoll] 设置为true时，可以设置模型只动态更改方向，内部固定模型的Pitch和Roll方向值为0
  * @param [options.label] - 设置是否显示 文本 和对应的样式
  * @param [options.billboard] - 设置是否显示 图标 和对应的样式，如果不设置gltf模型时，可以选择该项。
- * @param [options.point] - 设置是否显示 图标 和对应的样式，如果不设置gltf模型时，可以选择该项。
+ * @param [options.point] - 设置是否显示 像素点 和对应的样式，如果不设置gltf模型时，可以选择该项。
  * @param [options.path] - 设置是否显示 轨迹路线 和对应的样式
  * @param [options.circle] - 设置是否显示 圆对象 和对应的样式
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
@@ -16218,11 +16189,6 @@ declare namespace RoamLine {
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
- *
- * //以下是 clampToGround中使用的
- * @param [options.splitNum = 100] - 当clampToGround计算时，插值数，等比分割的个数
- * @param [options.minDistance = null] - 当clampToGround计算时，插值最小间隔(单位：米)，优先级高于splitNum
- * @param [options.offset = 0] - 当clampToGround计算时，可以按需增加偏移高度（单位：米），便于可视
  * @param [options.clampToTileset = false] - 是否贴3dtiles模型上（贴模型效率较慢，按需开启）
  * @param [options.frameRateHeight = 30] - 当clampToTileset：true时，控制贴模型的效率，多少帧计算一次贴模型高度,
  * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，默认是当前本身，可以是： primitives, entities, 或 3D Tiles features
@@ -16258,12 +16224,12 @@ declare class RoamLine extends BaseRoamLine {
         positions: any[][] | LngLatPoint[];
         speed: any[][] | number;
         timeField?: string;
-        model?: ModelEntity.StyleOptions | any;
-        label?: LabelEntity.StyleOptions | any;
-        billboard?: BillboardEntity.StyleOptions | any;
-        point?: PointEntity.StyleOptions | any;
-        path?: PathEntity.StyleOptions | any;
-        circle?: CircleEntity.StyleOptions | any;
+        model?: ModelEntity.StyleOptions | any | any;
+        label?: LabelEntity.StyleOptions | any | any;
+        billboard?: BillboardEntity.StyleOptions | any | any;
+        point?: PointEntity.StyleOptions | any | any;
+        path?: PathEntity.StyleOptions | any | any;
+        circle?: CircleEntity.StyleOptions | any | any;
         attr?: any;
         offsetHeight?: number;
         startTime?: string | Date | Cesium.JulianDate;
@@ -16280,9 +16246,6 @@ declare class RoamLine extends BaseRoamLine {
         forwardExtrapolationType?: Cesium.ExtrapolationType;
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
-        splitNum?: number;
-        minDistance?: number;
-        offset?: number;
         clampToTileset?: boolean;
         frameRateHeight?: number;
         objectsToExclude?: any;
@@ -16305,9 +16268,9 @@ declare class RoamLine extends BaseRoamLine {
             offsetZ?: number;
         };
         popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -16363,10 +16326,23 @@ declare class RoamLine extends BaseRoamLine {
     stop(): void;
     /**
      * 计算贴地线
-     * @param callback - 计算完成的回调方法
-     * @returns 无
+     * @param [options] - 控制参数
+     * @param [options.splitNum = 100] - 插值数，等比分割的个数
+     * @param [options.minDistance = null] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+     * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
+     * @param [options.callback] - 计算完成的回调方法
+     * @returns 异步计算完成的Promise
      */
-    clampToGround(callback: (...params: any[]) => any): void;
+    clampToGround(options?: {
+        splitNum?: number;
+        minDistance?: number;
+        has3dtiles?: boolean;
+        objectsToExclude?: any;
+        offset?: number;
+        callback?: (...params: any[]) => any;
+    }): Promise<any>;
     /**
      * 获取剖面数据
      * @param callback - 计算完成的回调方法
@@ -16515,7 +16491,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions): BaseGraphicLayer;
+    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions | any): BaseGraphicLayer;
     /**
      * 解除绑定的鼠标单击对象后的弹窗。
      * @param [bubbling = false] - 单击事件中是否继续冒泡查找
@@ -16544,7 +16520,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindTooltip(content: string | ((...params: any[]) => any), options?: Tooltip.StyleOptions): BaseGraphicLayer;
+    bindTooltip(content: string | ((...params: any[]) => any), options?: Tooltip.StyleOptions | any): BaseGraphicLayer;
     /**
      * 解除绑定的鼠标移入对象后的弹窗。
      * @param [bubbling = false] - 单击事件中是否继续冒泡查找
@@ -16937,7 +16913,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
         zIndex?: number;
         opacity?: number;
         symbol?: {
-            styleOptions: BillboardEntity.StyleOptions | PolylineEntity.StyleOptions | PolygonEntity.StyleOptions | any;
+            styleOptions: BillboardEntity.StyleOptions | any | PolylineEntity.StyleOptions | any | PolygonEntity.StyleOptions | any | any;
             styleField?: string;
             styleFieldOptions?: any;
             callback?: (...params: any[]) => any;
@@ -17237,7 +17213,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
         zIndex?: number;
         opacity?: number;
         symbol?: {
-            styleOptions: BillboardEntity.StyleOptions | PolylineEntity.StyleOptions | PolygonEntity.StyleOptions | any;
+            styleOptions: BillboardEntity.StyleOptions | any | PolylineEntity.StyleOptions | any | PolygonEntity.StyleOptions | any | any;
             styleField?: string;
             styleFieldOptions?: any;
             callback?: (...params: any[]) => any;
@@ -17510,7 +17486,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
         opacity?: number;
         zIndex?: number;
         symbol?: {
-            styleOptions: BillboardEntity.StyleOptions | PolylineEntity.StyleOptions | PolygonEntity.StyleOptions | any;
+            styleOptions: BillboardEntity.StyleOptions | any | PolylineEntity.StyleOptions | any | PolygonEntity.StyleOptions | any | any;
             styleField?: string;
             styleFieldOptions?: any;
             callback?: (...params: any[]) => any;
@@ -17640,7 +17616,7 @@ declare class GeodePoiLayer extends LodGraphicLayer {
         zIndex?: number;
         opacity?: number;
         symbol?: {
-            styleOptions: BillboardEntity.StyleOptions | PointEntity.StyleOptions;
+            styleOptions: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any;
             styleField?: string;
             styleFieldOptions?: any;
         };
@@ -18544,8 +18520,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
 declare class GraticuleLayer extends BaseLayer {
     constructor(options?: {
         numLines?: number;
-        lineStyle?: PolylinePrimitive.StyleOptions;
-        labelStyle?: LabelEntity.StyleOptions;
+        lineStyle?: PolylinePrimitive.StyleOptions | any;
+        labelStyle?: LabelEntity.StyleOptions | any;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -18700,7 +18676,7 @@ declare class LodGraphicLayer extends GraphicLayer {
         opacity?: number;
         zIndex?: number;
         symbol?: {
-            styleOptions: BillboardEntity.StyleOptions | PolylineEntity.StyleOptions | PolygonEntity.StyleOptions | any;
+            styleOptions: BillboardEntity.StyleOptions | any | PolylineEntity.StyleOptions | any | PolygonEntity.StyleOptions | any | any;
             styleField?: string;
             styleFieldOptions?: any;
             merge?: boolean;
@@ -19118,7 +19094,7 @@ declare namespace TilesetLayer {
 /**
  * 3dtiles 三维模型图层。
  * @param options - 参数对象， 构造参数建议从{@link http://mars3d.cn/editor.html?id=layer-tileset/manager/edit|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
- * @param options.url - tileset的主JSON文件的 url
+ * @param options.url - tileset的主JSON文件的 url ，ION资源时可以写 url: Cesium.IonResource.fromAssetId(8564),
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
  * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
  * 解释：
@@ -19210,7 +19186,7 @@ declare namespace TilesetLayer {
  */
 declare class TilesetLayer extends BaseGraphicLayer {
     constructor(options: {
-        url: Cesium.Resource | string;
+        url: string | Cesium.Resource | Cesium.IonResource;
         maximumScreenSpaceError?: number;
         maximumMemoryUsage?: number;
         position?: {
@@ -19460,7 +19436,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindPopup(content: string | any[] | ((...params: any[]) => any), options?: Popup.StyleOptions): TilesetLayer;
+    bindPopup(content: string | any[] | ((...params: any[]) => any), options?: Popup.StyleOptions | any): TilesetLayer;
     /**
      * 解除绑定的鼠标单击对象后的弹窗。
      * @returns 当前对象本身，可以链式调用
@@ -20157,7 +20133,7 @@ declare class ArcGisLayer extends BaseTileLayer {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions): ArcGisLayer;
+    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions | any): ArcGisLayer;
     /**
      * 解除绑定的鼠标单击对象后的弹窗。
      * @returns 当前对象本身，可以链式调用
@@ -22685,7 +22661,7 @@ declare class WmsLayer extends BaseTileLayer {
      * @param [options] - 控制参数
      * @returns 当前对象本身，可以链式调用
      */
-    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions): WmsLayer;
+    bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions | any): WmsLayer;
     /**
      * 解除绑定的鼠标单击对象后的弹窗。
      * @returns 当前对象本身，可以链式调用
@@ -23053,8 +23029,25 @@ declare class XyzLayer extends BaseTileLayer {
 
 /**
  * 右键菜单 控件
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.preventDefault = true] - 是否取消右键菜单
+ * @param [options.id = uuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
  */
 declare class ContextMenu extends BaseControl {
+    constructor(options?: {
+        preventDefault?: boolean;
+        id?: string | number;
+        enabled?: boolean;
+        parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement;
+        eventParent?: BaseClass | boolean;
+    });
     /**
      * 设置DOM容器的显示隐藏
      */
@@ -23063,8 +23056,35 @@ declare class ContextMenu extends BaseControl {
 
 /**
  * 键盘漫游控制类
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.moveStep = 10] - 平移步长 (米)
+ * @param [options.dirStep = 25] - 相机原地旋转步长，值越大步长越小。
+ * @param [options.rotateStep = 1.0] - 相机围绕目标点旋转速率，0.3 - 2.0
+ * @param [options.minPitch = 0.1] - 最小仰角  0 - 1
+ * @param [options.maxPitch = 0.95] - 最大仰角  0 - 1
+ * @param [options.minHeight = 0] - 最低高度（单位：米）
+ * @param [options.id = uuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
  */
 declare class KeyboardRoam extends BaseControl {
+    constructor(options?: {
+        moveStep?: number;
+        dirStep?: number;
+        rotateStep?: number;
+        minPitch?: number;
+        maxPitch?: number;
+        minHeight?: number;
+        id?: string | number;
+        enabled?: boolean;
+        parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement;
+        eventParent?: BaseClass | boolean;
+    });
     /**
      * 平移步长 (米)
      */
@@ -23334,7 +23354,6 @@ declare namespace Map {
      * 添加到地图的控件 参数
      *
      * 以下是mars3d.control定义的控件，支持所有控件类型
-     * @property [defaultContextMenu = true] - 是否绑定默认的地图右键菜单
      * @property [mouseDownView] - 鼠标滚轮缩放美化样式, 对应 {@link MouseDownView}构造参数
      * @property [locationBar] - 鼠标提示控件, 对应 {@link LocationBar}构造参数
      * @property [locationBar.fps] - 是否显示实时FPS帧率
@@ -23345,6 +23364,21 @@ declare namespace Map {
      * @property [zoom] - 时钟动画控制控件 , 对应 {@link Zoom}构造参数
      * @property [overviewMap] - 鹰眼地图 控件, 对应{@link OverviewMap }构造参数
      * @property [mapSplit] - 卷帘对比 控件, 对应{@link MapSplit }构造参数
+     * @property [contextmenu] - 内置 右键菜单 控制参数, 对应{@link ContextMenu }构造参数
+     * @property [contextmenu.preventDefault = true] - 是否取消右键菜单
+     * @property [contextmenu.hasDefault = true] - 是否绑定默认的地图右键菜单
+     * @property [popup] - 内置 Popup 控制参数
+     * @property [popup.isOnly = true] - 是否单个显示模式
+     * @property [popup.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
+     * @property [tooltip] - 内置 Tooltip 控制参数
+     * @property [tooltip.cacheTime = 20] - 延迟缓存的时间，单位：毫秒
+     * @property [keyboardRoam] - 内置 键盘漫游 控制参数, 对应{@link KeyboardRoam }构造参数
+     * @property [keyboardRoam.moveStep = 10] - 平移步长 (米)
+     * @property [keyboardRoam.dirStep = 25] - 相机原地旋转步长，值越大步长越小。
+     * @property [keyboardRoam.rotateStep = 1.0] - 相机围绕目标点旋转速率，0.3 - 2.0
+     * @property [keyboardRoam.minPitch = 0.1] - 最小仰角  0 - 1
+     * @property [keyboardRoam.maxPitch = 0.95] - 最大仰角  0 - 1
+     * @property [keyboardRoam.minHeight = 0] - 最低高度（单位：米）
      *
      * 以下是Cesium.Viewer所支持的控件相关的options
      * @property [infoBox = true] - 是否显示 点击要素之后显示的信息
@@ -23365,7 +23399,6 @@ declare namespace Map {
      * @property [showRenderLoopErrors = true] - 如果为true，则在发生渲染循环错误时，此小部件将自动向包含错误的用户显示HTML面板。
      */
     type controlOptions = {
-        defaultContextMenu?: boolean;
         mouseDownView?: boolean;
         locationBar?: {
             fps?: boolean;
@@ -23377,6 +23410,25 @@ declare namespace Map {
         zoom?: any;
         overviewMap?: any;
         mapSplit?: any;
+        contextmenu?: {
+            preventDefault?: boolean;
+            hasDefault?: boolean;
+        };
+        popup?: {
+            isOnly?: boolean;
+            depthTest?: boolean;
+        };
+        tooltip?: {
+            cacheTime?: number;
+        };
+        keyboardRoam?: {
+            moveStep?: number;
+            dirStep?: number;
+            rotateStep?: number;
+            minPitch?: number;
+            maxPitch?: number;
+            minHeight?: number;
+        };
         infoBox?: boolean;
         selectionIndicator?: boolean;
         animation?: boolean;
@@ -23486,9 +23538,9 @@ declare namespace Map {
         show?: boolean;
         center?: any;
         popup?: any;
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         tooltip?: any;
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         多个参数?: any;
     };
     /**
@@ -24426,7 +24478,7 @@ declare class Map extends BaseClass {
      * @param [options] - 配置参数
      * @returns 当前对象本身，可以链式调用
      */
-    openPopup(position: LngLatPoint | Cesium.Cartesian3 | number[], content: string | ((...params: any[]) => any) | BaseGraphic | BaseGraphicLayer, options?: Popup.StyleOptions): Map;
+    openPopup(position: LngLatPoint | Cesium.Cartesian3 | number[], content: string | ((...params: any[]) => any) | BaseGraphic | BaseGraphicLayer, options?: Popup.StyleOptions | any): Map;
     /**
      * 关闭Popup弹窗
      * @returns 当前对象本身，可以链式调用
@@ -24439,7 +24491,7 @@ declare class Map extends BaseClass {
      * @param [options] - 配置参数
      * @returns 当前对象本身，可以链式调用
      */
-    openTooltip(position: LngLatPoint | Cesium.Cartesian3 | number[], content: string | ((...params: any[]) => any), options?: Tooltip.StyleOptions): Map;
+    openTooltip(position: LngLatPoint | Cesium.Cartesian3 | number[], content: string | ((...params: any[]) => any), options?: Tooltip.StyleOptions | any): Map;
     /**
      * 关闭Tooltip弹窗
      * @returns 当前对象本身，可以链式调用
@@ -25663,7 +25715,7 @@ declare class HeatLayer extends BaseLayer {
             arcBlurScale?: boolean;
             height?: number;
             diffHeight?: number;
-            多个参数?: RectanglePrimitive.StyleOptions;
+            多个参数?: RectanglePrimitive.StyleOptions | any;
         };
         maxCanvasSize?: number;
         minCanvasSize?: number;
@@ -25694,7 +25746,7 @@ declare class HeatLayer extends BaseLayer {
     /**
      * 矩形的样式参数
      */
-    style: RectanglePrimitive.StyleOptions;
+    style: RectanglePrimitive.StyleOptions | any;
     /**
      * 数据位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
      */
@@ -25718,6 +25770,12 @@ declare class HeatLayer extends BaseLayer {
      * @returns 无
      */
     clear(): void;
+    /**
+     * 根据坐标点获取其对应的value值和颜色值
+     * @param item - 坐标点
+     * @returns 格式为 {"x":2081,"y":767,"value":3,"color":"rgba(209,231,0,195)"}
+     */
+    getPointData(item: Cesium.Cartesian3 | LngLatPoint): any;
     /**
      * 获取图层内所有数据的 矩形边界值
      * @param [options] - 控制参数
@@ -25774,7 +25832,7 @@ declare class MapVLayer extends BaseLayer {
             roll?: number;
         };
         flyTo?: boolean;
-    }|any, dataSet?: any);
+    } | any, dataSet?: any);
     /**
      * 图层对应的Canvas对象
      */
@@ -26110,7 +26168,7 @@ declare namespace CamberRadar {
      * @property [pitch = 0] - 俯仰角（度数值，0-360度）
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         color?: string | Cesium.Color;
         opacity?: number;
         outline?: boolean;
@@ -26146,7 +26204,7 @@ declare namespace CamberRadar {
 declare class CamberRadar extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: CamberRadar.StyleOptions;
+        style: CamberRadar.StyleOptions | any;
         attr?: any;
         id?: string | number;
         name?: string;
@@ -26211,7 +26269,7 @@ declare namespace ConicSensor {
      * @property [rayEllipsoid = false] - 是否求交地球计算动态length
      * @property [hideRayEllipsoid = false] - 在地球相交时 是否隐藏
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle?: number;
         length?: number;
         heading?: number;
@@ -26246,7 +26304,7 @@ declare namespace ConicSensor {
 declare class ConicSensor extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: ConicSensor.StyleOptions;
+        style: ConicSensor.StyleOptions | any;
         attr?: any;
         lookAt?: Cesium.Cartesian3 | Cesium.PositionProperty;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
@@ -26369,7 +26427,7 @@ declare namespace RectSensor {
      * @property [rayEllipsoid = false] - 是否求交地球计算动态length
      * @property [hideRayEllipsoid = false] - 在地球相交时 是否隐藏
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         angle1?: number;
         angle2?: number;
         angle?: number;
@@ -26406,7 +26464,7 @@ declare namespace RectSensor {
 declare class RectSensor extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: RectSensor.StyleOptions;
+        style: RectSensor.StyleOptions | any;
         attr?: any;
         lookAt?: Cesium.Cartesian3 | Cesium.PositionProperty;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
@@ -26545,13 +26603,13 @@ declare class Satellite extends BaseGraphic {
         period?: number;
         position: Cesium.SampledPositionProperty;
         orientation?: Cesium.Property;
-        model?: ModelEntity.StyleOptions;
-        cone?: SatelliteSensor.StyleOptions;
-        label?: LabelEntity.StyleOptions;
-        billboard?: BillboardEntity.StyleOptions;
-        point?: PointEntity.StyleOptions;
-        path?: PolylineEntity.StyleOptions;
-        shadingLine?: BillboardEntity.StyleOptions;
+        model?: ModelEntity.StyleOptions | any;
+        cone?: SatelliteSensor.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
+        billboard?: BillboardEntity.StyleOptions | any;
+        point?: PointEntity.StyleOptions | any;
+        path?: PolylineEntity.StyleOptions | any;
+        shadingLine?: BillboardEntity.StyleOptions | any;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         frameRate?: number;
         id?: string | number;
@@ -26708,7 +26766,7 @@ declare namespace SatelliteSensor {
      * @property [outlineColor = color] - 边线颜色
      * @property [rayEllipsoid = false] - 是否求交地球计算
      */
-    type StyleOptions = {
+    type StyleOptions = any | {
         sensorType?: SatelliteSensor.Type;
         angle1?: number;
         angle2?: number;
@@ -26751,7 +26809,7 @@ declare namespace SatelliteSensor {
 declare class SatelliteSensor extends BasePointPrimitive {
     constructor(options?: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: SatelliteSensor.StyleOptions;
+        style: SatelliteSensor.StyleOptions | any;
         attr?: any;
         lookAt?: Cesium.Cartesian3 | Cesium.PositionProperty;
         trackedEntity?: Cesium.Entity;
@@ -28671,6 +28729,51 @@ declare class QueryGeoServer extends BaseClass {
     readonly options: any;
 }
 
+/**
+ * 选中对象的 泛光效果。
+ * @param [options] - 参数对象
+ * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
+ * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
+ * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
+ * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
+ * @param [options.blurSamples = 32] - 模糊样本
+ * @param [options.delta = 1.0] - 增量
+ * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
+ * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
+ * @param [options.ratio = 2.0] - 亮度增强比例
+ * @param [options.threshold = 0.0] - 亮度阈值
+ * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
+ * @param [options.enabled = true] - 对象的启用状态
+ */
+declare class BloomTargetEffect extends BaseEffect {
+    constructor(options?: {
+        eventType?: EventType | boolean;
+        color?: Cesium.Color;
+        contrast?: number;
+        brightness?: number;
+        blurSamples?: number;
+        delta?: number;
+        sigma?: number;
+        stepSize?: number;
+        ratio?: number;
+        threshold?: number;
+        smoothWidth?: number;
+        enabled?: boolean;
+    });
+    /**
+     * 发光颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 高亮触发的事件类型，默认为单击。
+     */
+    eventType: EventType | string;
+    /**
+     * 选中对象
+     */
+    selected: any | any | undefined;
+}
+
 declare namespace Measure {
     /**
      * @example
@@ -28761,7 +28864,7 @@ declare class Measure extends BaseThing {
         hasEdit?: boolean;
         isAutoEditing?: boolean;
         isContinued?: boolean;
-        label?: LabelEntity.StyleOptions;
+        label?: LabelEntity.StyleOptions | any;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -28792,7 +28895,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 长度测量控制类 对象
      */
     distance(options?: {
-        style?: PolylineEntity.StyleOptions;
+        style?: PolylineEntity.StyleOptions | any;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
@@ -28813,7 +28916,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 贴地长度测量控制类 对象
      */
     distanceSurface(options?: {
-        style?: PolylineEntity.StyleOptions;
+        style?: PolylineEntity.StyleOptions | any;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
@@ -28835,7 +28938,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 剖面分析控制类矢量对象
      */
     section(options?: {
-        style?: PolylineEntity.StyleOptions;
+        style?: PolylineEntity.StyleOptions | any;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
@@ -28852,7 +28955,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 面积测量控制类 对象
      */
     area(options?: {
-        style?: PolygonEntity.StyleOptions;
+        style?: PolygonEntity.StyleOptions | any;
         unit?: string;
         decimal?: number;
     }): Promise<AreaMeasure | any>;
@@ -28867,7 +28970,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 面积测量控制类 对象
      */
     areaSurface(options?: {
-        style?: PolygonEntity.StyleOptions;
+        style?: PolygonEntity.StyleOptions | any;
         unit?: string;
         splitNum?: number;
         has3dtiles?: boolean;
@@ -28892,7 +28995,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 体积测量控制类 对象
      */
     volume(options?: {
-        style?: PolygonEntity.StyleOptions;
+        style?: PolygonEntity.StyleOptions | any;
         unit?: string;
         splitNum?: number;
         has3dtiles?: boolean;
@@ -28902,8 +29005,8 @@ declare class Measure extends BaseThing {
         heightLabel?: boolean;
         offsetLabel?: boolean;
         showArea?: boolean;
-        polygonWall?: PolygonEntity.StyleOptions;
-        labelHeight?: LabelEntity.StyleOptions;
+        polygonWall?: PolygonEntity.StyleOptions | any;
+        labelHeight?: LabelEntity.StyleOptions | any;
         decimal?: number;
     }): Promise<VolumeMeasure | any>;
     /**
@@ -28915,7 +29018,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 高度测量 对象
      */
     height(options?: {
-        style?: PolylineEntity.StyleOptions;
+        style?: PolylineEntity.StyleOptions | any;
         unit?: string;
         decimal?: number;
     }): Promise<HeightMeasure | any>;
@@ -28929,7 +29032,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 三角高度测量控制类 对象
      */
     heightTriangle(options?: {
-        style?: PolylineEntity.StyleOptions;
+        style?: PolylineEntity.StyleOptions | any;
         unit?: string;
         decimal?: number;
     }): Promise<HeightTriangleMeasure | any>;
@@ -28942,7 +29045,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 角度测量控制类 对象
      */
     angle(options?: {
-        style?: PolylineEntity.StyleOptions;
+        style?: PolylineEntity.StyleOptions | any;
         angleDecimal?: number;
         decimal?: number;
     }): Promise<AngleMeasure | any>;
@@ -28953,7 +29056,7 @@ declare class Measure extends BaseThing {
      * @returns 绘制创建完成的Promise，返回 坐标测量控制类 对象
      */
     point(options?: {
-        style?: PointEntity.StyleOptions;
+        style?: PointEntity.StyleOptions | any;
     }): Promise<PointMeasure | any>;
     /**
      * 取消并停止绘制，如有未完成的绘制会自动删除
@@ -29130,13 +29233,13 @@ declare class Sightline extends BaseThing {
      * @param [options.offsetHeight = 0] - 在起点增加的高度值，比如加上人的身高
      * @param [options.splitNum = 50] - 插值数，等比分割的个数
      * @param [options.minDistance] - 插值时的最小间隔(单位：米)，优先级高于splitNum
-     * @returns 无,  分析结果在end事件中返回
+     * @returns 分析结果完成的Promise
      */
     addAsync(origin: Cesium.Cartesian3, target: Cesium.Cartesian3, options?: {
         offsetHeight?: number;
         splitNum?: number;
         minDistance?: number;
-    }): void;
+    }): Promise<any>;
     /**
      * 清除分析
      * @returns 无
@@ -29600,7 +29703,7 @@ declare namespace FloodByGraphic {
 declare class FloodByGraphic extends BaseThing {
     constructor(options?: {
         positions?: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[];
-        style?: PolygonEntity.StyleOptions;
+        style?: PolygonEntity.StyleOptions | any;
         speed?: number;
         minHeight?: number;
         maxHeight?: number;
@@ -29790,9 +29893,9 @@ declare class Slope extends BaseThing {
             length?: number;
         };
         tooltip?: (...params: any[]) => any;
-        tooltipOptions?: Tooltip.StyleOptions;
+        tooltipOptions?: Tooltip.StyleOptions | any;
         popup?: (...params: any[]) => any;
-        popupOptions?: Popup.StyleOptions;
+        popupOptions?: Popup.StyleOptions | any;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -30162,7 +30265,7 @@ declare class TilesetBoxClip extends BaseThing {
         position: LngLatPoint | Cesium.Cartesian3;
         dimensions: Cesium.Cartesian3;
         showBox?: boolean;
-        boxStyle?: BoxEntity.StyleOptions;
+        boxStyle?: BoxEntity.StyleOptions | any;
         clipOutSide?: boolean;
         edgeWidth?: number;
         edgeColor?: Cesium.Color;
@@ -30523,7 +30626,7 @@ declare class TilesetPlanClip extends BaseThing {
         edgeColor?: Cesium.Color;
         showPlane?: boolean;
         editPlane?: boolean;
-        planeStyle?: PlaneEntity.StyleOptions;
+        planeStyle?: PlaneEntity.StyleOptions | any;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -30979,7 +31082,7 @@ declare class PolygonStyleConver extends BaseStyleConver {
      * @param isEntity - 是否为entity
      * @returns 矢量数据所需的Cesium内部对象
      */
-    static toCesiumVal(style: PolygonEntity.StyleOptions, entityGraphic: Cesium.PolygonGraphics | null, isEntity: boolean): Cesium.PolygonGraphics;
+    static toCesiumVal(style: PolygonEntity.StyleOptions | any, entityGraphic: Cesium.PolygonGraphics | null, isEntity: boolean): Cesium.PolygonGraphics;
     /**
      * 导出Cesium的样式对象到json可以保存的格式
      * @param czmVal - Cesium属性值
@@ -31230,7 +31333,7 @@ declare namespace DrawUtil {
      * @param value - 像素
      * @returns 无
      */
-    function setPointStyle(value: PointPrimitive.StyleOptions): void;
+    function setPointStyle(value: PointPrimitive.StyleOptions | any): void;
 }
 
 /**
@@ -32362,7 +32465,7 @@ declare namespace PolyUtil {
      * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
      * @param options.callback - 异步计算高度完成后 的回调方法
-     * @returns 无
+     * @returns 异步计算完成的Promise, 等价于callback
      */
     function computeSurfaceLine(options?: {
         scene: Cesium.Scene;
@@ -32373,7 +32476,7 @@ declare namespace PolyUtil {
         objectsToExclude?: any;
         offset?: number;
         callback: Globe.surfaceLineWork_callback;
-    }): void;
+    }): Promise<any>;
     /**
      * 求 多个点 的的贴地新坐标（不插值）
      * @param [options = {}] - 参数对象:
@@ -32383,7 +32486,7 @@ declare namespace PolyUtil {
      * @param [options.objectsToExclude = null] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
      * @param options.callback - 异步计算高度完成后 的回调方法
-     * @returns 无
+     * @returns 异步计算完成的Promise, 等价于callback
      */
     function computeSurfacePoints(options?: {
         scene: Cesium.Scene;
@@ -32392,7 +32495,7 @@ declare namespace PolyUtil {
         objectsToExclude?: any;
         offset?: number;
         callback: Globe.surfaceLineWork_callback;
-    }): void;
+    }): Promise<any>;
     /**
      * 异步分段分步计算贴地距离中，每计算完成2个点之间的距离后 的回调方法
      * @param raisedPositions - 当前2个点之间的 贴地坐标数组
@@ -32418,7 +32521,7 @@ declare namespace PolyUtil {
      * @param options.endItem - 异步计算高度完成后 的回调方法
      * @param options.end - 异步计算高度完成后 的回调方法
      * @param options.callback - 异步计算高度完成后 的回调方法(别名，同end)
-     * @returns 无
+     * @returns 异步计算完成的Promise,同callback
      */
     function computeStepSurfaceLine(options?: {
         scene: Cesium.Scene;
@@ -32431,7 +32534,7 @@ declare namespace PolyUtil {
         endItem: computeStepSurfaceLine_endItem;
         end: computeStepSurfaceLine_end;
         callback: computeStepSurfaceLine_end;
-    }): void;
+    }): Promise<any>;
     /**
      * 计算2点间的 曲线链路的点集（空中曲线）
      * @param startPoint - 开始节点
@@ -32939,6 +33042,7 @@ declare namespace Util {
      * @param [options.proxy] - 加载资源时要使用的代理服务url。
      * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
      * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' }
+     * @param [options.method = "get"] - 请求类型
      * @returns 返回Promise异步处理结果，对象为JSON数据
      */
     function fetchJson(options: {
@@ -32947,6 +33051,7 @@ declare namespace Util {
         proxy?: string;
         templateValues?: any;
         headers?: any;
+        method?: string;
     }): Promise<any>;
     /**
      * 请求服务返回结果，方法是基于axios库精简的
@@ -33055,6 +33160,7 @@ declare namespace material {
   export { PolyGradientMaterialProperty }
   export { RectSlideMaterialProperty }
   export { Image2MaterialProperty }
+  export { NeonLightMaterialProperty }
 }
 
 
@@ -33189,6 +33295,7 @@ declare namespace graphic {
   export { DynamicRoamLine }
   export { RoamLine }
 
+  //卫星插件
   export { CamberRadar }
   export { ConicSensor }
   export { RectSensor }
