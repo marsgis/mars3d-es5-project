@@ -27,10 +27,11 @@ Mars3D基础项目 是基于[Mars3D平台](http://mars3d.cn)做的一个应用�
 2. 使用[mars3d-widget](https://gitee.com/marsgis/mars3d-plugin/tree/master/mars3d-plugin-widget)插件进行模块化封装调用各功能
 3. 火星科技在传统技术栈时(vue还没成熟流行时)多年来应用于无数项目，归纳总结的一个基础的项目模版
 
+ > 如果您不熟悉原生JS，也可以阅读：[基础项目Vue版](http://mars3d.cn/dev/guide/project/jcxm-vue.html) 、[基础项目React版](http://mars3d.cn/dev/guide/project/jcxm-react.html)
 
 
 ## 运行效果 
-访问[基础项目在线](http://mars3d.cn/project/jcxm/index.html)体验效果和功能
+访问[基础项目在线](http://mars3d.cn/project/es5/jcxm.html)体验效果和功能
 
  ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
 
@@ -275,7 +276,7 @@ widget激活后页面执行流程:
  当还没有菜单时，需要测试widget功能，可以2种方式：
 
  一是在url中传入widget参数方式激活对应widget来测试.比如：
- > [http://mars3d.cn/project/jcxm/index.html?widget=widgets/plot/widget.js](http://mars3d.cn/project/jcxm/index.html?widget=widgets/plot/widget.js)
+ > [http://mars3d.cn/project/es5/jcxm.html?widget=widgets/plot/widget.js](http://mars3d.cn/project/es5/jcxm.html?widget=widgets/plot/widget.js)
  
  二是在widget.json中可以加配置` "debugger": true,`  打开 widget测试栏 功能，方便测试及触发激活widget，发布的正式版本记得改回 false 或删除。
 ```json
