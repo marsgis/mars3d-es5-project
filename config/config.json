@@ -44,7 +44,7 @@
       "geocoder": false,
       "selectionIndicator": false,
 
-      "defaultContextMenu": true,
+      "contextmenu": { "hasDefault": true },
       "mouseDownView": true,
       "zoom": { "insertIndex": 1 },
       "compass": { "bottom": "toolbar", "left": "5px" },
