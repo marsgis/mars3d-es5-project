@@ -5056,11 +5056,11 @@ input[type="button"].btn-block {
 .page-link {
   position: relative;
   display: block;
+  background-color: rgba(0, 0, 0, 0.03);
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
   color: #007bff;
-  background-color: #fff;
   border: 1px solid #dee2e6;
 }
 
@@ -5097,10 +5097,10 @@ input[type="button"].btn-block {
 }
 
 .page-item.disabled .page-link {
-  color: #6c757d;
+  color: #fff;
   pointer-events: none;
   cursor: auto;
-  background-color: #fff;
+  background-color: rgba(0, 0, 0, 0.03);
   border-color: #dee2e6;
 }
 

@@ -37,6 +37,11 @@ Mars3D基础项目 是基于[Mars3D平台](http://mars3d.cn)做的一个应用�
 
 
 
+## 视频讲解
+建议先看一遍视频讲解，再实际操作，您可以[新页面查看高清视频](https://www.bilibili.com/video/BV1nF41157Rn/)
+
+
+
 
 ## 1. widget模块化架构说明
 widget模块化设计方式是我们在2016年设计的一种基于传统JS的模块化设计架构。设计思想主要是借鉴了gis行业的arcgis flexviewer和jsviewer，也借鉴了前端行业的React和Vue。当前最流行和通用的方式是整个项目用Vue、React或angular下开发最佳，用现代化的技术栈来做开发。 

@@ -18,7 +18,7 @@ Mars3D平台插件, 结合supermap超图库使用的功能插件
   "mars3d/plugins/supermap/mars3d-supermap.js",//mars3d-supermap简化调用封装
 ],
 ```
-更多参考mars3d功能示例中[S3M图层示例](https://mars3d.cn/editor.html?id=layer-other/s3m/basis)
+更多参考mars3d功能示例中[S3M图层示例](https://mars3d.cn/editor-vue.html?id=layer-other/s3m/basis)
 
 #### 此方式的特别说明
 经过测试，[SuperMap3D](https://github.com/SuperMap/iClient3D-for-WebGL/tree/main/Cesium_S3MLayer_Plugins/S3MTilesLayer)插件代码不是最新的，超图官网API很多在此插件中都没有。

@@ -276,11 +276,12 @@
   clear: both;
 }
 
-.bootstrap-table .fixed-table-pagination > .pagination-detail,
+/* TODO：后续没有样式问题，可以移除 */
+/* .bootstrap-table .fixed-table-pagination > .pagination-detail,
 .bootstrap-table .fixed-table-pagination > .pagination {
   margin-top: 10px;
   margin-bottom: 10px;
-}
+} */
 
 .bootstrap-table .fixed-table-pagination > .pagination-detail .pagination-info {
   line-height: 34px;

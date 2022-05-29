@@ -2,10 +2,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.9
- * 编译日期：2022-05-23 10:15:38
+ * 版本信息：v3.3.11
+ * 编译日期：2022-05-29 09:17:26
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2022-02-01
+ * 使用单位：免费公开版 ，2022-06-01
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -187,6 +187,10 @@ declare enum EventType {
      * 更新了对象
      */
     update = "update",
+    /**
+     * 更新了坐标位置
+     */
+    updatePosition = "updatePosition",
     /**
      * 更新了style对象
      */
@@ -1081,7 +1085,7 @@ declare enum LayerType {
  *     width: 5,
  *     material: mars3d.MaterialUtil.createMaterialProperty(mars3d.MaterialType.LineFlow, {
  *       color: '#00ff00',
- *       image: 'img/textures/LinkPulse.png',
+ *       image: 'img/textures/line-pulse.png',
  *       speed: 5,
  *     }),
  *   },
@@ -1098,7 +1102,7 @@ declare enum LayerType {
  *     width: 5,
  *     material: mars3d.MaterialUtil.createMaterial(mars3d.MaterialType.LineFlow, {
  *       color: '#1a9850',
- *       image: 'img/textures/ArrowOpacity.png',
+ *       image: 'img/textures/line-arrow.png',
  *       speed: 10,
  *     }),
  *   },
@@ -2830,6 +2834,51 @@ declare class BloomEffect extends BaseEffect {
      * 步长,是下一个texel的距离
      */
     stepSize: number;
+}
+
+/**
+ * 选中对象的 泛光效果。
+ * @param [options] - 参数对象
+ * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
+ * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
+ * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
+ * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
+ * @param [options.blurSamples = 32] - 模糊样本
+ * @param [options.delta = 1.0] - 增量
+ * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
+ * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
+ * @param [options.ratio = 2.0] - 亮度增强比例
+ * @param [options.threshold = 0.0] - 亮度阈值
+ * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
+ * @param [options.enabled = true] - 对象的启用状态
+ */
+declare class BloomTargetEffect extends BaseEffect {
+    constructor(options?: {
+        eventType?: EventType | boolean;
+        color?: Cesium.Color;
+        contrast?: number;
+        brightness?: number;
+        blurSamples?: number;
+        delta?: number;
+        sigma?: number;
+        stepSize?: number;
+        ratio?: number;
+        threshold?: number;
+        smoothWidth?: number;
+        enabled?: boolean;
+    });
+    /**
+     * 发光颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 高亮触发的事件类型，默认为单击。
+     */
+    eventType: EventType | string;
+    /**
+     * 选中对象
+     */
+    selected: any | any | undefined;
 }
 
 /**
@@ -5936,6 +5985,10 @@ declare class Popup extends DivGraphic {
      * @returns DIV点对象
      */
     static fromDraw(layer: GraphicLayer, options: any): DivGraphic;
+    /**
+     * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
+     */
+    position: Cesium.Cartesian3;
 }
 
 declare namespace Tooltip {
@@ -6402,8 +6455,9 @@ declare class BasePointEntity extends BaseEntity {
     /**
      * 按Cesium.CallbackProperty的方式 更新坐标（更加平滑）
      * @param position - 坐标
+     * @returns 当前坐标
      */
-    setCallbackPosition(position: string | any[] | any | Cesium.Cartesian3 | any): void;
+    setCallbackPosition(position: string | any[] | any | Cesium.Cartesian3 | any): Cesium.Cartesian3;
     /**
      * 显示隐藏状态
      */
@@ -6544,8 +6598,9 @@ declare class BasePolyEntity extends BaseEntity {
     /**
      * 按Cesium.CallbackProperty的方式 更新坐标集合（更加平滑）
      * @param positions - 坐标数组
+     * @returns 当前坐标集合
      */
-    setCallbackPositions(positions: string[] | any[][] | LngLatPoint[]): void;
+    setCallbackPositions(positions: string[] | any[][] | LngLatPoint[]): Cesium.Cartesian3[];
 }
 
 declare namespace BillboardEntity {
@@ -9519,8 +9574,9 @@ declare class PolygonEntity extends BasePolyEntity {
     /**
      * 按Cesium.CallbackProperty的方式 更新坐标集合（更加平滑）
      * @param positions - 坐标数组
+     * @returns 当前坐标集合
      */
-    setCallbackPositions(positions: string[] | any[][] | LngLatPoint[]): void;
+    setCallbackPositions(positions: string[] | any[][] | LngLatPoint[]): Cesium.Cartesian3[];
 }
 
 declare namespace PolylineEntity {
@@ -15899,7 +15955,6 @@ declare namespace DynamicRoamLine {
  * @param options - 参数对象，包括以下：
  * @param [options.model] - 设置是否显示 gltf模型 和对应的样式, 还额外包括：<br />
  * //  * @param {Boolean} [options.model.noPitchRoll] 设置为true时，可以设置模型只动态更改方向，内部固定模型的Pitch和Roll方向值为0
- * @param [options.model] - 设置是否显示 gltf模型 和对应的样式
  * @param [options.label] - 设置是否显示 文本 和对应的样式
  * @param [options.billboard] - 设置是否显示 图标 和对应的样式，如果不设置gltf模型时，可以选择该项。
  * @param [options.point] - 设置是否显示 图标 和对应的样式，如果不设置gltf模型时，可以选择该项。
@@ -15944,7 +15999,6 @@ declare namespace DynamicRoamLine {
  */
 declare class DynamicRoamLine extends BaseRoamLine {
     constructor(options: {
-        model?: ModelEntity.StyleOptions | any;
         model?: ModelEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any;
         billboard?: BillboardEntity.StyleOptions | any;
@@ -25589,7 +25643,7 @@ declare class EchartsLayer extends BaseLayer {
  * 热力图图层，基于heatmap.js库渲染。
  * 【需要引入 heatmap.js 库 和 mars3d-heatmap 插件库】
  * @param options - 参数对象，包括以下：
- * @param [options.positions] - 坐标位置数组，有热力值时，传入LatLngPoint数组，热力值为value字段。示例:[{lat:31.123,lng:103.568,value:1.2},{lat:31.233,lng:103.938,value:2.3}]
+ * @param [options.positions] - 坐标数据集合（含value热力值），有热力值时，传入LatLngPoint数组，热力值为value字段。示例:[{lat:31.123,lng:103.568,value:1.2},{lat:31.233,lng:103.938,value:2.3}]
  * @param [options.rectangle] - 坐标的矩形区域范围，默认内部自动计算
  * @param options.rectangle.xmin - 最小经度值
  * @param options.rectangle.xmax - 最大纬度值
@@ -25682,7 +25736,8 @@ declare class HeatLayer extends BaseLayer {
      */
     style: RectanglePrimitive.StyleOptions | any;
     /**
-     * 数据位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
+     * 坐标数据集合（含value热力值），示例:[{lat:31.123,lng:103.568,value:1.2},{lat:31.233,lng:103.938,value:2.3}] 。
+     * 平滑更新建议使用setPositions方法
      */
     positions: Cesium.Cartesian3[] | LngLatPoint[];
     /**
@@ -25694,15 +25749,15 @@ declare class HeatLayer extends BaseLayer {
      */
     readonly rectangle: Cesium.Rectangle;
     /**
-     * 添加新的坐标点
-     * @param item - 坐标点（含热力值）
+     * 添加新的坐标点（含热力值）
+     * @param item - 坐标点（含热力值），示例: {lat:31.123,lng:103.568,value:1.2}
      * @param [isGD] - 是否固定区域坐标，true时可以平滑更新
      * @returns 无
      */
     addPosition(item: Cesium.Cartesian3 | LngLatPoint, isGD?: boolean): void;
     /**
-     * 添加新的坐标点
-     * @param arr - 坐标点（含热力值）
+     * 更新所有坐标点（含热力值）数据
+     * @param arr - 坐标点（含热力值），示例:[{lat:31.123,lng:103.568,value:1.2},{lat:31.233,lng:103.938,value:2.3}]
      * @param [isGD] - 是否固定区域坐标，true时可以平滑更新
      * @returns 无
      */
@@ -27645,6 +27700,9 @@ declare namespace widget {
      *   uri: "widgets/bookmark/widget.js",
      *   autoDisable: true,
      *   testdata:'测试数据1987', //传数据进widget内部，widget内部使用this.config.testdata获取到传的数据
+     *   success:function(thisWidget){
+     *     //创建完成的回调方法
+     *   }
      * });
      * @param item - 指widget模块的uri 或 指模块的配置参数,当有配置参数时，参数优先级是：
      * 【activate方法传入的配置 > init方法传入的配置(widget.json) > widget.js内部配置的】
@@ -28677,51 +28735,6 @@ declare class QueryGeoServer extends BaseClass {
      * 当前类的构造参数
      */
     readonly options: any;
-}
-
-/**
- * 选中对象的 泛光效果。
- * @param [options] - 参数对象
- * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
- * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
- * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
- * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
- * @param [options.blurSamples = 32] - 模糊样本
- * @param [options.delta = 1.0] - 增量
- * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
- * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
- * @param [options.ratio = 2.0] - 亮度增强比例
- * @param [options.threshold = 0.0] - 亮度阈值
- * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
- * @param [options.enabled = true] - 对象的启用状态
- */
-declare class BloomTargetEffect extends BaseEffect {
-    constructor(options?: {
-        eventType?: EventType | boolean;
-        color?: Cesium.Color;
-        contrast?: number;
-        brightness?: number;
-        blurSamples?: number;
-        delta?: number;
-        sigma?: number;
-        stepSize?: number;
-        ratio?: number;
-        threshold?: number;
-        smoothWidth?: number;
-        enabled?: boolean;
-    });
-    /**
-     * 发光颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 高亮触发的事件类型，默认为单击。
-     */
-    eventType: EventType | string;
-    /**
-     * 选中对象
-     */
-    selected: any | any | undefined;
 }
 
 declare namespace Measure {
@@ -30387,72 +30400,9 @@ declare class TilesetFlat extends TilesetEditBase {
         eventParent?: BaseClass | boolean;
     });
     /**
-     * 区域 列表
-     */
-    readonly list: any;
-    /**
-     * 需要分析的模型（3dtiles图层）
-     */
-    layer: TilesetLayer;
-    /**
-     * 需要分析的模型 对应的 Cesium3DTileset 对象
-     */
-    readonly tileset: Cesium.Cesium3DTileset;
-    /**
-     * 压平高度 (单位：米)，基于压平区域最低点高度的偏移量
-     */
-    readonly layerHeight: number;
-    /**
-     * 坐标位置数组，只显示单个区域【单个区域场景时使用】
-     */
-    positions: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[];
-    /**
-     * 已添加的区域个数
-     */
-    readonly length: number;
-    /**
-     * 添加单个区域
-     * @param positions - 坐标位置数组
-     * @param [options = {}] - 控制的参数
-     * @param [options.height] - 开挖深度（地形开挖时，可以控制单个区域的开挖深度）
-     * @returns 添加区域的记录对象
-     */
-    addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[], options?: {
-        height?: any;
-    }): Promise<any>;
-    /**
-     * 根据id获取区域对象
-     * @param id - id值
-     * @returns 区域对象
-     */
-    getAreaById(id: number): any;
-    /**
-     * 隐藏单个区域
-     * @param id - 区域id值
-     * @returns 无
-     */
-    hideArea(id: number): void;
-    /**
-     * 显示单个区域
-     * @param id - 区域id值
-     * @returns 无
-     */
-    showArea(id: number): void;
-    /**
-     * 移除单个区域
-     * @param item - 区域的id，或 addArea返回的区域对象
-     * @returns 无
-     */
-    removeArea(item: number | any): void;
-    /**
      * 压平高度 (单位：米)，基于压平区域最低点高度的偏移量
      */
     height: number;
-    /**
-     * 清除分析
-     * @returns 无
-     */
-    clear(): void;
 }
 
 declare namespace TilesetFlood {

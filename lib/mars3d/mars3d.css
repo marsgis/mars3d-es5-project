@@ -1,10 +1,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.9
- * 编译日期：2022-05-23 10:15:38
+ * 版本信息：v3.3.11
+ * 编译日期：2022-05-29 09:17:26
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2022-02-01
+ * 使用单位：免费公开版 ，2022-06-01
  */
 
 /**地球容器div*/
@@ -24,7 +24,7 @@
 }
 /**隐藏的div对象，如 DivBillboardEntity、HeatLayer 等*/
 .mars3d-hideDiv {
-  z-index: -1;
+  z-index: -99;
   position: absolute !important;
   top: 0;
   left: 0;
@@ -880,9 +880,6 @@
     transform-origin: 50% 50%;
     transform: scale(1, 1);
   }
-}
-.mars3d-popup-background {
-  background: rgba(41, 84, 141, 0.9) !important;
 }
 .mars3d-popup-btn {
   padding: 3px 10px;
