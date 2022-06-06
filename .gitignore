@@ -50,6 +50,5 @@ testem.log
 Thumbs.db
 package-lock.json
 
-# ±¾µØ²âÊÔ
-widgets-test
-/example-test
+# æœ¬åœ°æµ‹è¯•
+*-test

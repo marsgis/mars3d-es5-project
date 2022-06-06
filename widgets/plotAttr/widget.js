@@ -13,7 +13,7 @@
           width: 250,
           position: {
             top: 10,
-            right: 5,
+            left: 5,
             bottom: 30,
           },
         },

@@ -125,7 +125,7 @@
       {
         "pid": 10,
         "name": "腾讯影像",
-        "icon": "img/basemaps/gaode_img.png",
+        "icon": "img/basemaps/tencent_img.png",
         "type": "group",
         "layers": [
           { "name": "底图", "type": "tencent", "layer": "img_d" },
@@ -135,7 +135,7 @@
       {
         "pid": 10,
         "name": "腾讯电子",
-        "icon": "img/basemaps/gaode_vec.png",
+        "icon": "img/basemaps/tencent_vec.png",
         "type": "tencent",
         "layer": "vec"
       },

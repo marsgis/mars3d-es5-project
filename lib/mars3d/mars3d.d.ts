@@ -2,10 +2,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.11
- * 编译日期：2022-05-29 09:17:26
+ * 版本信息：v3.3.12
+ * 编译日期：2022-06-06 10:51:00
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2022-06-01
+ * 使用单位：免费公开版 ，2022-02-01
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -2520,7 +2520,7 @@ declare class LngLatPoint {
      * 复制一份对象
      * @returns 无
      */
-    clone(): void;
+    clone(): LngLatPoint;
     /**
      * 格式化对象内的经纬度的小数位为6位，高度小数位为1位。
      * @returns 当前对象本身，可以链式调用
@@ -2834,51 +2834,6 @@ declare class BloomEffect extends BaseEffect {
      * 步长,是下一个texel的距离
      */
     stepSize: number;
-}
-
-/**
- * 选中对象的 泛光效果。
- * @param [options] - 参数对象
- * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
- * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
- * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
- * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
- * @param [options.blurSamples = 32] - 模糊样本
- * @param [options.delta = 1.0] - 增量
- * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
- * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
- * @param [options.ratio = 2.0] - 亮度增强比例
- * @param [options.threshold = 0.0] - 亮度阈值
- * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
- * @param [options.enabled = true] - 对象的启用状态
- */
-declare class BloomTargetEffect extends BaseEffect {
-    constructor(options?: {
-        eventType?: EventType | boolean;
-        color?: Cesium.Color;
-        contrast?: number;
-        brightness?: number;
-        blurSamples?: number;
-        delta?: number;
-        sigma?: number;
-        stepSize?: number;
-        ratio?: number;
-        threshold?: number;
-        smoothWidth?: number;
-        enabled?: boolean;
-    });
-    /**
-     * 发光颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 高亮触发的事件类型，默认为单击。
-     */
-    eventType: EventType | string;
-    /**
-     * 选中对象
-     */
-    selected: any | any | undefined;
 }
 
 /**
@@ -4267,9 +4222,6 @@ declare namespace ModelCombine {
  * @param [options.shadows = ShadowMode.ENABLED] - 指定模型是投射还是接收来自光源的阴影。
  * @param [options.imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - 指定来自基于图像的漫反射和镜面照明的贡献。
  * @param [options.lightColor] - 光的颜色当遮光模型。当undefined场景的浅色被使用代替。
- * @param [options.luminanceAtZenith = 0.2] - 太阳在天顶的亮度，单位是千坎德拉每平方米，用于这个模型的程序环境地图。
- * @param [options.sphericalHarmonicCoefficients] - 三阶球面调和系数用于基于图像的漫射色彩照明。
- * @param [options.specularEnvironmentMaps] - 一个KTX文件的URL，该文件包含高光照明的立方体映射和复杂的高光mipmaps。
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
  * @param [options.debugShowBoundingVolume = false] - 仅供调试。查看模型的包围边界球。
  * @param [options.debugWireframe = false] - 仅供调试。查看模型的三角网线框图。
@@ -4307,9 +4259,6 @@ declare class ModelCombine extends BaseCombine {
         shadows?: Cesium.ShadowMode;
         imageBasedLightingFactor?: Cesium.Cartesian2;
         lightColor?: Cesium.Cartesian3;
-        luminanceAtZenith?: number;
-        sphericalHarmonicCoefficients?: Cesium.Cartesian3[];
-        specularEnvironmentMaps?: string;
         backFaceCulling?: boolean;
         debugShowBoundingVolume?: boolean;
         debugWireframe?: boolean;
@@ -8274,7 +8223,7 @@ declare namespace EllipsoidEntity {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
- * @param options.scanPlane - 动态扫描面
+ * @param [options.scanPlane] - 动态扫描面
  * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
@@ -8298,7 +8247,7 @@ declare class EllipsoidEntity extends BasePointEntity {
         style: EllipsoidEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
-        scanPlane: EllipsoidEntity.ScanPlaneOptions | EllipsoidEntity.ScanPlaneOptions[];
+        scanPlane?: EllipsoidEntity.ScanPlaneOptions | EllipsoidEntity.ScanPlaneOptions[];
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
@@ -8698,7 +8647,6 @@ declare namespace ModelEntity {
      * @property [incrementallyLoadTextures = true] - 确定模型加载后纹理是否会继续流进来。
      * @property [runAnimations = true] - 指定模型中指定的glTF动画是否应该启动。
      * @property [clampAnimations = true] - 指定在没有关键帧的情况下，glTF动画是否应该保持最后一个姿势。
-     * @property [imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - 指定来自基于图像的漫反射和镜面照明的贡献。
      * @property [lightColor] - 在为模型着色时指定光的颜色的属性。当undefined场景的浅色被使用代替。
      * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
      * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
@@ -8739,7 +8687,6 @@ declare namespace ModelEntity {
         incrementallyLoadTextures?: boolean;
         runAnimations?: boolean;
         clampAnimations?: boolean;
-        imageBasedLightingFactor?: Cesium.Cartesian2;
         lightColor?: Cesium.Color;
         nodeTransformations?: Cesium.PropertyBag | {
             [key: string]: Cesium.TranslationRotationScale;
@@ -9530,6 +9477,10 @@ declare class PolygonEntity extends BasePolyEntity {
      */
     readonly EditClass: EditPolygon;
     /**
+     * 周长 距离（单位：米）
+     */
+    readonly distance: number;
+    /**
      * 对应的Cesium面entity内部位置对象
      */
     readonly hierarchy: Cesium.PolygonHierarchy;
@@ -9992,6 +9943,10 @@ declare class RectangleEntity extends BasePolyEntity {
      */
     rectangle: Cesium.Rectangle;
     /**
+     * 周长 距离（单位：米）
+     */
+    readonly distance: number;
+    /**
      * 将矢量数据导出为GeoJSON格式规范对象。
      * @param [options] - 参数对象:
      * @param [options.outline] - 是否导出边线的坐标
@@ -10043,10 +9998,6 @@ declare class RectangleEntity extends BasePolyEntity {
      * 中心点坐标 （笛卡尔坐标）
      */
     readonly center: Cesium.Cartesian3;
-    /**
-     * 距离（单位：米）
-     */
-    readonly distance: number;
     /**
      * 面积（单位：平方米）
      */
@@ -13483,6 +13434,7 @@ declare namespace DiffuseWall {
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [speed = 10] - 扩散的速度，值越大越快
+     * @property [maxScale = 1] - 扩散的最大比例
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      */
     type StyleOptions = any | {
@@ -13490,6 +13442,7 @@ declare namespace DiffuseWall {
         color?: string | Cesium.Color;
         opacity?: number;
         speed?: number;
+        maxScale?: number;
         shadows?: Cesium.ShadowMode;
     };
 }
@@ -14082,7 +14035,6 @@ declare namespace ModelPrimitive {
      * @property [incrementallyLoadTextures = true] - 确定模型加载后纹理是否会继续流进来。
      * @property [runAnimations = true] - 指定模型中指定的glTF动画是否应该启动。
      * @property [clampAnimations = true] - 指定在没有关键帧的情况下，glTF动画是否应该保持最后一个姿势。
-     * @property [imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - 指定来自基于图像的漫反射和镜面照明的贡献。
      * @property [lightColor] - 在为模型着色时指定光的颜色的属性。当undefined场景的浅色被使用代替。
      * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
      * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
@@ -14141,7 +14093,6 @@ declare namespace ModelPrimitive {
         incrementallyLoadTextures?: boolean;
         runAnimations?: boolean;
         clampAnimations?: boolean;
-        imageBasedLightingFactor?: Cesium.Cartesian2;
         lightColor?: Cesium.Color;
         nodeTransformations?: Cesium.PropertyBag | {
             [key: string]: Cesium.TranslationRotationScale;
@@ -14735,6 +14686,10 @@ declare class PolygonPrimitive extends BasePolyPrimitive {
         allowDrillPick?: boolean | ((...params: any[]) => any);
     });
     /**
+     * 周长 距离（单位：米）
+     */
+    readonly distance: number;
+    /**
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
      */
     positions: Cesium.Cartesian3[];
@@ -15156,6 +15111,10 @@ declare class RectanglePrimitive extends BasePolyPrimitive {
      * 坐标数据对应的矩形边界对象
      */
     rectangle: Cesium.Rectangle;
+    /**
+     * 周长 距离（单位：米）
+     */
+    readonly distance: number;
     /**
      * 获取数据的矩形边界
      * @param [options] - 控制参数
@@ -16542,7 +16501,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      *           callback: function (e) {
      *             let graphic = e.graphic
      *             let strDis = mars3d.MeasureUtil.formatDistance(graphic.distance)
-     *             haoutil.alert('该对象的长度为:' + strDis)
+     *             alert('该对象的长度为:' + strDis)
      *           },
      *         },
      *       ])
@@ -19120,11 +19079,7 @@ declare namespace TilesetLayer {
  * @param [options.clippingPlanes] - {@link Cesium.ClippingPlaneCollection}用于选择性地禁用tile集的渲染。
  * @param [options.classificationType] - 确定地形、3D贴图或两者都将被这个贴图集分类。有关限制和限制的详细信息，请参阅{@link cesium3dtilesset #classificationType}。
  * @param [options.pointCloudShading] - 基于几何误差和光照构造一个{@link Cesium.PointCloudShading}对象来控制点衰减的选项。
- * @param [options.imageBasedLightingFactor = new Cartesian2(1.0, 1.0)] - 缩放来自地球、天空、大气和星星天空盒的漫反射和高光图像照明。
  * @param [options.lightColor] - 光的颜色当遮光模型。当undefined场景的浅色被使用代替。
- * @param [options.luminanceAtZenith = 0.2] - 太阳在天顶的亮度，单位是千坎德拉每平方米，用于这个模型的程序环境地图。
- * @param [options.sphericalHarmonicCoefficients] - 三阶球面调和系数用于基于图像的漫射色彩照明。
- * @param [options.specularEnvironmentMaps] - 一个KTX文件的URL，该文件包含高光照明的立方体映射和复杂的高光mipmaps。
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
  * @param [options.debugHeatmapTilePropertyName] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;作为热图着色的tile变量。所有渲染的贴图都将相对于其他指定的变量值着色。
  * @param [options.pickPrimitive] - 要在拾取过程中呈现的原语，而不是tile集合。
@@ -19211,11 +19166,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         clippingPlanes?: Cesium.ClippingPlaneCollection;
         classificationType?: Cesium.ClassificationType;
         pointCloudShading?: any;
-        imageBasedLightingFactor?: Cesium.Cartesian2;
         lightColor?: Cesium.Cartesian3;
-        luminanceAtZenith?: number;
-        sphericalHarmonicCoefficients?: Cesium.Cartesian3[];
-        specularEnvironmentMaps?: string;
         backFaceCulling?: boolean;
         debugHeatmapTilePropertyName?: string;
         pickPrimitive?: any;
@@ -19417,6 +19368,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
      */
     closePopup(): BaseGraphicLayer;
     /**
+     * 透明度，取值范围：0.0-1.0
+     */
+    opacity: number;
+    /**
      * 飞行定位至图层数据所在的视角
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
@@ -19456,6 +19411,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.parameters] - 要在URL中 传递给WFS服务GetFeature请求的其他参数。
  * @param [options.parameters.maxFeatures] - 返回结果最大数量
  * @param [options.parameters.cql_filter] - 筛选服务数据的[SQL语句]{@link https://docs.geoserver.org/2.12.2/user/services/wfs/vendor.html#wfs-vendor-parameters}
+ * @param [options.parameters.sortBy] - 排序的属性名称，默认升序，降序时+D
  * @param [options.parameters.service = 'WFS'] - 服务类型
  * @param [options.parameters.version = '1.0.0'] - 服务版本
  * @param [options.geometryName = 'the_geom'] - geometry字段名称
@@ -19534,6 +19490,7 @@ declare class WfsLayer extends LodGraphicLayer {
         parameters?: {
             maxFeatures?: number;
             cql_filter?: string;
+            sortBy?: string;
             service?: string;
             version?: string;
         };
@@ -24108,10 +24065,10 @@ declare class Map extends BaseClass {
      * @param cameraView - 飞行参数
      * @param cameraView.lng - 经度值, 180 - 180
      * @param cameraView.lat - 纬度值, -90 - 90
-     * @param cameraView.alt - 高度值
-     * @param cameraView.heading - 方向角度值，绕垂直于地心的轴旋转角度, 0-360
-     * @param cameraView.pitch - 俯仰角度值，绕纬度线旋转角度, 0-360
-     * @param cameraView.roll - 翻滚角度值，绕经度线旋转角度, 0-360
+     * @param [cameraView.alt] - 高度值
+     * @param [cameraView.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0-360
+     * @param [cameraView.pitch] - 俯仰角度值，绕纬度线旋转角度, 0-360
+     * @param [cameraView.roll] - 翻滚角度值，绕经度线旋转角度, 0-360
      * @param [options = {}] - 参数对象:
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
@@ -24128,10 +24085,10 @@ declare class Map extends BaseClass {
     setCameraView(cameraView: {
         lng: number;
         lat: number;
-        alt: number;
-        heading: number;
-        pitch: number;
-        roll: number;
+        alt?: number;
+        heading?: number;
+        pitch?: number;
+        roll?: number;
     }, options?: {
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
@@ -25649,6 +25606,8 @@ declare class EchartsLayer extends BaseLayer {
  * @param options.rectangle.xmax - 最大纬度值
  * @param options.rectangle.ymin - 最小纬度值
  * @param options.rectangle.ymax - 最大纬度值
+ * @param [options.max] - 数据集的value值上限，默认内部计算
+ * @param [options.min] - 数据集的value值下限，默认内部计算
  * @param [options.heatStyle] - heatmap热力图本身configObject参数，详情也可查阅 [heatmap文档]{@link https://www.patrick-wied.at/static/heatmapjs/docs.html}
  * @param [options.heatStyle.maxOpacity = 0.8] - 最大不透明度，取值范围0.0-1.0。
  * @param [options.heatStyle.minOpacity = 0.1] - 最小不透明度，取值范围0.0-1.0。
@@ -25689,6 +25648,8 @@ declare class HeatLayer extends BaseLayer {
             ymin: number;
             ymax: number;
         };
+        max?: number;
+        min?: number;
         heatStyle?: {
             maxOpacity?: number;
             minOpacity?: number;
@@ -31513,9 +31474,10 @@ declare namespace MeasureUtil {
     /**
      * 求坐标数组的空间距离
      * @param positions - 坐标数组
+     * @param [closure] - 是否闭合，如求面的周长时，传入true
      * @returns 距离（单位：米）
      */
-    function getDistance(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
+    function getDistance(positions: Cesium.Cartesian3[] | LngLatPoint[], closure?: boolean): number;
     /**
      * 求坐标数组的 距离（地球表面弧度的）,
      * 比如北京到纽约（不能穿过球心，是贴地表的线的距离）
@@ -32913,10 +32875,10 @@ declare namespace Util {
     /**
      * 执行alert弹窗（手动单击确定关闭窗口）
      * @param msg - 弹窗内的内容
-     * @param title - 弹窗的标题
+     * @param [title] - 弹窗的标题
      * @returns 无
      */
-    function alert(msg: string, title: string): void;
+    function alert(msg: string, title?: string): void;
     /**
      * 执行msg提示窗（自动消失）
      * @param msg - 弹窗内的内容
