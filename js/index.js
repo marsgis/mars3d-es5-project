@@ -1,30 +1,30 @@
-"use script"; //开发环境建议开启严格模式
+"use script" //开发环境建议开启严格模式
 //系统主入口
 
-var map; //地球对象
-var request; //传入的get参数
+var map //地球对象
+var request //传入的get参数
 
 //地图
 $(document).ready(function () {
   //判断webgl支持
   if (!mars3d.Util.webglreport()) {
-    mars3d.Util.webglerror();
+    mars3d.Util.webglerror()
   }
 
   //记录url传入参数
-  request = haoutil.system.getRequest();
+  request = haoutil.system.getRequest()
   if (window.top) {
     //有父级
-    request = $.extend(request, haoutil.system.getRequest(window.top));
+    request = $.extend(request, haoutil.system.getRequest(window.top))
   }
 
-  var configfile = "config/config.json"; //默认地址
+  var configfile = "config/config.json" //默认地址
   if (request.config) {
     //url传入地址
-    configfile = request.config;
+    configfile = request.config
   }
 
-  haoutil.loading.show();
+  haoutil.loading.show()
 
   $.ajax({
     type: "get",
@@ -32,31 +32,31 @@ $(document).ready(function () {
     url: configfile,
     timeout: 0,
     success: function (data) {
-      haoutil.loading.hide();
+      haoutil.loading.hide()
 
       //构建地图
-      initMap(data.map3d);
+      initMap(data.map3d)
 
-      setTimeout(removeMask, 3000); //欢迎UI关闭处理
+      setTimeout(removeMask, 3000) //欢迎UI关闭处理
     },
     error: function (request, textStatus) {
-      removeMask();
-      haoutil.loading.hide();
-      haoutil.alert("1.请检查文件内 json 语法是否存在问题。<br />2.请在浏览器输入文件url测试是否可以访问。", configfile + " 文件加载失败");
-      console.log(textStatus, request);
-    },
-  });
+      removeMask()
+      haoutil.loading.hide()
+      haoutil.alert("1.请检查文件内 json 语法是否存在问题。<br />2.请在浏览器输入文件url测试是否可以访问。", configfile + " 文件加载失败")
+      console.log(textStatus, request)
+    }
+  })
 
-  initUI();
-});
+  initUI()
+})
 
 function removeMask() {
-  $("#mask").remove();
+  $("#mask").remove()
 }
 
 //UI界面相关
 function initUI() {
-  haoutil.oneMsg("首次访问系统无缓存会略慢，请耐心等待！", "load3d_tip");
+  haoutil.oneMsg("首次访问系统无缓存会略慢，请耐心等待！", "load3d_tip")
 }
 
 //初始化地图
@@ -65,43 +65,43 @@ function initMap(mapOptions) {
   // mapOptions = mars3d.Util.merge(mapOptions, {})
 
   //创建三维地球场景
-  map = new mars3d.Map("mars3dContainer", mapOptions);
+  map = new mars3d.Map("mars3dContainer", mapOptions)
 
   //构造widget
-  initWidget(map);
+  initWidget(map)
 
   //如果有xyz传参，进行定位
   if (haoutil.isutil.isNotNull(request.x) && haoutil.isutil.isNotNull(request.y)) {
-    map.setCameraView(request, { duration: 0, isWgs84: true });
+    map.setCameraView(request, { duration: 0, isWgs84: true })
   }
 
   //开场动画
   if (window.location.hostname.indexOf("127.0.0.1") == -1) {
-    map.openFlyAnimation();
+    map.openFlyAnimation()
   }
 
   //针对不同终端的优化配置
   if (mars3d.Util.isPCBroswer()) {
-    map.zoomFactor = 2.0; // 鼠标滚轮放大的步长参数
+    map.zoomFactor = 2.0 // 鼠标滚轮放大的步长参数
 
     // IE浏览器优化
     if (window.navigator.userAgent.toLowerCase().indexOf("msie") >= 0) {
-      map.viewer.targetFrameRate = 20; // 限制帧率
-      map.scene.requestRenderMode = false; // 取消实时渲染
+      map.viewer.targetFrameRate = 20 // 限制帧率
+      map.scene.requestRenderMode = false // 取消实时渲染
     }
   } else {
-    map.zoomFactor = 5.0; // 鼠标滚轮放大的步长参数
+    map.zoomFactor = 5.0 // 鼠标滚轮放大的步长参数
 
     // 移动设备上禁掉以下几个选项，可以相对更加流畅
-    map.scene.requestRenderMode = false; // 取消实时渲染
-    map.scene.fog.enabled = false;
-    map.scene.skyAtmosphere.show = false;
-    map.scene.globe.showGroundAtmosphere = false;
+    map.scene.requestRenderMode = false // 取消实时渲染
+    map.scene.fog.enabled = false
+    map.scene.skyAtmosphere.show = false
+    map.scene.globe.showGroundAtmosphere = false
   }
 
   //二三维切换不用动画
   if (map.sceneModePicker) {
-    map.sceneModePicker.viewModel.duration = 0.0;
+    map.sceneModePicker.viewModel.duration = 0.0
   }
 
   //webgl渲染失败后，刷新页面
@@ -110,19 +110,19 @@ function initMap(mapOptions) {
   // });
 
   //绑定单击显示BIM的构件树
-  bindShowTilesParts();
+  bindShowTilesParts()
 
   //下面可以继续加项目相关的其他代码
 
   //演示：接收的widget内抛出的事件
   mars3d.widget.on("centerXY", function (event) {
-    console.log("在widget进行了坐标定位", event);
-  });
+    console.log("在widget进行了坐标定位", event)
+  })
 }
 
 //初始化widget相关
 function initWidget(map) {
-  haoutil.loading.show();
+  haoutil.loading.show()
 
   $.ajax({
     type: "get",
@@ -130,36 +130,36 @@ function initWidget(map) {
     url: "config/widget.json",
     timeout: 0,
     success: function (widgetCfg) {
-      haoutil.loading.hide();
+      haoutil.loading.hide()
 
       //url如果有传参时的处理
       if (haoutil.isutil.isNotNull(request.widget)) {
         if (request.onlyStart) {
-          widgetCfg.openAtStart = [];
+          widgetCfg.openAtStart = []
         }
         widgetCfg.openAtStart.push({
           uri: request.widget,
           name: request.name || "",
           windowOptions: {
-            closeBtn: !request.onlyStart,
+            closeBtn: !request.onlyStart
           },
-          request: request,
-        });
-        map.flyHome({ duration: 0 });
+          request: request
+        })
+        map.flyHome({ duration: 0 })
       }
       //初始化widget管理器
-      mars3d.widget.init(map, widgetCfg, "./"); //tip: 第3个参数支持定义widget目录的相对路径。
+      mars3d.widget.init(map, widgetCfg, "./") //tip: 第3个参数支持定义widget目录的相对路径。
 
       if (window.lastWidgetItem) {
-        activateWidget(lastWidgetItem);
-        lastWidgetItem = null;
+        activateWidget(lastWidgetItem)
+        lastWidgetItem = null
       }
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
-      haoutil.loading.hide();
-      haoutil.alert("config/widget.json文件加载失败！");
-    },
-  });
+      haoutil.loading.hide()
+      haoutil.alert("config/widget.json文件加载失败！")
+    }
+  })
 
   //widget相关事件监听
   // mars3d.widget.on(mars3d.widget.EventType.load, function (event) {
@@ -169,11 +169,11 @@ function initWidget(map) {
   //     console.log("创建了widet", event);
   // })
   mars3d.widget.on(mars3d.widget.EventType.activated, function (event) {
-    console.log("激活了widget", event);
-  });
+    console.log("激活了widget", event)
+  })
   mars3d.widget.on(mars3d.widget.EventType.disabled, function (event) {
-    console.log("释放了widget", event);
-  });
+    console.log("释放了widget", event)
+  })
 }
 
 //bim构件的处理
@@ -182,22 +182,22 @@ function bindShowTilesParts() {
   map.on(mars3d.EventType.clickGraphic, function (event) {
     if (!(event.pickedObject instanceof Cesium.Cesium3DTileFeature)) {
       //不是BIM数据时跳出
-      return;
+      return
     }
 
-    let layer = event.layer;
+    let layer = event.layer
     if (!layer.options.scenetree) {
       //未配置scenetree时跳出
-      return;
+      return
     }
 
-    var tilesParts = "widgets/tilesParts/widget.js";
+    var tilesParts = "widgets/tilesParts/widget.js"
 
     if (mars3d.widget.isActivate(tilesParts)) {
-      var parts = mars3d.widget.getClass(tilesParts);
+      var parts = mars3d.widget.getClass(tilesParts)
       if (parts.config.layerCfg == layer.options) {
         //当前已激活,并且单击了相同模型时跳出
-        return;
+        return
       }
     }
 
@@ -205,28 +205,28 @@ function bindShowTilesParts() {
       name: layer.name + " 构件",
       uri: tilesParts,
       layerCfg: layer.options,
-      disableOther: false,
-    });
-  });
+      disableOther: false
+    })
+  })
 }
 
 //外部页面调用
-var lastWidgetItem;
+var lastWidgetItem
 function activateWidget(item) {
   if (!map) {
-    lastWidgetItem = item;
-    return;
+    lastWidgetItem = item
+    return
   }
-  mars3d.widget.activate(item);
+  mars3d.widget.activate(item)
 }
 function disableWidget(item) {
-  mars3d.widget.disable(item);
+  mars3d.widget.disable(item)
 }
 function activateFunByMenu(fun) {
-  eval(fun);
+  eval(fun)
 }
 
 function goHome() {
-  mars3d.widget.disableAll();
-  map.flyHome();
+  mars3d.widget.disableAll()
+  map.flyHome()
 }

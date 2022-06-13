@@ -47,26 +47,26 @@
     <!--页面js-->
     <script>
       //对应widget.js中MyWidget实例化后的对象
-      let thisWidget;
+      let thisWidget
 
       //当前页面业务
       function initWidgetView(_thisWidget) {
-        thisWidget = _thisWidget;
+        thisWidget = _thisWidget
 
         $("#btn1").click(function () {
-          thisWidget.testCenterAt1();
-        });
+          thisWidget.testCenterAt1()
+        })
         $("#btn2").click(function () {
-          thisWidget.testCenterAt2();
-        });
+          thisWidget.testCenterAt2()
+        })
 
         $("#btn3").click(function () {
-          thisWidget.viewWindowRight.testShowText("我是从左侧面板调用的" + new Date());
-        });
+          thisWidget.viewWindowRight.testShowText("我是从左侧面板调用的" + new Date())
+        })
       }
 
       function testShowText(text) {
-        $("#lblName").html(text);
+        $("#lblName").html(text)
       }
     </script>
   </body>

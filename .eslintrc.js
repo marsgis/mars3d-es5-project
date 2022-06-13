@@ -40,6 +40,7 @@ module.exports = {
     netcdfjs: "readonly",
     ol: "readonly",
     olcs: "readonly",
+    mapv: "readonly",
 
     map: "readonly",
     $: false,

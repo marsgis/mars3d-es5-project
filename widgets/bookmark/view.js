@@ -1,22 +1,22 @@
-﻿"use script"; //开发环境建议开启严格模式
+﻿"use script" //开发环境建议开启严格模式
 
 //对应widget.js中MyWidget实例化后的对象
-let thisWidget;
-let $table;
+let thisWidget
+let $table
 
 function getHeight() {
-  return $(window).height() - 50;
+  return $(window).height() - 50
 }
 
 //当前页面业务
 function initWidgetView(_thisWidget) {
-  thisWidget = _thisWidget;
+  thisWidget = _thisWidget
 
   $("#btn_bookmark_Add").bind("click", function () {
-    saveBookmark();
-  });
+    saveBookmark()
+  })
 
-  $table = $("#table");
+  $table = $("#table")
   $table.bootstrapTable({
     height: getHeight(),
     singleSelect: true, //单选
@@ -32,8 +32,8 @@ function initWidgetView(_thisWidget) {
         align: "center",
         events: {
           "click .remove": function (e, value, row, index) {
-            delBookMark(row.id);
-          },
+            delBookMark(row.id)
+          }
         },
         formatter: function (value, row, index) {
           return `<div class="bookmarkitem" title="${row.name}">
@@ -42,27 +42,27 @@ function initWidgetView(_thisWidget) {
                           <p>${row.name}</p>
                           <a class="remove" href="javascript:void(0)" title="删除"><i class="fa fa-trash"></i></a>
                         </div>
-                  </div>`;
-        },
-      },
+                  </div>`
+        }
+      }
     ],
     onClickRow: function (rowData, $element, field) {
-      let location = rowData.data;
-      thisWidget.showExtent(location);
-    },
-  });
+      let location = rowData.data
+      thisWidget.showExtent(location)
+    }
+  })
   $(window).resize(function () {
     $table.bootstrapTable("refreshOptions", {
-      height: getHeight(),
-    });
-  });
+      height: getHeight()
+    })
+  })
 
   //读取localStorage
-  initBookMarkList();
+  initBookMarkList()
 }
 
-let storageName = "mars3d_bookmark";
-let arrBookmark = [];
+let storageName = "mars3d_bookmark"
+let arrBookmark = []
 
 function initBookMarkList() {
   if (window.parent.hasServer) {
@@ -73,50 +73,50 @@ function initBookMarkList() {
       dataType: "json",
       contentType: "application/x-www-form-urlencoded",
       success: function (result) {
-        let arr = [];
+        let arr = []
         for (let i = 0; i < result.length; i++) {
-          let itme = result[i];
+          let itme = result[i]
           if (!itme) {
-            continue;
+            continue
           }
           arr.push({
             name: itme.name,
             data: JSON.parse(itme.center),
-            id: itme.id,
-          });
+            id: itme.id
+          })
         }
-        arrBookmark = arr;
-        showListData(arrBookmark);
+        arrBookmark = arr
+        showListData(arrBookmark)
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
-        alert("服务出错：" + XMLHttpRequest.statusText + "，代码 " + XMLHttpRequest.status);
-      },
-    });
+        alert("服务出错：" + XMLHttpRequest.statusText + "，代码 " + XMLHttpRequest.status)
+      }
+    })
   } else {
     localforage.getItem(storageName).then((arrBookmark) => {
       if (arrBookmark == null) {
-        arrBookmark = [];
+        arrBookmark = []
       }
-      showListData(arrBookmark);
-    });
+      showListData(arrBookmark)
+    })
   }
 }
 
 //添加
 function saveBookmark() {
   if (arrBookmark == null) {
-    arrBookmark = [];
+    arrBookmark = []
   }
 
-  let name = $.trim($("#txt_bookmark_name").val()).replace("'", "").replace('"', "");
+  let name = $.trim($("#txt_bookmark_name").val()).replace("'", "").replace('"', "")
   if (name.length == 0) {
-    toastr.warning("请输入名称");
-    return;
+    toastr.warning("请输入名称")
+    return
   }
   for (let index = arrBookmark.length - 1; index >= 0; index--) {
     if (arrBookmark[index].name == name) {
-      toastr.info("该名称已存在，请更换！");
-      return;
+      toastr.info("该名称已存在，请更换！")
+      return
     }
   }
 
@@ -127,10 +127,10 @@ function saveBookmark() {
         name: name,
         data: bounds,
         icon: base64,
-        id: new Date().getTime(),
+        id: new Date().getTime()
       },
       0
-    );
+    )
 
     if (window.parent.hasServer) {
       //后台保存接口
@@ -138,24 +138,24 @@ function saveBookmark() {
         url: "v1/map/bookmark/add",
         data: JSON.stringify({
           name: name, //名称
-          center: JSON.stringify(bounds), //中心
+          center: JSON.stringify(bounds) //中心
         }),
         type: "post",
         dataType: "json",
         contentType: "application/json",
         success: function (result) {
-          $("#txt_bookmark_name").val("");
-          initBookMarkList();
-        },
-      });
+          $("#txt_bookmark_name").val("")
+          initBookMarkList()
+        }
+      })
     } else {
       //本地存储
       localforage.setItem(storageName, arrBookmark).then((value) => {
-        $("#txt_bookmark_name").val("");
-        initBookMarkList();
-      });
+        $("#txt_bookmark_name").val("")
+        initBookMarkList()
+      })
     }
-  });
+  })
 }
 
 function delBookMark(id) {
@@ -169,28 +169,28 @@ function delBookMark(id) {
       success: function (result) {
         for (let index = arrBookmark.length - 1; index >= 0; index--) {
           if (arrBookmark[index].id == id) {
-            arrBookmark.splice(index, 1);
-            showListData(arrBookmark);
-            break;
+            arrBookmark.splice(index, 1)
+            showListData(arrBookmark)
+            break
           }
         }
-      },
-    });
+      }
+    })
   } else {
     for (let index = arrBookmark.length - 1; index >= 0; index--) {
       if (arrBookmark[index].id == id) {
-        arrBookmark.splice(index, 1);
+        arrBookmark.splice(index, 1)
 
-        localforage.setItem(storageName, arrBookmark);
-        showListData(arrBookmark);
-        break;
+        localforage.setItem(storageName, arrBookmark)
+        showListData(arrBookmark)
+        break
       }
     }
   }
 }
 
 function showListData(arr) {
-  let positon = $table.bootstrapTable("getScrollPosition");
-  $table.bootstrapTable("load", arr);
-  $table.bootstrapTable("scrollTo", positon);
+  let positon = $table.bootstrapTable("getScrollPosition")
+  $table.bootstrapTable("load", arr)
+  $table.bootstrapTable("scrollTo", positon)
 }

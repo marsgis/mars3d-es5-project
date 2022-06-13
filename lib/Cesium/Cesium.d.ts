@@ -22462,7 +22462,7 @@ export class ModelVisualizer {
     constructor(scene: Scene, entityCollection: EntityCollection);
     /**
      * Updates models created this visualizer to match their
-     * Entity counterpart at the given time.
+    Entity counterpart at the given time.
      * @param time - The time to update to.
      * @returns This function always returns true.
      */
@@ -27248,7 +27248,9 @@ export class Cesium3DTileContent {
      */
     readonly texturesByteLength: number;
     /**
-     * Gets the amount of memory used by the batch table textures, in bytes.
+     * Gets the amount of memory used by the batch table textures and any binary
+    metadata properties not accounted for in geometryByteLength or
+    texturesByteLength
      */
     readonly batchTableByteLength: number;
     /**
@@ -27317,7 +27319,7 @@ handler.setInputAction(function(movement) {
         const length = propertyNames.length;
         for (let i = 0; i < length; ++i) {
             const propertyName = propertyNames[i];
-            console.log(propertyName + ': ' + feature.getProperty(propertyName));
+            console.log(`{propertyName}: ${feature.getProperty(propertyName)}`);
         }
     }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -27379,7 +27381,7 @@ export class Cesium3DTileFeature {
     const length = propertyNames.length;
     for (let i = 0; i < length; ++i) {
         const propertyName = propertyNames[i];
-        console.log(propertyName + ': ' + feature.getProperty(propertyName));
+        console.log(`{propertyName}: ${feature.getProperty(propertyName)}`);
     }
      * @param name - The case-sensitive name of the property.
      * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
@@ -27465,7 +27467,7 @@ handler.setInputAction(function(movement) {
         const length = propertyNames.length;
         for (let i = 0; i < length; ++i) {
             const propertyName = propertyNames[i];
-            console.log(propertyName + ': ' + feature.getProperty(propertyName));
+            console.log(`{propertyName}: ${feature.getProperty(propertyName)}`);
         }
     }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -27655,7 +27657,7 @@ export class Cesium3DTilePointFeature {
     const length = propertyNames.length;
     for (let i = 0; i < length; ++i) {
         const propertyName = propertyNames[i];
-        console.log(propertyName + ': ' + feature.getProperty(propertyName));
+        console.log(`{propertyName} : ${feature.getProperty(propertyName)}`);
     }
      * @param name - The case-sensitive name of the property.
      * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
@@ -27714,6 +27716,8 @@ const tileset = scene.primitives.add(new Cesium.Cesium3DTileset({
  * @param options.url - The url to a tileset JSON file.
  * @param [options.show = true] - Determines if the tileset will be shown.
  * @param [options.modelMatrix = Matrix4.IDENTITY] - A 4x4 transformation matrix that transforms the tileset's root tile.
+ * @param [options.modelUpAxis = Axis.Y] - Which axis is considered up when loading models for tile contents.
+ * @param [options.modelForwardAxis = Axis.X] - Which axis is considered forward when loading models for tile contents.
  * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the tileset casts or receives shadows from light sources.
  * @param [options.maximumScreenSpaceError = 16] - The maximum screen space error used to drive level of detail refinement.
  * @param [options.maximumMemoryUsage = 512] - The maximum amount of memory in MB that can be used by the tileset.
@@ -27753,6 +27757,7 @@ const tileset = scene.primitives.add(new Cesium.Cesium3DTileset({
  * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
  * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this tileset on screen.
  * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this tileset.
+ * @param [options.projectTo2D = false] - Whether to accurately project the tileset to 2D. If this is true, the tileset will be projected accurately to 2D, but it will use more memory to do so. If this is false, the tileset will use less memory and will still render in 2D / CV mode, but its projected positions may be inaccurate. This cannot be set after the tileset has loaded.
  * @param [options.debugHeatmapTilePropertyName] - The tile variable to colorize as a heatmap. All rendered tiles will be colorized relative to each other's specified variable value.
  * @param [options.debugFreezeFrame = false] - For debugging only. Determines if only the tiles from last frame should be used for rendering.
  * @param [options.debugColorizeTiles = false] - For debugging only. When true, assigns a random color to each tile.
@@ -27771,6 +27776,8 @@ export class Cesium3DTileset {
         url: Resource | string | Promise<Resource> | Promise<string>;
         show?: boolean;
         modelMatrix?: Matrix4;
+        modelUpAxis?: Axis;
+        modelForwardAxis?: Axis;
         shadows?: ShadowMode;
         maximumScreenSpaceError?: number;
         maximumMemoryUsage?: number;
@@ -27810,6 +27817,7 @@ export class Cesium3DTileset {
         instanceFeatureIdLabel?: string | number;
         showCreditsOnScreen?: boolean;
         splitDirection?: SplitDirection;
+        projectTo2D?: boolean;
         debugHeatmapTilePropertyName?: string;
         debugFreezeFrame?: boolean;
         debugColorizeTiles?: boolean;
@@ -27946,7 +27954,7 @@ export class Cesium3DTileset {
             return;
         }
     
-        console.log('Loading: requests: ' + numberOfPendingRequests + ', processing: ' + numberOfTilesProcessing);
+        console.log(`Loading: requests: ${numberOfPendingRequests}, processing: ${numberOfTilesProcessing}`);
     });
      */
     loadProgress: Event;
@@ -28022,8 +28030,8 @@ export class Cesium3DTileset {
     </p>
      * @example
      * tileset.tileFailed.addEventListener(function(error) {
-        console.log('An error occurred loading tile: ' + error.url);
-        console.log('Error: ' + error.message);
+        console.log(`An error occurred loading tile: ${error.url}`);
+        console.log(`Error: ${error.message}`);
     });
      */
     tileFailed: Event;
@@ -28236,8 +28244,8 @@ export class Cesium3DTileset {
     in the 3D Tiles spec for the full set of properties.
     </p>
      * @example
-     * console.log('Maximum building height: ' + tileset.properties.height.maximum);
-    console.log('Minimum building height: ' + tileset.properties.height.minimum);
+     * console.log(`Maximum building height: ${tileset.properties.height.maximum}`);
+    console.log(`Minimum building height: ${tileset.properties.height.minimum}`);
      */
     readonly properties: any;
     /**
@@ -28395,8 +28403,7 @@ export class Cesium3DTileset {
     readonly timeSinceLoad: number;
     /**
      * The total amount of GPU memory in bytes used by the tileset. This value is estimated from
-    geometry, texture, and batch table textures of loaded tiles. For point clouds, this value also
-    includes per-point metadata.
+    geometry, texture, batch table textures, and binary metadata of loaded tiles.
      */
     readonly totalMemoryUsageInBytes: number;
     /**
@@ -28863,7 +28870,7 @@ export class Cesium3DTileStyle {
     </p>
      * @example
      * const style = new Cesium3DTileStyle({
-        labelStyle : '(${Temperature} > 90) ? ' + LabelStyle.FILL_AND_OUTLINE + ' : ' + LabelStyle.FILL
+        labelStyle : `(\${Temperature} > 90) ? ${LabelStyle.FILL_AND_OUTLINE} : ${LabelStyle.FILL}`
     });
     style.labelStyle.evaluate(feature); // returns a LabelStyle
      * @example
@@ -32847,9 +32854,9 @@ export class ImageryLayerCollection {
     } else {
         Promise.resolve(featuresPromise).then(function(features) {
             // This function is called asynchronously when the list if picked features is available.
-            console.log('Number of features: ' + features.length);
+            console.log(`Number of features: ${features.length}`);
             if (features.length > 0) {
-                console.log('First feature name: ' + features[0].name);
+                console.log(`First feature name: ${features[0].name}`);
             }
         });
     }
@@ -35286,7 +35293,7 @@ export class ModelAnimation {
     </p>
      * @example
      * animation.start.addEventListener(function(model, animation) {
-      console.log('Animation started: ' + animation.name);
+      console.log(`Animation started: ${animation.name}`);
     });
      */
     start: Event;
@@ -35300,7 +35307,7 @@ export class ModelAnimation {
     </p>
      * @example
      * animation.update.addEventListener(function(model, animation, time) {
-      console.log('Animation updated: ' + animation.name + '. glTF animation time: ' + time);
+      console.log(`Animation updated: ${animation.name}. glTF animation time: ${time}`);
     });
      */
     update: Event;
@@ -35312,7 +35319,7 @@ export class ModelAnimation {
     </p>
      * @example
      * animation.stop.addEventListener(function(model, animation) {
-      console.log('Animation stopped: ' + animation.name);
+      console.log(`Animation stopped: ${animation.name}`);
     });
      */
     stop: Event;
@@ -35387,7 +35394,7 @@ export class ModelAnimationCollection {
     example, to keep a UI in sync.
      * @example
      * model.activeAnimations.animationAdded.addEventListener(function(model, animation) {
-      console.log('Animation added: ' + animation.name);
+      console.log(`Animation added: ${animation.name}`);
     });
      */
     animationAdded: Event;
@@ -35396,7 +35403,7 @@ export class ModelAnimationCollection {
     example, to keep a UI in sync.
      * @example
      * model.activeAnimations.animationRemoved.addEventListener(function(model, animation) {
-      console.log('Animation removed: ' + animation.name);
+      console.log(`Animation removed: ${animation.name}`);
     });
      */
     animationRemoved: Event;
@@ -35442,13 +35449,13 @@ export class ModelAnimationCollection {
     });
     
     animation.start.addEventListener(function(model, animation) {
-      console.log('Animation started: ' + animation.name);
+      console.log(`Animation started: ${animation.name}`);
     });
     animation.update.addEventListener(function(model, animation, time) {
-      console.log('Animation updated: ' + animation.name + '. glTF animation time: ' + time);
+      console.log(`Animation updated:  ${animation.name}. glTF animation time: ${time}`);
     });
     animation.stop.addEventListener(function(model, animation) {
-      console.log('Animation stopped: ' + animation.name);
+      console.log(`Animation stopped: ${animation.name}`);
     });
      * @param options - Object with the following properties:
      * @param [options.name] - The glTF animation name that identifies the animation. Must be defined if <code>options.index</code> is <code>undefined</code>.
@@ -35756,6 +35763,7 @@ the Model from your source data type.
 </p>
  * @param options - Object with the following properties:
  * @param options.resource - The Resource to the 3D model.
+ * @param [options.show = true] - Whether or not to render the model.
  * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms the model from model to world coordinates.
  * @param [options.scale = 1.0] - A uniform scale applied to this model.
  * @param [options.minimumPixelSize = 0.0] - The approximate minimum pixel size of the model regardless of zoom.
@@ -35769,7 +35777,8 @@ the Model from your source data type.
  * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
  * @param [options.customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
  * @param [options.content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
- * @param [options.show = true] - Whether or not to render the model.
+ * @param [options.heightReference = HeightReference.NONE] - Determines how the model is drawn relative to terrain.
+ * @param [options.scene] - Must be passed in for models that use the height reference property.
  * @param [options.color] - A color that blends with the model's rendered color.
  * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
  * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
@@ -35783,11 +35792,12 @@ the Model from your source data type.
  * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
  * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
  * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
- * @param [options.projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is false, the model will not show up in 2D / CV mode. This disables minimumPixelSize and prevents future modification to its model matrix. This also cannot be set after the model has loaded.
+ * @param [options.projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is true, the model will be projected accurately to 2D, but it will use more memory to do so. If this is false, the model will use less memory and will still render in 2D / CV mode, but its positions may be inaccurate. This disables minimumPixelSize and prevents future modification to the model matrix. This also cannot be set after the model has loaded.
  */
 export class ModelExperimental {
     constructor(options: {
         resource: Resource;
+        show?: boolean;
         modelMatrix?: Matrix4;
         scale?: number;
         minimumPixelSize?: number;
@@ -35801,7 +35811,8 @@ export class ModelExperimental {
         allowPicking?: boolean;
         customShader?: CustomShader;
         content?: Cesium3DTileContent;
-        show?: boolean;
+        heightReference?: HeightReference;
+        scene?: Scene;
         color?: Color;
         colorBlendMode?: ColorBlendMode;
         colorBlendAmount?: number;
@@ -35850,6 +35861,15 @@ export class ModelExperimental {
     may lead to undefined behavior.
      */
     customShader: CustomShader;
+    /**
+     * The height reference of the model, which determines how the model is drawn
+    relative to terrain.
+     */
+    heightReference: HeightReference;
+    /**
+     * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
+     */
+    style: Cesium3DTileStyle;
     /**
      * The color to blend with the model's rendered color.
      */
@@ -36006,6 +36026,7 @@ export class ModelExperimental {
      * @param options - Object with the following properties:
      * @param options.url - The url to the .gltf or .glb file.
      * @param [options.basePath = ''] - The base path that paths in the glTF JSON are relative to.
+     * @param [options.show = true] - Whether or not to render the model.
      * @param [options.modelMatrix = Matrix4.IDENTITY] - The 4x4 transformation matrix that transforms the model from model to world coordinates.
      * @param [options.scale = 1.0] - A uniform scale applied to this model.
      * @param [options.minimumPixelSize = 0.0] - The approximate minimum pixel size of the model regardless of zoom.
@@ -36022,7 +36043,8 @@ export class ModelExperimental {
      * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
      * @param [options.customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
      * @param [options.content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
-     * @param [options.show = true] - Whether or not to render the model.
+     * @param [options.heightReference = HeightReference.NONE] - Determines how the model is drawn relative to terrain.
+     * @param [options.scene] - Must be passed in for models that use the height reference property.
      * @param [options.color] - A color that blends with the model's rendered color.
      * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
      * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
@@ -36036,12 +36058,13 @@ export class ModelExperimental {
      * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
      * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
      * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
-     * @param [options.projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is false, the model will not show up in 2D / CV mode. This disables minimumPixelSize and prevents future modification to its model matrix. This also cannot be set after the model has loaded.
+     * @param [options.projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is true, the model will be projected accurately to 2D, but it will use more memory to do so. If this is false, the model will use less memory and will still render in 2D / CV mode, but its positions may be inaccurate. This disables minimumPixelSize and prevents future modification to the model matrix. This also cannot be set after the model has loaded.
      * @returns The newly created model.
      */
     static fromGltf(options: {
         url: string | Resource;
         basePath?: string | Resource;
+        show?: boolean;
         modelMatrix?: Matrix4;
         scale?: number;
         minimumPixelSize?: number;
@@ -36058,7 +36081,8 @@ export class ModelExperimental {
         allowPicking?: boolean;
         customShader?: CustomShader;
         content?: Cesium3DTileContent;
-        show?: boolean;
+        heightReference?: HeightReference;
+        scene?: Scene;
         color?: Color;
         colorBlendMode?: ColorBlendMode;
         colorBlendAmount?: number;
@@ -36088,11 +36112,6 @@ m.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
 export var modelMatrix: Matrix4;
 
 /**
- * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
- */
-export var style: Cesium3DTileStyle;
-
-/**
  * An active animation derived from a glTF asset. An active animation is an
 animation that is either currently playing or scheduled to be played due to
 being added to a model's {@link ModelExperimentalAnimationCollection}. An active animation
@@ -36118,7 +36137,7 @@ export class ModelExperimentalAnimation {
     </p>
      * @example
      * animation.start.addEventListener(function(model, animation) {
-      console.log('Animation started: ' + animation.name);
+      console.log(`Animation started: ${animation.name}`);
     });
      */
     start: Event;
@@ -36132,7 +36151,7 @@ export class ModelExperimentalAnimation {
     </p>
      * @example
      * animation.update.addEventListener(function(model, animation, time) {
-      console.log('Animation updated: ' + animation.name + '. glTF animation time: ' + time);
+      console.log(`Animation updated: ${animation.name}. glTF animation time: ${time}`);
     });
      */
     update: Event;
@@ -36144,7 +36163,7 @@ export class ModelExperimentalAnimation {
     </p>
      * @example
      * animation.stop.addEventListener(function(model, animation) {
-      console.log('Animation stopped: ' + animation.name);
+      console.log(`Animation stopped: ${animation.name}`);
     });
      */
     stop: Event;
@@ -36219,7 +36238,7 @@ export class ModelExperimentalAnimationCollection {
     example, to keep a UI in sync.
      * @example
      * model.activeAnimations.animationAdded.addEventListener(function(model, animation) {
-      console.log('Animation added: ' + animation.name);
+      console.log(`Animation added: ${animation.name}`);
     });
      */
     animationAdded: Event;
@@ -36228,7 +36247,7 @@ export class ModelExperimentalAnimationCollection {
     example, to keep a UI in sync.
      * @example
      * model.activeAnimations.animationRemoved.addEventListener(function(model, animation) {
-      console.log('Animation removed: ' + animation.name);
+      console.log(`Animation removed: ${animation.name}`);
     });
      */
     animationRemoved: Event;
@@ -36278,13 +36297,13 @@ export class ModelExperimentalAnimationCollection {
     });
     
     animation.start.addEventListener(function(model, animation) {
-      console.log('Animation started: ' + animation.name);
+      console.log(`Animation started: ${animation.name}`);
     });
     animation.update.addEventListener(function(model, animation, time) {
-      console.log('Animation updated: ' + animation.name + '. glTF animation time: ' + time);
+      console.log(`Animation updated: ${animation.name}. glTF animation time: ${time}`);
     });
     animation.stop.addEventListener(function(model, animation) {
-      console.log('Animation stopped: ' + animation.name);
+      console.log(`Animation stopped: ${animation.name}`);
     });
      * @param options - Object with the following properties:
      * @param [options.name] - The glTF animation name that identifies the animation. Must be defined if <code>options.index</code> is <code>undefined</code>.
@@ -38093,15 +38112,15 @@ export class PolylineMaterialAppearance {
  * Runs a post-process stage on either the texture rendered by the scene or the output of a previous post-process stage.
  * @example
  * // Simple stage to change the color
-const fs =
-    'uniform sampler2D colorTexture;\n' +
-    'varying vec2 v_textureCoordinates;\n' +
-    'uniform float scale;\n' +
-    'uniform vec3 offset;\n' +
-    'void main() {\n' +
-    '    vec4 color = texture2D(colorTexture, v_textureCoordinates);\n' +
-    '    gl_FragColor = vec4(color.rgb * scale + offset, 1.0);\n' +
-    '}\n';
+const fs =`
+    uniform sampler2D colorTexture;
+    varying vec2 v_textureCoordinates;
+    uniform float scale;
+    uniform vec3 offset;
+    void main() {
+        vec4 color = texture2D(colorTexture, v_textureCoordinates);
+        gl_FragColor = vec4(color.rgb * scale + offset, 1.0);
+    }`;
 scene.postProcessStages.add(new Cesium.PostProcessStage({
     fragmentShader : fs,
     uniforms : {
@@ -38114,19 +38133,19 @@ scene.postProcessStages.add(new Cesium.PostProcessStage({
  * @example
  * // Simple stage to change the color of what is selected.
 // If czm_selected returns true, the current fragment belongs to geometry in the selected array.
-const fs =
-    'uniform sampler2D colorTexture;\n' +
-    'varying vec2 v_textureCoordinates;\n' +
-    'uniform vec4 highlight;\n' +
-    'void main() {\n' +
-    '    vec4 color = texture2D(colorTexture, v_textureCoordinates);\n' +
-    '    if (czm_selected()) {\n' +
-    '        vec3 highlighted = highlight.a * highlight.rgb + (1.0 - highlight.a) * color.rgb;\n' +
-    '        gl_FragColor = vec4(highlighted, 1.0);\n' +
-    '    } else { \n' +
-    '        gl_FragColor = color;\n' +
-    '    }\n' +
-    '}\n';
+const fs =`
+    uniform sampler2D colorTexture;
+    varying vec2 v_textureCoordinates;
+    uniform vec4 highlight;
+    void main() {
+        vec4 color = texture2D(colorTexture, v_textureCoordinates);
+        if (czm_selected()) {
+            vec3 highlighted = highlight.a * highlight.rgb + (1.0 - highlight.a) * color.rgb;
+            gl_FragColor = vec4(highlighted, 1.0);
+        } else {
+            gl_FragColor = color;
+        }
+    }`;
 const stage = scene.postProcessStages.add(new Cesium.PostProcessStage({
     fragmentShader : fs,
     uniforms : {
@@ -38239,7 +38258,7 @@ export class PostProcessStage {
     if (czm_selected(v_textureCoordinates)) {
         // apply post-process stage
     } else {
-        gl_FragColor = texture2D(colorTexture, v_textureCordinates);
+        gl_FragColor = texture2D(colorTexture, v_textureCoordinates);
     }
     </code>
     </p>
@@ -38708,88 +38727,88 @@ export enum PostProcessStageSampleMode {
 
 /**
  * A primitive represents geometry in the {@link Scene}.  The geometry can be from a single {@link GeometryInstance}
- * as shown in example 1 below, or from an array of instances, even if the geometry is from different
- * geometry types, e.g., an {@link RectangleGeometry} and an {@link EllipsoidGeometry} as shown in Code Example 2.
- * <p>
- * A primitive combines geometry instances with an {@link Appearance} that describes the full shading, including
- * {@link Material} and {@link RenderState}.  Roughly, the geometry instance defines the structure and placement,
- * and the appearance defines the visual characteristics.  Decoupling geometry and appearance allows us to mix
- * and match most of them and add a new geometry or appearance independently of each other.
- * </p>
- * <p>
- * Combining multiple instances into one primitive is called batching, and significantly improves performance for static data.
- * Instances can be individually picked; {@link Scene#pick} returns their {@link GeometryInstance#id}.  Using
- * per-instance appearances like {@link PerInstanceColorAppearance}, each instance can also have a unique color.
- * </p>
- * <p>
- * {@link Geometry} can either be created and batched on a web worker or the main thread. The first two examples
- * show geometry that will be created on a web worker by using the descriptions of the geometry. The third example
- * shows how to create the geometry on the main thread by explicitly calling the <code>createGeometry</code> method.
- * </p>
+as shown in example 1 below, or from an array of instances, even if the geometry is from different
+geometry types, e.g., an {@link RectangleGeometry} and an {@link EllipsoidGeometry} as shown in Code Example 2.
+<p>
+A primitive combines geometry instances with an {@link Appearance} that describes the full shading, including
+{@link Material} and {@link RenderState}.  Roughly, the geometry instance defines the structure and placement,
+and the appearance defines the visual characteristics.  Decoupling geometry and appearance allows us to mix
+and match most of them and add a new geometry or appearance independently of each other.
+</p>
+<p>
+Combining multiple instances into one primitive is called batching, and significantly improves performance for static data.
+Instances can be individually picked; {@link Scene#pick} returns their {@link GeometryInstance#id}.  Using
+per-instance appearances like {@link PerInstanceColorAppearance}, each instance can also have a unique color.
+</p>
+<p>
+{@link Geometry} can either be created and batched on a web worker or the main thread. The first two examples
+show geometry that will be created on a web worker by using the descriptions of the geometry. The third example
+shows how to create the geometry on the main thread by explicitly calling the <code>createGeometry</code> method.
+</p>
  * @example
  * // 1. Draw a translucent ellipse on the surface with a checkerboard pattern
- * const instance = new Cesium.GeometryInstance({
- *   geometry : new Cesium.EllipseGeometry({
- *       center : Cesium.Cartesian3.fromDegrees(-100.0, 20.0),
- *       semiMinorAxis : 500000.0,
- *       semiMajorAxis : 1000000.0,
- *       rotation : Cesium.Math.PI_OVER_FOUR,
- *       vertexFormat : Cesium.VertexFormat.POSITION_AND_ST
- *   }),
- *   id : 'object returned when this instance is picked and to get/set per-instance attributes'
- * });
- * scene.primitives.add(new Cesium.Primitive({
- *   geometryInstances : instance,
- *   appearance : new Cesium.EllipsoidSurfaceAppearance({
- *     material : Cesium.Material.fromType('Checkerboard')
- *   })
- * }));
+const instance = new Cesium.GeometryInstance({
+  geometry : new Cesium.EllipseGeometry({
+      center : Cesium.Cartesian3.fromDegrees(-100.0, 20.0),
+      semiMinorAxis : 500000.0,
+      semiMajorAxis : 1000000.0,
+      rotation : Cesium.Math.PI_OVER_FOUR,
+      vertexFormat : Cesium.VertexFormat.POSITION_AND_ST
+  }),
+  id : 'object returned when this instance is picked and to get/set per-instance attributes'
+});
+scene.primitives.add(new Cesium.Primitive({
+  geometryInstances : instance,
+  appearance : new Cesium.EllipsoidSurfaceAppearance({
+    material : Cesium.Material.fromType('Checkerboard')
+  })
+}));
  * @example
  * // 2. Draw different instances each with a unique color
- * const rectangleInstance = new Cesium.GeometryInstance({
- *   geometry : new Cesium.RectangleGeometry({
- *     rectangle : Cesium.Rectangle.fromDegrees(-140.0, 30.0, -100.0, 40.0),
- *     vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
- *   }),
- *   id : 'rectangle',
- *   attributes : {
- *     color : new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5)
- *   }
- * });
- * const ellipsoidInstance = new Cesium.GeometryInstance({
- *   geometry : new Cesium.EllipsoidGeometry({
- *     radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
- *     vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
- *   }),
- *   modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
- *     Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
- *   id : 'ellipsoid',
- *   attributes : {
- *     color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
- *   }
- * });
- * scene.primitives.add(new Cesium.Primitive({
- *   geometryInstances : [rectangleInstance, ellipsoidInstance],
- *   appearance : new Cesium.PerInstanceColorAppearance()
- * }));
+const rectangleInstance = new Cesium.GeometryInstance({
+  geometry : new Cesium.RectangleGeometry({
+    rectangle : Cesium.Rectangle.fromDegrees(-140.0, 30.0, -100.0, 40.0),
+    vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+  }),
+  id : 'rectangle',
+  attributes : {
+    color : new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5)
+  }
+});
+const ellipsoidInstance = new Cesium.GeometryInstance({
+  geometry : new Cesium.EllipsoidGeometry({
+    radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
+    vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
+  }),
+  modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
+    Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
+  id : 'ellipsoid',
+  attributes : {
+    color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
+  }
+});
+scene.primitives.add(new Cesium.Primitive({
+  geometryInstances : [rectangleInstance, ellipsoidInstance],
+  appearance : new Cesium.PerInstanceColorAppearance()
+}));
  * @example
  * // 3. Create the geometry on the main thread.
- * scene.primitives.add(new Cesium.Primitive({
- *   geometryInstances : new Cesium.GeometryInstance({
- *     geometry : Cesium.EllipsoidGeometry.createGeometry(new Cesium.EllipsoidGeometry({
- *       radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
- *       vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
- *     })),
- *     modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
- *       Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
- *     id : 'ellipsoid',
- *     attributes : {
- *       color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
- *     }
- *   }),
- *   appearance : new Cesium.PerInstanceColorAppearance(),
- *   asynchronous : false
- * }));
+scene.primitives.add(new Cesium.Primitive({
+  geometryInstances : new Cesium.GeometryInstance({
+    geometry : Cesium.EllipsoidGeometry.createGeometry(new Cesium.EllipsoidGeometry({
+      radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
+      vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
+    })),
+    modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
+      Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
+    id : 'ellipsoid',
+    attributes : {
+      color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
+    }
+  }),
+  appearance : new Cesium.PerInstanceColorAppearance(),
+  asynchronous : false
+}));
  * @param [options] - Object with the following properties:
  * @param [options.geometryInstances] - The geometry instances - or a single geometry instance - to render.
  * @param [options.appearance] - The appearance used to render the primitive.
@@ -38825,67 +38844,67 @@ export class Primitive {
     });
     /**
      * The geometry instances rendered with this primitive.  This may
-     * be <code>undefined</code> if <code>options.releaseGeometryInstances</code>
-     * is <code>true</code> when the primitive is constructed.
-     * <p>
-     * Changing this property after the primitive is rendered has no effect.
-     * </p>
+    be <code>undefined</code> if <code>options.releaseGeometryInstances</code>
+    is <code>true</code> when the primitive is constructed.
+    <p>
+    Changing this property after the primitive is rendered has no effect.
+    </p>
      */
     readonly geometryInstances: GeometryInstance[] | GeometryInstance;
     /**
      * The {@link Appearance} used to shade this primitive. Each geometry
-     * instance is shaded with the same appearance.  Some appearances, like
-     * {@link PerInstanceColorAppearance} allow giving each instance unique
-     * properties.
+    instance is shaded with the same appearance.  Some appearances, like
+    {@link PerInstanceColorAppearance} allow giving each instance unique
+    properties.
      */
     appearance: Appearance;
     /**
      * The {@link Appearance} used to shade this primitive when it fails the depth test. Each geometry
-     * instance is shaded with the same appearance.  Some appearances, like
-     * {@link PerInstanceColorAppearance} allow giving each instance unique
-     * properties.
-     *
-     * <p>
-     * When using an appearance that requires a color attribute, like PerInstanceColorAppearance,
-     * add a depthFailColor per-instance attribute instead.
-     * </p>
-     *
-     * <p>
-     * Requires the EXT_frag_depth WebGL extension to render properly. If the extension is not supported,
-     * there may be artifacts.
-     * </p>
+    instance is shaded with the same appearance.  Some appearances, like
+    {@link PerInstanceColorAppearance} allow giving each instance unique
+    properties.
+    
+    <p>
+    When using an appearance that requires a color attribute, like PerInstanceColorAppearance,
+    add a depthFailColor per-instance attribute instead.
+    </p>
+    
+    <p>
+    Requires the EXT_frag_depth WebGL extension to render properly. If the extension is not supported,
+    there may be artifacts.
+    </p>
      */
     depthFailAppearance: Appearance;
     /**
      * The 4x4 transformation matrix that transforms the primitive (all geometry instances) from model to world coordinates.
-     * When this is the identity matrix, the primitive is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
-     * Local reference frames can be used by providing a different transformation matrix, like that returned
-     * by {@link Transforms.eastNorthUpToFixedFrame}.
-     *
-     * <p>
-     * This property is only supported in 3D mode.
-     * </p>
+    When this is the identity matrix, the primitive is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
+    Local reference frames can be used by providing a different transformation matrix, like that returned
+    by {@link Transforms.eastNorthUpToFixedFrame}.
+    
+    <p>
+    This property is only supported in 3D mode.
+    </p>
      * @example
      * const origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-     * p.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+    p.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
      */
     modelMatrix: Matrix4;
     /**
      * Determines if the primitive will be shown.  This affects all geometry
-     * instances in the primitive.
+    instances in the primitive.
      */
     show: boolean;
     /**
      * When <code>true</code>, the renderer frustum culls and horizon culls the primitive's commands
-     * based on their bounding volume.  Set this to <code>false</code> for a small performance gain
-     * if you are manually culling the primitive.
+    based on their bounding volume.  Set this to <code>false</code> for a small performance gain
+    if you are manually culling the primitive.
      */
     cull: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-     * <p>
-     * Draws the bounding sphere for each draw command in the primitive.
-     * </p>
+    <p>
+    Draws the bounding sphere for each draw command in the primitive.
+    </p>
      */
     debugShowBoundingVolume: boolean;
     /**
@@ -38918,8 +38937,8 @@ export class Primitive {
     readonly compressVertices: boolean;
     /**
      * Determines if the primitive is complete and ready to render.  If this property is
-     * true, the primitive will be rendered the next time that {@link Primitive#update}
-     * is called.
+    true, the primitive will be rendered the next time that {@link Primitive#update}
+    is called.
      */
     readonly ready: boolean;
     /**
@@ -38928,42 +38947,42 @@ export class Primitive {
     readonly readyPromise: Promise<Primitive>;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
-     * get the draw commands needed to render this primitive.
-     * <p>
-     * Do not call this function directly.  This is documented just to
-     * list the exceptions that may be propagated when the scene is rendered:
-     * </p>
+    get the draw commands needed to render this primitive.
+    <p>
+    Do not call this function directly.  This is documented just to
+    list the exceptions that may be propagated when the scene is rendered:
+    </p>
      */
     update(): void;
     /**
      * Returns the modifiable per-instance attributes for a {@link GeometryInstance}.
      * @example
      * const attributes = primitive.getGeometryInstanceAttributes('an id');
-     * attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.AQUA);
-     * attributes.show = Cesium.ShowGeometryInstanceAttribute.toValue(true);
-     * attributes.distanceDisplayCondition = Cesium.DistanceDisplayConditionGeometryInstanceAttribute.toValue(100.0, 10000.0);
-     * attributes.offset = Cesium.OffsetGeometryInstanceAttribute.toValue(Cartesian3.IDENTITY);
+    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.AQUA);
+    attributes.show = Cesium.ShowGeometryInstanceAttribute.toValue(true);
+    attributes.distanceDisplayCondition = Cesium.DistanceDisplayConditionGeometryInstanceAttribute.toValue(100.0, 10000.0);
+    attributes.offset = Cesium.OffsetGeometryInstanceAttribute.toValue(Cartesian3.IDENTITY);
      * @param id - The id of the {@link GeometryInstance}.
      * @returns The typed array in the attribute's format or undefined if the is no instance with id.
      */
     getGeometryInstanceAttributes(id: any): any;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-     * <p>
-     * If this object was destroyed, it should not be used; calling any function other than
-     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
-     * </p>
+    <p>
+    If this object was destroyed, it should not be used; calling any function other than
+    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+    </p>
      * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-     * <p>
-     * Once an object is destroyed, it should not be used; calling any function other than
-     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-     * assign the return value (<code>undefined</code>) to the object as done in the example.
-     * </p>
+    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+    <p>
+    Once an object is destroyed, it should not be used; calling any function other than
+    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+    assign the return value (<code>undefined</code>) to the object as done in the example.
+    </p>
      * @example
      * e = e && e.destroy();
      */
@@ -41045,8 +41064,8 @@ export class TimeDynamicPointCloud {
     </ul>
      * @example
      * pointCloud.frameFailed.addEventListener(function(error) {
-        console.log('An error occurred loading frame: ' + error.uri);
-        console.log('Error: ' + error.message);
+        console.log(`An error occurred loading frame: ${error.uri}`);
+        console.log(`Error: ${error.message}`);
     });
      */
     frameFailed: Event;
@@ -42540,6 +42559,11 @@ export class Cesium3DTilesInspectorViewModel {
      */
     showPickStatistics: boolean;
     /**
+     * Gets or sets the flag to show resource cache statistics. This property is
+    observable.
+     */
+    showResourceCacheStatistics: boolean;
+    /**
      * Gets or sets the flag to show the inspector.  This property is observable.
      */
     inspectorVisible: boolean;
@@ -42728,6 +42752,10 @@ export class Cesium3DTilesInspectorViewModel {
      * Gets the pick statistics text.  This property is observable.
      */
     readonly pickStatisticsText: string;
+    /**
+     * Gets the resource cache statistics text. This property is observable.
+     */
+    readonly resourceCacheStatisticsText: string;
     /**
      * Gets the available blend modes
      */
