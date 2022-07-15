@@ -7,6 +7,8 @@
 .toolsbar-mappic ul {
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .toolsbar-mappic ul li {
@@ -15,7 +17,6 @@
   list-style-type: none;
   margin-top: 10px;
   margin-left: 10px;
-  float: left;
   text-align: center;
   cursor: pointer;
   font-size: 12px;

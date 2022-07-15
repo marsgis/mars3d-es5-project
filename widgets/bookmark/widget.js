@@ -26,22 +26,14 @@
 
       console.log("视角定位：" + JSON.stringify(options))
     }
-    getThisExtent(callback) {
-      let bookmark = this.map.getCameraView()
-
-      haoutil.loading.show()
-      this.map.expImage({
+    getThisExtent() {
+      return this.map.getCameraView()
+    }
+    getExtentImage() {
+      return this.map.expImage({
         download: false,
-        width: 300, //指定 高  或 宽
-        callback: function (base64, size) {
-          haoutil.loading.close()
-
-          if (callback) {
-            callback(bookmark, base64)
-          }
-        }
+        width: 300 //指定 高  或 宽
       })
-      return bookmark
     }
   }
 

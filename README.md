@@ -259,7 +259,7 @@ get view() {
 将view的html直接添加至主页面中指定id的DOM节点下，通过`parent`属性配置指定，默认是`body`。
  ```js 
 get view() {
-   return { type: 'append', url: 'view.html', parent: '#centerDiv' }
+   return { type: 'append', url: 'view.html', parent: '#centerDiv3D' }
 }
  ```
 

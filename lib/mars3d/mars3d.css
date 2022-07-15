@@ -1,10 +1,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.3.13
- * 编译日期：2022-06-13 09:20:35
+ * 版本信息：v3.4.0
+ * 编译日期：2022-07-15 14:34:57
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2022-02-01
+ * 使用单位：免费公开版 ，2022-06-01
  */
 
 /**地球容器div*/
@@ -495,7 +495,6 @@
   margin: -2px;
   box-sizing: content-box;
 }
-/**内置的DivGraphic通用样式【动画点】*/
 .mars3d-animation-point,
 .mars3d-animation-point:after,
 .mars3d-animation-point:before,
@@ -528,6 +527,14 @@
   transform: translate(-50%, -50%);
   box-shadow: 0 0 2em currentColor, 0 0 0.5em currentColor;
   position: absolute;
+}
+.mars3d-animation-point .mars3d-animation-point-lbl {
+  position: absolute;
+  transform: translate(-50%, -120%);
+  left: 50%;
+  font-size: 16px;
+  width: fit-content;
+  white-space: nowrap;
 }
 .mars3d-animation-point p {
   position: absolute;
@@ -596,26 +603,26 @@
     filter: alpha(opacity=1);
   }
   25% {
-    width: 12px;
-    height: 12px;
+    width: 120%;
+    height: 120%;
     opacity: 0.7;
     filter: alpha(opacity=70);
   }
   50% {
-    width: 20px;
-    height: 20px;
+    width: 200%;
+    height: 200%;
     opacity: 0.5;
     filter: alpha(opacity=50);
   }
   75% {
-    width: 30px;
-    height: 30px;
+    width: 300%;
+    height: 300%;
     opacity: 0.2;
     filter: alpha(opacity=20);
   }
   to {
-    width: 40px;
-    height: 40px;
+    width: 400%;
+    height: 400%;
     opacity: 0;
     filter: alpha(opacity=0);
   }
@@ -628,26 +635,26 @@
     filter: alpha(opacity=1);
   }
   25% {
-    width: 12px;
-    height: 12px;
+    width: 120%;
+    height: 120%;
     opacity: 0.7;
     filter: alpha(opacity=70);
   }
   50% {
-    width: 20px;
-    height: 20px;
+    width: 200%;
+    height: 200%;
     opacity: 0.5;
     filter: alpha(opacity=50);
   }
   75% {
-    width: 30px;
-    height: 30px;
+    width: 300%;
+    height: 300%;
     opacity: 0.2;
     filter: alpha(opacity=20);
   }
   to {
-    width: 40px;
-    height: 40px;
+    width: 400%;
+    height: 400%;
     opacity: 0;
     filter: alpha(opacity=0);
   }
@@ -660,26 +667,26 @@
     filter: alpha(opacity=1);
   }
   25% {
-    width: 12px;
-    height: 12px;
+    width: 120%;
+    height: 120%;
     opacity: 0.7;
     filter: alpha(opacity=70);
   }
   50% {
-    width: 20px;
-    height: 20px;
+    width: 200%;
+    height: 200%;
     opacity: 0.5;
     filter: alpha(opacity=50);
   }
   75% {
-    width: 30px;
-    height: 30px;
+    width: 300%;
+    height: 300%;
     opacity: 0.2;
     filter: alpha(opacity=20);
   }
   to {
-    width: 40px;
-    height: 40px;
+    width: 400%;
+    height: 400%;
     opacity: 0;
     filter: alpha(opacity=0);
   }
@@ -692,26 +699,26 @@
     filter: alpha(opacity=1);
   }
   25% {
-    width: 12px;
-    height: 12px;
+    width: 120%;
+    height: 120%;
     opacity: 0.7;
     filter: alpha(opacity=70);
   }
   50% {
-    width: 20px;
-    height: 20px;
+    width: 200%;
+    height: 200%;
     opacity: 0.5;
     filter: alpha(opacity=50);
   }
   75% {
-    width: 30px;
-    height: 30px;
+    width: 300%;
+    height: 300%;
     opacity: 0.2;
     filter: alpha(opacity=20);
   }
   to {
-    width: 40px;
-    height: 40px;
+    width: 400%;
+    height: 400%;
     opacity: 0;
     filter: alpha(opacity=0);
   }
@@ -724,26 +731,26 @@
     filter: alpha(opacity=1);
   }
   25% {
-    width: 12px;
-    height: 12px;
+    width: 120%;
+    height: 120%;
     opacity: 0.7;
     filter: alpha(opacity=70);
   }
   50% {
-    width: 20px;
-    height: 20px;
+    width: 200%;
+    height: 200%;
     opacity: 0.5;
     filter: alpha(opacity=50);
   }
   75% {
-    width: 30px;
-    height: 30px;
+    width: 300%;
+    height: 300%;
     opacity: 0.2;
     filter: alpha(opacity=20);
   }
   to {
-    width: 40px;
-    height: 40px;
+    width: 400%;
+    height: 400%;
     opacity: 0;
     filter: alpha(opacity=0);
   }
@@ -914,13 +921,15 @@
 }
 .mars3d-template-content input {
   color: #ffffff;
-  background-color: rgba(63, 72, 84, 0.9);
+  background-color: transparent;
+  padding: 4px 5px;
   border-width: 1px;
   border-style: solid;
 }
 .mars3d-template-content textarea {
   color: #ffffff;
-  background-color: rgba(63, 72, 84, 0.9);
+  background-color: transparent;
+  padding: 4px 5px;
   border-width: 1px;
   border-style: solid;
   height: 60px;

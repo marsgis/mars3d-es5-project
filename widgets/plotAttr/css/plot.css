@@ -470,6 +470,7 @@ textarea {
   font-size: 12px;
   border: 1px solid #e6e6e6;
   background-color: #fff;
+  color: #fff;
   border-radius: 3px;
   display: block;
   width: 100%;
@@ -629,4 +630,13 @@ textarea {
 .dark .mp_tab_card .mp_tab_tit .cur {
   color: #ffffff;
   background-color: rgba(63, 72, 84, 0.6);
+}
+
+/* color */
+.minicolors-theme-default .minicolors-swatch {
+  top: 3px !important;
+}
+
+.minicolors-theme-default.minicolors {
+  display: block;
 }

@@ -69,7 +69,10 @@ li {
   list-style: none;
 }
 
-#centerDiv {
+:focus-visible {
+  outline: none;
+}
+#centerDiv3D {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -357,6 +360,7 @@ html {
   left: 40px;
   max-height: 700px;
   margin-bottom: 5px;
+  background-color: rgba(23, 49, 71, 0.7);
 }
 
 /**cesium 帮助面板*/
@@ -365,6 +369,14 @@ html {
   bottom: 0;
   left: 40px;
   transform-origin: left bottom;
+}
+.cesium-navigation-help-instructions,
+.cesium-navigation-button {
+  background-color: rgba(23, 49, 71, 0.8);
+}
+.cesium-navigation-button-selected,
+.cesium-navigation-button-unselected:hover {
+  background-color: rgba(23, 49, 71, 1);
 }
 
 /**cesium 二维三维切换*/
@@ -386,7 +398,7 @@ html {
 }
 
 .cesium-geocoder-searchButton {
-  background-color: #3f4854;
+  background-color: rgba(23, 49, 71, 0.8);
 }
 
 .cesium-viewer-geocoderContainer .cesium-geocoder-input {
@@ -398,7 +410,7 @@ html {
 }
 
 .cesium-viewer-geocoderContainer .search-results {
-  background-color: #3f4854;
+  background-color: rgba(23, 49, 71, 0.8);
 }
 
 /**cesium info信息框*/
@@ -408,7 +420,7 @@ html {
 }
 
 .cesium-infoBox-title {
-  background-color: #3f4854;
+  background-color: rgba(23, 49, 71, 0.8);
 }
 
 /**cesium 任务栏的FPS信息*/
@@ -428,7 +440,9 @@ html {
   top: 10px;
   left: 10px;
   right: auto;
-  background-color: #3f4854;
+}
+.cesium-cesiumInspector{
+  background-color: rgba(23, 49, 71, 0.8);
 }
 
 
@@ -464,6 +478,24 @@ html {
 .mars3d-popup-background {
   background: rgba(23, 49, 71, 0.8);
 }
+
+.mars3d-tooltip {
+  background: rgba(23, 49, 71, 0.8);
+  border: 1px solid rgba(23, 49, 71, 0.8);
+}
+.mars3d-tooltip-top:before {
+  border-top-color: rgba(23, 49, 71, 0.8);
+}
+.mars3d-tooltip-bottom:before {
+  border-bottom-color: rgba(23, 49, 71, 0.8);
+}
+.mars3d-tooltip-left:before {
+  border-left-color: rgba(23, 49, 71, 0.8);
+}
+.mars3d-tooltip-right:before {
+  border-right-color: rgba(23, 49, 71, 0.8);
+}
+
 .mars3d-template-content label {
   padding-right: 6px;
 }
@@ -477,6 +509,9 @@ html {
   padding: 3px 10px;
   border: 1px solid #209ffd;
   background: #209ffd1c;
+}
+.mars3d-popup-content {
+  margin: 15px;
 }
 .mars3d-divGraphic:hover {
   z-index: 999 !important;

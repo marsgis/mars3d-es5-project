@@ -8,7 +8,7 @@
 
     //弹窗配置
     get view() {
-      return { type: "append", url: "view.html", parent: "#centerDiv" }
+      return { type: "append", url: "view.html" }
     }
 
     //初始化[仅执行1次]
@@ -21,21 +21,21 @@
           name: "工具",
           icon: "fa fa-cubes",
           children: [
-            // { name: "图上量算", icon: "fa fa-calculator", widget: "widgets/measure/widget.js" },
-            // { name: "空间分析", icon: "fa fa-bar-chart", widget: "widgets/analysis/widget.js" },
+            { name: "图上量算", icon: "fa fa-calculator", widget: "widgets/measure/widget.js" },
+            { name: "空间分析", icon: "fa fa-bar-chart", widget: "widgets/analysis/widget.js" },
 
             { name: "坐标定位", icon: "fa fa-map-pin", widget: "widgets/centerXY/widget.js" },
-            // { name: "地区导航", icon: "fa fa-paper-plane", widget: "widgets/navXZQH/widget.js" },
-            // { name: "我的标记", icon: "fa fa-edit", widget: "widgets/addmarker/widget.js" },
+            { name: "地区导航", icon: "fa fa-paper-plane", widget: "widgets/navXZQH/widget.js" },
+            { name: "我的标记", icon: "fa fa-edit", widget: "widgets/addmarker/widget.js" },
             { name: "视角书签", icon: "fa fa-tags", widget: "widgets/bookmark/widget.js" },
-            // { name: "地图打印", icon: "fa fa-print", widget: "widgets/print/widget.js" },
+            { name: "地图打印", icon: "fa fa-print", widget: "widgets/print/widget.js" },
 
-            // { name: "图上标绘", icon: "fa fa-object-group", widget: "widgets/plot/widget.js" },
-            // { name: "飞行漫游", icon: "fa fa-send-o", widget: "widgets/roamLine/widget.js" },
-            // { name: "路线导航", icon: "fa fa-level-up", widget: "widgets/queryRoute/widget.js" },
+            { name: "图上标绘", icon: "fa fa-object-group", widget: "widgets/plot/widget.js" },
+            { name: "飞行漫游", icon: "fa fa-send-o", widget: "widgets/roamLine/widget.js" },
+            { name: "路线导航", icon: "fa fa-level-up", widget: "widgets/queryRoute/widget.js" },
 
-            // { name: "卷帘对比", icon: "fa fa-columns", widget: "widgets/mapSplit/widget.js" },
-            // { name: "分屏对比", icon: "fa fa-window-restore", widget: "widgets/mapCompare/widget.js" },
+            { name: "卷帘对比", icon: "fa fa-columns", widget: "widgets/mapSplit/widget.js" },
+            { name: "分屏对比", icon: "fa fa-window-restore", widget: "widgets/mapCompare/widget.js" }
             // { name: "百度街景", icon: "fa fa-street-view", widget: "widgets/streetscape/widget.js" },
           ]
         }

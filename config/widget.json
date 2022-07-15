@@ -79,15 +79,13 @@
           "bottom": 30,
           "right": 10
         },
-        "show":true
+        "show": true
       },
       "css": {
         "max-width": "300px"
       },
       "autoDisable": false,
-      "disableOther": [
-        "widgets/roamFly/widget.js"
-      ],
+      "disableOther": ["widgets/roamFly/widget.js"],
       "openAtStart": false
     },
     {
@@ -201,8 +199,7 @@
           "right": 5
         }
       },
-      "hasClear": false,
-      "openAtStart": false
+      "hasClear": false
     },
     {
       "name": "模型库",
@@ -247,14 +244,7 @@
     },
     {
       "name": "路线导航",
-      "uri": "widgets/queryRoute/widget.js",
-      "windowOptions": {
-        "position": {
-          "top": 45,
-          "bottom": 30,
-          "right": 5
-        }
-      }
+      "uri": "widgets/queryRoute/widget.js"
     },
 
     {

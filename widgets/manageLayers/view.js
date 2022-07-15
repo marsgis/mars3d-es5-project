@@ -46,7 +46,7 @@ function initWidgetView(_thisWidget) {
 }
 
 function _getNodeConfig(layer) {
-  if (layer == null || !layer.options || layer.options.noLayerManage) {
+  if (layer == null || !layer.options || layer.isPrivate) {
     return
   }
 
@@ -61,7 +61,6 @@ function _getNodeConfig(layer) {
     id: layer.id,
     pId: layer.pid,
     name: layer.name,
-    uuid: layer.uuid,
     checked: layer.isAdded && layer.show
   }
 
@@ -76,11 +75,11 @@ function _getNodeConfig(layer) {
   } else {
     node.icon = "img/layer.png"
     if (layer.parent) {
-      node._parentId = layer.parent.uuid
+      node._parentId = layer.parent.id
     }
   }
   //记录图层
-  layersObj[node.uuid] = layer
+  layersObj[node.id] = layer
   return node
 }
 
@@ -111,7 +110,7 @@ function addNode(item) {
 function removeNode(layer) {
   let treeObj = $.fn.zTree.getZTreeObj("treeOverlays")
 
-  let node = treeObj.getNodeByParam("uuid", layer.uuid, null)
+  let node = treeObj.getNodeByParam("id", layer.id, null)
   if (node) {
     treeObj.removeNode(node)
   }
@@ -120,7 +119,7 @@ function removeNode(layer) {
 function updateNode(layer) {
   let treeObj = $.fn.zTree.getZTreeObj("treeOverlays")
 
-  let node = treeObj.getNodeByParam("uuid", layer.uuid, null)
+  let node = treeObj.getNodeByParam("id", layer.id, null)
   let show = layer.isAdded && layer.show
   if (node) {
     //更新node
@@ -139,20 +138,20 @@ function updateNode(layer) {
 
 //===================================双击定位图层====================================
 function treeOverlays_onClick(e, treeId, treeNode, clickFlag) {
-  // if (treeNode == null || treeNode.uuid == null) {
+  // if (treeNode == null || treeNode.id == null) {
   //   return
   // }
-  // var layer = layersObj[treeNode.uuid]
+  // var layer = layersObj[treeNode.id]
   // if (layer) {
   //   thisWidget.checkClickLayer(layer, treeNode.checked)
   // }
 }
 
 function treeOverlays_onDblClick(event, treeId, treeNode) {
-  if (treeNode == null || treeNode.uuid == null) {
+  if (treeNode == null || treeNode.id == null) {
     return
   }
-  let layer = layersObj[treeNode.uuid]
+  let layer = layersObj[treeNode.id]
   if (layer && layer.show) {
     layer.flyTo()
   }
@@ -186,7 +185,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
       continue
     }
 
-    var layer = layersObj[treeNode.uuid]
+    var layer = layersObj[treeNode.id]
     if (layer == null) {
       continue
     }
@@ -202,8 +201,8 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
     if (layer.options.radio && treeNode.checked) {
       let nodes = treeObj.getNodesByFilter(
         function (node) {
-          let item = layersObj[node.uuid]
-          return item.options.radio && item.pid == layer.pid && node.uuid != treeNode.uuid
+          let item = layersObj[node.id]
+          return item.options.radio && item.pid == layer.pid && node.id != treeNode.id
         },
         false,
         treeNode.getParentNode()
@@ -214,7 +213,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
 
         $("#" + nodes[nidx].tId + "_range").hide()
 
-        let layertmp = layersObj[nodes[nidx].uuid]
+        let layertmp = layersObj[nodes[nidx].id]
         layertmp.show = false
       }
     }
@@ -223,7 +222,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
     thisWidget.updateLayerShow(layer, treeNode.checked)
   }
 
-  let layerThis = layersObj[chktreeNode.uuid]
+  let layerThis = layersObj[chktreeNode.id]
   if (layerThis) {
     thisWidget.checkClickLayer(layerThis, chktreeNode.checked)
   }
@@ -235,7 +234,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
 function addOpacityRangeDom(treeId, tNode) {
   //if (tNode.icon == "images/folder.png") return;
 
-  let layer = layersObj[tNode.uuid]
+  let layer = layersObj[tNode.id]
   if (!layer || !layer.hasOpacity) {
     return
   }
@@ -247,7 +246,7 @@ function addOpacityRangeDom(treeId, tNode) {
     .slider({ id: "slider" + tNode.tId, min: 0, max: 100, step: 1, value: (layer.opacity || 1) * 100 })
     .on("change", (e) => {
       let opacity = e.value.newValue / 100
-      let layer = layersObj[tNode.uuid]
+      let layer = layersObj[tNode.id]
       //设置图层的透明度
       // thisWidget.udpateLayerOpacity(layer, opacity)
       layer.opacity = opacity
@@ -267,7 +266,7 @@ function treeOverlays_OnRightClick(event, treeId, treeNode) {
     return
   }
 
-  let layer = layersObj[treeNode.uuid]
+  let layer = layersObj[treeNode.id]
   if (!layer || !layer.hasZIndex) {
     return
   }
@@ -331,7 +330,7 @@ function moveNodeAndLayer(type) {
   }
 
   let thisNode = lastRightClickTreeNode
-  let thisLayer = layersObj[thisNode.uuid]
+  let thisLayer = layersObj[thisNode.id]
 
   switch (type) {
     default:
@@ -341,7 +340,7 @@ function moveNodeAndLayer(type) {
         let moveNode = thisNode.getPreNode()
         if (moveNode) {
           treeObj.moveNode(moveNode, thisNode, "prev")
-          let moveLayer = layersObj[moveNode.uuid]
+          let moveLayer = layersObj[moveNode.id]
 
           exchangeLayer(thisLayer, moveLayer)
         }
@@ -359,7 +358,7 @@ function moveNodeAndLayer(type) {
           if (moveNode) {
             treeObj.moveNode(moveNode, thisNode, "prev")
 
-            let moveLayer = layersObj[moveNode.uuid]
+            let moveLayer = layersObj[moveNode.id]
             exchangeLayer(thisLayer, moveLayer)
           }
         }
@@ -372,7 +371,7 @@ function moveNodeAndLayer(type) {
         if (moveNode) {
           treeObj.moveNode(moveNode, thisNode, "next")
 
-          let moveLayer = layersObj[moveNode.uuid]
+          let moveLayer = layersObj[moveNode.id]
           exchangeLayer(thisLayer, moveLayer)
         }
       }
@@ -389,7 +388,7 @@ function moveNodeAndLayer(type) {
           if (moveNode) {
             treeObj.moveNode(moveNode, thisNode, "next")
 
-            let moveLayer = layersObj[moveNode.uuid]
+            let moveLayer = layersObj[moveNode.id]
             exchangeLayer(thisLayer, moveLayer)
           }
         }

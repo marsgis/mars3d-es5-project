@@ -26,26 +26,23 @@ $(document).ready(function () {
 
   haoutil.loading.show()
 
-  $.ajax({
-    type: "get",
-    dataType: "json",
-    url: configfile,
-    timeout: 0,
-    success: function (data) {
+  mars3d.Util.fetchJson({ url: configfile })
+    .then(function (json) {
+      console.log("读取 config.json 配置文件完成", json) // 打印测试信息
       haoutil.loading.hide()
 
       //构建地图
-      initMap(data.map3d)
+      initMap(json.map3d)
 
       setTimeout(removeMask, 3000) //欢迎UI关闭处理
-    },
-    error: function (request, textStatus) {
+    })
+    .catch(function (error) {
+      console.log("加载JSON出错", error)
+
       removeMask()
       haoutil.loading.hide()
       haoutil.alert("1.请检查文件内 json 语法是否存在问题。<br />2.请在浏览器输入文件url测试是否可以访问。", configfile + " 文件加载失败")
-      console.log(textStatus, request)
-    }
-  })
+    })
 
   initUI()
 })
@@ -124,20 +121,16 @@ function initMap(mapOptions) {
 function initWidget(map) {
   haoutil.loading.show()
 
-  $.ajax({
-    type: "get",
-    dataType: "json",
-    url: "config/widget.json",
-    timeout: 0,
-    success: function (widgetCfg) {
+  mars3d.Util.fetchJson({ url: "config/widget.json" })
+    .then(function (json) {
       haoutil.loading.hide()
 
       //url如果有传参时的处理
       if (haoutil.isutil.isNotNull(request.widget)) {
         if (request.onlyStart) {
-          widgetCfg.openAtStart = []
+          json.openAtStart = []
         }
-        widgetCfg.openAtStart.push({
+        json.openAtStart.push({
           uri: request.widget,
           name: request.name || "",
           windowOptions: {
@@ -148,18 +141,19 @@ function initWidget(map) {
         map.flyHome({ duration: 0 })
       }
       //初始化widget管理器
-      mars3d.widget.init(map, widgetCfg, "./") //tip: 第3个参数支持定义widget目录的相对路径。
+      mars3d.widget.init(map, json, "./") //tip: 第3个参数支持定义widget目录的相对路径。
 
       if (window.lastWidgetItem) {
         activateWidget(lastWidgetItem)
         lastWidgetItem = null
       }
-    },
-    error: function (XMLHttpRequest, textStatus, errorThrown) {
+    })
+    .catch(function (error) {
+      console.log("加载JSON出错", error)
+
       haoutil.loading.hide()
       haoutil.alert("config/widget.json文件加载失败！")
-    }
-  })
+    })
 
   //widget相关事件监听
   // mars3d.widget.on(mars3d.widget.EventType.load, function (event) {

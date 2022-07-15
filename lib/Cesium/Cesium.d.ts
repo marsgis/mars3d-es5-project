@@ -2857,6 +2857,11 @@ export class CatmullRomSpline {
 
 /**
  * A {@link TerrainProvider} that accesses terrain data in a Cesium terrain format.
+Terrain formats can be one of the following:
+<ul>
+<li> {@link https://github.com/AnalyticalGraphicsInc/quantized-mesh Quantized Mesh} </li>
+<li> {@link https://github.com/AnalyticalGraphicsInc/cesium/wiki/heightmap-1.0 Height Map} </li>
+</ul>
  * @example
  * // Create Arctic DEM terrain with normals.
 const viewer = new Cesium.Viewer('cesiumContainer', {
@@ -7663,7 +7668,7 @@ export class GoogleEarthEnterpriseTerrainData {
 /**
  * Provides tiled terrain using the Google Earth Enterprise REST API.
  * @example
- * const geeMetadata = new GoogleEarthEnterpriseMetadata('http://www.earthenterprise.org/3d');
+ * const geeMetadata = new GoogleEarthEnterpriseMetadata('http://www.example.com');
 const gee = new Cesium.GoogleEarthEnterpriseTerrainProvider({
     metadata : geeMetadata
 });
@@ -22462,7 +22467,7 @@ export class ModelVisualizer {
     constructor(scene: Scene, entityCollection: EntityCollection);
     /**
      * Updates models created this visualizer to match their
-    Entity counterpart at the given time.
+     * Entity counterpart at the given time.
      * @param time - The time to update to.
      * @returns This function always returns true.
      */
@@ -27315,11 +27320,11 @@ or picking using {@link Scene#pick}.
 handler.setInputAction(function(movement) {
     const feature = scene.pick(movement.endPosition);
     if (feature instanceof Cesium.Cesium3DTileFeature) {
-        const propertyNames = feature.getPropertyNames();
-        const length = propertyNames.length;
+        const propertyIds = feature.getPropertyIds();
+        const length = propertyIds.length;
         for (let i = 0; i < length; ++i) {
-            const propertyName = propertyNames[i];
-            console.log(`{propertyName}: ${feature.getProperty(propertyName)}`);
+            const propertyId = propertyIds[i];
+            console.log(`{propertyId}: ${feature.getProperty(propertyId)}`);
         }
     }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -27373,15 +27378,22 @@ export class Cesium3DTileFeature {
      */
     getPropertyNames(results?: string[]): string[];
     /**
+     * Returns an array of property IDs for the feature. This includes properties from this feature's
+    class and inherited classes when using a batch table hierarchy.
+     * @param [results] - An array into which to store the results.
+     * @returns The IDs of the feature's properties.
+     */
+    getPropertyIds(results?: string[]): string[];
+    /**
      * Returns a copy of the value of the feature's property with the given name. This includes properties from this feature's
     class and inherited classes when using a batch table hierarchy.
      * @example
      * // Display all the properties for a feature in the console log.
-    const propertyNames = feature.getPropertyNames();
-    const length = propertyNames.length;
+    const propertyIds = feature.getPropertyIds();
+    const length = propertyIds.length;
     for (let i = 0; i < length; ++i) {
-        const propertyName = propertyNames[i];
-        console.log(`{propertyName}: ${feature.getProperty(propertyName)}`);
+        const propertyId = propertyIds[i];
+        console.log(`{propertyId}: ${feature.getProperty(propertyId)}`);
     }
      * @param name - The case-sensitive name of the property.
      * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
@@ -27463,11 +27475,11 @@ or picking using {@link Scene#pick} and {@link Scene#pickPosition}.
 handler.setInputAction(function(movement) {
     const feature = scene.pick(movement.endPosition);
     if (feature instanceof Cesium.Cesium3DTilePointFeature) {
-        const propertyNames = feature.getPropertyNames();
-        const length = propertyNames.length;
+        const propertyIds = feature.getPropertyIds();
+        const length = propertyIds.length;
         for (let i = 0; i < length; ++i) {
-            const propertyName = propertyNames[i];
-            console.log(`{propertyName}: ${feature.getProperty(propertyName)}`);
+            const propertyId = propertyIds[i];
+            console.log(`{propertyId}: ${feature.getProperty(propertyId)}`);
         }
     }
 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -27649,15 +27661,22 @@ export class Cesium3DTilePointFeature {
      */
     getPropertyNames(results?: string[]): string[];
     /**
+     * Returns an array of property IDs for the feature. This includes properties from this feature's
+    class and inherited classes when using a batch table hierarchy.
+     * @param [results] - An array into which to store the results.
+     * @returns The IDs of the feature's properties.
+     */
+    getPropertyIds(results?: string[]): string[];
+    /**
      * Returns a copy of the value of the feature's property with the given name. This includes properties from this feature's
     class and inherited classes when using a batch table hierarchy.
      * @example
      * // Display all the properties for a feature in the console log.
-    const propertyNames = feature.getPropertyNames();
-    const length = propertyNames.length;
+    const propertyIds = feature.getPropertyIds();
+    const length = propertyIds.length;
     for (let i = 0; i < length; ++i) {
-        const propertyName = propertyNames[i];
-        console.log(`{propertyName} : ${feature.getProperty(propertyName)}`);
+        const propertyId = propertyIds[i];
+        console.log(`{propertyId} : ${feature.getProperty(propertyId)}`);
     }
      * @param name - The case-sensitive name of the property.
      * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
@@ -31359,7 +31378,7 @@ export namespace GoogleEarthEnterpriseImageryProvider {
 Notes: This provider is for use with the 3D Earth API of Google Earth Enterprise,
        {@link GoogleEarthEnterpriseMapsProvider} should be used with 2D Maps API.
  * @example
- * const geeMetadata = new GoogleEarthEnterpriseMetadata('http://www.earthenterprise.org/3d');
+ * const geeMetadata = new GoogleEarthEnterpriseMetadata('http://www.example.com');
 const gee = new Cesium.GoogleEarthEnterpriseImageryProvider({
     metadata : geeMetadata
 });
@@ -34822,7 +34841,7 @@ relative to a local origin.
  * @param [options.silhouetteColor = Color.RED] - The silhouette color. If more than 256 models have silhouettes enabled, there is a small chance that overlapping models will have minor artifacts.
  * @param [options.silhouetteSize = 0.0] - The size of the silhouette in pixels.
  * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
- * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models. Deprecated in CesiumJS 1.94, will be removed in CesiumJS 1.95.
+ * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models. Deprecated in CesiumJS 1.94, will be removed in CesiumJS 1.96.
  * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
  * @param [options.imageBasedLighting] - The properties for managing image-based lighting on this model.
  * @param [options.credit] - A credit for the data source, which is displayed on the canvas.
@@ -35160,7 +35179,7 @@ export class Model {
      * @param [options.silhouetteColor = Color.RED] - The silhouette color. If more than 256 models have silhouettes enabled, there is a small chance that overlapping models will have minor artifacts.
      * @param [options.silhouetteSize = 0.0] - The size of the silhouette in pixels.
      * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
-     * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models. Deprecated in CesiumJS 1.94, will be removed in CesiumJS 1.95.
+     * @param [options.dequantizeInShader = true] - Determines if a {@link https://github.com/google/draco|Draco} encoded model is dequantized on the GPU. This decreases total memory usage for encoded models. Deprecated in CesiumJS 1.94, will be removed in CesiumJS 1.96.
      * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
      * @param [options.imageBasedLighting] - The properties for managing image-based lighting for this tileset.
      * @param [options.credit] - A credit for the model, which is displayed on the canvas.
@@ -35768,31 +35787,36 @@ the Model from your source data type.
  * @param [options.scale = 1.0] - A uniform scale applied to this model.
  * @param [options.minimumPixelSize = 0.0] - The approximate minimum pixel size of the model regardless of zoom.
  * @param [options.maximumScale] - The maximum scale size of a model. An upper limit for minimumPixelSize.
+ * @param [options.id] - A user-defined object to return when the model is picked with {@link Scene#pick}.
+ * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
  * @param [options.clampAnimations = true] - Determines if the model's animations should hold a pose over frames where no keyframes are specified.
+ * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
  * @param [options.debugShowBoundingVolume = false] - For debugging only. Draws the bounding sphere for each draw command in the model.
  * @param [options.enableDebugWireframe = false] - For debugging only. This must be set to true for debugWireframe to work in WebGL1. This cannot be set after the model has loaded.
  * @param [options.debugWireframe = false] - For debugging only. Draws the model in wireframe. Will only work for WebGL1 if enableDebugWireframe is set to true.
  * @param [options.cull = true] - Whether or not to cull the model using frustum/horizon culling. If the model is part of a 3D Tiles tileset, this property will always be false, since the 3D Tiles culling system is used.
  * @param [options.opaquePass = Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
- * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
  * @param [options.customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
  * @param [options.content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
  * @param [options.heightReference = HeightReference.NONE] - Determines how the model is drawn relative to terrain.
  * @param [options.scene] - Must be passed in for models that use the height reference property.
+ * @param [options.distanceDisplayCondition] - The condition specifying at what distance from the camera that this model will be displayed.
  * @param [options.color] - A color that blends with the model's rendered color.
  * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
  * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
- * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
- * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
- * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation based on geometric error and lighting.
+ * @param [options.silhouetteColor = Color.RED] - The silhouette color. If more than 256 models have silhouettes enabled, there is a small chance that overlapping models will have minor artifacts.
+ * @param [options.silhouetteSize = 0.0] - The size of the silhouette in pixels.
  * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
  * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
  * @param [options.imageBasedLighting] - The properties for managing image-based lighting on this model.
  * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if the model's color is translucent.
- * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
+ * @param [options.credit] - A credit for the data source, which is displayed on the canvas.
  * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
  * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
  * @param [options.projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is true, the model will be projected accurately to 2D, but it will use more memory to do so. If this is false, the model will use less memory and will still render in 2D / CV mode, but its positions may be inaccurate. This disables minimumPixelSize and prevents future modification to the model matrix. This also cannot be set after the model has loaded.
+ * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation based on geometric error and lighting.
  */
 export class ModelExperimental {
     constructor(options: {
@@ -35802,31 +35826,36 @@ export class ModelExperimental {
         scale?: number;
         minimumPixelSize?: number;
         maximumScale?: number;
+        id?: any;
+        allowPicking?: boolean;
         clampAnimations?: boolean;
+        shadows?: ShadowMode;
         debugShowBoundingVolume?: boolean;
         enableDebugWireframe?: boolean;
         debugWireframe?: boolean;
         cull?: boolean;
         opaquePass?: boolean;
-        allowPicking?: boolean;
         customShader?: CustomShader;
         content?: Cesium3DTileContent;
         heightReference?: HeightReference;
         scene?: Scene;
+        distanceDisplayCondition?: DistanceDisplayCondition;
         color?: Color;
         colorBlendMode?: ColorBlendMode;
         colorBlendAmount?: number;
-        featureIdLabel?: string | number;
-        instanceFeatureIdLabel?: string | number;
-        pointCloudShading?: any;
+        silhouetteColor?: Color;
+        silhouetteSize?: number;
         clippingPlanes?: ClippingPlaneCollection;
         lightColor?: Cartesian3;
         imageBasedLighting?: ImageBasedLighting;
         backFaceCulling?: boolean;
-        shadows?: ShadowMode;
+        credit?: Credit | string;
         showCreditsOnScreen?: boolean;
         splitDirection?: SplitDirection;
         projectTo2D?: boolean;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
+        pointCloudShading?: any;
     });
     /**
      * When <code>true</code>, this model is ready to render, i.e., the external binary, image,
@@ -35867,6 +35896,15 @@ export class ModelExperimental {
      */
     heightReference: HeightReference;
     /**
+     * Gets or sets the distance display condition, which specifies at what distance
+    from the camera this model will be displayed.
+     */
+    distanceDisplayCondition: DistanceDisplayCondition;
+    /**
+     * A user-defined object that is returned when the model is picked.
+     */
+    id: any;
+    /**
      * The style to apply the to the features in the model. Cannot be applied if a {@link CustomShader} is also applied.
      */
     style: Cesium3DTileStyle;
@@ -35882,6 +35920,14 @@ export class ModelExperimental {
      * Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
      */
     colorBlendAmount: number;
+    /**
+     * The silhouette color.
+     */
+    silhouetteColor: Color;
+    /**
+     * The size of the silhouette in pixels.
+     */
+    silhouetteSize: number;
     /**
      * Gets the model's bounding sphere in world space. This does not take into account
     glTF animations, skins, or morph targets. It also does not account for
@@ -35954,8 +36000,8 @@ export class ModelExperimental {
     /**
      * Whether to cull back-facing geometry. When true, back face culling is
     determined by the material's doubleSided property; when false, back face
-    culling is disabled. Back faces are not culled if the model's color is
-    translucent.
+    culling is disabled. Back faces are not culled if {@link ModelExperimental#color}
+    is translucent or {@link ModelExperimental#silhouetteSize} is greater than 0.0.
      */
     backFaceCulling: boolean;
     /**
@@ -35981,6 +36027,10 @@ export class ModelExperimental {
      */
     shadows: ShadowMode;
     /**
+     * Gets the credit that will be displayed for the model
+     */
+    readonly credit: Credit;
+    /**
      * Gets or sets whether the credits of the model will be displayed on the screen
      */
     showCreditsOnScreen: boolean;
@@ -35988,6 +36038,23 @@ export class ModelExperimental {
      * The {@link SplitDirection} to apply to this model.
      */
     splitDirection: SplitDirection;
+    /**
+     * Sets the current value of an articulation stage.  After setting one or
+    multiple stage values, call ModelExperimental.applyArticulations() to
+    cause the node matrices to be recalculated.
+     * @example
+     * // Sets the value of the stage named "MoveX" belonging to the articulation named "SampleArticulation"
+    model.setArticulationStage("SampleArticulation MoveX", 50.0);
+     * @param articulationStageKey - The name of the articulation, a space, and the name of the stage.
+     * @param value - The numeric value of this stage of the articulation.
+     */
+    setArticulationStage(articulationStageKey: string, value: number): void;
+    /**
+     * Applies any modified articulation stages to the matrix of each node that
+    participates in any articulation. Note that this will overwrite any node
+    transformations on participating nodes.
+     */
+    applyArticulations(): void;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
     get the draw commands needed to render this primitive.
@@ -36031,7 +36098,12 @@ export class ModelExperimental {
      * @param [options.scale = 1.0] - A uniform scale applied to this model.
      * @param [options.minimumPixelSize = 0.0] - The approximate minimum pixel size of the model regardless of zoom.
      * @param [options.maximumScale] - The maximum scale size of a model. An upper limit for minimumPixelSize.
+     * @param [options.id] - A user-defined object to return when the model is picked with {@link Scene#pick}.
+     * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
      * @param [options.incrementallyLoadTextures = true] - Determine if textures may continue to stream in after the model is loaded.
+     * @param [options.asynchronous = true] - Determines if model WebGL resource creation will be spread out over several frames or block until completion once all glTF files are loaded.
+     * @param [options.clampAnimations = true] - Determines if the model's animations should hold a pose over frames where no keyframes are specified.
+     * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
      * @param [options.releaseGltfJson = false] - When true, the glTF JSON is released once the glTF is loaded. This is is especially useful for cases like 3D Tiles, where each .gltf model is unique and caching the glTF JSON is not effective.
      * @param [options.debugShowBoundingVolume = false] - For debugging only. Draws the bounding sphere for each draw command in the model.
      * @param [options.enableDebugWireframe = false] - For debugging only. This must be set to true for debugWireframe to work in WebGL1. This cannot be set after the model has loaded.
@@ -36040,25 +36112,27 @@ export class ModelExperimental {
      * @param [options.opaquePass = Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
      * @param [options.upAxis = Axis.Y] - The up-axis of the glTF model.
      * @param [options.forwardAxis = Axis.Z] - The forward-axis of the glTF model.
-     * @param [options.allowPicking = true] - When <code>true</code>, each primitive is pickable with {@link Scene#pick}.
      * @param [options.customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
      * @param [options.content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
      * @param [options.heightReference = HeightReference.NONE] - Determines how the model is drawn relative to terrain.
      * @param [options.scene] - Must be passed in for models that use the height reference property.
+     * @param [options.distanceDisplayCondition] - The condition specifying at what distance from the camera that this model will be displayed.
      * @param [options.color] - A color that blends with the model's rendered color.
      * @param [options.colorBlendMode = ColorBlendMode.HIGHLIGHT] - Defines how the color blends with the model.
      * @param [options.colorBlendAmount = 0.5] - Value used to determine the color strength when the <code>colorBlendMode</code> is <code>MIX</code>. A value of 0.0 results in the model's rendered color while a value of 1.0 results in a solid color, with any value in-between resulting in a mix of the two.
-     * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
-     * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
-     * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation and lighting.
+     * @param [options.silhouetteColor = Color.RED] - The silhouette color. If more than 256 models have silhouettes enabled, there is a small chance that overlapping models will have minor artifacts.
+     * @param [options.silhouetteSize = 0.0] - The size of the silhouette in pixels.
      * @param [options.clippingPlanes] - The {@link ClippingPlaneCollection} used to selectively disable rendering the model.
      * @param [options.lightColor] - The light color when shading the model. When <code>undefined</code> the scene's light color is used instead.
      * @param [options.imageBasedLighting] - The properties for managing image-based lighting on this model.
      * @param [options.backFaceCulling = true] - Whether to cull back-facing geometry. When true, back face culling is determined by the material's doubleSided property; when false, back face culling is disabled. Back faces are not culled if the model's color is translucent.
-     * @param [options.shadows = ShadowMode.ENABLED] - Determines whether the model casts or receives shadows from light sources.
+     * @param [options.credit] - A credit for the data source, which is displayed on the canvas.
      * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
      * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
      * @param [options.projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is true, the model will be projected accurately to 2D, but it will use more memory to do so. If this is false, the model will use less memory and will still render in 2D / CV mode, but its positions may be inaccurate. This disables minimumPixelSize and prevents future modification to the model matrix. This also cannot be set after the model has loaded.
+     * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+     * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+     * @param [options.pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation and lighting.
      * @returns The newly created model.
      */
     static fromGltf(options: {
@@ -36069,7 +36143,12 @@ export class ModelExperimental {
         scale?: number;
         minimumPixelSize?: number;
         maximumScale?: number;
+        id?: any;
+        allowPicking?: boolean;
         incrementallyLoadTextures?: boolean;
+        asynchronous?: boolean;
+        clampAnimations?: boolean;
+        shadows?: ShadowMode;
         releaseGltfJson?: boolean;
         debugShowBoundingVolume?: boolean;
         enableDebugWireframe?: boolean;
@@ -36078,25 +36157,27 @@ export class ModelExperimental {
         opaquePass?: boolean;
         upAxis?: Axis;
         forwardAxis?: Axis;
-        allowPicking?: boolean;
         customShader?: CustomShader;
         content?: Cesium3DTileContent;
         heightReference?: HeightReference;
         scene?: Scene;
+        distanceDisplayCondition?: DistanceDisplayCondition;
         color?: Color;
         colorBlendMode?: ColorBlendMode;
         colorBlendAmount?: number;
-        featureIdLabel?: string | number;
-        instanceFeatureIdLabel?: string | number;
-        pointCloudShading?: any;
+        silhouetteColor?: Color;
+        silhouetteSize?: number;
         clippingPlanes?: ClippingPlaneCollection;
         lightColor?: Cartesian3;
         imageBasedLighting?: ImageBasedLighting;
         backFaceCulling?: boolean;
-        shadows?: ShadowMode;
+        credit?: Credit | string;
         showCreditsOnScreen?: boolean;
         splitDirection?: SplitDirection;
         projectTo2D?: boolean;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
+        pointCloudShading?: any;
     }): ModelExperimental;
 }
 
@@ -36472,11 +36553,11 @@ export class ModelFeature {
      * Returns a copy of the value of the feature's property with the given name.
      * @example
      * // Display all the properties for a feature in the console log.
-    const propertyNames = feature.getPropertyNames();
-    const length = propertyNames.length;
+    const propertyIds = feature.getPropertyIds();
+    const length = propertyIds.length;
     for (let i = 0; i < length; ++i) {
-        const propertyName = propertyNames[i];
-        console.log(propertyName + ': ' + feature.getProperty(propertyName));
+        const propertyId = propertyIds[i];
+        console.log(propertyId + ': ' + feature.getProperty(propertyId));
     }
      * @param name - The case-sensitive name of the property.
      * @returns The value of the property or <code>undefined</code> if the feature does not have this property.
@@ -36505,6 +36586,12 @@ export class ModelFeature {
      * @returns The names of the feature's properties.
      */
     getPropertyNames(results?: string[]): string[];
+    /**
+     * Returns an array of property IDs for the feature.
+     * @param [results] - An array into which to store the results.
+     * @returns The IDs of the feature's properties.
+     */
+    getPropertyIds(results?: string[]): string[];
     /**
      * Sets the value of the feature's property with the given name.
      * @example
@@ -38727,88 +38814,88 @@ export enum PostProcessStageSampleMode {
 
 /**
  * A primitive represents geometry in the {@link Scene}.  The geometry can be from a single {@link GeometryInstance}
-as shown in example 1 below, or from an array of instances, even if the geometry is from different
-geometry types, e.g., an {@link RectangleGeometry} and an {@link EllipsoidGeometry} as shown in Code Example 2.
-<p>
-A primitive combines geometry instances with an {@link Appearance} that describes the full shading, including
-{@link Material} and {@link RenderState}.  Roughly, the geometry instance defines the structure and placement,
-and the appearance defines the visual characteristics.  Decoupling geometry and appearance allows us to mix
-and match most of them and add a new geometry or appearance independently of each other.
-</p>
-<p>
-Combining multiple instances into one primitive is called batching, and significantly improves performance for static data.
-Instances can be individually picked; {@link Scene#pick} returns their {@link GeometryInstance#id}.  Using
-per-instance appearances like {@link PerInstanceColorAppearance}, each instance can also have a unique color.
-</p>
-<p>
-{@link Geometry} can either be created and batched on a web worker or the main thread. The first two examples
-show geometry that will be created on a web worker by using the descriptions of the geometry. The third example
-shows how to create the geometry on the main thread by explicitly calling the <code>createGeometry</code> method.
-</p>
+ * as shown in example 1 below, or from an array of instances, even if the geometry is from different
+ * geometry types, e.g., an {@link RectangleGeometry} and an {@link EllipsoidGeometry} as shown in Code Example 2.
+ * <p>
+ * A primitive combines geometry instances with an {@link Appearance} that describes the full shading, including
+ * {@link Material} and {@link RenderState}.  Roughly, the geometry instance defines the structure and placement,
+ * and the appearance defines the visual characteristics.  Decoupling geometry and appearance allows us to mix
+ * and match most of them and add a new geometry or appearance independently of each other.
+ * </p>
+ * <p>
+ * Combining multiple instances into one primitive is called batching, and significantly improves performance for static data.
+ * Instances can be individually picked; {@link Scene#pick} returns their {@link GeometryInstance#id}.  Using
+ * per-instance appearances like {@link PerInstanceColorAppearance}, each instance can also have a unique color.
+ * </p>
+ * <p>
+ * {@link Geometry} can either be created and batched on a web worker or the main thread. The first two examples
+ * show geometry that will be created on a web worker by using the descriptions of the geometry. The third example
+ * shows how to create the geometry on the main thread by explicitly calling the <code>createGeometry</code> method.
+ * </p>
  * @example
  * // 1. Draw a translucent ellipse on the surface with a checkerboard pattern
-const instance = new Cesium.GeometryInstance({
-  geometry : new Cesium.EllipseGeometry({
-      center : Cesium.Cartesian3.fromDegrees(-100.0, 20.0),
-      semiMinorAxis : 500000.0,
-      semiMajorAxis : 1000000.0,
-      rotation : Cesium.Math.PI_OVER_FOUR,
-      vertexFormat : Cesium.VertexFormat.POSITION_AND_ST
-  }),
-  id : 'object returned when this instance is picked and to get/set per-instance attributes'
-});
-scene.primitives.add(new Cesium.Primitive({
-  geometryInstances : instance,
-  appearance : new Cesium.EllipsoidSurfaceAppearance({
-    material : Cesium.Material.fromType('Checkerboard')
-  })
-}));
+ * const instance = new Cesium.GeometryInstance({
+ *   geometry : new Cesium.EllipseGeometry({
+ *       center : Cesium.Cartesian3.fromDegrees(-100.0, 20.0),
+ *       semiMinorAxis : 500000.0,
+ *       semiMajorAxis : 1000000.0,
+ *       rotation : Cesium.Math.PI_OVER_FOUR,
+ *       vertexFormat : Cesium.VertexFormat.POSITION_AND_ST
+ *   }),
+ *   id : 'object returned when this instance is picked and to get/set per-instance attributes'
+ * });
+ * scene.primitives.add(new Cesium.Primitive({
+ *   geometryInstances : instance,
+ *   appearance : new Cesium.EllipsoidSurfaceAppearance({
+ *     material : Cesium.Material.fromType('Checkerboard')
+ *   })
+ * }));
  * @example
  * // 2. Draw different instances each with a unique color
-const rectangleInstance = new Cesium.GeometryInstance({
-  geometry : new Cesium.RectangleGeometry({
-    rectangle : Cesium.Rectangle.fromDegrees(-140.0, 30.0, -100.0, 40.0),
-    vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
-  }),
-  id : 'rectangle',
-  attributes : {
-    color : new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5)
-  }
-});
-const ellipsoidInstance = new Cesium.GeometryInstance({
-  geometry : new Cesium.EllipsoidGeometry({
-    radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
-    vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
-  }),
-  modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
-    Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
-  id : 'ellipsoid',
-  attributes : {
-    color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
-  }
-});
-scene.primitives.add(new Cesium.Primitive({
-  geometryInstances : [rectangleInstance, ellipsoidInstance],
-  appearance : new Cesium.PerInstanceColorAppearance()
-}));
+ * const rectangleInstance = new Cesium.GeometryInstance({
+ *   geometry : new Cesium.RectangleGeometry({
+ *     rectangle : Cesium.Rectangle.fromDegrees(-140.0, 30.0, -100.0, 40.0),
+ *     vertexFormat : Cesium.PerInstanceColorAppearance.VERTEX_FORMAT
+ *   }),
+ *   id : 'rectangle',
+ *   attributes : {
+ *     color : new Cesium.ColorGeometryInstanceAttribute(0.0, 1.0, 1.0, 0.5)
+ *   }
+ * });
+ * const ellipsoidInstance = new Cesium.GeometryInstance({
+ *   geometry : new Cesium.EllipsoidGeometry({
+ *     radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
+ *     vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
+ *   }),
+ *   modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
+ *     Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
+ *   id : 'ellipsoid',
+ *   attributes : {
+ *     color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
+ *   }
+ * });
+ * scene.primitives.add(new Cesium.Primitive({
+ *   geometryInstances : [rectangleInstance, ellipsoidInstance],
+ *   appearance : new Cesium.PerInstanceColorAppearance()
+ * }));
  * @example
  * // 3. Create the geometry on the main thread.
-scene.primitives.add(new Cesium.Primitive({
-  geometryInstances : new Cesium.GeometryInstance({
-    geometry : Cesium.EllipsoidGeometry.createGeometry(new Cesium.EllipsoidGeometry({
-      radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
-      vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
-    })),
-    modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
-      Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
-    id : 'ellipsoid',
-    attributes : {
-      color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
-    }
-  }),
-  appearance : new Cesium.PerInstanceColorAppearance(),
-  asynchronous : false
-}));
+ * scene.primitives.add(new Cesium.Primitive({
+ *   geometryInstances : new Cesium.GeometryInstance({
+ *     geometry : Cesium.EllipsoidGeometry.createGeometry(new Cesium.EllipsoidGeometry({
+ *       radii : new Cesium.Cartesian3(500000.0, 500000.0, 1000000.0),
+ *       vertexFormat : Cesium.VertexFormat.POSITION_AND_NORMAL
+ *     })),
+ *     modelMatrix : Cesium.Matrix4.multiplyByTranslation(Cesium.Transforms.eastNorthUpToFixedFrame(
+ *       Cesium.Cartesian3.fromDegrees(-95.59777, 40.03883)), new Cesium.Cartesian3(0.0, 0.0, 500000.0), new Cesium.Matrix4()),
+ *     id : 'ellipsoid',
+ *     attributes : {
+ *       color : Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color.AQUA)
+ *     }
+ *   }),
+ *   appearance : new Cesium.PerInstanceColorAppearance(),
+ *   asynchronous : false
+ * }));
  * @param [options] - Object with the following properties:
  * @param [options.geometryInstances] - The geometry instances - or a single geometry instance - to render.
  * @param [options.appearance] - The appearance used to render the primitive.
@@ -38844,67 +38931,67 @@ export class Primitive {
     });
     /**
      * The geometry instances rendered with this primitive.  This may
-    be <code>undefined</code> if <code>options.releaseGeometryInstances</code>
-    is <code>true</code> when the primitive is constructed.
-    <p>
-    Changing this property after the primitive is rendered has no effect.
-    </p>
+     * be <code>undefined</code> if <code>options.releaseGeometryInstances</code>
+     * is <code>true</code> when the primitive is constructed.
+     * <p>
+     * Changing this property after the primitive is rendered has no effect.
+     * </p>
      */
     readonly geometryInstances: GeometryInstance[] | GeometryInstance;
     /**
      * The {@link Appearance} used to shade this primitive. Each geometry
-    instance is shaded with the same appearance.  Some appearances, like
-    {@link PerInstanceColorAppearance} allow giving each instance unique
-    properties.
+     * instance is shaded with the same appearance.  Some appearances, like
+     * {@link PerInstanceColorAppearance} allow giving each instance unique
+     * properties.
      */
     appearance: Appearance;
     /**
      * The {@link Appearance} used to shade this primitive when it fails the depth test. Each geometry
-    instance is shaded with the same appearance.  Some appearances, like
-    {@link PerInstanceColorAppearance} allow giving each instance unique
-    properties.
-    
-    <p>
-    When using an appearance that requires a color attribute, like PerInstanceColorAppearance,
-    add a depthFailColor per-instance attribute instead.
-    </p>
-    
-    <p>
-    Requires the EXT_frag_depth WebGL extension to render properly. If the extension is not supported,
-    there may be artifacts.
-    </p>
+     * instance is shaded with the same appearance.  Some appearances, like
+     * {@link PerInstanceColorAppearance} allow giving each instance unique
+     * properties.
+     *
+     * <p>
+     * When using an appearance that requires a color attribute, like PerInstanceColorAppearance,
+     * add a depthFailColor per-instance attribute instead.
+     * </p>
+     *
+     * <p>
+     * Requires the EXT_frag_depth WebGL extension to render properly. If the extension is not supported,
+     * there may be artifacts.
+     * </p>
      */
     depthFailAppearance: Appearance;
     /**
      * The 4x4 transformation matrix that transforms the primitive (all geometry instances) from model to world coordinates.
-    When this is the identity matrix, the primitive is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
-    Local reference frames can be used by providing a different transformation matrix, like that returned
-    by {@link Transforms.eastNorthUpToFixedFrame}.
-    
-    <p>
-    This property is only supported in 3D mode.
-    </p>
+     * When this is the identity matrix, the primitive is drawn in world coordinates, i.e., Earth's WGS84 coordinates.
+     * Local reference frames can be used by providing a different transformation matrix, like that returned
+     * by {@link Transforms.eastNorthUpToFixedFrame}.
+     *
+     * <p>
+     * This property is only supported in 3D mode.
+     * </p>
      * @example
      * const origin = Cesium.Cartesian3.fromDegrees(-95.0, 40.0, 200000.0);
-    p.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
+     * p.modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(origin);
      */
     modelMatrix: Matrix4;
     /**
      * Determines if the primitive will be shown.  This affects all geometry
-    instances in the primitive.
+     * instances in the primitive.
      */
     show: boolean;
     /**
      * When <code>true</code>, the renderer frustum culls and horizon culls the primitive's commands
-    based on their bounding volume.  Set this to <code>false</code> for a small performance gain
-    if you are manually culling the primitive.
+     * based on their bounding volume.  Set this to <code>false</code> for a small performance gain
+     * if you are manually culling the primitive.
      */
     cull: boolean;
     /**
      * This property is for debugging only; it is not for production use nor is it optimized.
-    <p>
-    Draws the bounding sphere for each draw command in the primitive.
-    </p>
+     * <p>
+     * Draws the bounding sphere for each draw command in the primitive.
+     * </p>
      */
     debugShowBoundingVolume: boolean;
     /**
@@ -38937,8 +39024,8 @@ export class Primitive {
     readonly compressVertices: boolean;
     /**
      * Determines if the primitive is complete and ready to render.  If this property is
-    true, the primitive will be rendered the next time that {@link Primitive#update}
-    is called.
+     * true, the primitive will be rendered the next time that {@link Primitive#update}
+     * is called.
      */
     readonly ready: boolean;
     /**
@@ -38947,42 +39034,42 @@ export class Primitive {
     readonly readyPromise: Promise<Primitive>;
     /**
      * Called when {@link Viewer} or {@link CesiumWidget} render the scene to
-    get the draw commands needed to render this primitive.
-    <p>
-    Do not call this function directly.  This is documented just to
-    list the exceptions that may be propagated when the scene is rendered:
-    </p>
+     * get the draw commands needed to render this primitive.
+     * <p>
+     * Do not call this function directly.  This is documented just to
+     * list the exceptions that may be propagated when the scene is rendered:
+     * </p>
      */
     update(): void;
     /**
      * Returns the modifiable per-instance attributes for a {@link GeometryInstance}.
      * @example
      * const attributes = primitive.getGeometryInstanceAttributes('an id');
-    attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.AQUA);
-    attributes.show = Cesium.ShowGeometryInstanceAttribute.toValue(true);
-    attributes.distanceDisplayCondition = Cesium.DistanceDisplayConditionGeometryInstanceAttribute.toValue(100.0, 10000.0);
-    attributes.offset = Cesium.OffsetGeometryInstanceAttribute.toValue(Cartesian3.IDENTITY);
+     * attributes.color = Cesium.ColorGeometryInstanceAttribute.toValue(Cesium.Color.AQUA);
+     * attributes.show = Cesium.ShowGeometryInstanceAttribute.toValue(true);
+     * attributes.distanceDisplayCondition = Cesium.DistanceDisplayConditionGeometryInstanceAttribute.toValue(100.0, 10000.0);
+     * attributes.offset = Cesium.OffsetGeometryInstanceAttribute.toValue(Cartesian3.IDENTITY);
      * @param id - The id of the {@link GeometryInstance}.
      * @returns The typed array in the attribute's format or undefined if the is no instance with id.
      */
     getGeometryInstanceAttributes(id: any): any;
     /**
      * Returns true if this object was destroyed; otherwise, false.
-    <p>
-    If this object was destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
-    </p>
+     * <p>
+     * If this object was destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.
+     * </p>
      * @returns <code>true</code> if this object was destroyed; otherwise, <code>false</code>.
      */
     isDestroyed(): boolean;
     /**
      * Destroys the WebGL resources held by this object.  Destroying an object allows for deterministic
-    release of WebGL resources, instead of relying on the garbage collector to destroy this object.
-    <p>
-    Once an object is destroyed, it should not be used; calling any function other than
-    <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
-    assign the return value (<code>undefined</code>) to the object as done in the example.
-    </p>
+     * release of WebGL resources, instead of relying on the garbage collector to destroy this object.
+     * <p>
+     * Once an object is destroyed, it should not be used; calling any function other than
+     * <code>isDestroyed</code> will result in a {@link DeveloperError} exception.  Therefore,
+     * assign the return value (<code>undefined</code>) to the object as done in the example.
+     * </p>
      * @example
      * e = e && e.destroy();
      */

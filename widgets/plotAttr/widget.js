@@ -21,36 +21,7 @@
     }
 
     //初始化[仅执行1次]
-    create() {
-      let that = this
-      $.getJSON(this.path + "config/attr.json", function (data) {
-        that.attrConfig = data
-        that.setDefaultVal()
-
-        that.attrConfig["curve"] = that.attrConfig["polyline"]
-        that.startEditing()
-      })
-    }
-    //获取所有可配置属性的默认值
-    setDefaultVal() {
-      let data = this.attrConfig
-
-      //标号默认样式
-      let attrDefConfig = {}
-      for (let i in data) {
-        let defstyle = {}
-        for (let idx = 0; idx < data[i].style.length; idx++) {
-          let item = data[i].style[idx]
-          defstyle[item.name] = item.defval
-        }
-        attrDefConfig[i] = defstyle
-      }
-      this.attrDefConfig = attrDefConfig
-
-      // let logInfo = JSON.stringify(attrDefConfig)
-      // logInfo = logInfo.replaceAll('"diffHeight":0,', '').replaceAll('"hasShadows":false,', '')
-      // console.log('标号默认样式', logInfo)
-    }
+    create() {}
 
     //每个窗口创建完成后调用
     winCreateOK(opt, result) {
@@ -60,10 +31,6 @@
     activate() {}
     //释放插件
     disable() {}
-    getDefStyle(type) {
-      let defStyle = this.attrDefConfig[type] || {}
-      return mars3d.Util.clone(defStyle)
-    }
     getMinPointNum() {
       let graphic = this.config.graphic
       if (graphic && graphic._minPointNum) {
@@ -138,6 +105,9 @@
     }
     deleteEntity() {
       let graphic = this.config.graphic
+      if (graphic.stopEditing) {
+        graphic.stopEditing()
+      }
       graphic.remove()
 
       this.disableBase()

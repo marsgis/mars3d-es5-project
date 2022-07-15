@@ -20,7 +20,7 @@ function initWidgetView(_thisWidget) {
 
     let imgsrc = layer.options.icon || "img/basemaps/bingAerial.png"
 
-    inhtml += `<li ${vhtml} onclick="changeBaseMaps(this,'${layer.uuid}')">
+    inhtml += `<li ${vhtml} onclick="changeBaseMaps(this,'${layer.id}')">
       <div><img src="../../${imgsrc}" /></div><div>${layer.name}</div>
     </li>`
   }

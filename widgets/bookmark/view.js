@@ -119,14 +119,14 @@ function saveBookmark() {
       return
     }
   }
-
-  thisWidget.getThisExtent(function (bounds, base64) {
+  let bounds = thisWidget.getThisExtent()
+  thisWidget.getExtentImage().then((result) => {
     haoutil.array.insert(
       arrBookmark,
       {
         name: name,
         data: bounds,
-        icon: base64,
+        icon: result.image,
         id: new Date().getTime()
       },
       0
