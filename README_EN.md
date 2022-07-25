@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://muyao1987.gitee.io/cdn/mars3d.cn/logo.png" width="300px" />
+<img src="//mars3d.cn/logo.png" width="300px" />
 </p>
 
 <p align="center">Mars3d development template based on Widget module (native JS)</p>
@@ -34,8 +34,8 @@
 
 ## Operation effect 
  [online Demo](http://mars3d.cn/project/jcxm/)  
-
- ![image](https://muyao1987.gitee.io/cdn/mars3d.cn/xm/jcxm/1.jpg)
+ 
+ ![image](http://marsgis.cn/img/project/mars3d-vue-project-jcxm/1.jpg)
  
 
 ## What is Mars3D

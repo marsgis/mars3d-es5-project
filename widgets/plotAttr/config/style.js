@@ -1685,6 +1685,8 @@ const styleConfig = {
         name: "moveDuration",
         label: "动画时长",
         type: "number",
+        min: 1.0,
+        max: 999999999,
         step: 1,
         defval: 2.0,
         show(style, allStyle, graphicType) {
@@ -1909,7 +1911,6 @@ const styleConfig = {
     name: "管道线",
     primitive: true,
     style: [
-      { name: "radius", label: "半径", type: "number", step: 1, defval: 10.0 },
       {
         name: "shape",
         label: "形状",
@@ -1921,6 +1922,37 @@ const styleConfig = {
           { label: "星状管", value: "star" }
         ]
       },
+      { name: "radius", label: "半径", type: "number", step: 1, defval: 10.0 },
+      {
+        name: "thicknes",
+        label: "厚度",
+        type: "number",
+        step: 1,
+        defval: 3.0,
+        show(style, allStyle, graphicType) {
+          return style.shape === "pipeline"
+        }
+      },
+      {
+        name: "slices",
+        label: "边线边数",
+        type: "number",
+        min: 1,
+        max: 360,
+        step: 1,
+        defval: 90
+      },
+
+      {
+        name: "startAngle",
+        label: "开始角度",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.1,
+        defval: 0.0
+      },
+
       {
         name: "materialType",
         label: "材质类型",

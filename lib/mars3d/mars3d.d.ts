@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.0
- * 编译日期：2022-07-15 14:34:57
+ * 版本信息：v3.4.1
+ * 编译日期：2022-07-25 15:46:59
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1854,11 +1854,11 @@ declare namespace LocationBar {
  * @param [options] - 参数对象，包括以下：
  * @param [options.template] - 展示的内容格式化字符串, 为数组时按多语言顺序定义，如[中文、繁体、英文]
  * 支持以下模版配置：
- * 【鼠标所在位置】 经度:{lng}， 纬度:{lat}， 海拔：{alt}米，
+ * 【鼠标所在位置】 经度:{lng}， 纬度:{lat}， 海拔：{alt}米， 横{crsx}  纵{crsy}
  * 【相机的】 方向角度：{heading}， 俯仰角度：{pitch}， 视高：{cameraHeight}米，
  * 【地图的】 层级：{level}
  * @param [options.latDecimal = LngLatPoint.FormatLength] - 保留的{lat}和{lng}的小数位
- * @param [options.crs] - 按指定坐标系显示坐标值,  配置后template可以加模板：【鼠标所在位置对应的crs坐标系】 X或经度值：{crsx}， Y或纬度值：{crsy}
+ * @param [options.crs] - 按指定坐标系显示坐标值,true时取值CRS.CGCS2000_GK_Zone_3，配置后template可以加模板：【鼠标所在位置对应的crs坐标系】 X或经度值：{crsx}， Y或纬度值：{crsy}
  * @param [options.crsDecimal = 1] - 保留的{crsx}和{crsy}的小数位
  * @param [options.style] - 可以CSS样式，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
@@ -1877,7 +1877,7 @@ declare class LocationBar extends BaseControl {
     constructor(options?: {
         template?: string | string[];
         latDecimal?: number;
-        crs?: string | CRS;
+        crs?: string | CRS | boolean;
         crsDecimal?: number;
         style?: {
             top?: string;
@@ -1897,6 +1897,64 @@ declare class LocationBar extends BaseControl {
      * 显示的数据
      */
     readonly locationData: any;
+}
+
+/**
+ * 地图分屏对比 控件，
+ * 默认自动读取当前Map配置，也会合并传入的scene、control等参数值
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.basemaps] - 底图图层配置
+ * @param [options.layers] - 可以叠加显示的图层配置
+ * @param [options.scene] - 场景参数
+ * @param [options.control] - 添加的控件
+ * @param [options.effect] - 添加的特效
+ * @param [options.mouse] - 鼠标操作相关配置参数
+ * @param [options.terrain] - 地形服务配置
+ * @param [options.className = "mars3d-container  mars3d-mapCompare"] - 对比地图DIV的样式名称
+ * @param [options.id = createGuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
+ */
+declare class MapCompare extends BaseControl {
+    constructor(options?: {
+        basemaps?: Map.basemapOptions[];
+        layers?: Map.layerOptions[];
+        scene?: Map.sceneOptions;
+        control?: Map.controlOptions;
+        effect?: Map.effectOptions;
+        mouse?: Map.mouseOptions;
+        terrain?: Map.terrainOptions;
+        className?: string;
+        id?: string | number;
+        enabled?: boolean;
+        parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement;
+    });
+    /**
+     * 对比的地图对象
+     */
+    mapEx: Map;
+    /**
+     * 对象添加到地图前创建一些对象的钩子方法，
+     * 只会调用一次
+     * @returns 无
+     */
+    _mountedHook(): void;
+    /**
+     * 对象添加到地图上的创建钩子方法，
+     * 每次add时都会调用
+     * @returns 无
+     */
+    _addedHook(): void;
+    /**
+     * 对象从地图上移除的创建钩子方法，
+     * 每次remove时都会调用
+     * @returns 无
+     */
+    _removedHook(): void;
 }
 
 /**
@@ -1923,18 +1981,18 @@ declare class MapSplit extends BaseControl {
     /**
      * 左侧区域瓦片图层
      */
-    leftLayer: BaseTileLayer;
+    leftLayer: BaseTileLayer | BaseTileLayer[] | any;
     /**
      * 右侧区域瓦片图层
      */
-    rightLayer: BaseTileLayer;
+    rightLayer: BaseTileLayer | BaseTileLayer[] | any;
     /**
      * 对瓦片图层设置卷帘方向
-     * @param layer - 图层
+     * @param layer - 图层 或图层构造参数
      * @param [splitDirection] - 图层显示的方向
-     * @returns 无
+     * @returns 图层对象
      */
-    setLayerSplitDirection(layer: BaseTileLayer | GroupLayer, splitDirection?: Cesium.SplitDirection): void;
+    setLayerSplitDirection(layer: BaseTileLayer | GroupLayer | any, splitDirection?: Cesium.SplitDirection): BaseTileLayer | GroupLayer;
     /**
      * 控件类型
      */
@@ -2919,8 +2977,8 @@ declare class BlackAndWhiteEffect extends BaseEffect {
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
  * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
- * @param [options.delta = 1.0] - 增量
- * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
+ * @param [options.delta = 1.0] - 增量权值
+ * @param [options.sigma = 3.78] - 滤波权值，delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
  * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
  */
 declare class BloomEffect extends BaseEffect {
@@ -3000,7 +3058,7 @@ declare class BloomTargetEffect extends BaseEffect {
 }
 
 /**
- * 亮度
+ * 高亮特效
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.brightness = 2.0] - 亮度值
@@ -3056,13 +3114,21 @@ declare class DepthOfFieldEffect extends BaseEffect {
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.fogByDistance = new Cesium.Cartesian4(10, 0.0, 1000, 0.9)] - 雾强度
+ * @param [options.fogByDistance_near] - 最近距离，可以与fogByDistance二选一
+ * @param [options.fogByDistance_nearValue] - 最近强度，可以与fogByDistance二选一
+ * @param [options.fogByDistance_far] - 最远距离，可以与fogByDistance二选一
+ * @param [options.fogByDistance_farValue] - 最远强度，可以与fogByDistance二选一
  * @param [options.color = Cesium.Color.WHITE] - 雾颜色
- * @param [options.maxHeight = 9000] - 最高限定高度，超出该高度不显示雾场景效果
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示雾场景效果
  */
 declare class FogEffect extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         fogByDistance?: Cesium.Cartesian4;
+        fogByDistance_near?: number;
+        fogByDistance_nearValue?: number;
+        fogByDistance_far?: number;
+        fogByDistance_farValue?: number;
         color?: Cesium.Color;
         maxHeight?: number;
     });
@@ -3115,7 +3181,7 @@ declare class NightVisionEffect extends BaseEffect {
 
 declare namespace OutlineEffect {
     /**
-     * 选中对象的 轮廓线描边效果 支持的参数信息
+     * 对象轮廓描边效果 支持的参数信息
      * @property [width = 6] - 线宽，单位：像素px
      * @property [color = Cesium.Color.WHITE] - 轮廓线 颜色
      * @property [colorHidden = color] - 被遮挡的轮廓线 颜色
@@ -3140,7 +3206,7 @@ declare namespace OutlineEffect {
 }
 
 /**
- * 选中对象的 轮廓线描边效果。
+ * 对象轮廓描边效果
  * @param [options] - 参数对象
  * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
  * @param [options.enabled = true] - 对象的启用状态
@@ -3203,18 +3269,18 @@ declare class OutlineEffect extends BaseEffect {
 }
 
 /**
- * 下雨效果
+ * 雨天气 效果
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.size = 20] - 粒子大小
  * @param [options.speed = 10] - 速度
- * @param [options.size = 20] - 雨粒子大小
- * @param [options.direction = -30] - 雨的方向（度），0度垂直向下
+ * @param [options.direction = -30] - 方向（度），0度垂直向下
  */
 declare class RainEffect extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
-        speed?: number;
         size?: number;
+        speed?: number;
         direction?: number;
     });
     /**
@@ -3236,7 +3302,7 @@ declare class RainEffect extends BaseEffect {
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.alpha = 1.0] - 覆盖强度  0-1
- * @param [options.maxHeight = 9000] - 最高限定高度，超出该高度不显示积雪效果
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果
  */
 declare class SnowCoverEffect extends BaseEffect {
     constructor(options?: {
@@ -3255,7 +3321,7 @@ declare class SnowCoverEffect extends BaseEffect {
 }
 
 /**
- * 下雪效果
+ * 雪天气 效果
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.speed = 10] - 速度
@@ -3306,10 +3372,17 @@ declare namespace BaseGraphic {
      * graphic.on(mars3d.EventType.click, function (event) {
      *   console.log('单击了矢量数据对象', event)
      * })
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
+     * @property add - 本身被添加
+     * @property remove - 本身被移除
+     * @property show - 显示了对象本身
+     * @property hide - 隐藏了对象本身
+     * @property updatePosition - 更新了坐标位置
+     * @property updateStyle - 更新了style对象
+     * @property updateAttr - 更新了attr对象
+     * @property click - 左键单击 鼠标事件 【仅支持交互的相关对象内存在】
+     * @property rightClick - 右键单击 鼠标事件
+     * @property mouseOver - 鼠标移入 鼠标事件
+     * @property mouseOut - 鼠标移出 鼠标事件
      * @property popupOpen - popup弹窗打开后
      * @property popupClose - popup弹窗关闭
      * @property tooltipOpen - tooltip弹窗打开后
@@ -3317,12 +3390,36 @@ declare namespace BaseGraphic {
      * @property contextMenuOpen - 右键菜单 打开后
      * @property contextMenuClose - 右键菜单 关闭
      * @property contextMenuClick - 右键菜单 单击某一项后
+     * @property highlightOpen - highlight高亮后
+     * @property highlightClose - highlight关闭后
+     * @property postRender - 每帧渲染  【仅DIV或Popup相关对象内存在】
+     * @property drawStart - 开始绘制 标绘事件 【仅支持标绘的相关对象内存在】
+     * @property drawMouseMove - 正在移动鼠标中，绘制过程中鼠标移动了点 标绘事件
+     * @property drawAddPoint - 绘制过程中增加了点 标绘事件
+     * @property drawRemovePoint - 绘制过程中删除了最后一个点 标绘事件
+     * @property drawCreated - 创建完成 标绘事件
+     * @property editStart - 开始编辑 标绘事件 【仅支持编辑的相关对象内存在】
+     * @property editMouseDown - 移动鼠标按下左键（LEFT_DOWN）标绘事件
+     * @property editMouseMove - 正在移动鼠标中，正在编辑拖拽修改点中（MOUSE_MOVE） 标绘事件
+     * @property editMovePoint - 编辑修改了点（LEFT_UP）标绘事件
+     * @property editRemovePoint - 编辑删除了点 标绘事件
+     * @property editStyle - 图上编辑修改了相关style属性 标绘事件
+     * @property editStop - 停止编辑 标绘事件
+     * @property load - gltf模型加载完成后【仅gltf模型相关对象存在】
+     * @property stop - 模型addDynamicPosition添加的动态点，到时时间停止后触发【仅addDynamicPosition动态点时存在】
      */
     type EventType = {
         add: string;
         remove: string;
         show: string;
         hide: string;
+        updatePosition: string;
+        updateStyle: string;
+        updateAttr: string;
+        click: string;
+        rightClick: string;
+        mouseOver: string;
+        mouseOut: string;
         popupOpen: string;
         popupClose: string;
         tooltipOpen: string;
@@ -3330,6 +3427,23 @@ declare namespace BaseGraphic {
         contextMenuOpen: string;
         contextMenuClose: string;
         contextMenuClick: string;
+        highlightOpen: string;
+        highlightClose: string;
+        postRender: string;
+        drawStart: string;
+        drawMouseMove: string;
+        drawAddPoint: string;
+        drawRemovePoint: string;
+        drawCreated: string;
+        editStart: string;
+        editMouseDown: string;
+        editMouseMove: string;
+        editMovePoint: string;
+        editRemovePoint: string;
+        editStyle: string;
+        editStop: string;
+        load: string;
+        stop: string;
     };
 }
 
@@ -4414,55 +4528,6 @@ declare class FrustumCombine extends BasePointCombine {
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
     });
-}
-
-declare namespace ModelCombine {
-    /**
-     * 当前类支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * graphic.on(mars3d.EventType.load, function (event) {
-     *   console.log('模型加载完成', event)
-     * })
-     * @property load - 完成加载，执行所有内部处理后
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     * @property highlightOpen - highlight高亮后
-     * @property highlightClose - highlight关闭后
-     * @property click - 左键单击 鼠标事件
-     * @property rightClick - 右键单击 鼠标事件
-     * @property mouseOver - 鼠标移入 鼠标事件
-     * @property mouseOut - 鼠标移出 鼠标事件
-     */
-    type EventType = {
-        load: string;
-        add: string;
-        remove: string;
-        show: string;
-        hide: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-        highlightOpen: string;
-        highlightClose: string;
-        click: string;
-        rightClick: string;
-        mouseOver: string;
-        mouseOut: string;
-    };
 }
 
 /**
@@ -6092,64 +6157,6 @@ declare namespace DivGraphic {
         setHeight?: number | string;
         addHeight?: number | string;
     };
-    /**
-     * 当前类支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * graphic.on(mars3d.EventType.click, function (event) {
-     *   console.log('单击了矢量数据对象', event)
-     * })
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     * @property highlightOpen - highlight高亮后
-     * @property highlightClose - highlight关闭后
-     * @property change - 变化了
-     * @property click - 左键单击 鼠标事件
-     * @property rightClick - 右键单击 鼠标事件
-     * @property mouseOver - 鼠标移入 鼠标事件
-     * @property mouseOut - 鼠标移出 鼠标事件
-     * @property drawStart - 开始绘制 标绘事件
-     * @property drawMouseMove - 正在移动鼠标中，绘制过程中鼠标移动了点 标绘事件
-     * @property drawCreated - 创建完成 标绘事件
-     * @property editStart - 开始编辑 标绘事件
-     * @property editMouseMove - 正在移动鼠标中，正在编辑拖拽修改点中（MOUSE_MOVE） 标绘事件
-     * @property editStop - 停止编辑 标绘事件
-     */
-    type EventType = {
-        add: string;
-        remove: string;
-        show: string;
-        hide: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-        highlightOpen: string;
-        highlightClose: string;
-        change: string;
-        click: string;
-        rightClick: string;
-        mouseOver: string;
-        mouseOut: string;
-        drawStart: string;
-        drawMouseMove: string;
-        drawCreated: string;
-        editStart: string;
-        editMouseMove: string;
-        editStop: string;
-    };
 }
 
 /**
@@ -6796,77 +6803,6 @@ declare class Tooltip extends Popup {
         name?: string;
         show?: boolean;
     });
-}
-
-declare namespace BaseEntity {
-    /**
-     * 当前类支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * graphic.on(mars3d.EventType.click, function (event) {
-     *   console.log('单击了矢量数据对象', event)
-     * })
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     * @property highlightOpen - highlight高亮后
-     * @property highlightClose - highlight关闭后
-     * @property click - 左键单击 鼠标事件
-     * @property rightClick - 右键单击 鼠标事件
-     * @property mouseOver - 鼠标移入 鼠标事件
-     * @property mouseOut - 鼠标移出 鼠标事件
-     * @property drawStart - 开始绘制 标绘事件
-     * @property drawMouseMove - 正在移动鼠标中，绘制过程中鼠标移动了点 标绘事件
-     * @property drawAddPoint - 绘制过程中增加了点 标绘事件
-     * @property drawRemovePoint - 绘制过程中删除了最后一个点 标绘事件
-     * @property drawCreated - 创建完成 标绘事件
-     * @property editStart - 开始编辑 标绘事件
-     * @property editMouseDown - 移动鼠标按下左键（LEFT_DOWN）标绘事件
-     * @property editMouseMove - 正在移动鼠标中，正在编辑拖拽修改点中（MOUSE_MOVE） 标绘事件
-     * @property editMovePoint - 编辑修改了点（LEFT_UP）标绘事件
-     * @property editRemovePoint - 编辑删除了点 标绘事件
-     * @property editStyle - 图上编辑修改了相关style属性 标绘事件
-     * @property editStop - 停止编辑 标绘事件
-     */
-    type EventType = {
-        add: string;
-        remove: string;
-        show: string;
-        hide: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-        highlightOpen: string;
-        highlightClose: string;
-        click: string;
-        rightClick: string;
-        mouseOver: string;
-        mouseOut: string;
-        drawStart: string;
-        drawMouseMove: string;
-        drawAddPoint: string;
-        drawRemovePoint: string;
-        drawCreated: string;
-        editStart: string;
-        editMouseDown: string;
-        editMouseMove: string;
-        editMovePoint: string;
-        editRemovePoint: string;
-        editStyle: string;
-        editStop: string;
-    };
 }
 
 /**
@@ -9430,42 +9366,6 @@ declare namespace ModelEntity {
         highlight?: ModelEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any;
     };
-    /**
-     * 当前类支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * thing.on(mars3d.EventType.change, function (event) {
-     *   console.log('发送了变化', event)
-     * })
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     * @property load - 模型加载完成后
-     * @property stop - 模型addDynamicPosition添加的动态点，到时时间停止后触发
-     */
-    type EventType = {
-        add: string;
-        remove: string;
-        show: string;
-        hide: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-        load: string;
-        stop: string;
-    };
 }
 
 /**
@@ -10411,8 +10311,12 @@ declare class PolylineEntity extends BasePolyEntity {
 declare namespace PolylineVolumeEntity {
     /**
      * 管道线 支持的样式信息
-     * @property [radius = 10] - 半径
      * @property [shape = "pipeline"] - 形状类型 或 定义要挤压的形状。类型可选项：pipeline (解释：空心管),circle (解释：实心管),star (解释：星状管),
+     * @property [radius = 10] - 半径(单位：米)
+     * @property [thicknes = radius/3] - 厚度(单位：米)，空心管/星状管 的外层厚度
+     * @property [slices] - 边数，比如为4时是矩形管；星状管代表角的个数；
+     * @property [startAngle = 0] - 开始角度，取值范围0-360
+     * @property [endAngle = 360] - 结束角度，取值范围0-360，比如endAngle=180的空心管是拱形半圆管道
      * @property [fill = true] - 是否填充
      * @property [color = "#FFFF00"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -10434,8 +10338,12 @@ declare namespace PolylineVolumeEntity {
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
-        radius?: number;
         shape?: string | Cesium.Cartesian2[];
+        radius?: number;
+        thicknes?: number;
+        slices?: number;
+        startAngle?: number;
+        endAngle?: number;
         fill?: boolean;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -12891,53 +12799,6 @@ declare class BasePolyPrimitive extends BasePrimitive {
     }): Promise<any>;
 }
 
-declare namespace BasePrimitive {
-    /**
-     * 当前类支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * graphic.on(mars3d.EventType.click, function (event) {
-     *   console.log('单击了矢量数据对象', event)
-     * })
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     * @property highlightOpen - highlight高亮后
-     * @property highlightClose - highlight关闭后
-     * @property click - 左键单击 鼠标事件
-     * @property rightClick - 右键单击 鼠标事件
-     * @property mouseOver - 鼠标移入 鼠标事件
-     * @property mouseOut - 鼠标移出 鼠标事件
-     */
-    type EventType = {
-        add: string;
-        remove: string;
-        show: string;
-        hide: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-        highlightOpen: string;
-        highlightClose: string;
-        click: string;
-        rightClick: string;
-        mouseOver: string;
-        mouseOut: string;
-    };
-}
-
 /**
  * Primitive图元 矢量对象 基类
  * @param options - 参数对象，包括以下：
@@ -14738,52 +14599,6 @@ declare namespace ModelPrimitive {
         highlight?: ModelPrimitive.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any;
     };
-    /**
-     * 当前类支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * graphic.on(mars3d.EventType.load, function (event) {
-     *   console.log('模型加载完成', event)
-     * })
-     * @property load - 完成加载，执行所有内部处理后
-     * @property add - 添加对象
-     * @property remove - 移除对象
-     * @property show - 显示了对象
-     * @property hide - 隐藏了对象
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     * @property highlightOpen - highlight高亮后
-     * @property highlightClose - highlight关闭后
-     * @property click - 左键单击 鼠标事件
-     * @property rightClick - 右键单击 鼠标事件
-     * @property mouseOver - 鼠标移入 鼠标事件
-     * @property mouseOut - 鼠标移出 鼠标事件
-     */
-    type EventType = {
-        load: string;
-        add: string;
-        remove: string;
-        show: string;
-        hide: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-        highlightOpen: string;
-        highlightClose: string;
-        click: string;
-        rightClick: string;
-        mouseOver: string;
-        mouseOut: string;
-    };
 }
 
 /**
@@ -15513,8 +15328,12 @@ declare class PolylineSimplePrimitive extends BasePolyPrimitive {
 declare namespace PolylineVolumePrimitive {
     /**
      * 管道线 Primitive图元 支持的样式信息
-     * @property [radius = 10] - 半径
      * @property [shape = "pipeline"] - 形状类型 或 定义要挤压的形状。类型可选项：pipeline (解释：空心管),circle (解释：实心管),star (解释：星状管),
+     * @property [radius = 10] - 半径(单位：米)
+     * @property [thicknes = radius/3] - 厚度(单位：米)，空心管/星状管 的外层厚度
+     * @property [slices] - 边数，比如为4时是矩形管；星状管代表角的个数；
+     * @property [startAngle = 0] - 开始角度，取值范围0-360
+     * @property [endAngle = 360] - 结束角度，取值范围0-360，比如endAngle=180的空心管是拱形半圆管道
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
@@ -15538,8 +15357,12 @@ declare namespace PolylineVolumePrimitive {
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
-        radius?: number;
         shape?: string | Cesium.Cartesian2[];
+        radius?: number;
+        thicknes?: number;
+        slices?: number;
+        startAngle?: number;
+        endAngle?: number;
         materialType?: string;
         materialOptions?: any;
         material?: Cesium.Material;
@@ -18064,7 +17887,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     readonly hasZIndex: boolean;
     /**
-     * 图层顺序，数字大的在上面。（当hasZIndex为true时）
+     * 图层顺序，数字大的在上面。<br/>
+     * 只对 同类型(Entity/Primitive) + 贴地(clampToGround: true) 矢量对象间有效
      */
     zIndex: number;
     /**
@@ -18185,9 +18009,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
     eachGraphic(method: (...params: any[]) => any, context?: any): GraphicLayer;
     /**
      * 获取图层内 所有矢量数据
+     * @param [hasPrivate = false] - 是否取私有的graphic
      * @returns 矢量数据数组
      */
-    getGraphics(): BaseGraphic[] | any[];
+    getGraphics(hasPrivate?: boolean): BaseGraphic[] | any[];
     /**
      * 清除图层内所有矢量数据
      * @param [hasDestroy = false] - 是否释放矢量对象
@@ -18799,6 +18624,7 @@ declare namespace TilesetLayer {
  * @param [options.tooltipOptions.titleField] - 标题对应的属性字段名称
  * @param [options.tooltipOptions.noTitle] - 不显示标题
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.hasEdit = true] - 是否允许编辑，且需要transform是true的模型才支持编辑
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -18892,6 +18718,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
             noTitle?: string;
         };
         contextmenuItems?: any;
+        hasEdit?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -19002,6 +18829,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
      */
     readonly planClip: TilesetPlanClip;
     /**
+     * 是否可以编辑
+     */
+    hasEdit: boolean;
+    /**
      * 模型裁剪 对象
      */
     readonly clip: TilesetClip;
@@ -19021,6 +18852,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * 重新加载模型
      */
     reload(): void;
+    /**
+     * 是否存在世界矩阵
+     */
+    readonly transform: boolean;
     /**
      * 模型原始矩阵
      */
@@ -19681,7 +19516,8 @@ declare namespace ArcGisLayer {
  * @param [options.crs = CRS.EPSG4326] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.enablePickFeatures = true] - 如果为true，则请求 单击坐标处服务中对应的矢量数据 并尝试解释响应中包含的功能。为false时不去服务请求。
- * @param [options.graphicConver] - 单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
+ * @param [options.featureToGraphic = mars3d.Util.geoJsonToGraphics] - 解析单击返回的矢量数据信息为Graphic构造参数，可以按需自定义。
+ * @param [options.hasToGraphic] - 筛选或判断是否解析，单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
  * @param [options.highlight] - 鼠标单击高亮显示对应的矢量数据 及其样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.highlight.type] - 构造成的矢量数据类型。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
@@ -19752,7 +19588,8 @@ declare class ArcGisLayer extends BaseTileLayer {
         crs?: CRS;
         chinaCRS?: ChinaCRS;
         enablePickFeatures?: boolean;
-        graphicConver?: number | boolean | ((...params: any[]) => any);
+        featureToGraphic?: (...params: any[]) => any;
+        hasToGraphic?: number | boolean | ((...params: any[]) => any);
         highlight?: {
             type?: GraphicType | string;
         };
@@ -22205,7 +22042,8 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.clock] - 一个时钟实例，用于确定时间维度的值。指定' times '时需要。
  * @param [options.times] - TimeIntervalCollection 的数据属性是一个包含时间动态维度及其值的对象。
  * @param [options.enablePickFeatures = true] - 如果为true，则请求 单击坐标处服务中对应的矢量数据 并尝试解释响应中包含的功能。为false时不去服务请求。
- * @param [options.graphicConver] - 单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
+ * @param [options.featureToGraphic = mars3d.Util.geoJsonToGraphics] - 解析单击返回的矢量数据信息为Graphic构造参数，可以按需自定义。
+ * @param [options.hasToGraphic] - 筛选或判断是否解析，单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
  * @param [options.getFeatureInfoParameters] - 在单击坐标处通过GetFeatureInfo请求接口时,传递给WMS服务器的附加参数。
  * @param [options.highlight] - 鼠标单击高亮显示对应的矢量数据 及其样式，包括type参数指定构造的类型，其他参数见各{@link GraphicType}矢量数据的style参数项。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
@@ -22278,7 +22116,8 @@ declare class WmsLayer extends BaseTileLayer {
         clock?: Cesium.Clock;
         times?: Cesium.TimeIntervalCollection;
         enablePickFeatures?: boolean;
-        graphicConver?: number | boolean | ((...params: any[]) => any);
+        featureToGraphic?: (...params: any[]) => any;
+        hasToGraphic?: number | boolean | ((...params: any[]) => any);
         getFeatureInfoParameters?: any;
         highlight?: any;
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
@@ -23058,18 +22897,37 @@ declare namespace Map {
     };
     /**
      * 添加到地图的控件 参数
-     *
-     * 以下是mars3d.control定义的控件，支持所有控件类型
-     * @property [mouseDownView] - 鼠标滚轮缩放美化样式, 对应 {@link MouseDownView}构造参数
-     * @property [locationBar] - 鼠标提示控件, 对应 {@link LocationBar}构造参数
+     * @property [homeButton = false] - 视角复位按钮，是否显示
+     * @property [zoom] - 放大缩小按钮 , 对应 {@link Zoom}构造参数
+     * @property [sceneModePicker = false] - 二三维切换按钮，是否显示二维、三维、2.5D视图切换按钮
+     * @property [projectionPicker = false] - 投影切换按钮, 是否显示用于在透视和正投影之间进行切换按钮
+     * @property [fullscreenButton = false] - 全屏按钮，是否显示
+     * @property [fullscreenElement = document.body] - 当按下全屏按钮时，要置于全屏模式的元素或id
+     * @property [vrButton = false] - VR效果按钮，是否显示
+     * @property [geocoder = false] - 是否显示 地名查找控件按钮，是Cesium原生控件
+     * @property [navigationHelpButton = false] - 帮助按钮，是否显示
+     * @property [navigationInstructionsInitiallyVisible = true] - 帮助按钮 在用户明确单击按钮之前是否自动显示
+     * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件
+     * @property [imageryProviderViewModels = []] - baseLayerPicker底图切换面板中，用于图像的ProviderViewModel实例数组，默认自动根据basemaps数组生成。
+     * @property [selectedImageryProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基本图像层的视图模型，则使用第一个可用的图像层。默认为show:true的basemaps图层
+     * @property [terrainProviderViewModels = []] - baseLayerPicker底图切换面板中，用于地形的ProviderViewModel实例数组。默认自动使用terrain配置+无地形。
+     * @property [selectedTerrainProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基础地形层的视图模型，则使用第一个可用的地形层。
+     * @property [compass] - 导航球, 对应 {@link Compass}构造参数
+     * @property [locationBar] - 状态栏, 对应 {@link LocationBar}构造参数
      * @property [locationBar.fps] - 是否显示实时FPS帧率
      * @property [locationBar.format] - 显示内容的格式化html展示的内容格式化字符串。  支持以下模版配置：【鼠标所在位置】 经度:{lng}， 纬度:{lat}， 海拔：{alt}米， 【相机的】 方向角度：{heading}， 俯仰角度：{pitch}， 视高：{cameraHeight}米， 【地图的】 层级：{level}，
-     * @property [compass] - 导航球控件 , 对应 {@link Compass}构造参数
-     * @property [distanceLegend] - 比例尺控件  , 对应 {@link DistanceLegend}构造参数
-     * @property [clockAnimate] - 时钟动画控制控件 , 对应{@link ClockAnimate}构造参数
-     * @property [zoom] - 时钟动画控制控件 , 对应 {@link Zoom}构造参数
-     * @property [overviewMap] - 鹰眼地图 控件, 对应{@link OverviewMap }构造参数
-     * @property [mapSplit] - 卷帘对比 控件, 对应{@link MapSplit }构造参数
+     * @property [distanceLegend] - 比例尺, 对应 {@link DistanceLegend}构造参数
+     * @property [clockAnimate] - 时钟控制, 对应{@link ClockAnimate}构造参数
+     * @property [animation = true] - 时钟仪表控制(Cesium原生)
+     * @property [animationTicks] - 时钟仪表控制(Cesium原生)的可选步长
+     * @property [timeline = true] - 时间线, 是否创建下侧时间线控件面板
+     * @property [overviewMap] - 鹰眼地图, 对应{@link OverviewMap }构造参数
+     * @property [mapSplit] - 卷帘对比, 对应{@link MapSplit }构造参数
+     * @property [keyboardRoam] - 键盘漫游, 对应{@link KeyboardRoam }构造参数
+     * @property [mouseDownView] - 鼠标滚轮缩放美化样式, 对应 {@link MouseDownView}构造参数
+     * @property [infoBox = true] - 信息面板，是否显示点击要素之后显示的信息，是Cesium原生控件
+     * @property [selectionIndicator = true] - 选中框，是否显示选择模型时的绿色框，是Cesium原生控件
+     * @property [showRenderLoopErrors = true] - 如果为true，则在发生渲染循环错误时，此小部件将自动向包含错误的用户显示HTML面板，是Cesium原生控件
      * @property [contextmenu] - 内置 右键菜单 控制参数, 对应{@link ContextMenu }构造参数
      * @property [contextmenu.preventDefault = true] - 是否取消右键菜单
      * @property [contextmenu.hasDefault = true] - 是否绑定默认的地图右键菜单
@@ -23077,44 +22935,40 @@ declare namespace Map {
      * @property [popup.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
      * @property [tooltip] - 内置 Tooltip 控制参数
      * @property [tooltip.cacheTime = 20] - 延迟缓存的时间，单位：毫秒
-     * @property [keyboardRoam] - 内置 键盘漫游 控制参数, 对应{@link KeyboardRoam }构造参数
-     * @property [keyboardRoam.moveStep = 10] - 平移步长 (米)
-     * @property [keyboardRoam.dirStep = 25] - 相机原地旋转步长，值越大步长越小。
-     * @property [keyboardRoam.rotateStep = 1.0] - 相机围绕目标点旋转速率，0.3 - 2.0
-     * @property [keyboardRoam.minPitch = 0.1] - 最小仰角  0 - 1
-     * @property [keyboardRoam.maxPitch = 0.95] - 最大仰角  0 - 1
-     * @property [keyboardRoam.minHeight = 0] - 最低高度（单位：米）
-     *
-     * 以下是Cesium.Viewer所支持的控件相关的options
-     * @property [infoBox = true] - 是否显示 点击要素之后显示的信息
-     * @property [selectionIndicator = true] - 选择模型时，是否显示绿色框
-     * @property [animation = true] - 是否创建 左下角仪表动画面板
-     * @property [animationTicks] - 左下角仪表动画面板 的可选步长
-     * @property [timeline = true] - 是否创建 下侧时间线控件面板
-     * @property [baseLayerPicker = true] - 是否显示 basemaps底图切换按钮
-     * @property [fullscreenButton = true] - 是否显示 全屏按钮
-     * @property [fullscreenElement = document.body] - 当按下全屏按钮时，要置于全屏模式的元素或id。
-     * @property [vrButton = false] - 是否显示 右下角vr虚拟现实按钮
-     * @property [geocoder = true] - 是否显示 地名查找控件按钮
-     * @property [homeButton = true] - 是否显示  视角复位按钮
-     * @property [sceneModePicker = true] - 是否显示  二三维视图切换按钮
-     * @property [projectionPicker = false] - 是否显示  用于在透视和正投影之间进行切换按钮
-     * @property [navigationHelpButton = true] - 是否显示  帮助按钮
-     * @property [navigationInstructionsInitiallyVisible = true] - 在用户明确单击按钮之前是否自动显示navigationHelpButton
-     * @property [showRenderLoopErrors = true] - 如果为true，则在发生渲染循环错误时，此小部件将自动向包含错误的用户显示HTML面板。
      */
     type controlOptions = {
-        mouseDownView?: boolean;
+        homeButton?: boolean;
+        zoom?: any;
+        sceneModePicker?: boolean;
+        projectionPicker?: boolean;
+        fullscreenButton?: boolean;
+        fullscreenElement?: Element | string;
+        vrButton?: boolean;
+        geocoder?: boolean | Cesium.GeocoderService[];
+        navigationHelpButton?: boolean;
+        navigationInstructionsInitiallyVisible?: boolean;
+        baseLayerPicker?: boolean;
+        imageryProviderViewModels?: Cesium.ProviderViewModel[];
+        selectedImageryProviderViewModel?: Cesium.ProviderViewModel;
+        terrainProviderViewModels?: Cesium.ProviderViewModel[];
+        selectedTerrainProviderViewModel?: Cesium.ProviderViewModel;
+        compass?: any;
         locationBar?: {
             fps?: boolean;
             format?: string | ((...params: any[]) => any);
         };
-        compass?: any;
         distanceLegend?: any;
         clockAnimate?: any;
-        zoom?: any;
+        animation?: boolean;
+        animationTicks?: number[];
+        timeline?: boolean;
         overviewMap?: any;
         mapSplit?: any;
+        keyboardRoam?: any;
+        mouseDownView?: boolean;
+        infoBox?: boolean;
+        selectionIndicator?: boolean;
+        showRenderLoopErrors?: boolean;
         contextmenu?: {
             preventDefault?: boolean;
             hasDefault?: boolean;
@@ -23125,30 +22979,6 @@ declare namespace Map {
         tooltip?: {
             cacheTime?: number;
         };
-        keyboardRoam?: {
-            moveStep?: number;
-            dirStep?: number;
-            rotateStep?: number;
-            minPitch?: number;
-            maxPitch?: number;
-            minHeight?: number;
-        };
-        infoBox?: boolean;
-        selectionIndicator?: boolean;
-        animation?: boolean;
-        animationTicks?: number[];
-        timeline?: boolean;
-        baseLayerPicker?: boolean;
-        fullscreenButton?: boolean;
-        fullscreenElement?: Element | string;
-        vrButton?: boolean;
-        geocoder?: boolean | Cesium.GeocoderService[];
-        homeButton?: boolean;
-        sceneModePicker?: boolean;
-        projectionPicker?: boolean;
-        navigationHelpButton?: boolean;
-        navigationInstructionsInitiallyVisible?: boolean;
-        showRenderLoopErrors?: boolean;
     };
     /**
      * 鼠标操作相关配置 参数
@@ -23167,32 +22997,32 @@ declare namespace Map {
     };
     /**
      * 添加到地图的特效 参数
-     * @property [blackAndWhite] - 黑白效果,对应{@link BlackAndWhiteEffect }构造参数
-     * @property [bloom] - 泛光效果,对应{@link BloomEffect }构造参数
-     * @property [brightness] - 亮度特效,对应{@link BrightnessEffect }构造参数
-     * @property [depthOfField] - 景深特效,对应{@link DepthOfFieldEffect }构造参数
-     * @property [fog] - 雾 特效,对应{@link FogEffect }构造参数
-     * @property [inverted] - 倒影效果,对应{@link InvertedEffect }构造参数
-     * @property [mosaic] - 马赛克效果,对应{@link MosaicEffect }构造参数
-     * @property [nightVision] - 夜视效果,对应{@link NightVisionEffect }构造参数
-     * @property [outline] - 轮廓线描边效果,对应{@link OutlineEffect }构造参数
-     * @property [rain] - 下雨 特效,对应{@link RainEffect }构造参数
-     * @property [snow] - 下雪 特效,对应{@link SnowEffect }构造参数
-     * @property [snowCover] - 地面积雪 特效,对应{@link SnowCoverEffect }构造参数
+     * @property [bloom] - 泛光,对应{@link BloomEffect }构造参数
+     * @property [brightness] - 亮度,对应{@link BrightnessEffect }构造参数
+     * @property [rain] - 雨天气,对应{@link RainEffect }构造参数
+     * @property [snow] - 雪天气 ,对应{@link SnowEffect }构造参数
+     * @property [snowCover] - 地面积雪,对应{@link SnowCoverEffect }构造参数
+     * @property [fog] - 雾天气,对应{@link FogEffect }构造参数
+     * @property [depthOfField] - 景深,对应{@link DepthOfFieldEffect }构造参数
+     * @property [mosaic] - 马赛克,对应{@link MosaicEffect }构造参数
+     * @property [nightVision] - 夜视,对应{@link NightVisionEffect }构造参数
+     * @property [blackAndWhite] - 黑白,对应{@link BlackAndWhiteEffect }构造参数
+     * @property [outline] - 对象轮廓描边,对应{@link OutlineEffect }构造参数
+     * @property [bloomTarget] - 对象泛光,对应{@link BloomTargetEffect }构造参数
      */
     type effectOptions = {
-        blackAndWhite?: any;
         bloom?: any;
         brightness?: any;
-        depthOfField?: any;
-        fog?: any;
-        inverted?: any;
-        mosaic?: any;
-        nightVision?: any;
-        outline?: any;
         rain?: any;
         snow?: any;
         snowCover?: any;
+        fog?: any;
+        depthOfField?: any;
+        mosaic?: any;
+        nightVision?: any;
+        blackAndWhite?: any;
+        outline?: any;
+        bloomTarget?: any;
     };
     /**
      * 地形服务配置
@@ -23376,8 +23206,8 @@ declare namespace Map {
  * @param [options = {}] - 参数对象:
  * @param [options.scene] - 场景参数
  * @param [options.control] - 添加的控件
- * @param [options.mouse] - 鼠标操作相关配置参数
  * @param [options.effect] - 添加的特效
+ * @param [options.mouse] - 鼠标操作相关配置参数
  * @param [options.terrain] - 地形服务配置
  * @param [options.basemaps] - 底图图层配置
  * @param [options.layers] - 可以叠加显示的图层配置
@@ -23390,8 +23220,8 @@ declare class Map extends BaseClass {
     constructor(id: string | Cesium.Viewer, options?: {
         scene?: Map.sceneOptions;
         control?: Map.controlOptions;
-        mouse?: Map.mouseOptions;
         effect?: Map.effectOptions;
+        mouse?: Map.mouseOptions;
         terrain?: Map.terrainOptions;
         basemaps?: Map.basemapOptions[];
         layers?: Map.layerOptions[];
@@ -24338,6 +24168,14 @@ declare class CircleScanMaterialProperty extends BaseMaterialProperty {
         color?: string | Cesium.Color;
     });
     /**
+     * 背景图片URL
+     */
+    image: string;
+    /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24356,14 +24194,6 @@ declare class CircleScanMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 背景图片URL
-     */
-    image: string;
 }
 
 /**
@@ -24384,6 +24214,26 @@ declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
         gradient?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
+     * 播放总时长，单位：秒 （会覆盖speed参数）
+     */
+    duration: number;
+    /**
+     * 圆圈个数
+     */
+    count: number;
+    /**
+     * 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
+     */
+    gradient: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24402,22 +24252,6 @@ declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 速度
-     */
-    speed: number;
-    /**
-     * 圆圈个数
-     */
-    count: number;
-    /**
-     * 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
-     */
-    gradient: number;
 }
 
 /**
@@ -24436,6 +24270,22 @@ declare class CylinderWaveMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 圈数量
+     */
+    repeat: number;
+    /**
+     * 圈的宽度比例
+     */
+    thickness: number;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24454,14 +24304,6 @@ declare class CylinderWaveMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 重复次数
-     */
-    repeat: number;
 }
 
 /**
@@ -24482,6 +24324,26 @@ declare class DigitalFlowMaterialProperty extends BaseMaterialProperty {
         segment?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
+     * 高亮强度
+     */
+    glow: number;
+    /**
+     * 流动高亮强度
+     */
+    flowGlow: number;
+    /**
+     * 分段数
+     */
+    segment: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24500,10 +24362,6 @@ declare class DigitalFlowMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24518,6 +24376,14 @@ declare class EllipsoidElectricMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24536,10 +24402,6 @@ declare class EllipsoidElectricMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24554,6 +24416,14 @@ declare class EllipsoidWaveMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24572,10 +24442,6 @@ declare class EllipsoidWaveMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24592,6 +24458,18 @@ declare class Image2MaterialProperty extends BaseMaterialProperty {
         color?: string | Cesium.Color;
     });
     /**
+     * 背景图片URL
+     */
+    image: string;
+    /**
+     * 透明度，0-1
+     */
+    opacity: number;
+    /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24610,14 +24488,6 @@ declare class Image2MaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 透明度，0-1
-     */
-    opacity: number;
-    /**
-     * 背景图片URL
-     */
-    image: string;
 }
 
 /**
@@ -24634,6 +24504,18 @@ declare class LineBloomMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
+     * 泛光强度
+     */
+    glow: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24652,10 +24534,6 @@ declare class LineBloomMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24670,6 +24548,14 @@ declare class LineFlickerMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 背景图片颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24688,10 +24574,6 @@ declare class LineFlickerMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24712,6 +24594,26 @@ declare class LineFlowColorMaterialProperty extends BaseMaterialProperty {
         startTime?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
+     * 比例
+     */
+    percent: number;
+    /**
+     * 透明程度 0.0-1.0
+     */
+    alpha: number;
+    /**
+     * 开始的时间系数
+     */
+    startTime: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24730,10 +24632,6 @@ declare class LineFlowColorMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24743,7 +24641,7 @@ declare class LineFlowColorMaterialProperty extends BaseMaterialProperty {
  * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 背景图片颜色
  * @param [options.repeat = new Cesium.Cartesian2(1.0, 1.0)] - 横纵方向重复次数
  * @param [options.axisY = false] - 是否Y轴朝上
- * @param [options.speed = 10] - 速度，建议取值范围1-100
+ * @param [options.speed = 10] - 速度
  * @param [options.duration] - 播放总时长，单位：秒 （会覆盖speed参数）
  * @param [options.hasImage2 = false] - 是否有2张图片的混合模式
  * @param [options.image2] - 第2张背景图片URL地址
@@ -24762,6 +24660,42 @@ declare class LineFlowMaterialProperty extends BaseMaterialProperty {
         color2?: string | Cesium.Color;
     });
     /**
+     * 背景图片URL
+     */
+    image: string;
+    /**
+     * 背景图片颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 是否Y轴朝上
+     */
+    axisY: boolean;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
+     * 播放总时长，单位：秒 （会覆盖speed参数）
+     */
+    duration: number;
+    /**
+     * 横纵方向重复次数
+     */
+    repeat: Cesium.Cartesian2;
+    /**
+     * 第2张背景图片
+     */
+    image2: string;
+    /**
+     * 第2张背景图片颜色
+     */
+    color2: Cesium.Color;
+    /**
+     * 是否有2张图片的混合模式
+     */
+    hasImage2: boolean;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24780,17 +24714,13 @@ declare class LineFlowMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
  * 线状: 轨迹线 材质
  * @param [options] - 参数对象，包括以下：
  * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 颜色
- * @param [options.bgColor] - 线的背景颜色
+ * @param [options.bgColor] - 背景颜色
  * @param [options.speed = 5.0] - 速度，值越大越快
  */
 declare class LineTrailMaterialProperty extends BaseMaterialProperty {
@@ -24800,6 +24730,18 @@ declare class LineTrailMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 背景颜色
+     */
+    bgColor: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24818,14 +24760,6 @@ declare class LineTrailMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 背景颜色
-     */
-    bgColor: Cesium.Color;
 }
 
 /**
@@ -24840,6 +24774,14 @@ declare class NeonLightMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24858,10 +24800,6 @@ declare class NeonLightMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24882,6 +24820,26 @@ declare class ODLineMaterialProperty extends BaseMaterialProperty {
         bidirectional?: number;
     });
     /**
+     * 运动对象的颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 线的背景颜色
+     */
+    bgColor: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
+     * 开始的时间系数
+     */
+    startTime: number;
+    /**
+     * 运行形式：0 正向运动 1 反向运动 2 双向运动
+     */
+    bidirectional: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24900,18 +24858,6 @@ declare class ODLineMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 运动对象的颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 线的背景颜色
-     */
-    bgColor: Cesium.Color;
-    /**
-     * 速度
-     */
-    speed: number;
 }
 
 /**
@@ -24928,6 +24874,18 @@ declare class PolyAsphaltMaterialProperty extends BaseMaterialProperty {
         frequency?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 块大小
+     */
+    size: number;
+    /**
+     * 粗糙度
+     */
+    frequency: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24946,10 +24904,6 @@ declare class PolyAsphaltMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -24966,6 +24920,18 @@ declare class PolyBlobMaterialProperty extends BaseMaterialProperty {
         frequency?: number;
     });
     /**
+     * 浅色的颜色
+     */
+    evenColor: Cesium.Color;
+    /**
+     * 深色的颜色
+     */
+    oddColor: Cesium.Color;
+    /**
+     * 频率
+     */
+    frequency: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -24984,14 +24950,6 @@ declare class PolyBlobMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 浅色的颜色
-     */
-    evenColor: Cesium.Color;
-    /**
-     * 深色的颜色
-     */
-    oddColor: Cesium.Color;
 }
 
 /**
@@ -25013,14 +24971,6 @@ declare class PolyFacetMaterialProperty extends BaseMaterialProperty {
      * @returns 材质名称
      */
     getType(time?: Cesium.JulianDate): string;
-    /**
-     * 浅色的颜色
-     */
-    evenColor: Cesium.Color;
-    /**
-     * 深色的颜色
-     */
-    oddColor: Cesium.Color;
 }
 
 /**
@@ -25038,6 +24988,22 @@ declare class PolyGradientMaterialProperty extends BaseMaterialProperty {
         diffusePower?: number;
         center?: Cesium.Cartesian2;
     });
+    /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 漫射系数
+     */
+    diffusePower: number;
+    /**
+     * 透明度系数
+     */
+    alphaPower: number;
+    /**
+     * 渐变位置，默认在中心
+     */
+    center: Cesium.Cartesian2;
     /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
@@ -25057,10 +25023,6 @@ declare class PolyGradientMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -25082,14 +25044,6 @@ declare class PolyGrassMaterialProperty extends BaseMaterialProperty {
      * @returns 材质名称
      */
     getType(time?: Cesium.JulianDate): string;
-    /**
-     * 浅色的颜色
-     */
-    evenColor: Cesium.Color;
-    /**
-     * 深色的颜色
-     */
-    oddColor: Cesium.Color;
 }
 
 /**
@@ -25110,6 +25064,26 @@ declare class PolyWoodMaterialProperty extends BaseMaterialProperty {
         grainFrequency?: number;
     });
     /**
+     * 浅色的颜色
+     */
+    evenColor: Cesium.Color;
+    /**
+     * 深色的颜色
+     */
+    oddColor: Cesium.Color;
+    /**
+     * 环频率
+     */
+    frequency: number;
+    /**
+     * 噪波比例
+     */
+    noiseScale: Cesium.Cartesian2;
+    /**
+     * 颗粒的频率
+     */
+    grainFrequency: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25128,14 +25102,6 @@ declare class PolyWoodMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 浅色的颜色
-     */
-    evenColor: Cesium.Color;
-    /**
-     * 深色的颜色
-     */
-    oddColor: Cesium.Color;
 }
 
 /**
@@ -25150,6 +25116,14 @@ declare class RadarLineMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25168,10 +25142,6 @@ declare class RadarLineMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -25186,6 +25156,14 @@ declare class RadarWaveMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25204,10 +25182,6 @@ declare class RadarWaveMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -25226,6 +25200,22 @@ declare class RectSlideMaterialProperty extends BaseMaterialProperty {
         pure?: boolean;
     });
     /**
+     * 背景图片URL
+     */
+    image: string;
+    /**
+     * 背景图片颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度，值越大越快
+     */
+    speed: number;
+    /**
+     * 是否纯色
+     */
+    pure: boolean;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25244,14 +25234,6 @@ declare class RectSlideMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 背景图片URL
-     */
-    image: string;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -25266,6 +25248,14 @@ declare class ScanLineMaterialProperty extends BaseMaterialProperty {
         speed?: number;
     });
     /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25284,14 +25274,6 @@ declare class ScanLineMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 速度
-     */
-    speed: Cesium.Color;
 }
 
 /**
@@ -25338,6 +25320,10 @@ declare class TextMaterialProperty extends Image2MaterialProperty {
         onCustomCanvas?: (...params: any[]) => any;
     });
     /**
+     * 是否透明
+     */
+    transparent: boolean;
+    /**
      * 文本内容
      */
     text: string;
@@ -25345,6 +25331,10 @@ declare class TextMaterialProperty extends Image2MaterialProperty {
      * 文本样式
      */
     textStyles: any;
+    /**
+     * 背景图片URL
+     */
+    image: string;
 }
 
 /**
@@ -25369,6 +25359,34 @@ declare class WallScrollMaterialProperty extends BaseMaterialProperty {
         axisY?: boolean;
     });
     /**
+     * 背景图片URL
+     */
+    image: string;
+    /**
+     * 背景图片颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 速度
+     */
+    speed: number;
+    /**
+     * 数量
+     */
+    count: number;
+    /**
+     * 方向，false是往下，true是往上
+     */
+    reverse: boolean;
+    /**
+     * 是否Y轴朝上
+     */
+    axisY: boolean;
+    /**
+     * 是否泛光
+     */
+    bloom: boolean;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25387,14 +25405,6 @@ declare class WallScrollMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 背景图片URL
-     */
-    image: string;
-    /**
-     * 颜色
-     */
-    color: Cesium.Color;
 }
 
 /**
@@ -25411,6 +25421,18 @@ declare class WaterLightMaterialProperty extends BaseMaterialProperty {
         alpha?: number;
     });
     /**
+     * 图片路径，镜面反射纹理材质图片
+     */
+    specularMap: string;
+    /**
+     * 图片路径，水正常扰动的法线图材质图片
+     */
+    normalMap: string;
+    /**
+     * 透明度
+     */
+    alpha: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25429,24 +25451,20 @@ declare class WaterLightMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 图片路径，镜面反射纹理材质图片
-     */
-    specularMap: string;
 }
 
 /**
  * 水面效果材质
  * @param [options] - 参数对象，包括以下：
  * @param [options.baseWaterColor = new Cesium.Color(0.2, 0.3, 0.6, 1.0)] - 基础颜色
- * @param [options.blendColor = new Cesium.Color(0.0, 1.0, 0.699, 1.0)] - 从水中混合到非水域时使用的rgba颜色对象。
- * @param [options.specularMap] - 单一通道纹理用来指示水域的面积。
- * @param [options.normalMap] - 水正常扰动的法线图。
- * @param [options.frequency = 100] - 控制波数的数字。
- * @param [options.animationSpeed = 0.01] - 控制水的动画速度的数字。
- * @param [options.amplitude = 10] - 控制水波振幅的数字。
- * @param [options.specularIntensity = 0.5] - 控制镜面反射强度的数字。
- * @param [options.fadeFactor = 1.0] - fadeFactor
+ * @param [options.blendColor = new Cesium.Color(0.0, 1.0, 0.699, 1.0)] - 从水中混合到非水域时使用的rgba颜色
+ * @param [options.specularMap] - 单一通道纹理用来指示水域的面积
+ * @param [options.normalMap] - 水正常扰动的法线图
+ * @param [options.frequency = 100] - 控制波数的数字
+ * @param [options.animationSpeed = 0.01] - 控制水的动画速度的数字
+ * @param [options.amplitude = 10] - 控制水波振幅的数字
+ * @param [options.specularIntensity = 0.5] - 控制镜面反射强度的数字
+ * @param [options.fadeFactor = 1.0] - 衰减因子
  */
 declare class WaterMaterialProperty extends BaseMaterialProperty {
     constructor(options?: {
@@ -25461,6 +25479,42 @@ declare class WaterMaterialProperty extends BaseMaterialProperty {
         fadeFactor?: number;
     });
     /**
+     * 基础颜色
+     */
+    baseWaterColor: Cesium.Color;
+    /**
+     * 从水中混合到非水域时使用的rgba颜色
+     */
+    blendColor: Cesium.Color;
+    /**
+     * 单一通道纹理用来指示水域的面积
+     */
+    specularMap: string;
+    /**
+     * 水正常扰动的法线图
+     */
+    normalMap: string;
+    /**
+     * 控制波数的数字
+     */
+    frequency: number;
+    /**
+     * 控制水的动画速度的数字
+     */
+    animationSpeed: number;
+    /**
+     * 控制水波振幅的数字
+     */
+    amplitude: number;
+    /**
+     * 控制镜面反射强度的数字
+     */
+    specularIntensity: number;
+    /**
+     * 衰减因子
+     */
+    fadeFactor: number;
+    /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
      * @returns 材质名称
@@ -25479,22 +25533,6 @@ declare class WaterMaterialProperty extends BaseMaterialProperty {
      * @returns 两者是同一个对象
      */
     equals(other?: Cesium.Property): boolean;
-    /**
-     * 基础颜色
-     */
-    baseWaterColor: Cesium.Color;
-    /**
-     * 从水中混合到非水域时使用的rgba颜色对象。
-     */
-    blendColor: Cesium.Color;
-    /**
-     * 单一通道纹理用来指示水域的面积。
-     */
-    specularMap: string;
-    /**
-     * 水正常扰动的法线图。
-     */
-    normalMap: string;
 }
 
 /**
@@ -32619,12 +32657,12 @@ declare namespace PolyUtil {
      * @param positions - 坐标数组
      * @param [options = {}] - 参数对象:
      * @param [options.splitNum] - 插值数，等比分割的个数，默认不插值
-     * @param [options.minDistance] - 插值时的最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值时的最小间隔(单位：米)，优先级高于splitNum,如果传"auto"，自动计算坐标中最小的2点距离
      * @returns 插值后的坐标对象
      */
     function interLine(positions: LngLatPoint[] | Cesium.Cartesian3[] | any[], options?: {
         splitNum?: number;
-        minDistance?: number;
+        minDistance?: number | string;
     }): Cesium.Cartesian3[];
     /**
      * 求路线的贴地线坐标（插值）
@@ -33289,6 +33327,7 @@ declare namespace control {
   export { Compass }
   export { DistanceLegend }
   export { MapSplit }
+  export { MapCompare }
   export { OverviewMap }
   export { ClockAnimate }
   export { Timeline }
