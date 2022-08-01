@@ -13,8 +13,7 @@
 
     //初始化[仅执行1次]
     create() {
-      //此数据也可以放在widget.json的配置中，但是发现很多人容易引起同名误解，所以还是放在这里
-      this.data = this.config.data || [
+      this.data = window.toolBarMenuData || [
         { name: "底图", icon: "fa fa-map", widget: "widgets/manageBasemaps/widget.js" },
         { name: "图层", icon: "fa fa-tasks", widget: "widgets/manageLayers/widget.js" },
         {

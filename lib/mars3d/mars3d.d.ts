@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.1
- * 编译日期：2022-07-25 15:46:59
+ * 版本信息：v3.4.2
+ * 编译日期：2022-08-01 17:49:44
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1063,6 +1063,7 @@ declare enum LayerType {
     graphic,
     graphicGroup,
     geojson,
+    busineData,
     lodGraphic,
     wfs,
     arcgis_wfs,
@@ -1268,8 +1269,8 @@ declare namespace MaterialType {
     const Grid: string;
     /**
      * 面状：棋盘
-     * @property [evenColor = Cesium.Color.WHITE] - 主色
-     * @property [oddColor = Cesium.Color.BLACK] - 衬色，棋盘中另外一个颜色
+     * @property [lightColor = Cesium.Color.WHITE] - 主色
+     * @property [darkColor = Cesium.Color.BLACK] - 衬色，棋盘中另外一个颜色
      * @property [repeat = new Cesium.Cartesian2(2.0, 2.0)] - 数量，在每个方向重复的次数
      */
     const Checkerboard: string;
@@ -2018,7 +2019,7 @@ declare class MapSplit extends BaseControl {
 }
 
 /**
- * 鼠标按下指示图标，比如鼠标旋转、放大时
+ * 鼠标滚轮缩放美化样式(指示图标)控件
  * @param [options] - 参数对象，包括以下：
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -17154,6 +17155,169 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
 }
 
 /**
+ * 业务数据(通过API接口获取)图层, 主要是为了封装后简化使用，或直接配置到config.json，也可以自行构造Graphic矢量对象加到GraphicLayer。<br />
+ *
+ * 样式信息：通过symbol配置graphic类型和样式<br />
+ * 坐标信息：建议接口返回中有规范的坐标字段lat\lng\alt或用formatPosition方法自定义解析
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.url] - geojson文件或服务url地址
+ * @param [options.data] - geojson格式规范数据对象，与url二选一即可。
+ * @param [options.dataColumn] - 接口返回数据中，对应的业务数据数组所在的读取字段名称，支持多级(用.分割)；如果数据直接返回数组时可以不配置。
+ * @param [options.formatData] - 可以对加载的数据进行格式化或转换操作
+ * @param [options.lngColumn = "lng"] - 点坐标时，经度值对应的字段名称
+ * @param [options.latColumn = "lat"] - 点坐标时，纬度值对应的字段名称
+ * @param [options.altColumn = "alt"] - 点坐标时，高度值对应的字段名称
+ * @param [options.formatPosition] - 可以对加载的数据进行格式化或转换操作
+ * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
+ * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
+ * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
+ * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
+ * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
+ * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
+ * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
+ * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
+ * @param [options.clustering] - 设置聚合相关参数（仅对Entity点数据有效）：
+ * @param [options.clustering.enabled = false] - 是否开启聚合
+ * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
+ * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
+ * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
+ * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
+ * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
+ * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
+ * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
+ * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
+ * @param [options.proxy] - 加载资源时要使用的代理服务url。
+ * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
+ * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'}
+ * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' }
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
+ * @param [options.popupOptions.title] - 固定的标题名称
+ * @param [options.popupOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.popupOptions.noTitle] - 不显示标题
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑定，参数与popup属性完全相同。
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数,还包括：
+ * @param [options.tooltipOptions.title] - 固定的标题名称
+ * @param [options.tooltipOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.tooltipOptions.noTitle] - 不显示标题
+ * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 图层id标识
+ * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
+ * @param [options.name = ''] - 图层名称
+ * @param [options.show = true] - 图层是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
+ * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
+ * @param options.center.lng - 经度值, 180 - 180
+ * @param options.center.lat - 纬度值, -90 - 90
+ * @param [options.center.alt] - 高度值
+ * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0-360
+ * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, 0-360
+ * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, 0-360
+ * @param [options.extent] - 图层自定义定位的矩形区域，与center二选一即可。 {@link Map#flyToExtent}
+ * @param options.extent.xmin - 最小经度值, -180 至 180
+ * @param options.extent.xmax - 最大经度值, -180 至 180
+ * @param options.extent.ymin - 最小纬度值, -90 至 90
+ * @param options.extent.ymax - 最大纬度值, -90 至 90
+ * @param [options.extent.height = 0] - 矩形高度值
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ */
+declare class BusineDataLayer extends GraphicLayer {
+    constructor(options?: {
+        url?: string;
+        data?: any;
+        dataColumn?: string;
+        formatData?: (...params: any[]) => any;
+        lngColumn?: string;
+        latColumn?: string;
+        altColumn?: string;
+        formatPosition?: (...params: any[]) => any;
+        onCreateGraphic?: (...params: any[]) => any;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        opacity?: number;
+        zIndex?: number;
+        symbol?: {
+            type?: GraphicType | string;
+            styleOptions: any;
+            styleField?: string;
+            styleFieldOptions?: any;
+            merge?: boolean;
+            callback?: (...params: any[]) => any;
+        };
+        graphicOptions?: any;
+        clustering?: {
+            enabled?: boolean;
+            pixelRange?: number;
+            clampToGround?: boolean;
+            radius?: number;
+            fontColor?: string;
+            color?: string;
+            opacity?: number;
+            borderWidth?: number;
+            borderColor?: string;
+            borderOpacity?: number;
+            getImage?: (...params: any[]) => any;
+        };
+        proxy?: string;
+        templateValues?: any;
+        queryParameters?: any;
+        headers?: any;
+        popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
+        popupOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+        };
+        tooltip?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any) | any;
+        tooltipOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+        };
+        contextmenuItems?: any;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        center?: {
+            lng: number;
+            lat: number;
+            alt?: number;
+            heading?: number;
+            pitch?: number;
+            roll?: number;
+        };
+        extent?: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+            height?: number;
+        };
+        flyTo?: boolean;
+    });
+    /**
+     * 加载新数据 或 刷新数据
+     * @param [newOptions] - 新设定的参数，会与类的构造参数合并。
+     * @param [newOptions.url] - API接口url地址
+     * @param [newOptions.data] - API接口对应的数据对象，与url二选一即可。
+     * @param [newOptions.类参数] - 包含当前类支持的所有参数
+     * @returns 当前对象本身，可以链式调用
+     */
+    load(newOptions?: {
+        url?: string;
+        data?: any;
+        类参数?: any;
+    }): BusineDataLayer;
+}
+
+/**
  * 高德在线POI图层
  * @param [options] - 参数对象，包括以下：
  * @param [options.key = mars3d.Token.gaodeArr] - 高德KEY,在实际项目中请使用自己申请的高德KEY，因为我们的key不保证长期有效。
@@ -17357,6 +17521,18 @@ declare namespace GeoJsonLayer {
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'}
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' }
+ * @param [options.clustering] - 设置聚合相关参数（仅对Entity点数据有效）：
+ * @param [options.clustering.enabled = false] - 是否开启聚合
+ * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
+ * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
+ * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
+ * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
+ * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
+ * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
+ * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
+ * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -17418,6 +17594,19 @@ declare class GeoJsonLayer extends GraphicLayer {
         templateValues?: any;
         queryParameters?: any;
         headers?: any;
+        clustering?: {
+            enabled?: boolean;
+            pixelRange?: number;
+            clampToGround?: boolean;
+            radius?: number;
+            fontColor?: string;
+            color?: string;
+            opacity?: number;
+            borderWidth?: number;
+            borderColor?: string;
+            borderOpacity?: number;
+            getImage?: (...params: any[]) => any;
+        };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
             title?: string;
@@ -17747,7 +17936,7 @@ declare namespace GraphicLayer {
  * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.clustering] - Entity点数据时，设置聚合相关参数：
+ * @param [options.clustering] - 设置聚合相关参数（仅对Entity点数据有效）：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
@@ -18026,7 +18215,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param options.endItem - 每计算完成1个graphic高度后 的回调方法
      * @param options.end - 异步计算高度完成所有graphic后 的回调方法
-     * @returns 绘制创建完成的Promise,等价于callback参数
+     * @returns 绘制创建完成的Promise
      */
     autoSurfaceHeight(options?: {
         has3dtiles?: boolean;
@@ -22924,7 +23113,7 @@ declare namespace Map {
      * @property [overviewMap] - 鹰眼地图, 对应{@link OverviewMap }构造参数
      * @property [mapSplit] - 卷帘对比, 对应{@link MapSplit }构造参数
      * @property [keyboardRoam] - 键盘漫游, 对应{@link KeyboardRoam }构造参数
-     * @property [mouseDownView] - 鼠标滚轮缩放美化样式, 对应 {@link MouseDownView}构造参数
+     * @property [mouseDownView] - 鼠标滚轮缩放美化样式(指示图标), 对应 {@link MouseDownView}构造参数
      * @property [infoBox = true] - 信息面板，是否显示点击要素之后显示的信息，是Cesium原生控件
      * @property [selectionIndicator = true] - 选中框，是否显示选择模型时的绿色框，是Cesium原生控件
      * @property [showRenderLoopErrors = true] - 如果为true，则在发生渲染循环错误时，此小部件将自动向包含错误的用户显示HTML面板，是Cesium原生控件
@@ -31623,9 +31812,10 @@ declare namespace GraphicUtil {
      * 注册矢量数据类
      * @param type - 矢量数据类型
      * @param graphicClass - 矢量数据类
+     * @param [isPoint] - 是否为点状数据
      * @returns 无
      */
-    function register(type: string, graphicClass: BaseGraphic | any): void;
+    function register(type: string, graphicClass: BaseGraphic | any, isPoint?: boolean): void;
     /**
      * 根据 矢量数据类型 获取 矢量数据类
      * @param type - 矢量数据类型
@@ -33577,6 +33767,7 @@ declare namespace layer {
   export { GraphicLayer as DivLayer }
   export { GraphicGroupLayer }
   export { GeoJsonLayer }
+  export { BusineDataLayer }
   export { TilesetLayer }
   export { OsmBuildingsLayer }
   export { GraticuleLayer }

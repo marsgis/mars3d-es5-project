@@ -258,32 +258,6 @@
       "uri": "widgetsTS/qyPoint/widget.js",
       "autoDisable": false,
       "disableOther": false
-    },
-    {
-      "name": "企业详情",
-      "uri": "widgetsTS/qyDetailsView/widget.js",
-      "windowOptions": {
-        "position": {
-          "top": 50,
-          "bottom": 50,
-          "left": 120,
-          "right": 120
-        }
-      },
-      "disableOther": false
-    },
-    {
-      "name": "企业视频监控",
-      "uri": "widgetsTS/qyVideo/widget.js",
-      "windowOptions": {
-        "position": {
-          "top": 50,
-          "bottom": 50,
-          "left": 120,
-          "right": 120
-        }
-      },
-      "disableOther": false
     }
   ]
 }

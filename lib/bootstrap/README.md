@@ -4,7 +4,7 @@
 github地址：https://github.com/twbs/bootstrap
 中文文档：http://www.bootcss.com/
 
-本地版本： 3.3.7
+本地版本：
 更新日期：
 
 介绍：
