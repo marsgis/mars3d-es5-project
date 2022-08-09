@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.2
- * 编译日期：2022-08-01 17:49:44
+ * 版本信息：v3.4.3
+ * 编译日期：2022-08-09 13:24:48
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -8978,8 +8978,9 @@ declare namespace FontBillboardEntity {
     /**
      * Font CSS字体点转图片后的图标点  Entity 支持的样式信息
      * @property [iconClass = ""] - 字体css样式
-     * @property [iconSize = 50] - 字体大小
      * @property [color = '#ff0000'] - 字体颜色
+     * @property [iconSize = 50] - 字体大小，单位：像素
+     * @property [iconPadding = 10] - 字体DIV生成时div内的padding值
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
@@ -9017,8 +9018,9 @@ declare namespace FontBillboardEntity {
      */
     type StyleOptions = any | {
         iconClass?: string;
-        iconSize?: number;
         color?: string;
+        iconSize?: number;
+        iconPadding?: number;
         opacity?: number;
         scale?: number;
         rotation?: number;
@@ -9491,13 +9493,13 @@ declare class ModelEntity extends BasePointEntity {
      * @param options.position - 指定目标位置的坐标
      * @param [options.time = 5] - 移动的时长(单位 秒)，控制速度
      * @param [options.onEnd] - 移动完成的回调方法
-     * @returns 无
+     * @returns 绘制创建完成的Promise,等价于onEnd参数
      */
     moveTo(options?: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         time?: number;
         onEnd?: (...params: any[]) => any;
-    }): void;
+    }): Promise<ModelEntity | any>;
     /**
      * 飞行定位至数据所在的视角
      * @param [options = {}] - 参数对象:
@@ -10975,7 +10977,8 @@ declare class Video2D extends PolygonEntity {
 declare namespace WallEntity {
     /**
      * 墙 支持的样式信息
-     * @property [diffHeight = 100] - 墙高
+     * @property [diffHeight = 100] - 墙高，
+     * @property [fixedTop = false] - 墙顶部是否使用统一的水平高度值
      * @property [minimumHeights] - 没有指定diffHeight时，可以指定用于墙壁底部而不是球体表面的高度数组。
      * @property [maximumHeights] - 没有指定diffHeight时，可以指定用于墙顶的高度数组，而不是每个位置的高度。
      * @property [fill = true] - 是否填充
@@ -11004,6 +11007,7 @@ declare namespace WallEntity {
      */
     type StyleOptions = any | {
         diffHeight?: number;
+        fixedTop?: boolean;
         minimumHeights?: number[];
         maximumHeights?: number[];
         fill?: boolean;
@@ -11696,14 +11700,14 @@ declare class Regular extends PolygonEntity {
     readonly EditClass: EditRegular;
     /**
      * 计算当前矢量对象的边界坐标点
-     * @param positions - 坐标位置
+     * @param center - 坐标位置
      * @param options - 控制参数
      * @param [options.border = 3] - 边数量
      * @param options.radius - 区域的半径（单位：米）
      * @param [options.startAngle = 0] - 区域的开始角度(正东方向为0,顺时针到360度)
      * @returns 边界坐标点
      */
-    static getOutlinePositions(positions: Cesium.Cartesian3[], options: {
+    static getOutlinePositions(center: Cesium.Cartesian3, options: {
         border?: number;
         radius: number;
         startAngle?: number;
@@ -11772,14 +11776,14 @@ declare class Sector extends PolygonEntity {
     readonly EditClass: EditSector;
     /**
      * 计算当前矢量对象的边界坐标点
-     * @param positions - 坐标位置
+     * @param center - 中心点坐标位置
      * @param options - 控制参数
      * @param options.radius - 扇形区域的半径（单位：米）
      * @param options.startAngle - 扇形区域的开始角度(正东方向为0,顺时针到360度)
      * @param options.endAngle - 扇形区域的结束角度(正东方向为0,顺时针到360度)
      * @returns 边界坐标点
      */
-    static getOutlinePositions(positions: Cesium.Cartesian3[], options: {
+    static getOutlinePositions(center: Cesium.Cartesian3, options: {
         radius: number;
         startAngle: number;
         endAngle: number;

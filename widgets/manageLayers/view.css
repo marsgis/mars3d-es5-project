@@ -30,6 +30,7 @@
   cursor: default;
   outline: none;
 }
+
 /* 滑动条设置 */
 .slider {
   width: 50px !important;
@@ -41,4 +42,13 @@
   top: 4px;
   width: 12px;
   height: 12px;
+}
+
+.slider-selection {
+  background: rgb(88, 178, 231);
+}
+
+/* 滑动条内的小方块样式 */
+::-webkit-scrollbar-corner {
+  display: none;
 }

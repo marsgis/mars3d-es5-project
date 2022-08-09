@@ -519,8 +519,9 @@
         let inhtml = ""
         for (let index = this.arrHistory.length - 1; index >= 0; index--) {
           let item = this.arrHistory[index]
-          inhtml += "<li><i class='fa fa-history'/><a href=\"javascript:queryBaiduPOIWidget.autoSearch('" + item + "');\">" + item + "</a></li>"
+          inhtml += "<li><a href=\"javascript:queryBaiduPOIWidget.autoSearch('" + item + "');\">" + item + "</a></li>"
         }
+        // <i class='fa fa-history'/>
         $("#querybar_ul_history").html(inhtml)
         $("#querybar_histroy_view").show()
       })
