@@ -109,12 +109,36 @@ function initMap(mapOptions) {
   //绑定单击显示BIM的构件树
   bindShowTilesParts()
 
-  //下面可以继续加项目相关的其他代码
-
   //演示：接收的widget内抛出的事件
   mars3d.widget.on("centerXY", function (event) {
     console.log("在widget进行了坐标定位", event)
   })
+
+  // 用于 config.json 中 西藏垭口 图层的详情按钮 演示
+  window.showPopupDetails = (item) => {
+    haoutil.alert(item.NAME)
+  }
+
+  // 用于 config.json中配置的图层，绑定额外方法和参数
+  const tiles3dLayer = map.getLayerById(204012) // 上海市区
+  if (tiles3dLayer) {
+    tiles3dLayer.options.onSetOpacity = function (opacity) {
+      tiles3dLayer.style = {
+        color: {
+          conditions: [
+            ["${floor} >= 200", "rgba(45, 0, 75," + 0.5 * opacity + ")"],
+            ["${floor} >= 100", "rgba(170, 162, 204," + opacity + ")"],
+            ["${floor} >= 50", "rgba(224, 226, 238," + opacity + ")"],
+            ["${floor} >= 25", "rgba(252, 230, 200," + opacity + ")"],
+            ["${floor} >= 10", "rgba(248, 176, 87," + opacity + ")"],
+            ["${floor} >= 5", "rgba(198, 106, 11," + opacity + ")"],
+            ["true", "rgba(127, 59, 8," + opacity + ")"]
+          ]
+        }
+      }
+    }
+  }
+  //下面可以继续加项目相关的其他代码
 }
 
 //初始化widget相关

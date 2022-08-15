@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.3
- * 编译日期：2022-08-09 13:24:48
+ * 版本信息：v3.4.4
+ * 编译日期：2022-08-15 14:53:23
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1971,8 +1971,8 @@ declare class MapCompare extends BaseControl {
  */
 declare class MapSplit extends BaseControl {
     constructor(options?: {
-        leftLayer?: BaseTileLayer;
-        rightLayer?: BaseTileLayer;
+        leftLayer?: BaseTileLayer | BaseTileLayer[] | any;
+        rightLayer?: BaseTileLayer | BaseTileLayer[] | any;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -17171,7 +17171,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.lngColumn = "lng"] - 点坐标时，经度值对应的字段名称
  * @param [options.latColumn = "lat"] - 点坐标时，纬度值对应的字段名称
  * @param [options.altColumn = "alt"] - 点坐标时，高度值对应的字段名称
- * @param [options.formatPosition] - 可以对加载的数据进行格式化或转换操作
+ * @param [options.formatPosition] - 可以对加载的坐标进行格式化或转换操作
  * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
@@ -32421,6 +32421,13 @@ declare namespace PointUtil {
     }): number;
     /**
      * 异步精确计算坐标的 贴地(或贴模型)高度
+     * @example
+     * const position = graphic.position
+     *   mars3d.PointUtil.getSurfaceHeight(map.scene, graphic.position, { has3dtiles: true }).then((result) => {
+     *     console.log("原始高度为：" + result.height_original.toFixed(2) + ",贴地高度：" + result.height.toFixed(2))
+     *
+     *     graphic.position = result.position
+     *   })
      * @param scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param position - 坐标
      * @param [options = {}] - 参数对象:

@@ -69,7 +69,7 @@ ul, li {
 
 .dark a:hover {
   color: #CC3300;
-  text-decoration: underline;
+  /* text-decoration: underline; */
 }
 
 .dark .content {

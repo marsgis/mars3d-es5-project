@@ -72,6 +72,7 @@ li {
 :focus-visible {
   outline: none;
 }
+
 #centerDiv3D {
   height: 100%;
   width: 100%;
@@ -111,7 +112,7 @@ li {
 
 .dark a:hover {
   color: #cc3300;
-  text-decoration: underline;
+  /* text-decoration: underline; */
 }
 
 .dark .content {
@@ -155,16 +156,16 @@ li {
   background-color: rgba(244, 176, 102, 0.2);
 }
 
-.dark .table-hover > tbody > tr:hover {
+.dark .table-hover>tbody>tr:hover {
   background-color: rgba(63, 72, 84, 1);
 }
 
-.dark .dropdown-menu > li > a {
+.dark .dropdown-menu>li>a {
   color: #ffffff;
 }
 
-.dark .dropdown-menu > li > a:hover,
-.dark .dropdown-menu > li > a:focus {
+.dark .dropdown-menu>li>a:hover,
+.dark .dropdown-menu>li>a:focus {
   background-color: #4db3ff;
 }
 
@@ -193,9 +194,10 @@ li {
   box-shadow: 0 3px 14px rgba(128, 128, 128, 0.5);
   z-index: 19870101;
 }
+
 .infoview-left {
-   right: auto;
-   left: 10px;
+  right: auto;
+  left: 10px;
 }
 
 .infoview input,
@@ -207,7 +209,7 @@ li {
   font-size: 14px;
 }
 
-.infoview > div {
+.infoview>div {
   margin-top: 5px;
 }
 
@@ -265,6 +267,7 @@ html {
   scrollbar-highlight-color: #f4f7fc;
   scrollbar-darkshadow-color: #f4f7fc;
 }
+
 * {
   scrollbar-width: thin;
 }
@@ -370,10 +373,12 @@ html {
   left: 40px;
   transform-origin: left bottom;
 }
+
 .cesium-navigation-help-instructions,
 .cesium-navigation-button {
   background-color: rgba(23, 49, 71, 0.8);
 }
+
 .cesium-navigation-button-selected,
 .cesium-navigation-button-unselected:hover {
   background-color: rgba(23, 49, 71, 1);
@@ -441,7 +446,8 @@ html {
   left: 10px;
   right: auto;
 }
-.cesium-cesiumInspector{
+
+.cesium-cesiumInspector {
   background-color: rgba(23, 49, 71, 0.8);
 }
 
@@ -451,30 +457,35 @@ html {
 .mars3d-compass .mars3d-compass-outer {
   fill: rgba(23, 49, 71, 0.8);
 }
+
 .mars3d-contextmenu-ul,
 .mars3d-sub-menu {
   background-color: rgba(23, 49, 71, 0.8);
 }
-.mars3d-contextmenu-ul > li > a:hover,
-.mars3d-sub-menu > li > a:hover,
-.mars3d-contextmenu-ul > li > a:focus,
-.mars3d-sub-menu > li > a:focus,
-.mars3d-contextmenu-ul > li > .active,
-.mars3d-sub-menu > li > .active {
+
+.mars3d-contextmenu-ul>li>a:hover,
+.mars3d-sub-menu>li>a:hover,
+.mars3d-contextmenu-ul>li>a:focus,
+.mars3d-sub-menu>li>a:focus,
+.mars3d-contextmenu-ul>li>.active,
+.mars3d-sub-menu>li>.active {
   background-color: #3ea6ff;
 }
-.mars3d-contextmenu-ul > .active > a,
-.mars3d-sub-menu > .active > a,
-.mars3d-contextmenu-ul > .active > a:hover,
-.mars3d-sub-menu > .active > a:hover,
-.mars3d-contextmenu-ul > .active > a:focus,
-.mars3d-sub-menu > .active > a:focus {
+
+.mars3d-contextmenu-ul>.active>a,
+.mars3d-sub-menu>.active>a,
+.mars3d-contextmenu-ul>.active>a:hover,
+.mars3d-sub-menu>.active>a:hover,
+.mars3d-contextmenu-ul>.active>a:focus,
+.mars3d-sub-menu>.active>a:focus {
   background-color: #3ea6ff;
 }
+
 /* Popup样式*/
 .mars3d-popup-color {
   color: #ffffff;
 }
+
 .mars3d-popup-background {
   background: rgba(23, 49, 71, 0.8);
 }
@@ -483,15 +494,19 @@ html {
   background: rgba(23, 49, 71, 0.8);
   border: 1px solid rgba(23, 49, 71, 0.8);
 }
+
 .mars3d-tooltip-top:before {
   border-top-color: rgba(23, 49, 71, 0.8);
 }
+
 .mars3d-tooltip-bottom:before {
   border-bottom-color: rgba(23, 49, 71, 0.8);
 }
+
 .mars3d-tooltip-left:before {
   border-left-color: rgba(23, 49, 71, 0.8);
 }
+
 .mars3d-tooltip-right:before {
   border-right-color: rgba(23, 49, 71, 0.8);
 }
@@ -499,21 +514,25 @@ html {
 .mars3d-template-content label {
   padding-right: 6px;
 }
+
 .mars3d-template-titile {
   border-bottom: 1px solid #3ea6ff;
 }
+
 .mars3d-template-titile a {
   font-size: 16px;
 }
+
 .mars3d-popup-btn-custom {
   padding: 3px 10px;
   border: 1px solid #209ffd;
   background: #209ffd1c;
 }
+
 .mars3d-popup-content {
   margin: 15px;
 }
+
 .mars3d-divGraphic:hover {
   z-index: 999 !important;
 }
-
