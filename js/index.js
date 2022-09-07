@@ -235,11 +235,18 @@ function activateWidget(item) {
     lastWidgetItem = item
     return
   }
-  mars3d.widget.activate(item)
+
+  if (mars3d.widget.isActivate(item.uri)) {
+    mars3d.widget.disable(item)
+  } else {
+    mars3d.widget.activate(item)
+  }
 }
+
 function disableWidget(item) {
   mars3d.widget.disable(item)
 }
+
 function activateFunByMenu(fun) {
   eval(fun)
 }

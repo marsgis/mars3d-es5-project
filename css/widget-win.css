@@ -68,7 +68,9 @@ ul, li {
 }
 
 .dark a:hover {
-  color: #CC3300;
+  /* color: #CC3300; */
+  color: #fff;
+  background-color: #20a0ff;
   /* text-decoration: underline; */
 }
 
