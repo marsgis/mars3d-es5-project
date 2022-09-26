@@ -630,8 +630,36 @@ const styleConfig = {
   },
   div: {
     name: "DIV点标记",
+    extends: ["divBoderLabel", "divLightPoint", "divUpLabel", "popup", "tooltip"],
     style: [
-      { name: "html", label: "Html文本", type: "label", defval: "" },
+      {
+        name: "color",
+        label: "颜色",
+        type: "color",
+        defval: "#00ffff",
+        show(style, allStyle, graphicType) {
+          return graphicType === "divLightPoint" || graphicType === "divBoderLabel" || graphicType === "divUpLabel"
+        }
+      },
+      {
+        name: "boderColor",
+        label: "边框颜色",
+        type: "color",
+        defval: "#00ffff",
+        show(style, allStyle, graphicType) {
+          return graphicType === "divBoderLabel"
+        }
+      },
+      {
+        name: "size",
+        label: "大小",
+        type: "number",
+        step: 1,
+        defval: 10,
+        show(style, allStyle, graphicType) {
+          return graphicType === "divLightPoint"
+        }
+      },
 
       {
         name: "horizontalOrigin",
@@ -739,7 +767,8 @@ const styleConfig = {
         show(style, allStyle, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
-      }
+      },
+      { name: "html", label: "Html文本", type: "label", defval: "" }
     ]
   },
   fontBillboard: {
@@ -1806,6 +1835,7 @@ const styleConfig = {
   polyline: {
     name: "线",
     primitive: true,
+    extends: ["curve", "distanceMeasure", "heightMeasure"],
     style: [
       { name: "width", label: "线宽", type: "number", step: 1, defval: 4.0 },
       {
@@ -2438,7 +2468,195 @@ const styleConfig = {
   polygon: {
     name: "面",
     primitive: true,
+    extends: [
+      "video2D",
+      "attackArrow",
+      "attackArrowPW",
+      "attackArrowYW",
+      "closeVurve",
+      "straightArrow",
+      "doubleArrow",
+      "fineArrow",
+      "fineArrowYW",
+      "areaMeasure",
+      "gatheringPlace",
+      "isosTriangle",
+      "lune",
+      "regular"
+    ],
     style: [
+      {
+        name: "diffHeight",
+        label: "立体高度",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return !style.clampToGround
+        }
+      },
+
+      {
+        name: "fill",
+        label: "是否填充",
+        type: "radio",
+        defval: true,
+        show(style, allStyle, graphicType) {
+          return !style.clampToGround
+        }
+      },
+      {
+        name: "materialType",
+        label: "填充材质",
+        type: "combobox",
+        defval: "Color",
+        data: [
+          { label: "纯色", value: "Color" },
+          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "网格", value: "Grid" },
+          { label: "条纹", value: "Stripe" },
+          { label: "棋盘", value: "Checkerboard" },
+          { label: "文本", value: "Text" },
+
+          { label: "渐变面", value: "PolyGradient" },
+          { label: "水面", value: "Water" },
+          { label: "蓝光水面", value: "WaterLight" }
+        ],
+        show(style, allStyle, graphicType) {
+          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        }
+      },
+
+      {
+        name: "stRotationDegree",
+        label: "填充方向",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0,
+        show: (style) => {
+          return style.fill !== false
+        }
+      },
+
+      { name: "outline", label: "是否边框", type: "radio", defval: false },
+      {
+        name: "outlineWidth",
+        label: "边框宽度",
+        type: "number",
+        min: 0,
+        step: 1,
+        defval: 1.0,
+        show: (style) => {
+          return style.outline
+        }
+      },
+      {
+        name: "outlineColor",
+        label: "边框颜色",
+        type: "color",
+        defval: "#ffffff",
+        show: (style) => {
+          return style.outline
+        }
+      },
+
+      {
+        name: "distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show(style, allStyle, graphicType) {
+          return style.distanceDisplayCondition
+        }
+      },
+      {
+        name: "distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return style.distanceDisplayCondition
+        }
+      },
+
+      {
+        name: "hasShadows",
+        label: "是否阴影",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return !style.clampToGround
+        }
+      },
+
+      {
+        name: "clampToGround",
+        label: "是否贴地",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return false // 面无法切换
+        }
+      },
+      {
+        name: "zIndex",
+        label: "层级顺序",
+        type: "number",
+        min: 0,
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return style.clampToGround
+        }
+      }
+    ]
+  },
+  sector: {
+    name: "扇形面",
+    style: [
+      {
+        name: "radius",
+        label: "半径",
+        type: "number",
+        step: 0.1,
+        defval: 0.0
+      },
+      {
+        name: "startAngle",
+        label: "开始角度",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0,
+      },
+      {
+        name: "endAngle",
+        label: "结束角度",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0,
+      },
+      {
+        name: "noCenter",
+        label: "不连中心点",
+        type: "radio",
+        defval: false
+      },
+
+
       {
         name: "diffHeight",
         label: "立体高度",

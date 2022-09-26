@@ -1086,7 +1086,7 @@
         "maximumScreenSpaceError": 1,
         "maximumMemoryUsage": 1024,
         "center": { "lat": 34.215516, "lng": 108.960251, "alt": 834, "heading": 4, "pitch": -48 },
-        "flat":{},
+        "flat": {},
         "flyTo": false,
         "show": false
       },

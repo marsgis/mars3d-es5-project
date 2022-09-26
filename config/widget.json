@@ -166,7 +166,7 @@
           "bottom": 40,
           "left": 10
         },
-        "maxmin": true
+        "maxmin": false
       }
     },
     {

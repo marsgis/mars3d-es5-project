@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.7
- * 编译日期：2022-09-07 15:00:41
+ * 版本信息：v3.4.8
+ * 编译日期：2022-09-26 09:04:57
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1163,6 +1163,7 @@ declare namespace MaterialType {
      * @property [repeat = new Cesium.Cartesian2(1.0, 1.0)] - 横纵方向重复次数
      * @property [speed = 10] - 速度，值越大越快
      * @property [axisY = false] - 是否Y轴朝上
+     * @property [mixt = false] - 默认为color颜色，true时color颜色与图片颜色混合
      * @property [hasImage2 = false] - 是否有2张图片的混合模式
      * @property [image2 = Cesium.Material.DefaultImageId] - 第2张背景图片URL地址
      * @property [color2 = new Cesium.Color(1, 1, 1)] - 第2张背景图片颜色
@@ -2141,10 +2142,6 @@ declare class Timeline extends BaseControl {
      * @param stopTime - 结束时间
      */
     zoomTo(startTime: Cesium.JulianDate, stopTime: Cesium.JulianDate): void;
-    /**
-     * 父容器DOM对象
-     */
-    readonly parentContainer: HTMLElement;
 }
 
 declare namespace ToolButton {
@@ -6108,6 +6105,10 @@ declare class DivBoderLabel extends DivGraphic {
         show?: boolean;
         eventParent?: BaseClass | boolean;
     });
+    /**
+     * 设置或获取当前对象对应的Html
+     */
+    html: string | HTMLDivElement;
 }
 
 declare namespace DivGraphic {
@@ -6466,6 +6467,10 @@ declare class DivLightPoint extends DivGraphic {
         show?: boolean;
         eventParent?: BaseClass | boolean;
     });
+    /**
+     * 设置或获取当前对象对应的Html
+     */
+    html: string | HTMLDivElement;
 }
 
 declare namespace DivUpLabel {
@@ -6569,6 +6574,10 @@ declare class DivUpLabel extends DivGraphic {
         show?: boolean;
         eventParent?: BaseClass | boolean;
     });
+    /**
+     * 设置或获取当前对象对应的Html
+     */
+    html: string | HTMLDivElement;
 }
 
 /**
@@ -6630,6 +6639,7 @@ declare namespace Popup {
      * @property [zIndex = "10000000"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
      * @property [depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
      * @property [hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
+     * @property [checkData] - 在多个Popup时，校验是否相同Popup进行判断关闭
      */
     type StyleOptions = any | {
         html?: string;
@@ -6663,6 +6673,7 @@ declare namespace Popup {
         zIndex?: number | string;
         depthTest?: boolean;
         hasCache?: boolean;
+        checkData?: (...params: any[]) => any;
     };
 }
 
@@ -9463,6 +9474,14 @@ declare class ModelEntity extends BasePointEntity {
      */
     scale: number;
     /**
+     * 获取模型完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
+     * @example
+     * model.readyPromise.then(function(layer) {
+     *     console.log("load完成", layer)
+     *   })
+     */
+    readonly readyPromise: Promise<ModelEntity | any>;
+    /**
      * 获取模型的当前时间的实际hpr角度(如动态模型)
      * @returns Heading Pitch Roll方向
      */
@@ -9997,6 +10016,7 @@ declare namespace PolygonEntity {
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
+     * //  * @property {Boolean} [outlineStyle.closure = true] 边线是否闭合
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = 100000] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
@@ -11724,6 +11744,7 @@ declare class Regular extends PolygonEntity {
  * @param options.style.radius - 扇形区域的半径（单位：米）
  * @param options.style.startAngle - 扇形区域的开始角度(正东方向为0,顺时针到360度)
  * @param options.style.endAngle - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+ * @param [options.style.noCenter] - 不连中心点
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -11749,6 +11770,7 @@ declare class Sector extends PolygonEntity {
             radius: number;
             startAngle: number;
             endAngle: number;
+            noCenter?: boolean;
         };
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
@@ -11779,12 +11801,14 @@ declare class Sector extends PolygonEntity {
      * @param options.radius - 扇形区域的半径（单位：米）
      * @param options.startAngle - 扇形区域的开始角度(正东方向为0,顺时针到360度)
      * @param options.endAngle - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+     * @param [options.noCenter] - 不连中心点
      * @returns 边界坐标点
      */
     static getOutlinePositions(center: Cesium.Cartesian3, options: {
         radius: number;
         startAngle: number;
         endAngle: number;
+        noCenter?: boolean;
     }): Cesium.Cartesian3[];
     /**
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象 或 Cesium.PolygonHierarchy
@@ -16943,6 +16967,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
  * @param [options.clustering.radiusIn = radius-5] - 圆形图标的内圆半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 数字的颜色
@@ -17015,6 +17040,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             clampToGround?: boolean;
+            style?: BillboardEntity.StyleOptions | any;
             radius?: number;
             radiusIn?: number;
             fontColor?: string;
@@ -17214,6 +17240,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
  * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
@@ -17284,6 +17311,7 @@ declare class BusineDataLayer extends GraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             clampToGround?: boolean;
+            style?: BillboardEntity.StyleOptions | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -17370,6 +17398,7 @@ declare class BusineDataLayer extends GraphicLayer {
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
  * @param [options.clustering.radiusIn = radius-5] - 圆形图标的内圆半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 数字的颜色
@@ -17419,6 +17448,7 @@ declare class GeodePoiLayer extends LodGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             clampToGround?: boolean;
+            style?: BillboardEntity.StyleOptions | any;
             radius?: number;
             radiusIn?: number;
             fontColor?: string;
@@ -17555,6 +17585,7 @@ declare namespace GeoJsonLayer {
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
  * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
@@ -17628,6 +17659,7 @@ declare class GeoJsonLayer extends GraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             clampToGround?: boolean;
+            style?: BillboardEntity.StyleOptions | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -17970,6 +18002,7 @@ declare namespace GraphicLayer {
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
  * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
@@ -18029,6 +18062,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             clampToGround?: boolean;
+            style?: BillboardEntity.StyleOptions | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -18775,9 +18809,10 @@ declare namespace TilesetLayer {
  * 这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。<br />
  * 这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。<br />
  * @param [options.position] - 自定义新的中心点位置（移动模型）
- * @param options.position.lng - 经度值, 180 - 180
- * @param options.position.lat - 纬度值, -90 - 90
- * @param options.position.alt - 高度值（单位：米）
+ * @param [options.position.lng] - 经度值, 180 - 180
+ * @param [options.position.lat] - 纬度值, -90 - 90
+ * @param [options.position.alt] - 高度值（单位：米）
+ * @param [options.position.alt_offset] - 相对于模型本身高度的偏移值（单位：米） ，如果有alt时已alt优先。
  * @param [options.rotation] - 自定义旋转方向（旋转模型）
  * @param options.rotation.x - X方向，角度值0-360
  * @param options.rotation.y - Y方向，角度值0-360
@@ -18864,9 +18899,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
         maximumScreenSpaceError?: number;
         maximumMemoryUsage?: number;
         position?: {
-            lng: number;
-            lat: number;
-            alt: number;
+            lng?: number;
+            lat?: number;
+            alt?: number;
+            alt_offset?: number;
         };
         rotation?: {
             x: number;
@@ -19168,10 +19204,6 @@ declare class TilesetLayer extends BaseGraphicLayer {
      */
     stopEditing(): void;
     /**
-     * 透明度，取值范围：0.0-1.0
-     */
-    opacity: number;
-    /**
      * 飞行定位至图层数据所在的视角
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
@@ -19214,7 +19246,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.parameters.sortBy] - 排序的属性名称，默认升序，降序时+D
  * @param [options.parameters.service = 'WFS'] - 服务类型
  * @param [options.parameters.version = '1.0.0'] - 服务版本
- * @param [options.geometryName = 'the_geom'] - geometry字段名称
+ * @param [options.geometryName = 'the_geom'] - geometry字段名称, 比如：geom 或 the_geom
  * @param [options.headers] - 将被添加到HTTP请求头。
  * @param [options.proxy] - 加载资源时使用的代理。
  * @param options.layer - 图层名称（命名空间:图层名称），多个图层名称用逗号隔开
@@ -19248,6 +19280,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.clampToGround = true] - 是否贴地
+ * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
  * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
@@ -19334,6 +19367,7 @@ declare class WfsLayer extends LodGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             clampToGround?: boolean;
+            style?: BillboardEntity.StyleOptions | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -23523,6 +23557,10 @@ declare class Map extends BaseClass {
      */
     onlyPickModelPosition: boolean;
     /**
+     * 是否只拾取地形上的点，忽略模型和矢量数据
+     */
+    onlyPickTerrainPosition: boolean;
+    /**
      * 获取鼠标事件控制器
      */
     readonly mouseEvent: MouseEvent;
@@ -23602,7 +23640,7 @@ declare class Map extends BaseClass {
      * 提取地球当前视域边界,示例：{ xmin: 70,  xmax: 140,  ymin: 0,  ymax: 55, height: 0, }
      * @param [options = {}] - 参数对象:
      * @param [options.formatNum = false] - 是否格式化小数位，只保留6位小数
-     * @param [options.scale = 1] - 通过在每个方向上按给定比例扩展当前边界，0.x时返回缩小的比例边界，大于1时返回放大的边界
+     * @param [options.scale = 1] - 在每个方向上按给定比例扩展（大于0）或缩小（-1到0时）当前边界所创建的边界。比率为0.5时，边界在每个方向上扩展了50%。
      * @returns 当前视域边界
      */
     getExtent(options?: {
@@ -24860,6 +24898,7 @@ declare class LineFlowColorMaterialProperty extends BaseMaterialProperty {
  * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 背景图片颜色
  * @param [options.repeat = new Cesium.Cartesian2(1.0, 1.0)] - 横纵方向重复次数
  * @param [options.axisY = false] - 是否Y轴朝上
+ * @param [options.mixt = false] - 默认为color颜色，true时color颜色与图片颜色混合
  * @param [options.speed = 10] - 速度
  * @param [options.duration] - 播放总时长，单位：秒 （会覆盖speed参数）
  * @param [options.hasImage2 = false] - 是否有2张图片的混合模式
@@ -24872,6 +24911,7 @@ declare class LineFlowMaterialProperty extends BaseMaterialProperty {
         color?: string | Cesium.Color;
         repeat?: Cesium.Cartesian2;
         axisY?: boolean;
+        mixt?: boolean;
         speed?: number;
         duration?: number;
         hasImage2?: boolean;
@@ -24890,6 +24930,10 @@ declare class LineFlowMaterialProperty extends BaseMaterialProperty {
      * 是否Y轴朝上
      */
     axisY: boolean;
+    /**
+     * 默认为color颜色，true时color颜色与图片颜色混合
+     */
+    mixt: boolean;
     /**
      * 速度
      */
@@ -26471,10 +26515,10 @@ declare namespace CamberRadar {
      * @property [outlineColor = new Cesium.Color(1.0, 0.0, 0.0)] - 边线颜色
      * @property startRadius - 内曲面半径 （单位：米）
      * @property radius - 外曲面半径 （单位：米）
-     * @property [startFovH = Cesium.Math.toRadians(-50)] - 左横截面角度（弧度值）
-     * @property [endFovH = Cesium.Math.toRadians(50)] - 右横截面角度（弧度值）
-     * @property [startFovV = Cesium.Math.toRadians(5)] - 垂直起始角度（弧度值）
-     * @property [endFovV = Cesium.Math.toRadians(85)] - 垂直结束角度（弧度值）
+     * @property [startFovH = -50] - 左横截面角度（角度值）
+     * @property [endFovH = 50] - 右横截面角度（角度值）
+     * @property [startFovV = 5] - 垂直起始角度（角度值）
+     * @property [endFovV = 85] - 垂直结束角度（角度值）
      * @property [segmentH = 60] - 垂直方向(类似经度线)分割数
      * @property [segmentV = 20] - 水平方向(类似纬度线)分割数
      * @property [heading = 0] - 方向角 （度数值，0-360度）
@@ -26533,19 +26577,19 @@ declare class CamberRadar extends BasePointPrimitive {
      */
     radius: number;
     /**
-     * 左横截面角度（弧度值）
+     * 左横截面角度（角度值）
      */
     startFovV: number;
     /**
-     * 右横截面角度（弧度值）
+     * 右横截面角度（角度值）
      */
     endFovV: number;
     /**
-     * 垂直起始角度（弧度值）
+     * 垂直起始角度（角度值）
      */
     startFovH: number;
     /**
-     * 垂直结束角度（弧度值）
+     * 垂直结束角度（角度值）
      */
     endFovH: number;
     /**
@@ -29090,7 +29134,7 @@ declare class QueryGeoServer extends BaseClass {
      * @param [queryOptions.column] - 检索关键字时，对应的字段名称
      * @param [queryOptions.like = true] - 检索关键字时，是否模糊匹配，false时精确查询
      * @param [queryOptions.graphic] - 限定的搜索区域
-     * @param [queryOptions.geometryName = 'the_geom'] - 限定的搜索区域时，对应的geometry字段名称
+     * @param [queryOptions.geometryName = 'the_geom'] - 限定的搜索区域时，对应的geometry字段名称, 比如：geom 或 the_geom
      * @param [queryOptions.maxFeatures = 1000] - 返回结果最大数量
      * @param [queryOptions.sortBy] - 排序的属性名称，默认升序，降序时+D
      * @param [queryOptions.更多参数] - WFS服务支持的其他参数，均支持
@@ -29176,6 +29220,23 @@ declare class TdtPOI {
         error?: (...params: any[]) => any;
     }): Promise<any>;
     /**
+     * 天地图搜索提示
+     * @param queryOptions - 查询参数
+     * @param queryOptions.text - 输入建议关键字（支持拼音）
+     * @param [queryOptions.location] - 建议使用location参数，可在此location附近优先返回搜索关键词信息,在请求参数city不为空时生效
+     * @param [queryOptions.city] - 可以限定查询的行政区
+     * @param [queryOptions.success] - 查询完成的回调方法
+     * @param [queryOptions.error] - 查询失败的回调方法
+     * @returns 查询完成的Promise,等价于success参数
+     */
+    autoTip(queryOptions: {
+        text: string;
+        location?: LngLatPoint | Cesium.Cartesian3 | string | any[] | any;
+        city?: string;
+        success?: (...params: any[]) => any;
+        error?: (...params: any[]) => any;
+    }): Promise<any>;
+    /**
      * 按限定区域搜索
      * @param queryOptions - 查询参数
      * @param queryOptions.text - 检索关键字。支持多个关键字并集检索，不同关键字间以空格符号分隔，最多支持10个关键字检索。
@@ -29204,7 +29265,8 @@ declare class TdtPOI {
      * @param queryOptions.text - 检索关键字。支持多个关键字并集检索，不同关键字间以空格符号分隔，最多支持10个关键字检索。
      * @param [queryOptions.types = ''] - 检索分类偏好，与text组合进行检索，多个分类以","分隔（POI分类），如果需要严格按分类检索，请通过text参数设置
      * @param [queryOptions.city] - 可以重新限定查询的区域，默认为类构造时传入的city
-     * @param [queryOptions.citylimit = false] - 取值为"true"，仅返回city中指定城市检索结果
+     * @param [queryOptions.level = 18] - 查询的级别,1-18级
+     * @param [queryOptions.mapBound] - 查询的地图范围: "minx,miny,maxx,maxy"
      * @param [queryOptions.count = 20] - 单次召回POI数量，最大返回300条。多关键字检索时，返回的记录数为关键字个数*count。多关键词检索时，单页返回总数=关键词数量*count
      * @param [queryOptions.page = 0] - 分页页码，默认为0, 0代表第一页，1代表第二页，以此类推。常与 count 搭配使用，仅当返回结果为poi时可以翻页。
      * @param [queryOptions.success] - 查询完成的回调方法
@@ -29215,7 +29277,8 @@ declare class TdtPOI {
         text: string;
         types?: string;
         city?: string;
-        citylimit?: boolean;
+        level?: string;
+        mapBound?: string;
         count?: number;
         page?: number;
         success?: (...params: any[]) => any;
@@ -29264,6 +29327,27 @@ declare class TdtPOI {
         types?: string;
         polygon: any[][];
         limit?: boolean;
+        count?: number;
+        page?: number;
+        success?: (...params: any[]) => any;
+        error?: (...params: any[]) => any;
+    }): Promise<any>;
+    /**
+     * 视野内搜索
+     * @param queryOptions - 查询参数
+     * @param queryOptions.text - 检索关键字。支持多个关键字并集检索，不同关键字间以空格符号分隔，最多支持10个关键字检索。
+     * @param [queryOptions.types = ''] - 检索分类偏好，与text组合进行检索，多个分类以","分隔（POI分类），如果需要严格按分类检索，请通过text参数设置
+     * @param queryOptions.extent - 可传入左上右下两顶点坐标对；
+     * @param [queryOptions.count = 20] - 单次召回POI数量，最大返回25条。多关键字检索时，返回的记录数为关键字个数*count。多关键词检索时，单页返回总数=关键词数量*count
+     * @param [queryOptions.page = 0] - 分页页码，默认为0, 0代表第一页，1代表第二页，以此类推。常与 count 搭配使用，仅当返回结果为poi时可以翻页。
+     * @param [queryOptions.success] - 查询完成的回调方法
+     * @param [queryOptions.error] - 查询失败的回调方法
+     * @returns 查询完成的Promise,等价于success参数
+     */
+    queryExtent(queryOptions: {
+        text: string;
+        types?: string;
+        extent: any[][];
         count?: number;
         page?: number;
         success?: (...params: any[]) => any;
@@ -31004,6 +31088,11 @@ declare class TilesetEditBase extends BaseThing {
      * @returns 添加区域的记录对象
      */
     addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[]): any;
+    /**
+     * 转为Json简单对象，用于存储后再传参加载
+     * @returns Json简单对象
+     */
+    toJSON(): any;
 }
 
 /**
@@ -31087,6 +31176,11 @@ declare class TilesetFlat extends TilesetEditBase {
      * @returns 无
      */
     removeArea(item: number | any): void;
+    /**
+     * 转为Json简单对象，用于存储后再传参加载
+     * @returns Json简单对象
+     */
+    toJSON(): any;
     /**
      * 清除分析
      * @returns 无
@@ -31304,6 +31398,11 @@ declare class TilesetPlanClip extends BaseThing {
      * @returns 无
      */
     updateAllNormalZ(val: number): void;
+    /**
+     * 转为Json简单对象，用于存储后再传参加载
+     * @returns Json简单对象
+     */
+    toJSON(): any;
 }
 
 /**

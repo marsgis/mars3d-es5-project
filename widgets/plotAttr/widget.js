@@ -30,7 +30,16 @@
     //激活插件
     activate() {}
     //释放插件
-    disable() {}
+    disable() {
+      let graphic = this.config.graphic
+      if (graphic && graphic._minPointNum) {
+        graphic.stopEditing()
+
+        if (this.config.sendSaveEntity) {
+          this.config.sendSaveEntity()
+        }
+      }
+    }
     getMinPointNum() {
       let graphic = this.config.graphic
       if (graphic && graphic._minPointNum) {
