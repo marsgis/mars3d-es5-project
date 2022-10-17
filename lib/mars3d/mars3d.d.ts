@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.9
- * 编译日期：2022-10-09 09:17:47
+ * 版本信息：v3.4.10
+ * 编译日期：2022-10-17 17:28:53
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -3882,7 +3882,7 @@ declare class BaseCombine extends BasePrimitive {
         noAlt?: boolean;
     }): any;
     /**
-     * 更新颜色
+     * 更新颜色, 只对纯色材质有效，其他材质无法单独更新，需要setStle方法调用(全部更新渲染)。
      * @param style - 样式信息
      * @param [style.color = "#3388ff"] - 颜色
      * @param [style.opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -4416,6 +4416,7 @@ declare namespace FlatBillboard {
  * @param [options.style] - 所有图标的公共样式信息
  * @param [options.scale3d = 0.8] - 二维和三维模式切换后图标的缩放比例。因为二三维模式使用不同渲染方式，可能存在大小偏差，可以该参数调优。
  * @param [options.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(0, 5000000)] - 指定数据将显示在与摄像机的多大距离
+ * @param [options.translucent = false] - 当true时，将启用alpha混合。
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -4432,6 +4433,7 @@ declare class FlatBillboard extends BaseCombine {
         style?: FlatBillboard.StyleOptions | any;
         scale3d?: number;
         distanceDisplayCondition?: Cesium.DistanceDisplayCondition;
+        translucent?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -10299,7 +10301,7 @@ declare namespace PolylineEntity {
  */
 declare class PolylineEntity extends BasePolyEntity {
     constructor(options: {
-        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
+        positions: LngLatPoint[] | Cesium.Cartesian3[] | any[] | Cesium.PositionProperty | any;
         style: PolylineEntity.StyleOptions | any;
         attr?: any;
         availability?: Cesium.TimeIntervalCollection;
@@ -16300,7 +16302,7 @@ declare class BaseGraphicLayer extends BaseLayer {
  * @param options.extent.xmax - 最大经度值, -180 至 180
  * @param options.extent.ymin - 最小纬度值, -90 至 90
  * @param options.extent.ymax - 最大纬度值, -90 至 90
- * @param [options.extent.height = 0] - 矩形高度值
+ * @param [options.extent.height] - 矩形高度值, 默认取地形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  */
@@ -16415,11 +16417,12 @@ declare class BaseLayer extends BaseClass {
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
      * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
      * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -16435,11 +16438,11 @@ declare class BaseLayer extends BaseClass {
     flyTo(options?: {
         radius?: number;
         scale?: number;
-        minHeight?: number;
-        maxHeight?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -16645,13 +16648,13 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      * @param [newOptions.url] - geojson文件或服务url地址
      * @param [newOptions.data] - geojson格式规范数据对象，与url二选一即可。
      * @param [newOptions.类参数] - 包含当前类支持的所有参数
-     * @returns 当前对象本身，可以链式调用
+     * @returns 加载完成后的回调方法的Promise
      */
     load(newOptions?: {
         url?: string;
         data?: any;
         类参数?: any;
-    }): CzmGeoJsonLayer;
+    }): Promise<any>;
     /**
      * 加载新数据 或 刷新数据
      * @param symbol - 设置新的symbol 矢量数据样式.  {@link GraphicType}
@@ -16691,15 +16694,23 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      */
     clear(): CzmGeoJsonLayer;
     /**
+     * 追加数据，处理提供的url或数据对象，而不清除任何现有数据。
+     * @param diejiaData - 要处理的url或对象。
+     * @param [options] - 控制参数
+     * @returns 加载完成后的回调方法的Promise
+     */
+    process(diejiaData: Resource | string | any, options?: any): Promise<any>;
+    /**
      * 飞行定位至图层数据所在的视角
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
      * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
      * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -16715,11 +16726,11 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
     flyTo(options?: {
         radius?: number;
         scale?: number;
-        minHeight?: number;
-        maxHeight?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -19232,11 +19243,12 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
      * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
      * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -19252,11 +19264,11 @@ declare class TilesetLayer extends BaseGraphicLayer {
     flyTo(options?: {
         radius?: number;
         scale?: number;
-        minHeight?: number;
-        maxHeight?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -20506,11 +20518,12 @@ declare class BaseTileLayer extends BaseLayer {
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
      * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
      * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -20526,11 +20539,11 @@ declare class BaseTileLayer extends BaseLayer {
     flyTo(options?: {
         radius?: number;
         scale?: number;
-        minHeight?: number;
-        maxHeight?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -23344,7 +23357,7 @@ declare namespace Map {
      * @property [多个参数] - 每种不同type都有自己的不同属性，具体参考{@link LayerType}找到type对应的BaseTileLayer子类图层类,查看其构造参数
      */
     type basemapOptions = {
-        type: string;
+        type: string | LayerType;
         多个参数?: any;
     };
     /**
@@ -23362,7 +23375,7 @@ declare namespace Map {
      * @property [多个参数] - 每种type都有自己的不同属性，具体参考{@link LayerType}找到type对应的图层类,查看其构造参数
      */
     type layerOptions = {
-        type: string;
+        type: string | LayerType;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -24031,9 +24044,9 @@ declare class Map extends BaseClass {
      * 为了兼容老版本用户习惯和center参数名称一致而用的别名方法。
      * @param cameraView - 飞行参数，同 setCameraView 方法
      * @param [options = {}] - 参数对象，同 setCameraView 方法
-     * @returns 无
+     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
      */
-    centerAt(cameraView: any, options?: any): void;
+    centerAt(cameraView: any, options?: any): Promise<boolean>;
     /**
      * 飞行到默认视角，
      * 一般为config.json中的center参数配置的视角。
@@ -24201,7 +24214,7 @@ declare class Map extends BaseClass {
      * @param extent.xmax - 最大经度值, -180 至 180
      * @param extent.ymin - 最小纬度值, -90 至 90
      * @param extent.ymax - 最大纬度值, -90 至 90
-     * @param [extent.height = 0] - 矩形高度值
+     * @param [extent.height] - 矩形高度值, 默认取地形高度值
      * @param [options = {}] - 参数对象:
      * @param [options.scale] - 缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
@@ -25648,7 +25661,7 @@ declare class TextMaterialProperty extends Image2MaterialProperty {
  * 墙体:  走马灯围墙 材质
  * @param [options] - 参数对象，包括以下：
  * @param options.image - 背景图片URL
- * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 背景图片颜色
+ * @param [options.color = new Cesium.Color(0, 0, 0, 1.0)] - 背景图片颜色
  * @param [options.count = 1] - 数量
  * @param [options.reverse = false] - 方向，false是往下，true是往上
  * @param [options.speed = 5.0] - 速度，值越大越快
@@ -27411,11 +27424,12 @@ declare class S3MLayer extends BaseLayer {
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
      * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
      * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -27431,11 +27445,11 @@ declare class S3MLayer extends BaseLayer {
     flyTo(options?: {
         radius?: number;
         scale?: number;
-        minHeight?: number;
-        maxHeight?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -27654,11 +27668,12 @@ declare class SmMvtLayer extends BaseLayer {
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
      * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
      * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -27674,11 +27689,11 @@ declare class SmMvtLayer extends BaseLayer {
     flyTo(options?: {
         radius?: number;
         scale?: number;
-        minHeight?: number;
-        maxHeight?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
