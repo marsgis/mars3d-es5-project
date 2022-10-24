@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.10
- * 编译日期：2022-10-17 17:28:53
+ * 版本信息：v3.4.11
+ * 编译日期：2022-10-24 19:01:47
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -982,6 +982,7 @@ declare enum Lang {
     "_面下" = "[\"\u9762\u4E0B\",\"\u9762\u4E0B\",\"Down\"]",
     "_米" = "[\"\u7C73\",\"\u7C73\",\"m\"]",
     "_公里" = "[\"\u516C\u91CC\",\"\u516C\u88CF\",\"km\"]",
+    "_万米" = "[\"\u4E07\u7C73\",\"\u4E07\u7C73\",\"myriametre\"]",
     "_海里" = "[\"\u6D77\u91CC\",\"\u6D77\u88CF\",\"mile\"]",
     "_丈" = "[\"\u4E08\",\"\u4E08\",\"zhang\"]",
     "_平方米" = "[\"\u5E73\u65B9\u7C73\",\"\u5E73\u65B9\u7C73\",\"m\u00B2\"]",
@@ -2112,6 +2113,7 @@ declare class OverviewMap extends BaseControl {
 /**
  * 时间线 控件
  * @param [options] - 参数对象，包括以下：
+ * @param [options.maxSpan = 1] - 刻度放大的最大刻度跨度，单位：秒
  * @param [options.style] - 可以CSS样式，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
  * @param [options.style.bottom = 0] - css定位bottom位置
@@ -2125,6 +2127,7 @@ declare class OverviewMap extends BaseControl {
  */
 declare class Timeline extends BaseControl {
     constructor(options?: {
+        maxSpan?: number;
         style?: {
             top?: string;
             bottom?: string;
@@ -10344,6 +10347,8 @@ declare namespace PolylineVolumeEntity {
      * @property [slices] - 边数，比如为4时是矩形管；星状管代表角的个数；
      * @property [startAngle = 0] - 开始角度，取值范围0-360
      * @property [endAngle = 360] - 结束角度，取值范围0-360，比如endAngle=180的空心管是拱形半圆管道
+     * @property [vscale = 1] - 垂直缩放比例
+     * @property [hscale = 1] - 水平缩放比例
      * @property [fill = true] - 是否填充
      * @property [color = "#FFFF00"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -10371,6 +10376,8 @@ declare namespace PolylineVolumeEntity {
         slices?: number;
         startAngle?: number;
         endAngle?: number;
+        vscale?: number;
+        hscale?: number;
         fill?: boolean;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -11942,7 +11949,7 @@ declare class AngleMeasure extends PolylineEntity {
     readonly measured: any;
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @returns 无
      */
     updateText(unit: string): void;
@@ -12278,7 +12285,7 @@ declare class HeightMeasure extends PolylineEntity {
     readonly measured: any;
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @returns 无
      */
     updateText(unit: string): void;
@@ -12344,7 +12351,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
     });
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @returns 无
      */
     updateText(unit: string): void;
@@ -12484,6 +12491,7 @@ declare class SectionMeasure extends DistanceMeasure {
  * @param [options.labelHeight] - 各边界点高度结果文本的样式
  * @param [options.decimal = 2] - 显示的 数值 文本中保留的小数位
  * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+ * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -12507,6 +12515,7 @@ declare class VolumeMeasure extends AreaMeasure {
         labelHeight?: LabelEntity.StyleOptions | any;
         decimal?: number;
         has3dtiles?: boolean;
+        exact?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -15395,6 +15404,8 @@ declare namespace PolylineVolumePrimitive {
      * @property [slices] - 边数，比如为4时是矩形管；星状管代表角的个数；
      * @property [startAngle = 0] - 开始角度，取值范围0-360
      * @property [endAngle = 360] - 结束角度，取值范围0-360，比如endAngle=180的空心管是拱形半圆管道
+     * @property [vscale = 1] - 垂直缩放比例
+     * @property [hscale = 1] - 水平缩放比例
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
@@ -15424,6 +15435,8 @@ declare namespace PolylineVolumePrimitive {
         slices?: number;
         startAngle?: number;
         endAngle?: number;
+        vscale?: number;
+        hscale?: number;
         materialType?: string;
         materialOptions?: any;
         material?: Cesium.Material;
@@ -19075,9 +19088,13 @@ declare class TilesetLayer extends BaseGraphicLayer {
      */
     center: LngLatPoint;
     /**
+     * 调整修改模型高度, 同alt
+     */
+    height: number;
+    /**
      * 调整修改模型高度
      */
-    height: LngLatPoint;
+    alt: number;
     /**
      * 模型的边界球体。
      */
@@ -22579,7 +22596,6 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.hasAlphaChannel = true] - 如果此图像提供者提供的图像为真 包括一个Alpha通道；否则为假。如果此属性为false，则为Alpha通道，如果 目前，将被忽略。如果此属性为true，则任何没有Alpha通道的图像都将 它们的alpha随处可见。当此属性为false时，内存使用情况 和纹理上传时间可能会减少。
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
- * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -22649,7 +22665,6 @@ declare class WmtsLayer extends BaseTileLayer {
         hasAlphaChannel?: boolean;
         tileWidth?: number;
         tileHeight?: number;
-        customTags?: any;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -23027,6 +23042,12 @@ declare class MouseEvent {
      * 是否不拾取数据
      */
     noPickEntity: boolean;
+    /**
+     * 更新图层参数
+     * @param options - 与类的构造方法参数相同
+     * @returns 当前对象本身，可以链式调用
+     */
+    setOptions(options: any): MouseEvent;
     /**
      * 清除鼠标移动的clearTimeout延迟
      * @returns 无
@@ -26075,6 +26096,7 @@ declare class EchartsLayer extends BaseLayer {
  * @param [options.style.arc = false] - 是否显示曲面热力图
  * @param [options.style.arcRadiusScale = 1.5] - 曲面热力图时，radius扩大比例
  * @param [options.style.arcBlurScale = 1.5] - 曲面热力图时，blur扩大比例
+ * @param [options.style.arcDirection = 1] - 曲面热力图时，凹陷的方向，1向上，-1向下，0双面
  * @param [options.style.height = 0] - 高度，相对于椭球面的高度。
  * @param [options.style.diffHeight] - 曲面的起伏差值高，默认根据数据范围的比例自动计算。
  * @param [options.style.多个参数] - rectangle矩形支持的样式
@@ -26114,10 +26136,11 @@ declare class HeatLayer extends BaseLayer {
             gradient?: any;
         };
         style?: {
-            opacity?: boolean;
+            opacity?: number;
             arc?: boolean;
-            arcRadiusScale?: boolean;
-            arcBlurScale?: boolean;
+            arcRadiusScale?: number;
+            arcBlurScale?: number;
+            arcDirection?: number;
             height?: number;
             diffHeight?: number;
             多个参数?: RectanglePrimitive.StyleOptions | any;
@@ -29547,7 +29570,7 @@ declare class Measure extends BaseThing {
      * 测量 空间长度
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、mile、zhang 。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
@@ -29566,12 +29589,13 @@ declare class Measure extends BaseThing {
      * 测量 贴地长度
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、mile、zhang 。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
      * @param [options.splitNum = 100] - 插值数，将线段分割的个数
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 贴地长度测量控制类 对象
      */
@@ -29583,17 +29607,19 @@ declare class Measure extends BaseThing {
         showAddText?: boolean;
         splitNum?: number;
         has3dtiles?: boolean;
+        exact?: boolean;
         decimal?: number;
     }): Promise<DistanceSurfaceMeasure | any>;
     /**
      * 剖面分析，测量线插值点的高程数据
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、mile、zhang 。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.splitNum = 200] - 插值数，将线段分割的个数
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 剖面分析控制类矢量对象
      */
@@ -29604,6 +29630,7 @@ declare class Measure extends BaseThing {
         addHeight?: number;
         splitNum?: number;
         has3dtiles?: boolean;
+        exact?: boolean;
         decimal?: number;
     }): Promise<SectionMeasure | any>;
     /**
@@ -29643,6 +29670,7 @@ declare class Measure extends BaseThing {
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数
      * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.minHeight] - 可以指定最低高度（单位：米）
      * @param [options.maxHeight] - 可以指定最高高度（单位：米）
      * @param [options.height] - 可以指定基准面高度（单位：米），默认是绘制后的最低高度值
@@ -29659,6 +29687,7 @@ declare class Measure extends BaseThing {
         unit?: string;
         splitNum?: number;
         has3dtiles?: boolean;
+        exact?: boolean;
         minHeight?: number;
         maxHeight?: number;
         height?: number;
@@ -29673,7 +29702,7 @@ declare class Measure extends BaseThing {
      * 高度测量
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、mile、zhang 。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 高度测量 对象
      */
@@ -29687,7 +29716,7 @@ declare class Measure extends BaseThing {
      * 包括水平距离、空间距离、高度差。
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、mile、zhang 。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 三角高度测量控制类 对象
      */
@@ -29741,7 +29770,7 @@ declare class Measure extends BaseThing {
     clear(): void;
     /**
      * 更新量测结果的单位
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance}{@link MeasureUtil#formatArea} 可选值：auto、m、km、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位,{@link MeasureUtil#formatDistance}{@link MeasureUtil#formatArea} 可选值：auto、m、km、wm、mile、zhang 等等。auto时根据距离值自动选用k或km
      * @returns 无
      */
     updateUnit(unit: string): void;
@@ -30603,6 +30632,16 @@ declare class FloodByMaterial extends TerrainEditBase {
      * @returns 无
      */
     clear(): void;
+    /**
+     * 添加单个区域
+     * @param positions - 坐标位置数组
+     * @param [options = {}] - 控制的参数
+     * @param [options.diffHeight] - 开挖深度（地形开挖时，可以控制单个区域的开挖深度）
+     * @returns 添加区域的记录对象
+     */
+    addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[], options?: {
+        diffHeight?: any;
+    }): any;
 }
 
 declare namespace Slope {
@@ -32476,6 +32515,7 @@ declare namespace MeasureUtil {
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param [options.splitNum = 100] - 插值数，将线段分割的个数
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param options.endItem - 异步计算贴地距离中，每计算完成2个点之间的距离后 的回调方法
      * @param options.end - 异步计算完成的 回调方法
      * @returns 异步计算完成的Promise
@@ -32484,6 +32524,7 @@ declare namespace MeasureUtil {
         scene: Cesium.Scene;
         splitNum?: number;
         has3dtiles?: boolean;
+        exact?: boolean;
         endItem: getClampDistance_endItem;
         end: getClampDistance_endItem;
     }): Promise<any>;
@@ -32514,7 +32555,7 @@ declare namespace MeasureUtil {
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
-     * @param [options.exact] - 是否进行精确计算
+     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @returns 异步计算完成的Promise
      */
     function getClampArea(positions: Cesium.Cartesian3[] | LngLatPoint[], options: {
@@ -32535,7 +32576,7 @@ declare namespace MeasureUtil {
      * 格式化显示距离值, 可指定单位
      * @param val - 距离值，米
      * @param [options] - 参数：
-     * @param [options.unit = 'auto'] - 计量单位, 可选值：auto、m、km、mile、zhang 。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位, 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.lang = 0] - 使用的语言
      * @param [options.decimal = 2] - 保留的小数位
      * @returns 带单位的格式化距离值字符串，如：20.17 米
@@ -33268,6 +33309,7 @@ declare namespace PolyUtil {
      * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+     * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
      * @returns 异步计算完成的Promise, 等价于callback
      */
@@ -33278,6 +33320,7 @@ declare namespace PolyUtil {
         minDistance?: number;
         has3dtiles?: boolean;
         objectsToExclude?: any;
+        exact?: boolean;
         offset?: number;
     }): Promise<any>;
     /**
@@ -33287,6 +33330,7 @@ declare namespace PolyUtil {
      * @param options.positions - 坐标数组
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+     * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
      * @returns 异步计算完成的Promise, 等价于callback
      */
@@ -33295,6 +33339,7 @@ declare namespace PolyUtil {
         positions: Cesium.Cartesian3[] | LngLatPoint[];
         has3dtiles?: boolean;
         objectsToExclude?: any;
+        exact?: boolean;
         offset?: number;
     }): Promise<any>;
     /**
@@ -33318,6 +33363,7 @@ declare namespace PolyUtil {
      * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+     * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
      * @param options.endItem - 异步计算高度完成后 的回调方法
      * @param options.end - 异步计算高度完成后 的回调方法
@@ -33330,6 +33376,7 @@ declare namespace PolyUtil {
         minDistance?: number;
         has3dtiles?: boolean;
         objectsToExclude?: any;
+        exact?: boolean;
         offset?: number;
         endItem: computeStepSurfaceLine_endItem;
         end: computeStepSurfaceLine_end;
