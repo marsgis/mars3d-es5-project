@@ -86,13 +86,19 @@
       .bookmarkitem:hover img {
         border-bottom: 1px solid #6bb1da;
       }
+      .btn-middle {
+        border: none;
+        margin-left:5px;
+        background-color: rgba(13, 100, 167,0.8) !important
+      }
+
     </style>
   </head>
 
   <body>
     <div class="row" style="margin: 5px 3px">
       <input id="txt_bookmark_name" type="text" class="form-control" placeholder="输入名称" style="width: calc(100% - 60px)" />
-      <button id="btn_bookmark_Add" class="btn btn-primary">添加</button>
+      <button id="btn_bookmark_Add" class="btn btn-primary btn-middle">添加</button>
     </div>
 
     <table id="table"></table>

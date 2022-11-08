@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.11
- * 编译日期：2022-10-24 19:01:47
+ * 版本信息：v3.4.13
+ * 编译日期：2022-11-07 22:46:27
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1131,13 +1131,21 @@ declare namespace MaterialType {
      */
     const Color: string;
     /**
-     * 线：虚线
+     * 线：虚线(等长度虚线间隔)
      * @property [color = Cesium.Color.WHITE] - 颜色
      * @property [gapColor = Cesium.Color.TRANSPARENT] - 虚线间隔颜色，默认为透明
      * @property [dashLength = 16.0] - 虚线间隔长度，以像素为单位
      * @property [dashPattern = 255.0] - 指定的16位模式
      */
     const PolylineDash: string;
+    /**
+     * 线：点划线虚线
+     * @property [color = Cesium.Color.WHITE] - 颜色
+     * @property [gapColor = Cesium.Color.TRANSPARENT] - 虚线间隔颜色，默认为透明
+     * @property [dashLength = 16.0] - 虚线间隔长度，以像素为单位
+     * @property [dashPattern = 255.0] - 指定的16位模式
+     */
+    const LineDotDash: string;
     /**
      * 线：衬色线
      * @property [color = Cesium.Color.WHITE] - 主颜色
@@ -1677,6 +1685,12 @@ declare class BaseControl extends BaseThing {
      * 设置对象的启用和禁用状态。
      */
     enabled: boolean;
+    /**
+     * 更新图层参数
+     * @param options - 与类的构造方法参数相同
+     * @returns 当前对象本身，可以链式调用
+     */
+    setOptions(options: any): BaseLayer;
 }
 
 /**
@@ -2417,6 +2431,12 @@ declare class BaseThing extends BaseClass {
      * @returns 无
      */
     _removedHook(): void;
+    /**
+     * 更新图层参数
+     * @param options - 与类的构造方法参数相同
+     * @returns 当前对象本身，可以链式调用
+     */
+    setOptions(options: any): BaseLayer;
     /**
      * 当前类的构造参数
      */
@@ -3455,7 +3475,7 @@ declare namespace BaseGraphic {
  * @param options - 参数对象，包括以下：
  * @param options.position - 【点状】矢量数据时的坐标位置，具体看子类实现
  * @param options.positions - 【线面状（多点）】矢量数据时的坐标位置，具体看子类实现
- * @param options.style - 矢量数据的 样式信息，具体见各类数据的说明
+ * @param options.style - 矢量数据的 样式信息，具体见各{@link GraphicType}子类矢量数据的style参数。
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
@@ -4556,7 +4576,7 @@ declare class FrustumCombine extends BasePointCombine {
  * @param [options.lightColor] - 光的颜色当遮光模型。当undefined场景的浅色被使用代替。
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
  * @param [options.debugShowBoundingVolume = false] - 仅供调试。查看模型的包围边界球。
- * @param [options.debugWireframe = false] - 仅供调试。查看模型的三角网线框图。
+ * @param [options.enableDebugWireframe = false] - 仅供调试。查看模型的三角网线框图。
  *
  * //以下是 模型动画相关
  * @param [options.startTime] - 场景时间开始播放动画。当undefined时，动画从下一帧开始。
@@ -4593,7 +4613,7 @@ declare class ModelCombine extends BaseCombine {
         lightColor?: Cesium.Cartesian3;
         backFaceCulling?: boolean;
         debugShowBoundingVolume?: boolean;
-        debugWireframe?: boolean;
+        enableDebugWireframe?: boolean;
         startTime?: Cesium.JulianDate;
         delay?: number;
         stopTime?: Cesium.JulianDate;
@@ -5018,8 +5038,6 @@ declare class WallCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
- * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5051,9 +5069,6 @@ declare class WaterCombine extends PolygonCombine {
             attr?: any;
         }[];
         style?: Water.StyleOptions | any;
-        highlight?: {
-            type?: string;
-        };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -8571,6 +8586,14 @@ declare class EditBase {
      */
     readonly entityGraphic: any;
     /**
+     * 是否已经开启 旋转矩阵
+     */
+    readonly hasRotateMatrix: boolean;
+    /**
+     * 是否已经开启 平移矩阵
+     */
+    readonly hasMoveMatrix: boolean;
+    /**
      * 激活绘制
      * @returns 当前对象本身，可以链式调用
      */
@@ -8580,6 +8603,25 @@ declare class EditBase {
      * @returns 当前对象本身，可以链式调用
      */
     disable(): EditBase;
+    /**
+     * 开启 平移矩阵
+     * @param [graphic] - 矢量对象
+     * @param [eventRM] - 事件对象，仅用于传递
+     */
+    startMoveMatrix(graphic?: BaseGraphic, eventRM?: any): void;
+    /**
+     * 停止 平移矩阵
+     */
+    stopMoveMatrix(): void;
+    /**
+     * 开启 旋转矩阵
+     * @param [graphic] - 矢量对象
+     */
+    startRotateMatrix(graphic?: BaseGraphic): void;
+    /**
+     * 停止 旋转矩阵
+     */
+    stopRotateMatrix(): void;
 }
 
 /**
@@ -8669,6 +8711,11 @@ declare class EditRectangle extends EditPoly {
  * 3dtiles对象 标绘处理对应的编辑类
  */
 declare class EditTileset extends EditBase {
+    /**
+     * 开启 旋转矩阵
+     * @param [graphic] - 矢量对象
+     */
+    startRotateMatrix(graphic?: BaseGraphic): void;
 }
 
 /**
@@ -15080,6 +15127,9 @@ declare namespace PolygonPrimitive {
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
      * @property [closeBottom = true] - 当为false时，离开挤压多边形的底部打开。
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [arcType = Cesium.ArcType.GEODESIC] - 多边形的边缘必须遵循的线条类型。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
@@ -15123,6 +15173,9 @@ declare namespace PolygonPrimitive {
         granularity?: number;
         closeTop?: boolean;
         closeBottom?: boolean;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayConditionGeometryInstanceAttribute;
+        distanceDisplayCondition_far?: number;
+        distanceDisplayCondition_near?: number;
         arcType?: Cesium.ArcType;
         hasShadows?: boolean;
         shadows?: Cesium.ShadowMode;
@@ -15261,7 +15314,7 @@ declare namespace PolylinePrimitive {
         depthFail?: boolean;
         depthFailColor?: string;
         depthFailOpacity?: number;
-        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayConditionGeometryInstanceAttribute;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
         arcType?: Cesium.ArcType;
@@ -16148,6 +16201,18 @@ declare class BaseGraphicLayer extends BaseLayer {
      */
     unbindHighlight(): void;
     /**
+     * 高亮对象
+     * @param graphic - 高亮的矢量对，类型支持{@link GraphicType}
+     * @param [event] - 事件对象
+     * @returns 无
+     */
+    openHighlight(graphic: BaseGraphic, event?: any): void;
+    /**
+     * 清除已高亮的矢量对象
+     * @returns 无
+     */
+    closeHighlight(): void;
+    /**
      * 是否存在Popup绑定，判断图层及内部所有矢量数据
      * @returns 是否存在Popup绑定
      */
@@ -16435,7 +16500,7 @@ declare class BaseLayer extends BaseClass {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
      * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -16456,6 +16521,7 @@ declare class BaseLayer extends BaseClass {
         roll?: number;
         minHeight?: number;
         maxHeight?: number;
+        height?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -16723,7 +16789,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
      * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -16744,6 +16810,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
         roll?: number;
         minHeight?: number;
         maxHeight?: number;
+        height?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -19265,7 +19332,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
      * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -19286,6 +19353,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         roll?: number;
         minHeight?: number;
         maxHeight?: number;
+        height?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -20540,7 +20608,7 @@ declare class BaseTileLayer extends BaseLayer {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
      * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -20561,6 +20629,7 @@ declare class BaseTileLayer extends BaseLayer {
         roll?: number;
         minHeight?: number;
         maxHeight?: number;
+        height?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -24872,6 +24941,58 @@ declare class LineBloomMaterialProperty extends BaseMaterialProperty {
 }
 
 /**
+ * 线状: 泛光线 材质
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.color = Cesium.Color.WHITE] - 颜色
+ * @param [options.gapColor = Cesium.Color.TRANSPARENT] - 虚线间隔颜色，默认为透明
+ * @param [options.dashLength = 16.0] - 虚线间隔长度，以像素为单位
+ * @param [options.dashPattern = 255.0] - 指定的16位模式
+ */
+declare class LineDotDashMaterialProperty extends BaseMaterialProperty {
+    constructor(options?: {
+        color?: Cesium.Color;
+        gapColor?: Cesium.Color;
+        dashLength?: number;
+        dashPattern?: number;
+    });
+    /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 虚线间隔颜色，默认为透明
+     */
+    gapColor: Cesium.Color;
+    /**
+     * 虚线间隔长度，以像素为单位
+     */
+    dashLength: number;
+    /**
+     * 指定的16位模式
+     */
+    dashPattern: number;
+    /**
+     * 获取 材质名称
+     * @param [time] - 检索值的时间。
+     * @returns 材质名称
+     */
+    getType(time?: Cesium.JulianDate): string;
+    /**
+     * 获取所提供时间的属性值。
+     * @param [time] - 检索值的时间。
+     * @param [result] - 用于存储值的对象，如果省略，则创建并返回一个新的实例。
+     * @returns 修改的result参数或一个新的实例(如果没有提供result参数)。
+     */
+    getValue(time?: Cesium.JulianDate, result?: any): any;
+    /**
+     * 将此属性与提供的属性进行比较并返回, 如果两者相等返回true，否则为false
+     * @param [other] - 比较的对象
+     * @returns 两者是同一个对象
+     */
+    equals(other?: Cesium.Property): boolean;
+}
+
+/**
  * 线状: 闪烁线 材质
  * @param [options] - 参数对象，包括以下：
  * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 颜色
@@ -26554,7 +26675,7 @@ declare class Tle {
      */
     static ecfToEci(positionEcf: Cesium.Cartesian3, datetime: Date | Cesium.JulianDate | number): Cesium.Cartesian3;
     /**
-     * 卫星开普勒六根数转换到两行轨道根数
+     * 卫星开普勒六根数转换到两行轨道根数 【测试算法，待验证优化】
      * @param startYear - 开始年,比如2017年时传入17
      * @param startTime - 开始时间，每年1月1日0点为0，后逐渐累积，整数部分为日，小数部分为时分秒
      * @param six - 轨道六根数,顺序为:
@@ -26829,7 +26950,7 @@ declare class ConicSensor extends BasePointPrimitive {
      */
     readonly reverse: boolean;
     /**
-     * 是否与地球相交，当rayEllipsoid：true时才有效。
+     * 是否与地球相交，当 rayEllipsoid：true时才有效。
      */
     readonly intersectEllipsoid: boolean;
     /**
@@ -27452,7 +27573,7 @@ declare class S3MLayer extends BaseLayer {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
      * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -27473,6 +27594,7 @@ declare class S3MLayer extends BaseLayer {
         roll?: number;
         minHeight?: number;
         maxHeight?: number;
+        height?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -27696,7 +27818,7 @@ declare class SmMvtLayer extends BaseLayer {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
      * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [extent.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
      * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
@@ -27717,6 +27839,7 @@ declare class SmMvtLayer extends BaseLayer {
         roll?: number;
         minHeight?: number;
         maxHeight?: number;
+        height?: number;
         duration?: number;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
@@ -28355,6 +28478,8 @@ declare namespace CanvasWindLayer {
  * @param [options.color = '#ffffff'] - 线颜色
  * @param [options.lineWidth = 1] - 线宽度
  * @param [options.fixedHeight = 0] - 点的固定的海拔高度
+ * @param [options.mouseHidden] - 鼠标按下时是否隐藏渲染
+ * @param [options.worker] - 处理计算粒子点的多线程JS文件地址
  * @param [options.reverseY = false] - 是否翻转纬度数组顺序，正常数据是从北往南的（纬度从大到小），如果反向时请传reverseY为true
  * @param [options.pointerEvents = false] - 图层是否可以进行鼠标交互，为false时可以穿透操作及缩放地图
  * @param [options.id = createGuid()] - 图层id标识
@@ -28381,6 +28506,8 @@ declare class CanvasWindLayer extends BaseLayer {
         color?: string;
         lineWidth?: number;
         fixedHeight?: number;
+        mouseHidden?: boolean;
+        worker?: string;
         reverseY?: boolean;
         pointerEvents?: boolean;
         id?: string | number;
@@ -28435,13 +28562,13 @@ declare class CanvasWindLayer extends BaseLayer {
      */
     pointerEvents: boolean;
     /**
-     * 风前进速率，意思是将当前风场横向纵向分成100份，再乘以风速就能得到移动位置，无论地图缩放到哪一级别都是一样的速度，可以用该数值控制线流动的快慢，值越大，越慢，
-     */
-    speedRate: number;
-    /**
      * 初始粒子总数
      */
     particlesnumber: number;
+    /**
+     * 风前进速率，意思是将当前风场横向纵向分成100份，再乘以风速就能得到移动位置，无论地图缩放到哪一级别都是一样的速度，可以用该数值控制线流动的快慢，值越大，越慢，
+     */
+    speedRate: number;
     /**
      * 每个粒子的最大生存周期
      */
@@ -28451,16 +28578,16 @@ declare class CanvasWindLayer extends BaseLayer {
      */
     data: CanvasWindLayer.DataOptions;
     /**
-     * 重绘，根据现有参数重新生成风场
-     * @returns 无
-     */
-    redraw(): void;
-    /**
      * 设置 风场数据
      * @param data - 风场数据
      * @returns 无
      */
     setData(data: any): void;
+    /**
+     * 重绘，根据现有参数重新生成风场
+     * @returns 无
+     */
+    redraw(): void;
     /**
      * 清除数据
      * @returns 无
@@ -29242,7 +29369,7 @@ declare class QueryGeoServer extends BaseClass {
      * @param [queryOptions.更多参数] - WFS服务支持的其他参数，均支持
      * @param [queryOptions.success] - 查询完成的回调方法
      * @param [queryOptions.error] - 查询失败的回调方法
-     * @returns 当前对象本身，可以链式调用
+     * @returns 查询完成的Promise,等价于success参数
      */
     query(queryOptions: {
         text?: string;
@@ -29255,7 +29382,7 @@ declare class QueryGeoServer extends BaseClass {
         更多参数?: any;
         success?: (...params: any[]) => any;
         error?: (...params: any[]) => any;
-    }): QueryGeoServer;
+    }): Promise<any>;
     /**
      * 查询服务，基于cql_filter条件
      * @param queryOptions - 查询参数
@@ -29267,7 +29394,7 @@ declare class QueryGeoServer extends BaseClass {
      * @param [queryOptions.更多参数] - WFS服务支持的其他参数，均支持
      * @param [queryOptions.success] - 查询完成的回调方法
      * @param [queryOptions.error] - 查询失败的回调方法
-     * @returns 当前对象本身，可以链式调用
+     * @returns 查询完成的Promise,等价于success参数
      */
     queryBySql(queryOptions: {
         cql_filter: string;
@@ -29278,7 +29405,7 @@ declare class QueryGeoServer extends BaseClass {
         更多参数?: any;
         success?: (...params: any[]) => any;
         error?: (...params: any[]) => any;
-    }): QueryGeoServer;
+    }): Promise<any>;
     /**
      * 清除
      * @returns 无

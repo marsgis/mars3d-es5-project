@@ -986,6 +986,16 @@ const styleConfig = {
     style: [
       { name: "radius", label: "半径", type: "number", step: 1, defval: 0.0 },
       {
+        name: "height",
+        label: "高度",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return !style.clampToGround
+        }
+      },
+      {
         name: "diffHeight",
         label: "立体高度",
         type: "number",
