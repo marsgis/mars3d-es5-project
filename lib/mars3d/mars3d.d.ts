@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.13
- * 编译日期：2022-11-07 22:46:27
+ * 版本信息：v3.4.14
+ * 编译日期：2022-11-23 15:08:54
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1690,7 +1690,7 @@ declare class BaseControl extends BaseThing {
      * @param options - 与类的构造方法参数相同
      * @returns 当前对象本身，可以链式调用
      */
-    setOptions(options: any): BaseLayer;
+    setOptions(options: any): BaseThing | BaseControl | any;
 }
 
 /**
@@ -2436,7 +2436,7 @@ declare class BaseThing extends BaseClass {
      * @param options - 与类的构造方法参数相同
      * @returns 当前对象本身，可以链式调用
      */
-    setOptions(options: any): BaseLayer;
+    setOptions(options: any): BaseThing | BaseControl | any;
     /**
      * 当前类的构造参数
      */
@@ -3654,6 +3654,11 @@ declare class BaseGraphic extends BaseClass {
         isFormat?: boolean;
     }): Cesium.Rectangle | any;
     /**
+     * 获取数据的最大高度
+     * @returns 高度
+     */
+    getMaxHeight(): number;
+    /**
      * 飞行定位至 数据所在的视角
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
@@ -3926,7 +3931,7 @@ declare class BaseCombine extends BasePrimitive {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -3995,7 +4000,7 @@ declare class BasePointCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4081,7 +4086,7 @@ declare class BasePolyCombine extends BaseCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4150,7 +4155,7 @@ declare class BoxCombine extends BasePointCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4219,6 +4224,8 @@ declare class CircleCombine extends BasePointCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有线的公共样式信息
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
+ * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4250,6 +4257,9 @@ declare class CorridorCombine extends BasePolyCombine {
             attr?: any;
         }[];
         style?: CorridorPrimitive.StyleOptions | any;
+        highlight?: {
+            type?: string;
+        };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -4283,7 +4293,7 @@ declare class CorridorCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4352,7 +4362,7 @@ declare class CylinderCombine extends BasePointCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4437,7 +4447,7 @@ declare namespace FlatBillboard {
  * @param options.instances.style - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有图标的公共样式信息
- * @param [options.scale3d = 0.8] - 二维和三维模式切换后图标的缩放比例。因为二三维模式使用不同渲染方式，可能存在大小偏差，可以该参数调优。
+ * @param [options.scale3d = 1] - 二维和三维模式切换后图标的缩放比例。因为二三维模式使用不同渲染方式，可能存在大小偏差，可以该参数调优。
  * @param [options.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(0, 5000000)] - 指定数据将显示在与摄像机的多大距离
  * @param [options.translucent = false] - 当true时，将启用alpha混合。
  * @param [options.id = createGuid()] - 矢量数据id标识
@@ -4494,7 +4504,7 @@ declare class FlatBillboard extends BaseCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4641,7 +4651,7 @@ declare class ModelCombine extends BaseCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4710,7 +4720,7 @@ declare class PlaneCombine extends BasePointCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * //  * @param {String} [options.highlight.type] 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4777,6 +4787,8 @@ declare class PolygonCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有线的公共样式信息
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
+ * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4808,6 +4820,9 @@ declare class PolylineCombine extends BasePolyCombine {
             attr?: any;
         }[];
         style?: PolylinePrimitive.StyleOptions | any;
+        highlight?: {
+            type?: string;
+        };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -4841,6 +4856,8 @@ declare class PolylineCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有线的公共样式信息
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
+ * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4872,6 +4889,9 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
             attr?: any;
         }[];
         style?: PolylineVolumePrimitive.StyleOptions | any;
+        highlight?: {
+            type?: string;
+        };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -4905,7 +4925,7 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有面的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -4974,6 +4994,8 @@ declare class RectangleCombine extends BasePolyCombine {
  * @param [options.instances.style] - 样式信息
  * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
  * @param [options.style] - 所有线的公共样式信息
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
+ * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5005,6 +5027,9 @@ declare class WallCombine extends BasePolyCombine {
             attr?: any;
         }[];
         style?: WallPrimitive.StyleOptions | any;
+        highlight?: {
+            type?: string;
+        };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
         depthFailAppearance?: Cesium.Appearance;
@@ -5787,6 +5812,8 @@ declare namespace Tetrahedron {
      * @property [moveHeight = 30] - 动画时，上下移动的单程总高度，单位：米
      * @property [moveDuration = 2] - 动画时，上下移动的单程总时长，单位：秒
      * @property [rotationAngle = 1] - 动画时，每帧旋转的角度值，单位：度
+     * @property [translucent = false] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = true] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
      */
     type StyleOptions = any | {
         width?: number;
@@ -5796,6 +5823,8 @@ declare namespace Tetrahedron {
         moveHeight?: number;
         moveDuration?: number;
         rotationAngle?: number;
+        translucent?: boolean;
+        closed?: boolean;
     };
 }
 
@@ -5990,6 +6019,10 @@ declare class ViewShed extends BasePointPrimitive {
      * 距离，单位：米
      */
     distance: number;
+    /**
+     * 场景的ShadowMap阴影图
+     */
+    readonly shadowMap: Cesium.ShadowMap;
     /**
      * 相机对象
      */
@@ -6815,7 +6848,7 @@ declare namespace Tooltip {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.testPoint] - 测试点 的对应样式 ，可以进行用于比较测试div的位置，方便调试CSS。
- * @param [options.pointerEvents = false] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
+ * @param [options.pointerEvents = true] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
  * @param [options.hasZIndex = false] - 是否自动调整DIV的层级顺序。
  * @param [options.zIndex = "10000000"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
  * @param [options.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
@@ -12408,6 +12441,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
  * 坐标量算对象，
  * 非直接调用，由 Measure 类统一创建及管理
  * @param options - 参数对象，包括以下：
+ * @param [options.crs = CRS.CGCS2000_GK_Zone_3] - 按指定坐标系显示坐标值,false不显示
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
@@ -12431,6 +12465,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
  */
 declare class PointMeasure extends PointEntity {
     constructor(options: {
+        crs?: string | CRS | boolean;
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: PointEntity.StyleOptions | any;
         attr?: any;
@@ -16146,6 +16181,7 @@ declare namespace BaseGraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class BaseGraphicLayer extends BaseLayer {
     constructor(options?: {
@@ -16183,6 +16219,7 @@ declare class BaseGraphicLayer extends BaseLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 绑定鼠标移入或单击后的 对象高亮
@@ -16382,6 +16419,7 @@ declare class BaseGraphicLayer extends BaseLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height] - 矩形高度值, 默认取地形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  */
 declare class BaseLayer extends BaseClass {
@@ -16406,6 +16444,7 @@ declare class BaseLayer extends BaseClass {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
         eventParent?: BaseClass | boolean;
     });
     /**
@@ -16648,6 +16687,7 @@ declare namespace CzmGeoJsonLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class CzmGeoJsonLayer extends BaseGraphicLayer {
     constructor(options?: {
@@ -16696,6 +16736,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * GeoJsonDataSource 对象
@@ -16727,13 +16768,13 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      * @param [newOptions.url] - geojson文件或服务url地址
      * @param [newOptions.data] - geojson格式规范数据对象，与url二选一即可。
      * @param [newOptions.类参数] - 包含当前类支持的所有参数
-     * @returns 加载完成后的回调方法的Promise
+     * @returns 当前对象本身，可以链式调用
      */
     load(newOptions?: {
         url?: string;
         data?: any;
         类参数?: any;
-    }): Promise<any>;
+    }): CzmGeoJsonLayer;
     /**
      * 加载新数据 或 刷新数据
      * @param symbol - 设置新的symbol 矢量数据样式.  {@link GraphicType}
@@ -16778,7 +16819,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      * @param [options] - 控制参数
      * @returns 加载完成后的回调方法的Promise
      */
-    process(diejiaData: Resource | string | any, options?: any): Promise<any>;
+    process(diejiaData: Cesium.Resource | string | any, options?: any): Promise<any>;
     /**
      * 飞行定位至图层数据所在的视角
      * @param [options = {}] - 参数对象:
@@ -16860,6 +16901,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class CzmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
@@ -16900,6 +16942,7 @@ declare class CzmlLayer extends CzmGeoJsonLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 加载新数据 或 刷新数据
@@ -16968,6 +17011,7 @@ declare class CzmlLayer extends CzmGeoJsonLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class KmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
@@ -17015,6 +17059,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 加载新数据 或 刷新数据
@@ -17112,6 +17157,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class ArcGisWfsLayer extends LodGraphicLayer {
     constructor(options?: {
@@ -17189,6 +17235,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 更新where条件后 刷新数据
@@ -17248,6 +17295,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
     constructor(options?: {
@@ -17303,6 +17351,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 更新where条件后 刷新数据
@@ -17398,6 +17447,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class BusineDataLayer extends GraphicLayer {
     constructor(options?: {
@@ -17474,6 +17524,7 @@ declare class BusineDataLayer extends GraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 加载新数据 或 刷新数据
@@ -17538,6 +17589,7 @@ declare class BusineDataLayer extends GraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GeodePoiLayer extends LodGraphicLayer {
     constructor(options?: {
@@ -17591,6 +17643,7 @@ declare class GeodePoiLayer extends LodGraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 获取配置的高德Key（多个时轮询）
@@ -17739,6 +17792,7 @@ declare namespace GeoJsonLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GeoJsonLayer extends GraphicLayer {
     constructor(options?: {
@@ -17818,6 +17872,7 @@ declare class GeoJsonLayer extends GraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 加载新数据 或 刷新数据
@@ -17856,6 +17911,7 @@ declare class GeoJsonLayer extends GraphicLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GraphicGroupLayer extends GroupLayer {
     constructor(options?: {
@@ -17879,6 +17935,7 @@ declare class GraphicGroupLayer extends GroupLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 是否可以编辑
@@ -18156,6 +18213,7 @@ declare namespace GraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GraphicLayer extends BaseGraphicLayer {
     constructor(options?: {
@@ -18221,6 +18279,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 完成标绘时是否自动启动编辑(需要hasEdit:true时)
@@ -18291,6 +18350,11 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @returns isFormat：true时，返回格式化对象，isFormat：false时返回Cesium.Rectangle对象
      */
     getRectangle(isFormat?: boolean): Cesium.Rectangle | any;
+    /**
+     * 获取图层内所有数据的  最大高度
+     * @returns 高度
+     */
+    getMaxHeight(): number;
     /**
      * 将图层数据导出为GeoJSON格式规范对象。
      * @param [options] - 参数对象:
@@ -18522,6 +18586,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GraticuleLayer extends BaseLayer {
     constructor(options?: {
@@ -18549,6 +18614,7 @@ declare class GraticuleLayer extends BaseLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 对象添加到地图前创建一些对象的钩子方法，
@@ -18662,6 +18728,7 @@ declare namespace LodGraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class LodGraphicLayer extends GraphicLayer {
     constructor(options?: {
@@ -18732,6 +18799,7 @@ declare class LodGraphicLayer extends GraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 根据LOD分块信息去请求对应的Tile瓦块内的数据
@@ -18811,6 +18879,7 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class OsmBuildingsLayer extends TilesetLayer {
     constructor(options: {
@@ -18861,6 +18930,7 @@ declare class OsmBuildingsLayer extends TilesetLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
 }
 
@@ -19007,6 +19077,7 @@ declare namespace TilesetLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class TilesetLayer extends BaseGraphicLayer {
     constructor(options: {
@@ -19103,6 +19174,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 原始的旋转角度，示例：{ x: 0, y: 0, z: 0 }
@@ -19450,6 +19522,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height = 0] - 矩形高度值
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class WfsLayer extends LodGraphicLayer {
     constructor(options?: {
@@ -19542,6 +19615,7 @@ declare class WfsLayer extends LodGraphicLayer {
             height?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
 }
 
@@ -19562,6 +19636,7 @@ declare class WfsLayer extends LodGraphicLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GroupLayer extends BaseGraphicLayer {
     constructor(options?: {
@@ -19580,6 +19655,7 @@ declare class GroupLayer extends BaseGraphicLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 子图层对象数组
@@ -19688,6 +19764,8 @@ declare class GroupLayer extends BaseGraphicLayer {
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
  * @param [options.show = true] - 图层是否显示（多个地形服务时，请只设置一个TerrainLayer图层的show为tue）
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class TerrainLayer extends BaseLayer {
     constructor(options?: {
@@ -19702,6 +19780,8 @@ declare class TerrainLayer extends BaseLayer {
         pid?: string | number;
         name?: string;
         show?: boolean;
+        flyTo?: boolean;
+        flyToOptions?: any;
     });
 }
 
@@ -19779,6 +19859,7 @@ declare class TerrainLayer extends BaseLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class ArcGisCacheLayer extends BaseTileLayer {
     constructor(options?: {
@@ -19838,6 +19919,7 @@ declare class ArcGisCacheLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -19941,6 +20023,7 @@ declare namespace ArcGisLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class ArcGisLayer extends BaseTileLayer {
     constructor(options?: {
@@ -20016,6 +20099,7 @@ declare class ArcGisLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 坐标系
@@ -20130,6 +20214,7 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class ArcGisTileLayer extends BaseTileLayer {
     constructor(options?: {
@@ -20188,6 +20273,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -20267,6 +20353,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class BaiduLayer extends BaseTileLayer {
     constructor(options?: {
@@ -20325,6 +20412,7 @@ declare class BaiduLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -20435,6 +20523,7 @@ declare namespace BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class BaseTileLayer extends BaseLayer {
     constructor(options?: {
@@ -20492,6 +20581,7 @@ declare class BaseTileLayer extends BaseLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 当前是否为瓦片图层
@@ -20705,6 +20795,7 @@ declare class BaseTileLayer extends BaseLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class BingLayer extends BaseTileLayer {
     constructor(options?: {
@@ -20764,6 +20855,7 @@ declare class BingLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -20817,6 +20909,7 @@ declare class BingLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class EmptyTileLayer extends BaseTileLayer {
     constructor(options?: {
@@ -20845,6 +20938,7 @@ declare class EmptyTileLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 判断级别是否在当前图层的最大最小层级范围内
@@ -20930,6 +21024,7 @@ declare class EmptyTileLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GaodeLayer extends BaseTileLayer {
     constructor(options?: {
@@ -20989,6 +21084,7 @@ declare class GaodeLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21061,6 +21157,7 @@ declare class GaodeLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GeeLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21119,6 +21216,7 @@ declare class GeeLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21198,6 +21296,7 @@ declare class GeeLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GoogleLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21257,6 +21356,7 @@ declare class GoogleLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21325,6 +21425,7 @@ declare class GoogleLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class GridLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21380,6 +21481,7 @@ declare class GridLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建瓦片图层对应的ImageryProvider对象
@@ -21443,6 +21545,7 @@ declare class GridLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class ImageLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21499,6 +21602,7 @@ declare class ImageLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21573,6 +21677,7 @@ declare class ImageLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class IonLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21633,6 +21738,7 @@ declare class IonLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21710,6 +21816,7 @@ declare class IonLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class MapboxLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21773,6 +21880,7 @@ declare class MapboxLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21840,6 +21948,7 @@ declare class MapboxLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class OsmLayer extends BaseTileLayer {
     constructor(options?: {
@@ -21894,6 +22003,7 @@ declare class OsmLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -21975,6 +22085,7 @@ declare class OsmLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class TdtLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22033,6 +22144,7 @@ declare class TdtLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -22109,6 +22221,7 @@ declare class TdtLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class TencentLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22166,6 +22279,7 @@ declare class TencentLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -22227,6 +22341,7 @@ declare class TencentLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class TileInfoLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22275,6 +22390,7 @@ declare class TileInfoLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建瓦片图层对应的ImageryProvider对象
@@ -22343,6 +22459,7 @@ declare class TileInfoLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class TmsLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22403,6 +22520,7 @@ declare class TmsLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -22478,6 +22596,10 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.proxy] - 加载资源时要使用的代理服务url。
+ * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
+ * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
+ * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -22491,6 +22613,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度,-90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class WmsLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22554,6 +22677,10 @@ declare class WmsLayer extends BaseTileLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        proxy?: string;
+        templateValues?: any;
+        queryParameters?: any;
+        headers?: any;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -22568,6 +22695,7 @@ declare class WmsLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 是否存在Popup绑定
@@ -22678,6 +22806,7 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class WmtsLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22748,6 +22877,7 @@ declare class WmtsLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -22870,6 +23000,7 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
 declare class XyzLayer extends BaseTileLayer {
     constructor(options?: {
@@ -22931,6 +23062,7 @@ declare class XyzLayer extends BaseTileLayer {
             roll?: number;
         };
         flyTo?: boolean;
+        flyToOptions?: any;
     });
     /**
      * 创建用于图层的 ImageryProvider对象
@@ -23753,6 +23885,12 @@ declare class Map extends BaseClass {
      */
     highlightEnabled: boolean;
     /**
+     * 设置Map所有参数构造参数 【测试中功能，可能部分参数无法更新,欢迎反馈问题 】
+     * @param newOptions - Map所有参数构造参数
+     * @returns 当前对象本身，可以链式调用
+     */
+    setOptions(newOptions: any): Map;
+    /**
      * 设置Scene场景参数
      * @param options - 参数
      * @returns 当前对象本身，可以链式调用
@@ -24390,13 +24528,25 @@ declare class Map extends BaseClass {
      */
     isFlyAnimation(): boolean;
     /**
-     * 执行开场动画，动画播放地球飞行定位到指定区域
+     * 执行开场动画，动画播放地球飞行定位到指定区域（1.旋转地球+2.降低高度+3.指定视角）
      * @param [options = {}] - 参数对象:
      * @param [options.center = getCameraView()] - 飞行到的指定区域视角参数
+     * @param [options.duration1 = 2] - 第一步旋转地球时长，单位：秒
+     * @param [options.easingFunction1 = Cesium.EasingFunction.LINEAR_NONE] - 第一步旋转地球飞行中，控制如何在飞行期间内插值时间参数。
+     * @param [options.duration2 = 2] - 第二步降低高度时长，单位：秒
+     * @param [options.easingFunction2] - 第二步降低高度飞行中，控制如何在飞行期间内插值时间参数。
+     * @param [options.duration3 = 2] - 第三步指定视角飞行时长，单位：秒
+     * @param [options.easingFunction3] - 第三步指定视角飞行中，控制如何在飞行期间内插值时间参数。
      * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
      */
     openFlyAnimation(options?: {
         center?: any;
+        duration1?: number;
+        easingFunction1?: Cesium.EasingFunction.Callback;
+        duration2?: number;
+        easingFunction2?: Cesium.EasingFunction.Callback;
+        duration3?: number;
+        easingFunction3?: Cesium.EasingFunction.Callback;
     }): Promise<boolean>;
     /**
      * 执行旋转地球动画
@@ -26725,6 +26875,8 @@ declare namespace CamberRadar {
      * @property [heading = 0] - 方向角 （度数值，0-360度）
      * @property [pitch = 0] - 俯仰角（度数值，0-360度）
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = true] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
      */
     type StyleOptions = any | {
         color?: string | Cesium.Color;
@@ -26744,6 +26896,8 @@ declare namespace CamberRadar {
         heading?: number;
         pitch?: number;
         roll?: number;
+        translucent?: boolean;
+        closed?: boolean;
     };
 }
 
@@ -26838,6 +26992,8 @@ declare namespace ConicSensor {
      * @property [hideRayEllipsoid = false] - 在地球相交时 是否隐藏
      * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
      * @property [faceForward = false] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = true] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
      */
     type StyleOptions = any | {
         angle?: number;
@@ -26856,6 +27012,8 @@ declare namespace ConicSensor {
         hideRayEllipsoid?: boolean;
         flat?: boolean;
         faceForward?: boolean;
+        translucent?: boolean;
+        closed?: boolean;
     };
 }
 
@@ -27010,6 +27168,8 @@ declare namespace RectSensor {
      * @property [hideRayEllipsoid = false] - 在地球相交时 是否隐藏
      * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
      * @property [faceForward = false] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = false] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
      */
     type StyleOptions = any | {
         angle1?: number;
@@ -27030,6 +27190,8 @@ declare namespace RectSensor {
         hideRayEllipsoid?: boolean;
         flat?: boolean;
         faceForward?: boolean;
+        translucent?: boolean;
+        closed?: boolean;
     };
 }
 
@@ -27357,6 +27519,8 @@ declare namespace SatelliteSensor {
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色
      * @property [rayEllipsoid = false] - 是否求交地球计算
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = false] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
      */
     type StyleOptions = any | {
         sensorType?: SatelliteSensor.Type;
@@ -27372,6 +27536,8 @@ declare namespace SatelliteSensor {
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         rayEllipsoid?: boolean;
+        translucent?: boolean;
+        closed?: boolean;
     };
     /**
      * 视锥体类型
@@ -29946,6 +30112,10 @@ declare class Shadows extends BaseThing {
         eventParent?: BaseClass | boolean;
     });
     /**
+     * 场景的ShadowMap阴影图
+     */
+    readonly shadowMap: Cesium.ShadowMap;
+    /**
      * 当前时间
      */
     time: Date;
@@ -30093,12 +30263,6 @@ declare class Skyline extends BaseThing {
      * 天际线宽度
      */
     width: number;
-    /**
-     * 销毁当前对象
-     * @param [noDel = false] - false:会自动delete释放所有属性，true：不delete绑定的变量
-     * @returns 无
-     */
-    destroy(noDel?: boolean): void;
 }
 
 /**

@@ -1,8 +1,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.13
- * 编译日期：2022-11-07 22:46:27
+ * 版本信息：v3.4.14
+ * 编译日期：2022-11-23 15:08:55
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -224,7 +224,7 @@
 }
 .mars3d-clockAnimate .mars3d-clockAnimate-speed ::-webkit-outer-spin-button,
 .mars3d-clockAnimate .mars3d-clockAnimate-speed input::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
+  appearance: none !important;
   margin: 0;
 }
 .mars3d-compass {
