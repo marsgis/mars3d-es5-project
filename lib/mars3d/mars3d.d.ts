@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.14
- * 编译日期：2022-11-23 15:08:54
+ * 版本信息：v3.4.15
+ * 编译日期：2022-12-05 19:37:36
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -3558,6 +3558,10 @@ declare class BaseGraphic extends BaseClass {
      */
     hasEdit: boolean;
     /**
+     * 设置事件的启用和禁用状态
+     */
+    enabledEvent: boolean;
+    /**
      * 中心点坐标（笛卡尔坐标）
      */
     readonly center: Cesium.Cartesian3 | Cesium.SampledPositionProperty;
@@ -4566,7 +4570,8 @@ declare class FrustumCombine extends BasePointCombine {
 }
 
 /**
- * 大数据 gltf小模型集合 (合并渲染) Primitive图元 矢量对象
+ * 大数据 gltf小模型集合 (合并渲染) Primitive图元 矢量对象 <br />
+ * 【注意：该类仅对Cesium 1.97之前版本有效，1.97后Cesium移除了 Cesium.ModelInstanceCollection 】
  * @param options - 参数对象，包括以下：
  * @param [options.url] - glTF模型的URI的字符串或资源属性。
  * @param [options.instances] - 集合信息数组，单个对象包括：
@@ -5571,7 +5576,7 @@ declare namespace Route {
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
- * @param [options.maxCacheCount = 100] - 保留的坐标点数量,当为-1时保留所有
+ * @param [options.maxCacheCount = 100] - 保留的坐标点数量, 当为-1时保留所有
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
@@ -6190,6 +6195,7 @@ declare namespace DivGraphic {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
+     * @property [templateEmptyStr = ''] - html中如果存在模版时，空值时显示的内容
      * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
@@ -6213,6 +6219,7 @@ declare namespace DivGraphic {
         heightReference?: Cesium.HeightReference;
         css_transform_origin?: string;
         timeRender?: boolean;
+        templateEmptyStr?: string;
         setHeight?: number | string;
         addHeight?: number | string;
     };
@@ -6665,6 +6672,7 @@ declare namespace Popup {
      * (1)用于填充html的地方写上{content}标识；
      * (2)关闭按钮加class样式：closeButton。
      * 传空字符串或false时，不用内置模版。
+     * @property [closeButton = true] - 是否显示关闭按钮
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
      * @property [offsetX] - 用于非规则div时，横向偏移的px像素值
@@ -6694,13 +6702,14 @@ declare namespace Popup {
      * @property [pointerEvents = true] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
      * @property [hasZIndex = false] - 是否自动调整DIV的层级顺序。
      * @property [zIndex = "10000000"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
-     * @property [depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
+     * @property [depthTest = false] - 是否打开深度判断（true时判断是否在球背面）
      * @property [hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
      * @property [checkData] - 在多个Popup时，校验是否相同Popup进行判断关闭
      */
     type StyleOptions = any | {
         html?: string;
         template?: string;
+        closeButton?: boolean;
         horizontalOrigin?: Cesium.HorizontalOrigin;
         verticalOrigin?: Cesium.VerticalOrigin;
         offsetX?: number;
@@ -6747,7 +6756,7 @@ declare namespace Popup {
  * @param [options.pointerEvents = true] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
  * @param [options.hasZIndex = false] - 是否自动调整DIV的层级顺序。
  * @param [options.zIndex = "10000000"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
- * @param [options.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
+ * @param [options.depthTest = false] - 是否打开深度判断（true时判断是否在球背面）
  * @param [options.hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
@@ -6809,7 +6818,7 @@ declare namespace Tooltip {
      * @property [pointerEvents = true] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
      * @property [hasZIndex = false] - 是否自动调整DIV的层级顺序。
      * @property [zIndex = "10000000"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
-     * @property [depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
+     * @property [depthTest = false] - 是否打开深度判断（true时判断是否在球背面）
      * @property [hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
      */
     type StyleOptions = any | {
@@ -6851,7 +6860,7 @@ declare namespace Tooltip {
  * @param [options.pointerEvents = true] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
  * @param [options.hasZIndex = false] - 是否自动调整DIV的层级顺序。
  * @param [options.zIndex = "10000000"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
- * @param [options.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
+ * @param [options.depthTest = false] - 是否打开深度判断（true时判断是否在球背面）
  * @param [options.hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
@@ -6940,6 +6949,11 @@ declare class BaseEntity extends BaseGraphic {
      */
     readonly isEditing: boolean;
     /**
+     * 重新渲染对象
+     * @returns 无
+     */
+    reload(): void;
+    /**
      * 高亮对象。
      * @param [highlightStyle] - 高亮的样式，具体见各{@link GraphicType}矢量数据的style参数。
      * @param [closeLast = true] - 是否清除地图上上一次的高亮对象
@@ -7013,6 +7027,10 @@ declare class BaseEntity extends BaseGraphic {
      * 矢量数据对应的 Cesium内部对象 (不同子类中实现)
      */
     readonly czmObject: Cesium.Entity | Cesium.Primitive | Cesium.GroundPrimitive | Cesium.ClassificationPrimitive | any;
+    /**
+     * 设置事件的启用和禁用状态
+     */
+    enabledEvent: boolean;
 }
 
 /**
@@ -7029,7 +7047,7 @@ declare class BaseEntity extends BaseGraphic {
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEdit = true] - 是否允许编辑
- * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
@@ -7420,7 +7438,7 @@ declare namespace BillboardEntity {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
- * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
@@ -9483,7 +9501,7 @@ declare namespace ModelEntity {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
- * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
@@ -10026,7 +10044,7 @@ declare namespace PointEntity {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
- * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
@@ -12656,7 +12674,7 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
  * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
  * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
- * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
@@ -14756,7 +14774,7 @@ declare namespace ModelPrimitive {
  * @param [options.frameRate = 1] - 当postion为CallbackProperty时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
- * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
@@ -18447,7 +18465,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
     getGraphics(hasPrivate?: boolean): BaseGraphic[] | any[];
     /**
      * 清除图层内所有矢量数据
-     * @param [hasDestroy = false] - 是否释放矢量对象
+     * @param [hasDestroy = true] - 是否释放矢量对象
      * @returns 无
      */
     clear(hasDestroy?: boolean): void;
@@ -23439,7 +23457,7 @@ declare namespace Map {
      * @property [geocoder = false] - 是否显示 地名查找控件按钮，是Cesium原生控件
      * @property [navigationHelpButton = false] - 帮助按钮，是否显示
      * @property [navigationInstructionsInitiallyVisible = true] - 帮助按钮 在用户明确单击按钮之前是否自动显示
-     * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件
+     * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件, 如果true底图是Cesium机制控制，Map内的basemaps相关获取和控制将会无效。
      * @property [imageryProviderViewModels = []] - baseLayerPicker底图切换面板中，用于图像的ProviderViewModel实例数组，默认自动根据basemaps数组生成。
      * @property [selectedImageryProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基本图像层的视图模型，则使用第一个可用的图像层。默认为show:true的basemaps图层
      * @property [terrainProviderViewModels = []] - baseLayerPicker底图切换面板中，用于地形的ProviderViewModel实例数组。默认自动使用terrain配置+无地形。
@@ -23519,6 +23537,7 @@ declare namespace Map {
      * @property [pickWidth = 4] - 拾取时所选矩形的宽度，单位：像素
      * @property [pickHeight = 4] - 拾取时所选矩形的高度，单位：像素
      * @property [pickLimit = 9] - 在允许allowDrillPick穿透拾取时，限制拾取的对象个数。
+     * @property [transform] - 在body或地图DIV上设置了scale等css缩放时，需要该方法转换像素坐标值。如： transform: function (position) {  return new Cesium.Cartesian2(position.x / 0.5, position.y / 0.5); }
      */
     type mouseOptions = {
         enabledMoveTarget?: boolean;
@@ -23526,6 +23545,7 @@ declare namespace Map {
         pickWidth?: number;
         pickHeight?: number;
         pickLimit?: number;
+        transform?: (...params: any[]) => any;
     };
     /**
      * 添加到地图的特效 参数
@@ -24167,15 +24187,17 @@ declare class Map extends BaseClass {
     /**
      * 放大地图
      * @param [relativeAmount = 2] - 相对量
+     * @param [mandatory] - 是否强制更新，忽略其他限制
      * @returns 是否有移动位置
      */
-    zoomIn(relativeAmount?: number): boolean;
+    zoomIn(relativeAmount?: number, mandatory?: number): boolean;
     /**
      * 缩小地图
      * @param [relativeAmount = 2] - 相对量
+     * @param [mandatory] - 是否强制更新，忽略其他限制
      * @returns 是否有移动位置
      */
-    zoomOut(relativeAmount?: number): boolean;
+    zoomOut(relativeAmount?: number, mandatory?: number): boolean;
     /**
      * 设置鼠标操作习惯方式。
      * 默认为中键旋转，右键拉伸远近。传`rightTilt:true`可以设置为右键旋转，中键拉伸远近。
@@ -28514,6 +28536,14 @@ declare namespace widget {
      * @returns 是否激活
      */
     function isActivate(uri: string): boolean;
+    /**
+     * 设置view弹窗的显示和隐藏，基于修改css实现
+     * @param uri - widget的uri 或 id
+     * @param show - 是否显示
+     * @param [index] - 当有多个view时，可以指定单个操作的view的index
+     * @returns 是否成功设置
+     */
+    function setViewShow(uri: string, show: boolean, index?: number): boolean;
     /**
      * 释放指定的widget
      * @param uri - widget的uri 或 id
