@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.15
- * 编译日期：2022-12-05 19:37:36
+ * 版本信息：v3.4.16
+ * 编译日期：2022-12-05 21:57:48
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -235,6 +235,10 @@ declare enum EventType {
      * 完成
      */
     stop = "stop",
+    /**
+     * 地图zoomIn/zoomOut方法缩放事件
+     */
+    zoom = "zoom",
     /**
      * 完成加载，但未做任何其他处理前
      */
@@ -19029,10 +19033,11 @@ declare namespace TilesetLayer {
  * @param [options.customShader] - 自定义shader效果
  * @param [options.highlight] - 高亮及其样式配置
  * @param [options.highlight.type] - 鼠标移入高亮 或 单击高亮(type:'click')
- * @param [options.highlight.all] - 是否整体高亮， true:模型整体全部高亮，false:单个构件高亮
  * @param [options.highlight.color = '#FFFF00'] - 颜色，支持rgba字符串
  * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link OutlineEffect}方式高亮。
  * @param [options.highlight.filter] - 可以设置筛选排除一些构件, 排除的构件在filter方法内返回false
+ * @param [options.highlight.all] - 是否按整体高亮， true:模型整体全部高亮，false:单个构件高亮
+ * @param [options.highlight.uniqueKey] - 按指定字段进行对应相关构件的整体高亮
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.clampToGround] - 是否贴地,true时自动调用贴地计算，但此属性只适合标准的与地形数据匹配的模型，并不精确，建议通过模型编辑页面调试给具体高度值。
  * @param [options.chinaCRS] - 标识模型的国内坐标系（用于自动纠偏或加偏）
@@ -19122,10 +19127,11 @@ declare class TilesetLayer extends BaseGraphicLayer {
         customShader?: Cesium.CustomShader;
         highlight?: {
             type?: string;
-            all?: boolean;
             color?: string | ((...params: any[]) => any);
             outlineEffect?: boolean;
             filter?: (...params: any[]) => any;
+            all?: boolean;
+            uniqueKey?: string;
         };
         allowDrillPick?: boolean | ((...params: any[]) => any);
         clampToGround?: boolean;
