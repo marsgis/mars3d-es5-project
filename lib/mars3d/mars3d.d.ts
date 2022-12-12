@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.16
- * 编译日期：2022-12-05 21:57:48
+ * 版本信息：v3.4.17
+ * 编译日期：2022-12-12 09:11:28
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -909,7 +909,7 @@ declare enum Lang {
     "_纬度" = "[\"\u7EAC\u5EA6\",\"\u7DEF\u5EA6\",\"Lat\"]",
     "_海拔" = "[\"\u9AD8\u7A0B\",\"\u9AD8\u7A0B\",\"Alt\"]",
     "_横坐标" = "[\"\u6A2A\u5750\u6807\",\"\u6A6B\u5750\u6A19\",\"X\"]",
-    "_纵坐标" = "[\"\u7EB5\u5750\u6807\uFF1A\",\"\u7E31\u5750\u6A19\",\"Y\"]",
+    "_纵坐标" = "[\"\u7EB5\u5750\u6807\",\"\u7E31\u5750\u6A19\",\"Y\"]",
     "_查看当前视角" = "[\"\u67E5\u770B\u5F53\u524D\u89C6\u89D2\",\"\u67E5\u770B\u7576\u524D\u8996\u89D2\",\"Camera info\"]",
     "_当前视角信息" = "[\"\u5F53\u524D\u89C6\u89D2\u4FE1\u606F\",\"\u7576\u524D\u8996\u89D2\u4FE1\u606F\",\"Current Camera Information\"]",
     "_视角切换" = "[\"\u89C6\u89D2\u5207\u6362\",\"\u8996\u89D2\u5207\u63DB\",\"Camera\"]",
@@ -5704,7 +5704,7 @@ declare class Route extends BasePointPrimitive {
      */
     multiplier: number;
     /**
-     * 是否暂停状态
+     * 是否暂停状态 【针对全局时钟的，即 map.clock.shouldAnimate】
      */
     isPause: boolean;
     /**
@@ -5796,12 +5796,12 @@ declare class Route extends BasePointPrimitive {
         followedZ?: number;
     }): void;
     /**
-     * 暂停
+     * 暂停 【针对全局时钟的，即 map.clock.shouldAnimate】
      * @returns 无
      */
     pause(): void;
     /**
-     * 继续
+     * 继续 【针对全局时钟的，即 map.clock.shouldAnimate】
      * @returns 无
      */
     proceed(): void;
@@ -12763,6 +12763,10 @@ declare class BasePointPrimitive extends BasePrimitive {
      * 坐标对应的高度值（单位：米）
      */
     height: number;
+    /**
+     * 三维空间中的旋转 【仅部分对象支持】
+     */
+    readonly orientation: Cesium.Quaternion;
     /**
      * 将图元(所有几何实例)从模型转换为世界坐标的4x4变换矩阵。
      * <br/>提示：父类属性，非所有子类都具备
@@ -23460,7 +23464,7 @@ declare namespace Map {
      * @property [fullscreenButton = false] - 全屏按钮，是否显示
      * @property [fullscreenElement = document.body] - 当按下全屏按钮时，要置于全屏模式的元素或id
      * @property [vrButton = false] - VR效果按钮，是否显示
-     * @property [geocoder = false] - 是否显示 地名查找控件按钮，是Cesium原生控件
+     * @property [geocoder = false] - 是否显示 地名查找按钮 控件，是Cesium原生控件
      * @property [navigationHelpButton = false] - 帮助按钮，是否显示
      * @property [navigationInstructionsInitiallyVisible = true] - 帮助按钮 在用户明确单击按钮之前是否自动显示
      * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件, 如果true底图是Cesium机制控制，Map内的basemaps相关获取和控制将会无效。
@@ -24127,7 +24131,7 @@ declare class Map extends BaseClass {
     /**
      * 根据指定属性获取控件
      * @param attrValue - 属性值
-     * @param [attrName = 'id'] - 属性键
+     * @param [attrName = 'type'] - 属性键
      * @returns 控件对象
      */
     getControl(attrValue: string | number | boolean, attrName?: string): BaseControl;
@@ -24147,7 +24151,7 @@ declare class Map extends BaseClass {
     /**
      * 根据指定属性获取Thing对象
      * @param key - 属性值（如id、name值）
-     * @param [attrName = 'id'] - 属性名称
+     * @param [attrName = 'type'] - 属性名称
      * @returns Thing对象
      */
     getEffect(key: string | any, attrName?: string): BaseEffect;
@@ -26391,13 +26395,14 @@ declare class EchartsLayer extends BaseLayer {
  * @param [options.heatStyle.radius = 25] - 每个数据点将具有的半径（如果未在数据点本身上指定）
  * @param [options.heatStyle.gradient] - 色带，表示渐变的对象，示例：{ 0.4: 'blue', 0.6: 'green',0.8: 'yellow',0.9: 'red' }
  * @param [options.style] - 矢量对象样式参数，还包括：
+ * @param [options.style.type] - 渲染类型，支持："image"：ImageLayer图片展示, "graphic"：普通RectanglePrimitive矢量矩形展示, "arc"：曲面RectanglePrimitive矢量矩形展示
  * @param [options.style.opacity = 1] - 透明度
- * @param [options.style.arc = false] - 是否显示曲面热力图
+ * @param [options.style.height = 0] - 高度，相对于椭球面的高度。
+ * @param [options.style.arc = false] - 是否显示曲面热力图，同 type:"arc"
  * @param [options.style.arcRadiusScale = 1.5] - 曲面热力图时，radius扩大比例
  * @param [options.style.arcBlurScale = 1.5] - 曲面热力图时，blur扩大比例
  * @param [options.style.arcDirection = 1] - 曲面热力图时，凹陷的方向，1向上，-1向下，0双面
- * @param [options.style.height = 0] - 高度，相对于椭球面的高度。
- * @param [options.style.diffHeight] - 曲面的起伏差值高，默认根据数据范围的比例自动计算。
+ * @param [options.style.diffHeight] - 曲面热力图时，曲面的起伏差值高，默认根据数据范围的比例自动计算。
  * @param [options.style.多个参数] - rectangle矩形支持的样式
  * @param [options.maxCanvasSize = 5000] - Canvas最大尺寸（单位：像素），调大精度更高，但过大容易内存溢出
  * @param [options.minCanvasSize = 700] - Canvas最小尺寸（单位：像素）
@@ -26435,12 +26440,13 @@ declare class HeatLayer extends BaseLayer {
             gradient?: any;
         };
         style?: {
+            type?: string;
             opacity?: number;
+            height?: number;
             arc?: boolean;
             arcRadiusScale?: number;
             arcBlurScale?: number;
             arcDirection?: number;
-            height?: number;
             diffHeight?: number;
             多个参数?: RectanglePrimitive.StyleOptions | any;
         };
@@ -29983,6 +29989,7 @@ declare class Measure extends BaseThing {
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
+     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @returns 绘制创建完成的Promise，返回 面积测量控制类 对象
      */
     areaSurface(options?: {
@@ -29991,6 +29998,7 @@ declare class Measure extends BaseThing {
         splitNum?: number;
         has3dtiles?: boolean;
         decimal?: number;
+        exact?: boolean;
     }): Promise<AreaSurfaceMeasure | any>;
     /**
      * 体积测量（方量分析）
@@ -30156,7 +30164,7 @@ declare class Shadows extends BaseThing {
      */
     time: Date;
     /**
-     * 是否在播放
+     * 是否在播放 【针对全局时钟的，即 map.clock.shouldAnimate】
      */
     readonly isStart: boolean;
     /**
@@ -30172,17 +30180,17 @@ declare class Shadows extends BaseThing {
      */
     start(startDate: Date, endDate: Date, currentTime?: Date): void;
     /**
-     * 暂停
+     * 暂停 【针对全局时钟的，即 map.clock.shouldAnimate】
      * @returns 无
      */
     pause(): void;
     /**
-     * 继续
+     * 继续 【针对全局时钟的，即 map.clock.shouldAnimate】
      * @returns 无
      */
     proceed(): void;
     /**
-     * 停止
+     * 停止 【针对全局时钟的，即 map.clock.shouldAnimate】
      * @returns 无
      */
     stop(): void;
