@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.4.20
- * 编译日期：2023-01-10 12:55:02
+ * 版本信息：v3.4.26
+ * 编译日期：2023-03-09 16:00:05
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2022-06-01
  */
@@ -1662,6 +1662,11 @@ declare class BaseControl extends BaseThing {
      * 父容器DOM对象的ID
      */
     readonly parentContainerId: string;
+    /**
+     * 重新加载
+     * @returns 无
+     */
+    reload(): void;
     /**
      * 添加到地图上，同 map.addControl
      * @param map - 地图对象
@@ -5225,6 +5230,7 @@ declare class ArcFrustum extends BasePointPrimitive {
  * @param [options.interpolationAlgorithm = Cesium.HermitePolynomialApproximation] - 当interpolation为true时，使用的插值算法，如：Cesium.HermitePolynomialApproximation、Cesium.LagrangePolynomialApproximation、Cesium.LinearApproximation
  * @param [options.interpolationDegree = 2] - 当interpolation为true时，使用的插值程度。
  * @param [options.showStop = true] - 是否在start前或stop后显示矢量对象
+ * @param [options.updateClock = true] - 是否自动更新时钟，多个FixedRoute时或外部手动控制时钟时建议关闭
  * @param options.speed - 轨迹的 速度( 单位：千米/小时)
  * @param [options.timeField] - 当points数组中已有时间值，请传入该值的字段名称，同时speed将失效，已实际传入时间字段为准。
  * @param [options.startTime] - 轨迹的开始时间，默认当前时间
@@ -5283,6 +5289,7 @@ declare class FixedRoute extends Route {
         interpolationAlgorithm?: number;
         interpolationDegree?: Cesium.InterpolationAlgorithm | number;
         showStop?: boolean;
+        updateClock?: boolean;
         speed: any[][] | number;
         timeField?: string;
         startTime?: string | Date | Cesium.JulianDate;
@@ -5708,6 +5715,14 @@ declare class Route extends BasePointPrimitive {
      */
     model: ModelPrimitive;
     /**
+     * 获取model模型子对象完成解析加载完成的Promise承诺
+     * @example
+     * route.readyPromise.then(function(graphic) {
+     *     console.log("load完成", graphic)
+     *   })
+     */
+    readonly readyPromise: Promise<ModelEntity | any>;
+    /**
      * 圆 子对象
      */
     circle: CircleEntity;
@@ -5736,6 +5751,10 @@ declare class Route extends BasePointPrimitive {
      * 求当前位置射线与地球相交点
      */
     readonly groundPosition: Cesium.Cartesian3;
+    /**
+     * 当前海拔高度值
+     */
+    readonly alt: number;
     /**
      * 开始时间
      */
@@ -7241,7 +7260,7 @@ declare class BasePointEntity extends BaseEntity {
      */
     clearDynamicPosition(): BasePointEntity;
     /**
-     * 设置并添加动画轨迹位置，按“指定时间”运动到达“指定位置”。
+     * 设置并添加动画轨迹位置，按“指定时间”运动到达“指定位置”。【仅文本、图标点、模型等部分子类支持】
      * @param point - 指定位置坐标
      * @param [currTime] - 指定时间, 默认为当前时间。当为String时，可以传入'2021-01-01 12:13:00'; 当为number时，可以传入当前时间延迟的秒数。
      * @returns 当前对象本身，可以链式调用
@@ -7289,6 +7308,7 @@ declare class BasePointEntity extends BaseEntity {
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.minPointNum = 2] - 绘制时，至少需要点的个数
  * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
@@ -7315,6 +7335,7 @@ declare class BasePolyEntity extends BaseEntity {
         onBeforeCreate?: (...params: any[]) => any;
         minPointNum?: number;
         maxPointNum?: number;
+        hasDrawDelPoint?: boolean;
         hasEdit?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
@@ -7947,6 +7968,7 @@ declare namespace CircleEntity {
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.drawShowRadius = true] - 绘制时，是否显示圆的半径。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -7972,6 +7994,7 @@ declare class CircleEntity extends BasePointEntity {
         onBeforeCreate?: (...params: any[]) => any;
         drawShowRadius?: boolean;
         drawShow?: boolean;
+        hasDrawDelPoint?: boolean;
         hasEdit?: boolean;
         hasMoveEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
@@ -8117,7 +8140,7 @@ declare namespace ConeTrack {
      * @property [color = "#00FF00"] - 填充颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
@@ -8147,7 +8170,7 @@ declare namespace ConeTrack {
         color?: string | Cesium.Color;
         opacity?: number;
         outline?: boolean;
-        outlineWidth?: string;
+        outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
         numberOfVerticalLines?: number;
@@ -8272,7 +8295,7 @@ declare namespace CorridorEntity {
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
@@ -8457,7 +8480,7 @@ declare namespace CylinderEntity {
      * @property [color = "#00FF00"] - 填充颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
@@ -8487,7 +8510,7 @@ declare namespace CylinderEntity {
         color?: string | Cesium.Color;
         opacity?: number;
         outline?: boolean;
-        outlineWidth?: string;
+        outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
         numberOfVerticalLines?: number;
@@ -8518,6 +8541,7 @@ declare namespace CylinderEntity {
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -8541,6 +8565,7 @@ declare class CylinderEntity extends BasePointEntity {
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
         drawShow?: boolean;
+        hasDrawDelPoint?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -8999,7 +9024,7 @@ declare namespace EllipsoidEntity {
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [stackPartitions = 64] - 指定竖向划分数量
@@ -9043,7 +9068,7 @@ declare namespace EllipsoidEntity {
         color?: string | Cesium.Color;
         opacity?: number;
         outline?: boolean;
-        outlineWidth?: string;
+        outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
         stackPartitions?: number;
@@ -9090,6 +9115,7 @@ declare namespace EllipsoidEntity {
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditRadii = true] - 编辑时，是否可以编辑半径
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -9116,6 +9142,7 @@ declare class EllipsoidEntity extends BasePointEntity {
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
         drawShow?: boolean;
+        hasDrawDelPoint?: boolean;
         hasEdit?: boolean;
         hasEditRadii?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
@@ -9942,7 +9969,7 @@ declare namespace PlaneEntity {
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
@@ -9973,7 +10000,7 @@ declare namespace PlaneEntity {
         color?: string | Cesium.Color;
         opacity?: number;
         outline?: boolean;
-        outlineWidth?: string;
+        outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
@@ -10274,6 +10301,7 @@ declare namespace PolygonEntity {
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.minPointNum = 2] - 绘制时，至少需要点的个数
  * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
@@ -10300,6 +10328,7 @@ declare class PolygonEntity extends BasePolyEntity {
         onBeforeCreate?: (...params: any[]) => any;
         minPointNum?: number;
         maxPointNum?: number;
+        hasDrawDelPoint?: boolean;
         hasEdit?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
@@ -10456,6 +10485,7 @@ declare namespace PolylineEntity {
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
  * @param [options.minPointNum = 2] - 绘制时，至少需要点的个数
  * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
@@ -10482,6 +10512,7 @@ declare class PolylineEntity extends BasePolyEntity {
         onBeforeCreate?: (...params: any[]) => any;
         minPointNum?: number;
         maxPointNum?: number;
+        hasDrawDelPoint?: boolean;
         hasEdit?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
@@ -11022,7 +11053,7 @@ declare namespace Video2D {
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
@@ -11188,7 +11219,7 @@ declare namespace WallEntity {
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [closure = false] - 是否闭合, 在positions是属性机制的回调对象时无效
      * @property [outline = false] - 是否边框
-     * @property [outlineWidth = 1] - 边框宽度
+     * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
@@ -11217,7 +11248,7 @@ declare namespace WallEntity {
         opacity?: number;
         closure?: boolean;
         outline?: boolean;
-        outlineWidth?: string;
+        outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
@@ -12640,7 +12671,7 @@ declare class SectionMeasure extends DistanceMeasure {
 }
 
 /**
- * 体积量算对象（方量），
+ * 体积量算对象（方量分析），
  * 非直接调用，由 Measure 类统一创建及管理。<br />
  *
  * 1. 挖方量: 计算“基准面”到地表之间的凸出部分进行挖掉的体积。<br />
@@ -12874,7 +12905,7 @@ declare class BasePointPrimitive extends BasePrimitive {
      */
     property: Cesium.SampledPositionProperty | Cesium.CallbackProperty;
     /**
-     * 设置并添加动画轨迹位置，按“指定时间”运动到达“指定位置”。
+     * 设置并添加动画轨迹位置，按“指定时间”运动到达“指定位置”。【仅文本、图标点、模型等部分子类支持】
      * @param point - 指定位置坐标
      * @param [currTime = Cesium.JulianDate.now()] - 指定时间, 默认为当前时间5秒后。当为String时，可以传入'2021-01-01 12:13:00'; 当为number时，可以传入当前时间延迟的秒数。
      * @returns 当前对象本身，可以链式调用
@@ -14666,11 +14697,15 @@ declare namespace LightCone {
      * @property [color = '#00ffff'] - 颜色
      * @property [radius = 100] - 锥体底部半径。(单位：米)
      * @property [height = 1000] - 锥体高度，相对于椭球面的高度。(单位：米)
+     * @property [distanceDisplayCondition] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      */
     type StyleOptions = any | {
         color?: string | Cesium.Color;
         radius?: number;
         height?: number;
+        distanceDisplayCondition?: Cesium.DistanceDisplayConditionGeometryInstanceAttribute;
+        highlight?: LightCone.StyleOptions | any;
     };
 }
 
@@ -16970,7 +17005,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url] - CZML文件或服务url地址
  * @param [options.data] - CZML格式规范数据对象，与url二选一即可。
- * @param [options.autoUpdateClock = true] - 是否自动更新时钟
+ * @param [options.updateClock = true] - 是否自动更新时钟，多个时或外部手动控制时钟时建议关闭
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
@@ -17008,7 +17043,7 @@ declare class CzmlLayer extends CzmGeoJsonLayer {
     constructor(options?: {
         url?: string;
         data?: any;
-        autoUpdateClock?: boolean;
+        updateClock?: boolean;
         zIndex?: number;
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -18422,6 +18457,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     pointerEvents: boolean;
     /**
+     * 获取当前图层中所有对象，用于贴模型分析时，排除的不进行贴模型计算的模型对象
+     */
+    readonly objectsToExclude: any | undefined;
+    /**
      * 是否可以调整图层顺序（在同类型图层间）
      */
     readonly hasZIndex: boolean;
@@ -18650,12 +18689,15 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     endDraw(): boolean;
     /**
-     * 停止绘制，如有未完成的绘制会自动删除
+     * 停止绘制。
+     * 线面对象：未完成的绘制会自动删除，已绘制的会完成在最后一个点位；
+     * 点状对象：会结束停留在最后一个点位，未完成的绘制会自动删除
+     * 如果需要清除正在绘制的对象，请用 clearDrawing() 方法
      * @returns 是否清除了未完成的对象
      */
     stopDraw(): boolean;
     /**
-     * 清除正在绘制
+     * 清除正在绘制的对象
      * @returns 是否清除了对象
      */
     clearDrawing(): boolean;
@@ -24126,9 +24168,10 @@ declare class Map extends BaseClass {
     /**
      * 重新设置basemps底图图层，对options.basemaps重新赋值
      * @param arr - 底图图层配置
+     * @param [reload = true] - 是否重新构造
      * @returns 图层数组
      */
-    setBasemapsOptions(arr: Map.basemapOptions[]): BaseLayer[];
+    setBasemapsOptions(arr: Map.basemapOptions[], reload?: boolean): BaseLayer[];
     /**
      * 重新设置layers图层，对options.layers重新赋值
      * @param arr - 可以叠加显示的图层配置
@@ -24315,17 +24358,17 @@ declare class Map extends BaseClass {
     /**
      * 放大地图
      * @param [relativeAmount = 2] - 相对量
-     * @param [mandatory] - 是否强制更新，忽略其他限制
+     * @param [mandatory] - 是否强制更新，忽略screenSpaceCameraController的enableInputs/enableZoom限制
      * @returns 是否有移动位置
      */
-    zoomIn(relativeAmount?: number, mandatory?: number): boolean;
+    zoomIn(relativeAmount?: number, mandatory?: boolean): boolean;
     /**
      * 缩小地图
      * @param [relativeAmount = 2] - 相对量
-     * @param [mandatory] - 是否强制更新，忽略其他限制
+     * @param [mandatory] - 是否强制更新，忽略screenSpaceCameraController的enableInputs/enableZoom限制
      * @returns 是否有移动位置
      */
-    zoomOut(relativeAmount?: number, mandatory?: number): boolean;
+    zoomOut(relativeAmount?: number, mandatory?: boolean): boolean;
     /**
      * 设置鼠标操作习惯方式。
      * 默认为中键旋转，右键拉伸远近。传`rightTilt:true`可以设置为右键旋转，中键拉伸远近。
@@ -24831,6 +24874,13 @@ declare class Map extends BaseClass {
      * @returns 当前对象本身,可以链式调用
      */
     off(types?: EventType | string | EventType[], fn?: (...params: any[]) => any, context?: any): BaseClass;
+    /**
+     * 是否有绑定指定的事件
+     * @param type - 事件类型
+     * @param [propagate] - 是否判断指定的父类 (用addEventParent设置的)
+     * @returns 是否存在
+     */
+    listens(type: EventType | string, propagate?: BaseClass): boolean;
 }
 
 /**
@@ -27188,7 +27238,7 @@ declare namespace ConicSensor {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.lookAt] - 椎体方向追踪的目标（椎体方向跟随变化，位置不变）
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
- * @param [options.revers = false] - 是否反转朝向
+ * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -27200,7 +27250,7 @@ declare class ConicSensor extends BasePointPrimitive {
         attr?: any;
         lookAt?: Cesium.Cartesian3 | Cesium.PositionProperty;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
-        revers?: boolean;
+        reverse?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -27366,7 +27416,7 @@ declare namespace RectSensor {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.lookAt] - 椎体方向追踪的目标（椎体方向跟随变化，位置不变）
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
- * @param [options.revers = false] - 是否反转朝向
+ * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -27378,7 +27428,7 @@ declare class RectSensor extends BasePointPrimitive {
         attr?: any;
         lookAt?: Cesium.Cartesian3 | Cesium.PositionProperty;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
-        revers?: boolean;
+        reverse?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -27726,7 +27776,7 @@ declare namespace SatelliteSensor {
  * @param [options.trackedEntity] - 椎体跟随的卫星（椎体位置跟随变化，方向不变）
  * @param [options.autoHeading] - 是否自动追踪trackedEntity目标的heading方向
  * @param [options.fixedFrameTransform] - 参考系
- * @param [options.revers = false] - 是否反转朝向
+ * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -27741,7 +27791,7 @@ declare class SatelliteSensor extends BasePointPrimitive {
         trackedEntity?: Cesium.Entity;
         autoHeading?: boolean;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
-        revers?: boolean;
+        reverse?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -28267,7 +28317,7 @@ declare namespace BaseWidget {
      * @property [autoDisable = true] - 激活其他新插件时，是否自动释放本插件
      * @property [disableOther = true] - 激活本插件时，是否释放其它已激活的插件
      * @property [group] - 配置group后，同group下的widget互斥，打开任意一个会自动释放其他的
-     * @property [windowOptions] - 存在弹窗的插件的弹窗相关参数配置，更多参数请参考 [layer弹窗API]{@linkhttps://layui.gitee.io/v2/docs/modules/layer.html} 包括：
+     * @property [windowOptions] - 存在弹窗的插件的弹窗相关参数配置，更多参数请参考 [layer弹窗API]{@link https://layui.gitee.io/v2/docs/modules/layer.html} 包括：
      * @property [windowOptions.width] - 窗口宽度，可以是 像素数字(像素值) 或者 字符串(屏幕宽度百分比)，示例：200 或 "20%"
      * @property [windowOptions.height] - 窗口高度，可以是 像素数字(像素值) 或者 字符串(屏幕高度百分比)，示例：600 或 "50%"
      * @property [windowOptions.position = 'auto'] - 窗口所在位置坐标，配置字符串可选值：auto垂直水平居中，t顶部,b底部,r右边缘,l左边缘,lt左上角,lb左下角,rt右上角,rb右下角；也可以配置对象：
@@ -29004,7 +29054,7 @@ declare namespace WindLayer {
 }
 
 /**
- * 风场图层，基于粒子实现，
+ * 风场图层，基于粒子实现(目前仅限webgl1渲染，不支持webgl2渲染)
  * 【需要引入 mars3d-wind 插件库】
  * @param [options] - 参数对象，包括以下：
  * @param [options.data] - 风场数据
@@ -33122,7 +33172,7 @@ declare namespace PointTrans {
      * 使用proj4转换坐标（支持任意坐标系），
      * 坐标系 可以在 {@link http://epsg.io }进行查询，已经内置支持 EPSG:4326、EPSG:3857、EPSG:4490、EPSG:4491至4554
      * @param arrdata - 原始坐标,示例：[39396641,3882123]
-     * @param fromProjParams - 原始坐标的坐标系，如'EPSG:4527'
+     * @param fromProjParams - 原始坐标的坐标系，如'EPSG:4527' 或  mars3d.CRS.CGCS2000_GK_Zone_3
      * @param [toProjParams = 'EPSG:4326'] - 转为返回的结果坐标系
      * @returns 返回结果坐标系的对应坐标,示例：[115.866936, 35.062583]
      */
@@ -33834,7 +33884,7 @@ declare namespace PolyUtil {
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
-     * @param options.endItem - 异步计算高度完成后 的回调方法
+     * @param options.endItem - 异步计算每2个点后之间坐标后 的回调方法
      * @param options.end - 异步计算高度完成后 的回调方法
      * @returns 异步计算完成的Promise,同callback
      */
@@ -34181,6 +34231,7 @@ declare namespace Util {
      * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
      * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
      * @param [options.crs] - 原始数据的坐标系，如'EPSG:3857' （可以从 {@link http://epsg.io }查询）
+     * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理,比如坐标纠偏 onPointTrans: mars3d.PointUtil.getTransFun(mars3d.ChinaCRS.GCJ02, map.chinaCRS)
      * @returns Graphic构造参数数组（用于创建{@link BaseGraphic}）
      */
     function geoJsonToGraphics(geojson: any, options?: {
@@ -34195,6 +34246,7 @@ declare namespace Util {
             callback?: (...params: any[]) => any;
         };
         crs?: string;
+        onPointTrans?: (...params: any[]) => any;
     }): any;
     /**
      * GeoJSON格式的Feature单个对象转为 Graphic构造参数（用于创建{@link BaseGraphic}）
@@ -34293,7 +34345,7 @@ declare namespace Util {
     }): string;
     /**
      * 导出下载图片文件
-     * @param name - 图片文件名称，不需要后缀名
+     * @param name - 图片文件名称， 后缀名默认为.png
      * @param base64 - 图片内容，base64格式
      * @returns 无
      */
