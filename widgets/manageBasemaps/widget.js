@@ -9,13 +9,14 @@
       let width, height
       if (index <= 4) {
         width = 190
-        height = Math.ceil(index / 2) * 100 + 70
+        height = Math.ceil(index / 2) * 100 + 80
+        // height = Math.ceil(index / 2) * 100 + 70   原本是70但是有的内容没有展示
       } else if (index > 4 && index <= 6) {
         width = 270
-        height = Math.ceil(index / 3) * 100 + 70
+        height = Math.ceil(index / 3) * 100 + 80
       } else {
         width = 360
-        height = Math.ceil(index / 4) * 105 + 70
+        height = Math.ceil(index / 4) * 105 + 80
       }
 
       return {
@@ -45,7 +46,7 @@
 
     updateBasemap(item) {
       this.map.basemap = item
-      this.disableBase()
+      // this.disableBase()
     }
   }
 

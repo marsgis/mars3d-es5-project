@@ -10,7 +10,7 @@ const styleConfig = {
         name: "font_family",
         label: "字体",
         type: "combobox",
-        defval: "楷体",
+        defval: "微软雅黑",
         data: [
           { label: "微软雅黑", value: "微软雅黑" },
           { label: "宋体", value: "宋体" },
@@ -1122,10 +1122,10 @@ const styleConfig = {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
-        defval: false,
-        show(style, allStyle, graphicType) {
-          return false // 面无法切换
-        }
+        defval: false
+        // show(style, allStyle, graphicType) {
+        //   return false // 面无法切换
+        // }
       },
       {
         name: "zIndex",
@@ -1840,6 +1840,28 @@ const styleConfig = {
       { name: "topShow", label: "显示顶盖", type: "radio", defval: true }
     ]
   },
+  pointLight: {
+    name: "点光源",
+    style: [
+      { name: "color", label: "光颜色", type: "color", defval: "rgba(0,255,0,0.4)" },
+      { name: "intensity", label: "光强度", type: "number", min: 1.0, max: 10000.0, step: 1, defval: 1.0 },
+      { name: "radius", label: "点光源半径", type: "number", min: 1.0, max: 10000.0, step: 1, defval: 1.0 },
+      { name: "addHeight", label: "偏移高度", type: "number", min: 0.0, max: 999999999.0, step: 1, defval: 0.0 }
+    ]
+  },
+  spotLight: {
+    name: "聚光灯",
+    style: [
+      { name: "color", label: "光颜色", type: "color", defval: "rgba(0,255,0,0.4)" },
+      { name: "intensity", label: "光强度", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 1.0 },
+      { name: "radius", label: "聚光灯半径", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 1.0 },
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "innerCone", label: "内圆锥角", type: "slider", min: 0.0, max: 45, step: 0.1, defval: 10.0 },
+      { name: "outerCone", label: "外圆锥角", type: "slider", min: 0.0, max: 45, step: 0.1, defval: 10.0 },
+      { name: "addHeight", label: "偏移高度", type: "number", min: 0.0, max: 999999999.0, step: 1, defval: 0.0 }
+    ]
+  },
 
   // 线状
   polyline: {
@@ -2448,10 +2470,10 @@ const styleConfig = {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
-        defval: false,
-        show(style, allStyle, graphicType) {
-          return false // 面无法切换
-        }
+        defval: false
+        // show(style, allStyle, graphicType) {
+        //   return false // 面无法切换
+        // }
       },
       {
         name: "hasShadows",
@@ -2613,10 +2635,10 @@ const styleConfig = {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
-        defval: false,
-        show(style, allStyle, graphicType) {
-          return false // 面无法切换
-        }
+        defval: false
+        // show(style, allStyle, graphicType) {
+        //   return false // 面无法切换
+        // }
       },
       {
         name: "zIndex",
@@ -2648,7 +2670,7 @@ const styleConfig = {
         min: 0.0,
         max: 360.0,
         step: 0.01,
-        defval: 0.0,
+        defval: 0.0
       },
       {
         name: "endAngle",
@@ -2657,7 +2679,7 @@ const styleConfig = {
         min: 0.0,
         max: 360.0,
         step: 0.01,
-        defval: 0.0,
+        defval: 0.0
       },
       {
         name: "noCenter",
@@ -2665,7 +2687,6 @@ const styleConfig = {
         type: "radio",
         defval: false
       },
-
 
       {
         name: "diffHeight",
@@ -2941,6 +2962,18 @@ const styleConfig = {
           return style.clampToGround
         }
       }
+    ]
+  },
+  reflectionWater: {
+    name: "反射水面",
+    style: [
+      { name: "color", label: "水面颜色", type: "color", defval: "#7badd0" },
+      { name: "opacity", label: "透明度", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.9 },
+      { name: "normalMap", label: "水扰动的法线图", type: "label", defval: "img/textures/waterNormals.jpg" },
+      { name: "reflectivity", label: "反射率", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.5 },
+      { name: "ripple", label: "波纹大小", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 50.0 },
+      { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },
+      { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 },
     ]
   }
 }

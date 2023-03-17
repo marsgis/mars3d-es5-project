@@ -29,34 +29,37 @@
         pid: 99 //图层管理 中使用，父节点id
       })
       //鼠标单击后的信息面板弹窗
-      this.graphicLayer.bindPopup(function (event) {
-        let item = event.graphic?.attr
-        if (!item) {
-          return
-        }
-
-        let inHtml = `<div class="mars-popup-titile"><a href="https://www.amap.com/detail/${item.id}"  target="_black" style="color: #ffffff; ">${item.name}</a></div><div class="mars-popup-content" >`
-
-        let phone = $.trim(item.tel)
-        if (phone != "") {
-          inHtml += "<div><label>电话</label>" + phone + "</div>"
-        }
-
-        let dz = $.trim(item.address)
-        if (dz != "") {
-          inHtml += "<div><label>地址</label>" + dz + "</div>"
-        }
-
-        if (item.type) {
-          let fl = $.trim(item.type)
-          if (fl != "") {
-            inHtml += "<div><label>类别</label>" + fl + "</div>"
+      this.graphicLayer.bindPopup(
+        function (event) {
+          let item = event.graphic?.attr
+          if (!item) {
+            return
           }
-        }
-        inHtml += "</div>"
 
-        return inHtml
-      })
+          let inHtml = `<div class="mars-popup-titile"><a href="https://www.amap.com/detail/${item.id}"  target="_black" style="color: #ffffff; ">${item.name}</a></div><div class="mars-popup-content" >`
+
+          let phone = $.trim(item.tel)
+          if (phone != "") {
+            inHtml += "<div><label>电话</label>" + phone + "</div>"
+          }
+
+          let dz = $.trim(item.address)
+          if (dz != "") {
+            inHtml += "<div><label>地址</label>" + dz + "</div>"
+          }
+
+          if (item.type) {
+            let fl = $.trim(item.type)
+            if (fl != "") {
+              inHtml += "<div><label>类别</label>" + fl + "</div>"
+            }
+          }
+          inHtml += "</div>"
+
+          return inHtml
+        },
+        { has3dtiles: false }
+      )
 
       //查询控制器
       this._queryPoi = new mars3d.query.GaodePOI({

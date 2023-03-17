@@ -23,6 +23,9 @@ function initWidgetView(_thisWidget) {
   thisWidget.startEditing()
 }
 
+
+let newAttr = {}// 解决的问题：在updateAttr捕获到内容改变后，会导致仅保留最后一次更改的属性数据
+
 //属性编辑相关
 var plotEdit = {
   hasEditSylte: true,
@@ -218,6 +221,7 @@ var plotEdit = {
     attr.attr = attr.attr || {}
 
     let attrcfg = thisWidget.getAttrList()
+
     let tempKyes = {}
     for (let idx = 0; idx < attrcfg.length; idx++) {
       let edit = attrcfg[idx]
@@ -660,6 +664,7 @@ var plotEdit = {
       }
     }
   },
+
   //属性面板值修改后触发此方法
   updateAttr: function (parname, attrName, attrVal, edit) {
     switch (parname) {
@@ -755,8 +760,6 @@ var plotEdit = {
       }
       case "plot_attr_attr_": {
         this._last_attr.attr[attrName] = attrVal
-
-        let newAttr = {}
         newAttr[attrName] = attrVal
         thisWidget.updateAttr2map(newAttr)
         break

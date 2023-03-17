@@ -140,9 +140,9 @@
       "windowOptions": {
         "noTitle": true,
         "position": {
-          "top": 10,
-          "left": 10,
-          "right": 10
+          "top": 60,
+          "left": 20,
+          "right": 20
         }
       },
       "disableOther": false
