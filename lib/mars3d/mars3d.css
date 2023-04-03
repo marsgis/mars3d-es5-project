@@ -1,10 +1,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.0
- * 编译日期：2023-03-16 18:58:13
+ * 版本信息：v3.5.2
+ * 编译日期：2023-04-03 18:06:01
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2022-10-01
+ * 使用单位：免费公开版 ，2023-03-17
  */
 
 /**地球容器div*/
@@ -427,6 +427,19 @@
   height: 100%;
   text-align: center;
 }
+.mars3d-divGraphic {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.mars3d-divGraphic-edit {
+  background-color: rgba(254, 87, 161, 0.1);
+  border: 2px dashed rgba(172, 85, 59, 0.768);
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  margin: -2px;
+  box-sizing: content-box;
+}
 /**内置的DivGraphic通用样式【文本动态边框】*/
 .mars3d-divBoderLabel {
   position: absolute;
@@ -488,23 +501,6 @@
 }
 .mars3d-divBoderLabel-boder::before {
   animation-delay: -4s;
-}
-.mars3d-divGraphic {
-  position: absolute;
-  left: 0;
-  top: 0;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.mars3d-divGraphic-edit {
-  background-color: rgba(254, 87, 161, 0.1);
-  border: 2px dashed rgba(172, 85, 59, 0.768);
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  margin: -2px;
-  box-sizing: content-box;
 }
 .mars3d-animation-point,
 .mars3d-animation-point:after,

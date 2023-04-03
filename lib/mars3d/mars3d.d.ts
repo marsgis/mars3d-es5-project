@@ -2,10 +2,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.0
- * 编译日期：2023-03-16 18:58:13
+ * 版本信息：v3.5.2
+ * 编译日期：2023-04-03 18:06:00
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2022-10-01
+ * 使用单位：免费公开版 ，2023-03-17
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -1841,7 +1841,7 @@ declare class Animation extends BaseCzmControl {
  * @param [options] - 参数对象，包括以下：
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
- * @param [options.destroyCzm = false] - remove移除时是否销毁Cesium对象，true时销毁，false时只是DOM隐藏
+ * @param [options.destroyCzm = true] - remove移除时是否销毁Cesium对象，true时销毁，false时只是DOM隐藏
  */
 declare class BaseCzmControl extends BaseControl {
     constructor(options?: {
@@ -2215,12 +2215,6 @@ declare class MapCompare extends BaseControl {
      * @returns 无
      */
     _addedHook(): void;
-    /**
-     * 对象从地图上移除的创建钩子方法，
-     * 每次remove时都会调用
-     * @returns 无
-     */
-    _removedHook(): void;
 }
 
 /**
@@ -2308,6 +2302,7 @@ declare class MouseDownView extends BaseControl {
  * @param options.basemap - 瓦片底图图层配置
  * @param [options.layers] - 可以叠加显示的图层配置
  * @param [options.scene] - 鹰眼地图场景参数
+ * @param [options.control] - 鹰眼地图控件参数
  * @param [options.rectangle] - 矩形区域样式信息，不配置时不显示矩形。
  * @param [options.style] - 可以CSS样式，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
@@ -2327,9 +2322,10 @@ declare class MouseDownView extends BaseControl {
  */
 declare class OverviewMap extends BaseControl {
     constructor(options?: {
-        basemap: Map.basemapOptions;
-        layers?: Map.layerOptions[];
+        basemap: Map.basemapOptions | any;
+        layers?: Map.layerOptions[] | any[];
         scene?: Map.sceneOptions;
+        control?: Map.controlOptions;
         rectangle?: RectangleEntity.StyleOptions | any;
         style?: {
             top?: string;
@@ -2353,6 +2349,10 @@ declare class OverviewMap extends BaseControl {
      * 鹰眼小地图对象
      */
     smallMap: Map;
+    /**
+     * 中心点坐标 （笛卡尔坐标）
+     */
+    readonly center: Cesium.Cartesian3;
     /**
      * 对象添加到地图前创建一些对象的钩子方法，
      * 只会调用一次
@@ -6825,6 +6825,10 @@ declare class DivGraphic extends BaseGraphic {
      */
     stopEditing(): void;
     /**
+     * 属性信息
+     */
+    attr: any;
+    /**
      * 中心点坐标（笛卡尔坐标）
      */
     readonly center: Cesium.Cartesian3 | Cesium.SampledPositionProperty;
@@ -10173,8 +10177,6 @@ declare namespace PathEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = 100000] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
      */
     type StyleOptions = any | {
         width?: number;
@@ -10187,8 +10189,6 @@ declare namespace PathEntity {
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
-        setHeight?: number | string;
-        addHeight?: number | string;
     };
 }
 
@@ -10211,6 +10211,7 @@ declare namespace PathEntity {
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.label] - 设置是否显示 文本 和对应的样式
  * @param [options.model] - 设置附加的 gltf模型 和对应的样式
+ * //  * @param {boolean} [options.model.mergeOrientation=false] 设置为true时，是在orientation基础的方式值上加上设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的纠偏处理
  * @param [options.billboard] - 设置附加的 图标 和对应的样式。
  * @param [options.point] - 设置附加的 像素点 和对应的样式
  * @param [options.circle] - 设置附加的 圆 和对应的样式
@@ -13480,8 +13481,8 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
  * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
  * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -13931,8 +13932,8 @@ declare class BasePrimitive extends BaseGraphic {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -15511,8 +15512,8 @@ declare namespace LabelPrimitive {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -15773,8 +15774,8 @@ declare namespace ModelPrimitive {
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -16124,8 +16125,8 @@ declare namespace PointPrimitive {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.frameRate = 1] - 当postion为CallbackProperty时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -19862,6 +19863,252 @@ declare class GraticuleLayer extends BaseLayer {
     _mountedHook(): void;
 }
 
+declare namespace I3SLayer {
+    /**
+     * 当前类支持的{@link EventType}事件类型
+     * @example
+     * //绑定监听事件
+     * layer.on(mars3d.EventType.load, function (event) {
+     *   console.log('矢量数据对象加载完成', event)
+     * })
+     * @property add - 添加对象
+     * @property remove - 移除对象
+     * @property show - 显示了对象
+     * @property hide - 隐藏了对象
+     * @property click - 左键单击 鼠标事件
+     * @property rightClick - 右键单击 鼠标事件
+     * @property mouseOver - 鼠标移入 鼠标事件
+     * @property mouseOut - 鼠标移出 鼠标事件
+     * @property popupOpen - popup弹窗打开后
+     * @property popupClose - popup弹窗关闭
+     * @property tooltipOpen - tooltip弹窗打开后
+     * @property tooltipClose - tooltip弹窗关闭
+     * @property loadBefore - 完成加载，但未做任何其他处理前
+     * @property load - 完成加载，执行所有内部处理后
+     */
+    type EventType = {
+        add: string;
+        remove: string;
+        show: string;
+        hide: string;
+        click: string;
+        rightClick: string;
+        mouseOver: string;
+        mouseOut: string;
+        popupOpen: string;
+        popupClose: string;
+        tooltipOpen: string;
+        tooltipClose: string;
+        loadBefore: string;
+        load: string;
+    };
+}
+
+/**
+ * I3S 三维模型图层。
+ * @param options - 参数对象, 包括以下：
+ * @param options.url - tileset的主JSON文件的 url ，ION资源时可以写 url: Cesium.IonResource.fromAssetId(8564),
+ * @param [options.traceFetches = false] - 调试选项。当为true时，每当获取I3S tile时记录一条消息。
+ * @param [options.geoidTiledTerrainProvider] - arcgis地形服务。如果定义了，I3S模型将基于此地形服务的偏移量进行移位。需要将与重力相关高度的I3S数据集定位在正确的位置。
+ *
+ * //以下是3dtiles图层参数
+ * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
+ * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
+ * 解释：
+ * 这个参数默认是512，也即是当几何体和纹理资源大于512MB的时候，cesium就会淘汰掉当前帧中没有visited的所有块，这个值其实很小，也是cesium为了避免资源占用过高的一个保障.<br />
+ * 这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。<br />
+ * 这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。<br />
+ * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
+ * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式。
+ * @param [options.customShader] - 自定义shader效果
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.shadows = ShadowMode.ENABLED] - 确定tileset是否投射或接收来自光源的阴影。
+ * @param [options.cullWithChildrenBounds = true] - 优化选择。是否使用子绑定卷的并集来筛选贴图。
+ * @param [options.cullRequestsWhileMoving = true] - 优化选择。不要要求贴图，当他们回来的时候可能不会使用，因为相机的运动。这个优化只适用于固定瓷砖组。
+ * @param [options.cullRequestsWhileMovingMultiplier = 60.0] - 优化选择。在移动时选择请求时使用的倍增器。越大的选择性越强，越小的选择性越弱。值越小能够更快的剔除。
+ * @param [options.preloadWhenHidden = false] - 当true时，tileset.show是false，也去预加载数据。
+ * @param [options.preloadFlightDestinations = true] - 优化选择。当摄像机在飞行时，在摄像机的飞行目的地预加载贴图。
+ * @param [options.preferLeaves = false] - 优化选择。最好先加载上叶子节点数据。这个参数默认是false，同等条件下，叶子节点会优先加载。但是Cesium的tile加载优先级有很多考虑条件，这个只是其中之一，如果skipLevelOfDetail=false，这个参数几乎无意义。所以要配合skipLevelOfDetail=true来使用，此时设置preferLeaves=true。这样我们就能最快的看见符合当前视觉精度的块，对于提升大数据以及网络环境不好的前提下有一点点改善意义。
+ * @param [options.dynamicScreenSpaceError = false] - 优化选择。减少远离摄像头的贴图的屏幕空间误差。true时会在真正的全屏加载完之后才清晰化模型.
+ * @param [options.dynamicScreenSpaceErrorDensity = 0.00278] - 密度用来调整动态画面空间误差，类似于雾密度。
+ * @param [options.dynamicScreenSpaceErrorFactor = 4.0] - 用于增加计算的动态屏幕空间误差的因素。
+ * @param [options.dynamicScreenSpaceErrorHeightFalloff = 0.25] - 瓷砖密度开始下降时的高度之比。
+ * @param [options.progressiveResolutionHeightFraction = 0.3] - 优化选择。如果在(0.0,0.5)之间，在屏幕空间或以上的瓷砖错误降低屏幕分辨率 <code>progressiveResolutionHeightFraction*screenHeight</code> 将优先。这可以帮助得到一个快速层的瓷砖下来，而全分辨率的瓷砖继续加载。
+ * @param [options.foveatedScreenSpaceError = true] - 优化选择。通过暂时提高屏幕边缘的贴图的屏幕空间误差，优先加载屏幕中央的贴图。一旦所有由{@link cesium3dtilesset#foveatedConeSize}确定的屏幕中央的贴图被加载，屏幕空间错误就会恢复正常。
+ * @param [options.foveatedConeSize = 0.1] - 优化选择。当{@link cesium3dtilesset#foveatedScreenSpaceError}为true时使用，以控制决定哪些贴图被延迟的锥大小。装在这个圆锥体里的瓷砖会立即被装入。锥外的贴图有可能被延迟，这取决于它们在锥外的距离和它们的屏幕空间误差。这是由{@link I3SDataProvider#foveatedInterpolationCallback}和{@link I3SDataProvider#foveatedMinimumScreenSpaceErrorRelaxation}控制的。设置为0.0意味着圆锥将是由相机位置和它的视图方向形成的线。将此设置为1.0意味着圆锥将包含相机的整个视场，禁用此效果。
+ * @param [options.foveatedMinimumScreenSpaceErrorRelaxation = 0.0] - 优化选择。当{@link cesium3dtilesset#foveatedScreenSpaceError}为true时使用，以控制中心锥形以外的贴图的初始屏幕空间误差松弛。屏幕空间错误将基于所提供的{@link I3SDataProvider#foveatedInterpolationCallback}从tileset值开始直到{@link I3SDataProvider#maximumScreenSpaceError}。
+ * @param [options.foveatedInterpolationCallback = Math.lerp] - 优化选择。当{@link cesium3dtilesset#foveatedScreenSpaceError}为true时使用，以控制中心锥形以外的贴图的初始屏幕空间误差松弛。优化选择。当{@link I3SDataProvider#foveatedScreenSpaceError}为true时使用，以控制凸出圆锥外的贴图的屏幕空间误差提高多少，插值在{@link I3SDataProvider#foveatedminimumscreenspaceerror}和{@link I3SDataProvider#maximumScreenSpaceError}之间。
+ * @param [options.foveatedTimeDelay = 0.2] - 优化选择。当{@link cesium3dtilesset#foveatedScreenSpaceError}为true时使用，以控制中心锥形以外的贴图的初始屏幕空间误差松弛。优化选择。优化选择。当{@link cesium3dtilesset#foveatedScreenSpaceError}为true时使用，以控制在延迟tile开始加载前摄像机停止移动后等待多长时间(秒)。这个时间延迟阻止了在相机移动时请求屏幕边缘的贴图。将此设置为0.0将立即请求任何给定视图中的所有贴图。
+ * @param [options.skipLevelOfDetail = false] - 优化选择。确定在遍历过程中是否应应用跳过详细信息的级别。是Cesium在1.5x 引入的一个优化参数，这个参数在金字塔数据加载中，可以跳过一些级别，这样整体的效率会高一些，数据占用也会小一些。但是带来的异常是：1） 加载过程中闪烁，看起来像是透过去了，数据载入完成后正常。2，有些异常的面片，这个还是因为两级LOD之间数据差异较大，导致的。当这个参数设置false，两级之间的变化更平滑，不会跳跃穿透，但是清晰的数据需要更长，而且还有个致命问题，一旦某一个tile数据无法请求到或者失败，导致一直不清晰。所以我们建议：对于网络条件好，并且数据总量较小的情况下，可以设置false，提升数据显示质量。
+ * @param [options.baseScreenSpaceError = 1024] - 当skipLevelOfDetail为true时，跳过详细级别之前必须达到的屏幕空间错误。
+ * @param [options.skipScreenSpaceErrorFactor = 16] - 当skipLevelOfDetail = true时，一个定义要跳过的最小屏幕空间错误的乘法器。与skipLevels一起使用，以决定加载哪些贴图。
+ * @param [options.skipLevels = 1] - 当skipLevelOfDetail是true，一个常量定义了加载tiles时要跳过的最小级别数。当它为0时，不会跳过任何级别。与skipScreenSpaceErrorFactor一起使用，以决定加载哪些贴图。
+ * @param [options.immediatelyLoadDesiredLevelOfDetail = false] - 当skipLevelOfDetail为true时，只有满足最大屏幕空间错误的tiles才会被下载。跳过因素将被忽略，并且只加载所需的块。
+ * @param [options.loadSiblings = false] - 当skipLevelOfDetail = true时，判断遍历过程中是否总是下载可见块的兄弟块。如果为true则不会在已加载完模型后，自动从中心开始超清化模型。
+ * @param [options.clippingPlanes] - {@link Cesium.ClippingPlaneCollection}用于选择性地禁用tile集的渲染。
+ * @param [options.classificationType] - 确定地形、3D贴图或两者都将被这个贴图集分类。有关限制和限制的详细信息，请参阅{@link cesium3dtilesset #classificationType}。
+ * @param [options.pointCloudShading] - 基于几何误差和光照构造一个{@link Cesium.PointCloudShading}对象来控制点衰减的选项。
+ * @param [options.lightColor] - 光的颜色当遮光模型。当undefined场景的浅色被使用代替。表示，rgb的倍数，new Cesium.Cartesian3(100.0,100.0, 100.0)表示白光增强到100倍。对Pbrt材质有效，倾斜摄影不生效。
+ * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
+ * @param [options.debugHeatmapTilePropertyName] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;作为热图着色的tile变量。所有渲染的贴图都将相对于其他指定的变量值着色。
+ * @param [options.pickPrimitive] - 要在拾取过程中呈现的原语，而不是tile集合。
+ * @param [options.enableDebugWireframe = false] - 仅供调试。是否可以通过debugWireframe来切换查看模型的三角网线框图。
+ * @param [options.debugWireframe = false] - 仅供调试。是否打开模型的三角网线框图。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
+ * @param [options.popupOptions.title] - 固定的标题名称
+ * @param [options.popupOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.popupOptions.noTitle] - 不显示标题
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑定，参数与popup属性完全相同。
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数,还包括：
+ * @param [options.tooltipOptions.title] - 固定的标题名称
+ * @param [options.tooltipOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.tooltipOptions.noTitle] - 不显示标题
+ * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 图层id标识
+ * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
+ * @param [options.name = ''] - 图层名称
+ * @param [options.show = true] - 图层是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
+ * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
+ * @param options.center.lng - 经度值, 180 - 180
+ * @param options.center.lat - 纬度值, -90 - 90
+ * @param [options.center.alt] - 高度值
+ * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
+ * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
+ * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
+ */
+declare class I3SLayer extends BaseGraphicLayer {
+    constructor(options: {
+        url: string | Cesium.Resource | Cesium.IonResource;
+        traceFetches?: boolean;
+        geoidTiledTerrainProvider?: any | Cesium.ArcGISTiledElevationTerrainProvider;
+        maximumScreenSpaceError?: number;
+        maximumMemoryUsage?: number;
+        style?: any | Cesium.Cesium3DTileStyle | ((...params: any[]) => any);
+        marsJzwStyle?: boolean | string;
+        customShader?: Cesium.CustomShader;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        shadows?: Cesium.ShadowMode;
+        cullWithChildrenBounds?: boolean;
+        cullRequestsWhileMoving?: boolean;
+        cullRequestsWhileMovingMultiplier?: number;
+        preloadWhenHidden?: boolean;
+        preloadFlightDestinations?: boolean;
+        preferLeaves?: boolean;
+        dynamicScreenSpaceError?: boolean;
+        dynamicScreenSpaceErrorDensity?: number;
+        dynamicScreenSpaceErrorFactor?: number;
+        dynamicScreenSpaceErrorHeightFalloff?: number;
+        progressiveResolutionHeightFraction?: number;
+        foveatedScreenSpaceError?: boolean;
+        foveatedConeSize?: number;
+        foveatedMinimumScreenSpaceErrorRelaxation?: number;
+        foveatedInterpolationCallback?: Cesium.I3SDataProvider.foveatedInterpolationCallback;
+        foveatedTimeDelay?: number;
+        skipLevelOfDetail?: boolean;
+        baseScreenSpaceError?: number;
+        skipScreenSpaceErrorFactor?: number;
+        skipLevels?: number;
+        immediatelyLoadDesiredLevelOfDetail?: boolean;
+        loadSiblings?: boolean;
+        clippingPlanes?: Cesium.ClippingPlaneCollection;
+        classificationType?: Cesium.ClassificationType;
+        pointCloudShading?: any;
+        lightColor?: Cesium.Cartesian3;
+        backFaceCulling?: boolean;
+        debugHeatmapTilePropertyName?: string;
+        pickPrimitive?: any;
+        enableDebugWireframe?: boolean;
+        debugWireframe?: boolean;
+        popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
+        popupOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+        };
+        tooltip?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any) | any;
+        tooltipOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+        };
+        contextmenuItems?: any;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        center?: {
+            lng: number;
+            lat: number;
+            alt?: number;
+            heading?: number;
+            pitch?: number;
+            roll?: number;
+        };
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 模型对应的 I3SDataProvider对象
+     */
+    readonly layer: Cesium.I3SDataProvider;
+    /**
+     * 开启或设置建筑物特效样式。
+     */
+    marsJzwStyle: boolean | any;
+    /**
+     * 重新加载模型
+     */
+    reload(): void;
+    /**
+     * 飞行定位至图层数据所在的视角
+     * @param [options = {}] - 参数对象:
+     * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
+     * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
+     * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
+     * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
+     * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
+     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
+     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
+     * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
+     * @param [options.complete] - 飞行完成后要执行的函数。
+     * @param [options.cancel] - 飞行取消时要执行的函数。
+     * @param [options.endTransform] - 变换矩阵表示飞行结束时相机所处的参照系。
+     * @param [options.maximumHeight] - 飞行高峰时的最大高度。
+     * @param [options.pitchAdjustHeight] - 如果相机飞得比这个值高，在飞行过程中调整俯仰以向下看，并保持地球在视口。
+     * @param [options.flyOverLongitude] - 地球上的两点之间总有两条路。这个选项迫使相机选择战斗方向飞过那个经度。
+     * @param [options.flyOverLongitudeWeight] - 仅在通过flyOverLongitude指定的lon上空飞行，只要该方式的时间不超过flyOverLongitudeWeight的短途时间。
+     * @param [options.convert = true] - 是否将目的地从世界坐标转换为场景坐标（仅在不使用3D时相关）。
+     * @param [options.easingFunction] - 控制在飞行过程中如何插值时间。
+     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
+     */
+    flyTo(options?: {
+        radius?: number;
+        scale?: number;
+        heading?: number;
+        pitch?: number;
+        roll?: number;
+        minHeight?: number;
+        maxHeight?: number;
+        height?: number;
+        duration?: number;
+        complete?: Cesium.Camera.FlightCompleteCallback;
+        cancel?: Cesium.Camera.FlightCancelledCallback;
+        endTransform?: Cesium.Matrix4;
+        maximumHeight?: number;
+        pitchAdjustHeight?: number;
+        flyOverLongitude?: number;
+        flyOverLongitudeWeight?: number;
+        convert?: boolean;
+        easingFunction?: Cesium.EasingFunction.Callback;
+    }): Promise<boolean>;
+}
+
 declare namespace LodGraphicLayer {
     /**
      * 当前类支持的{@link EventType}事件类型
@@ -20253,7 +20500,7 @@ declare namespace TilesetLayer {
  * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link OutlineEffect}方式高亮。
  * @param [options.highlight.filter] - 可以设置筛选排除一些构件, 排除的构件在filter方法内返回false
  * @param [options.highlight.all] - 是否按整体高亮， true:模型整体全部高亮，false:单个构件高亮
- * @param [options.highlight.uniqueKey] - 按指定字段进行对应相关构件的整体高亮
+ * @param [options.highlight.uniqueKey] - 按指定字段进行对应相关构件的整体高亮，对outlineEffect时无效
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.clampToGround] - 是否贴地,true时自动调用贴地计算，但此属性只适合标准的与地形数据匹配的模型，并不精确，建议通过模型编辑页面调试给具体高度值。
  * @param [options.chinaCRS] - 标识模型的国内坐标系（用于自动纠偏或加偏）
@@ -21236,6 +21483,7 @@ declare namespace ArcGisLayer {
  * @param [options.crs = CRS.EPSG4326] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.enablePickFeatures = true] - 如果为true，则请求 单击坐标处服务中对应的矢量数据 并尝试解释响应中包含的功能。为false时不去服务请求。
+ * @param [options.featureIndex = 0] - 如果单击有多个feature返回时，默认用第0条数据，取其他数据时可以自定义，可传index顺序，回调方法、和字符串"end"代表取最后一条
  * @param [options.featureToGraphic = mars3d.Util.geoJsonToGraphics] - 解析单击返回的矢量数据信息为Graphic构造参数，可以按需自定义。
  * @param [options.hasToGraphic] - 筛选或判断是否解析，单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
  * @param [options.highlight] - 鼠标单击高亮显示对应的矢量数据 及其样式，具体见各{@link GraphicType}矢量数据的style参数。
@@ -21309,6 +21557,7 @@ declare class ArcGisLayer extends BaseTileLayer {
         crs?: CRS;
         chinaCRS?: ChinaCRS;
         enablePickFeatures?: boolean;
+        featureIndex?: number | string | ((...params: any[]) => any);
         featureToGraphic?: (...params: any[]) => any;
         hasToGraphic?: number | boolean | ((...params: any[]) => any);
         highlight?: {
@@ -23031,6 +23280,7 @@ declare class IonLayer extends BaseTileLayer {
  * @param [options.username = 'marsgis'] - 地图帐户的用户名。
  * @param options.styleId - Mapbox样式ID。
  * @param [options.accessToken = mars3d.Token.mapbox] - 图像的Token公共访问令牌。
+ * @param [options.token] - 同accessToken，别名
  * @param [options.tilesize = 512] - 图像块的大小。
  * @param [options.scaleFactor = true] - 确定贴图是否以 @2x 比例因子渲染。
  * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
@@ -23094,6 +23344,7 @@ declare class MapboxLayer extends BaseTileLayer {
         username?: string;
         styleId: string;
         accessToken?: string;
+        token?: string;
         tilesize?: number;
         scaleFactor?: boolean;
         minimumLevel?: number;
@@ -23826,6 +24077,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.clock] - 一个时钟实例，用于确定时间维度的值。指定' times '时需要。
  * @param [options.times] - TimeIntervalCollection 的数据属性是一个包含时间动态维度及其值的对象。
  * @param [options.enablePickFeatures = true] - 如果为true，则请求 单击坐标处服务中对应的矢量数据 并尝试解释响应中包含的功能。为false时不去服务请求。
+ * @param [options.featureIndex = 0] - 如果单击有多个feature返回时，默认用第0条数据，取其他数据时可以自定义，可传index顺序，回调方法、和字符串"end"代表取最后一条
  * @param [options.featureToGraphic = mars3d.Util.geoJsonToGraphics] - 解析单击返回的矢量数据信息为Graphic构造参数，可以按需自定义。
  * @param [options.hasToGraphic] - 筛选或判断是否解析，单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
  * @param [options.getFeatureInfoParameters] - 在单击坐标处通过GetFeatureInfo请求接口时,传递给WMS服务器的附加参数。
@@ -23905,6 +24157,7 @@ declare class WmsLayer extends BaseTileLayer {
         clock?: Cesium.Clock;
         times?: Cesium.TimeIntervalCollection;
         enablePickFeatures?: boolean;
+        featureIndex?: number | string | ((...params: any[]) => any);
         featureToGraphic?: (...params: any[]) => any;
         hasToGraphic?: number | boolean | ((...params: any[]) => any);
         getFeatureInfoParameters?: any;
@@ -24789,7 +25042,6 @@ declare namespace Map {
      * @property [pickWidth = 4] - 拾取时所选矩形的宽度，单位：像素
      * @property [pickHeight = 4] - 拾取时所选矩形的高度，单位：像素
      * @property [pickLimit = 9] - 在允许allowDrillPick穿透拾取时，限制拾取的对象个数。
-     * @property [transform] - 在body或地图DIV上设置了scale等css缩放时，需要该方法转换像素坐标值。如： transform: function (position) {  return new Cesium.Cartesian2(position.x / 0.5, position.y / 0.5); }
      */
     type mouseOptions = {
         enabledMoveTarget?: boolean;
@@ -24797,7 +25049,6 @@ declare namespace Map {
         pickWidth?: number;
         pickHeight?: number;
         pickLimit?: number;
-        transform?: (...params: any[]) => any;
     };
     /**
      * 添加到地图的特效 参数
