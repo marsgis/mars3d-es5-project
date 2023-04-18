@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.2
- * 编译日期：2023-04-03 18:06:00
+ * 版本信息：v3.5.3
+ * 编译日期：2023-04-18 09:45:21
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -550,11 +550,13 @@ declare enum GraphicType {
     divBillboard,
     fontBillboard,
     billboardP,
+    flatBillboard,
     model,
     modelP,
     modelC,
     plane,
     planeP,
+    doubleSidedPlane,
     box,
     boxP,
     circle,
@@ -566,6 +568,17 @@ declare enum GraphicType {
     coneTrackP,
     ellipsoid,
     ellipsoidP,
+    particleSystem,
+    lightCone,
+    tetrahedron,
+    frustum,
+    arcFrustum,
+    rectangularSensor,
+    camberRadar,
+    conicSensor,
+    rectSensor,
+    satelliteSensor,
+    satellite,
     polyline,
     curve,
     polylineP,
@@ -573,42 +586,43 @@ declare enum GraphicType {
     polylineVolume,
     polylineVolumeP,
     path,
-    roamLine,
-    dynamicRoamLine,
+    route,
+    fixedRoute,
     corridor,
     corridorP,
+    road,
+    dynamicRiver,
     wall,
     wallP,
+    scrollWall,
+    diffuseWall,
+    thickWall,
     polygon,
     polygonP,
     polygonC,
-    rectangle,
-    rectangleP,
-    frustum,
     water,
     waterC,
+    reflectionWater,
+    pit,
+    pitEntity,
+    video2D,
+    video3D,
+    viewShed,
+    rectangle,
+    rectangleP,
     div,
     divLightPoint,
     divUpLabel,
     divBoderLabel,
-    particleSystem,
-    video2D,
-    video3D,
-    flatBillboard,
-    lightCone,
-    scrollWall,
-    diffuseWall,
-    dynamicRiver,
-    road,
-    rectangularSensor,
-    pit,
-    tetrahedron,
+    popup,
+    tooltip,
     distanceMeasure,
     distanceSurfaceMeasure,
     sectionMeasure,
     areaMeasure,
     areaSurfaceMeasure,
     volumeMeasure,
+    volumeDepthMeasure,
     heightMeasure,
     heightTriangleMeasure,
     angleMeasure,
@@ -624,12 +638,7 @@ declare enum GraphicType {
     regular,
     isosTriangle,
     closeVurve,
-    gatheringPlace,
-    camberRadar,
-    conicSensor,
-    rectSensor,
-    satelliteSensor,
-    satellite
+    gatheringPlace
 }
 
 /**
@@ -5026,7 +5035,7 @@ declare class PlaneCombine extends BasePointCombine {
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。 @extends {BasePolyCombine}
  */
-declare class PolygonCombine {
+declare class PolygonCombine extends BasePolyCombine {
     constructor(options: {
         instances?: {
             positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
@@ -6469,7 +6478,7 @@ declare namespace DivBoderLabel {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -6580,7 +6589,7 @@ declare namespace DivGraphic {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -6851,7 +6860,7 @@ declare namespace DivLightPoint {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -6961,7 +6970,7 @@ declare namespace DivUpLabel {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -7093,7 +7102,7 @@ declare namespace Popup {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
@@ -7153,7 +7162,7 @@ declare namespace Popup {
 }
 
 /**
- * Popup对象div点
+ * 鼠标单击弹窗面板对象div点
  * @param options - 参数对象，包括以下：
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
@@ -7216,7 +7225,7 @@ declare namespace Tooltip {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
@@ -7260,7 +7269,7 @@ declare namespace Tooltip {
 }
 
 /**
- * Tooltip对象div点
+ * 鼠标移入弹窗对象div点
  * @param options - 参数对象，包括以下：
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
@@ -7792,7 +7801,7 @@ declare namespace BillboardEntity {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定该广告牌将显示在与摄像机的多大距离
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -7976,7 +7985,7 @@ declare namespace BoxEntity {
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 是投射还是接收来自光源的阴影。
@@ -8117,7 +8126,7 @@ declare namespace CanvasLabelEntity {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -8250,7 +8259,7 @@ declare namespace CircleEntity {
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离。
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
@@ -8496,7 +8505,7 @@ declare namespace ConeTrack {
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
      * @property [slices = 128] - 圆柱体周长周围的边数。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定圆柱是投射还是接收来自光源的阴影。
@@ -8653,7 +8662,7 @@ declare namespace CorridorEntity {
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度和经度之间的距离。
      * @property [hasShadows = false] - 是否投射阴影
@@ -8848,7 +8857,7 @@ declare namespace CylinderEntity {
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
      * @property [slices = 128] - 圆柱体周长周围的边数。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定圆柱是投射还是接收来自光源的阴影。
@@ -8979,7 +8988,7 @@ declare namespace DivBillboardEntity {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定该广告牌将显示在与摄像机的多大距离
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -9264,7 +9273,7 @@ declare namespace EllipseEntity {
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离。
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
@@ -9406,7 +9415,7 @@ declare namespace EllipsoidEntity {
      * @property [subdivisions = 128] - 指定每个轮廓环的样本数量，确定曲率的粒度。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定椭球是否投射或接收来自光源的阴影。
@@ -9464,12 +9473,16 @@ declare namespace EllipsoidEntity {
      * @property planeOptions - 扫描面构造参数
      * @property [planeOptions.type = 'heading'] - 扫描旋转的方向，可选值：'heading'，'pitch'，'roll'
      * @property [planeOptions.step = 0.5] - 旋转的步长（角度），控制速度
+     * @property [planeOptions.min] - 旋转的最小值（角度）
+     * @property [planeOptions.max] - 旋转的最大值（角度）
      * @property [planeOptions.style] - 样式信息
      */
     type ScanPlaneOptions = {
         planeOptions: {
             type?: string;
             step?: number;
+            min?: number;
+            max?: number;
             style?: EllipsoidEntity.StyleOptions | any;
         };
     };
@@ -9590,7 +9603,7 @@ declare namespace FontBillboardEntity {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定该广告牌将显示在与摄像机的多大距离
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -9738,7 +9751,7 @@ declare namespace LabelEntity {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -9903,7 +9916,7 @@ declare namespace ModelEntity {
      * @property [silhouetteAlpha = 0.8] - 轮廓透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayPoint] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 像素点 对象的样式，仅在distanceDisplayCondition设置时有效。
      * @property [distanceDisplayBillboard] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 图标 对象的样式，仅在distanceDisplayCondition设置时有效。
      * @property [hasShadows = true] - 是否阴影
@@ -10175,7 +10188,7 @@ declare namespace PathEntity {
      * @property [trailTime] - 保留历史轨迹的时间长度（单位：秒）
      * @property [resolution = 60] - 指定在对位置进行采样时步进的最大秒数。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      */
     type StyleOptions = any | {
@@ -10432,7 +10445,7 @@ declare namespace PlaneEntity {
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定平面是投射还是接收来自光源的阴影。
@@ -10553,7 +10566,7 @@ declare namespace PointEntity {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
@@ -10690,7 +10703,7 @@ declare namespace PolygonEntity {
      * //  * @property {boolean} [outlineStyle.closure = true] 边线是否闭合
      * @property [textureCoordinates] - 纹理坐标，是Cartesian2的UV坐标数组的多边形层次结构。对贴地对象无效。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
@@ -10895,7 +10908,7 @@ declare namespace PolylineEntity {
      * @property [depthFailColor] - 遮挡处颜色
      * @property [depthFailOpacity] - 遮挡处透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [arcType = Cesium.ArcType.GEODESIC] - 折线段必须遵循的线的类型。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 如果arcType不是arcType.none，则指定每个纬度和经度之间的角距离的数字属性。
@@ -11036,7 +11049,7 @@ declare namespace PolylineVolumeEntity {
      * @property [cornerType = CornerType.ROUNDED] - 指定边角的样式。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定管道是否投射或接收来自光源的阴影。
@@ -11167,7 +11180,7 @@ declare namespace RectangleEntity {
      * @property [stRotation = 0] - 矩形纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 矩形纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定矩形是投射还是接收来自光源的阴影。
@@ -11548,7 +11561,7 @@ declare namespace Video2D {
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定多边形是投射还是接收来自光源的阴影。
@@ -11722,7 +11735,7 @@ declare namespace WallEntity {
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定墙壁是投射还是接收来自光源的阴影。
@@ -15665,7 +15678,7 @@ declare namespace ModelPrimitive {
      * @property [silhouetteAlpha = 0.8] - 轮廓透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayPoint] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 像素点 对象的样式，仅在distanceDisplayCondition设置时有效。
      * @property [distanceDisplayBillboard] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 图标 对象的样式，仅在distanceDisplayCondition设置时有效。
      * @property [customShader] - 自定义shader效果
@@ -16084,7 +16097,7 @@ declare namespace PointPrimitive {
      * @property [scaleByDistance_near = 1000] - 下限
      * @property [scaleByDistance_nearValue = 1] - 比例值
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 10000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
@@ -16197,7 +16210,7 @@ declare namespace PolygonPrimitive {
      * @property [closeBottom = true] - 当为false时，离开挤压多边形的底部打开。
      * @property [textureCoordinates] - 纹理坐标，是Cartesian2的UV坐标数组的多边形层次结构。对贴地对象无效。
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [arcType = Cesium.ArcType.GEODESIC] - 多边形的边缘必须遵循的线条类型。
      * @property [hasShadows = false] - 是否阴影
@@ -16359,7 +16372,7 @@ declare namespace PolylinePrimitive {
      * @property [depthFailColor] - 遮挡处颜色
      * @property [depthFailOpacity] - 遮挡处透明度
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [distanceDisplayCondition_far = 100000] - 最大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [arcType = Cesium.ArcType.GEODESIC] - 折线段必须遵循的线的类型。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 如果arcType不是arcType.none，则指定每个纬度和经度之间的角距离的数字属性。
@@ -16791,7 +16804,7 @@ declare namespace ReflectionWater {
 }
 
 /**
- * 反射水面(显示模型倒影) Primitive图元 矢量对象
+ * 反射水面(显示模型倒影) Primitive图元 矢量对象, 目前仅支持少量数据（多了就卡）
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
@@ -19605,6 +19618,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.flyTo = false] - 是否加载完成后进行飞行到数据区域
      * @param [options.type] - 转为指定的类型
      * @param [options.style] - 可以设置指定style样式,每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
+     * //  * @param {boolean} [options.style.merge] 是否合并并覆盖json中已有的style，默认不合并，仅适用style配置。
      * @param [options.crs] - 原始数据的坐标系，如'EPSG:3857' （可以从 {@link http://epsg.io }查询）
      * @param [options.onEachFeature] - 创建每个Graphic前的回调
      * @returns 转换后的Graphic对象数组
@@ -20552,6 +20566,10 @@ declare namespace TilesetLayer {
  * @param [options.tooltipOptions.noTitle] - 不显示标题
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.hasEdit = true] - 是否允许编辑，且需要transform是true的模型才支持编辑
+ * @param [options.proxy] - 加载资源时要使用的代理服务url。
+ * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
+ * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
+ * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -20651,6 +20669,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
         };
         contextmenuItems?: any;
         hasEdit?: boolean;
+        proxy?: string;
+        templateValues?: any;
+        queryParameters?: any;
+        headers?: any;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -24963,9 +24985,9 @@ declare namespace Map {
      * @property [navigationHelpButton = false] - 帮助按钮，是否显示
      * @property [navigationInstructionsInitiallyVisible = true] - 帮助按钮 在用户明确单击按钮之前是否自动显示
      * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件, 如果true底图是Cesium机制控制，Map内的basemaps相关获取和控制将会无效。
-     * @property [imageryProviderViewModels = []] - baseLayerPicker底图切换面板中，用于图像的ProviderViewModel实例数组，默认自动根据basemaps数组生成。
+     * @property [imageryProviderViewModels] - baseLayerPicker底图切换面板中，用于图像的ProviderViewModel实例数组，默认自动根据basemaps数组生成。
      * @property [selectedImageryProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基本图像层的视图模型，则使用第一个可用的图像层。默认为show:true的basemaps图层
-     * @property [terrainProviderViewModels = []] - baseLayerPicker底图切换面板中，用于地形的ProviderViewModel实例数组。默认自动使用terrain配置+无地形。
+     * @property [terrainProviderViewModels] - baseLayerPicker底图切换面板中，用于地形的ProviderViewModel实例数组。默认自动使用terrain配置+无地形。
      * @property [selectedTerrainProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基础地形层的视图模型，则使用第一个可用的地形层。
      * @property [compass] - 导航球, 对应 {@link Compass}构造参数
      * @property [locationBar] - 状态栏, 对应 {@link LocationBar}构造参数
@@ -28986,6 +29008,7 @@ declare namespace Satellite {
  * @param [options.tle1] - 卫星两行轨道数（TLE） 的tle1, 示例：'1 39150U 13018A   18309.20646405  .00000034  00000-0  12253-4 0  9993'
  * @param [options.tle2] - 卫星两行轨道数（TLE） 的tle2, 示例：'2 39150  97.9189  29.2064 0018076 220.9170 139.0692 14.76532215297913'
  * @param [options.period] - 卫星运行周期（单位：分钟）, 未传值时自动在tle2中解析
+ * @param [options.pointsNum = 60] - 卫星轨道计算的点数量，值越大轨道越平滑度但占用资源越多(可能卡)
  * @param [options.position] - 当没有tle时，自定义传入动态坐标位置（含时序的点集合）
  * @param [options.orientation] - 当没有tle时，自定义传入实体方向
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
@@ -29006,6 +29029,7 @@ declare class Satellite extends Route {
         tle1?: string;
         tle2?: string;
         period?: number;
+        pointsNum?: number;
         position?: Cesium.SampledPositionProperty;
         orientation?: Cesium.Property;
         attr?: any;
@@ -35590,11 +35614,13 @@ declare namespace Util {
      * 方便popup、tooltip等构造方法使用
      * @param attr - Cesium内的属性对象
      * @param [options = {}] - 参数对象:
-     * @param options.onlySimpleType - 是否只获取简易类型的对象
+     * @param [options.onlySimpleType] - 是否只获取简易类型的对象
+     * @param [options.noArray] - onlySimpleType：true时，并且不取数组
      * @returns 最简的键值对属性对象
      */
     function getAttrVal(attr: any, options?: {
-        onlySimpleType: boolean;
+        onlySimpleType?: boolean;
+        noArray?: boolean;
     }): any;
     /**
      * 取3DTile模型瓦片的feature原有属性
@@ -35674,6 +35700,7 @@ declare namespace Util {
      * @param [options = {}] - 控制参数
      * @param [options.type] - 转为指定的类型
      * @param [options.style = {}] - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
+     * //  * @param {boolean} [options.style.merge] 是否合并并覆盖json中已有的style，默认不合并，仅适用style配置。
      * @param [options.symbol] - symbol配置，与style二选一
      * @param [options.symbol.type] - 标识数据类型
      * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并，仅适用symbol配置。
@@ -35705,6 +35732,7 @@ declare namespace Util {
      * @param [options = {}] - 参数，包括：
      * @param [options.type] - 转为指定的类型
      * @param [options.style = {}] - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
+     * //  * @param {boolean} [options.style.merge] 是否合并并覆盖json中已有的style，默认不合并，仅适用style配置。
      * @param [options.crs] - 原始数据的坐标系，如'EPSG:3857' （可以从 {@link http://epsg.io }查询）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理
      * @returns Graphic构造参数（用于创建{@link BaseGraphic}）
@@ -36284,7 +36312,7 @@ declare namespace thing {
 }
 
 export {
-  name, update, version, proj4,
+  name, update, version, proj4, Tle,
   BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType, Icon,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
