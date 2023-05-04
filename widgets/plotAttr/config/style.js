@@ -1587,6 +1587,22 @@ const styleConfig = {
       }
     ]
   },
+  doubleSidedPlane: {
+    name: "双面渲染图片平面",
+    primitive: true,
+    style: [
+      { name: "image", label: "填充的图片", type: "label" },
+      { name: "opacity", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 1 },
+      { name: "noWhite", label: "不显示白色", type: "radio", defval: true },
+
+      { name: "dimensions_x", label: "长度", type: "number", step: 1, defval: 100.0 },
+      { name: "dimensions_y", label: "宽度", type: "number", step: 1, defval: 100.0 },
+
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 }
+    ]
+  },
   box: {
     name: "盒子",
     primitive: true,
@@ -1699,7 +1715,8 @@ const styleConfig = {
     style: [
       { name: "color", label: "颜色", type: "color", defval: "#00ffff" },
       { name: "radius", label: "底部半径", type: "number", min: 1.0, max: 999999999, step: 1, defval: 100.0 },
-      { name: "height", label: "锥体高度", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 1000.0 }
+      { name: "height", label: "锥体高度", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 1000.0 },
+      { name: "setHeight", label: "指定坐标高度", type: "number", min: 0.0, max: 999999999.0, step: 1, defval: 0.0 }
     ]
   },
   tetrahedron: {
@@ -2199,6 +2216,17 @@ const styleConfig = {
           { label: "样式2", value: 2 }
         ]
       }
+    ]
+  },
+  thickWall: {
+    name: "厚度墙",
+    style: [
+      { name: "diffHeight", label: "墙高", type: "number", step: 100, defval: 9999.0 },
+      { name: "width", label: "墙厚度", type: "number", step: 1, defval: 9999.0 },
+      { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+      { name: "opacity", label: "透明度", type: "number", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
+      { name: "closure", label: "是否闭合", type: "radio", defval: false }, 
+      { name: "hasShadows", label: "是否阴影", type: "radio", defval: false }, 
     ]
   },
   diffuseWall: {
@@ -2973,7 +3001,7 @@ const styleConfig = {
       { name: "reflectivity", label: "反射率", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.5 },
       { name: "ripple", label: "波纹大小", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 50.0 },
       { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },
-      { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 },
+      { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 }
     ]
   }
 }

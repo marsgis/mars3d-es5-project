@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.4
- * 编译日期：2023-04-24 10:58:26
+ * 版本信息：v3.5.5
+ * 编译日期：2023-05-04 19:16:45
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -520,6 +520,10 @@ declare enum EventType {
      * 时钟跳动 场景事件
      */
     clockTick = "clockTick",
+    /**
+     * 时钟结束（当达到clock.stopTime时） 场景事件
+     */
+    clockStop = "clockStop",
     /**
      * 地形变化  事件
      */
@@ -2805,6 +2809,13 @@ declare class LngLatArray {
      */
     static toCartesians(value: string[] | any[][] | LngLatPoint[], clone?: boolean): Cesium.Cartesian3[];
     /**
+     * 根据传入的各种对象数据数组，转换返回Cartographic数组
+     * @param value - 坐标位置数组
+     * @param [clone] - 是否重新生成拷贝
+     * @returns 转换返回的Cartesian3数组
+     */
+    static toCartographics(value: string[] | any[][] | LngLatPoint[], clone?: boolean): Cesium.Cartographic[];
+    /**
      * 根据传入的各种对象数据数组，转换返回LatLngPoint数组
      * @param value - 坐标位置数组
      * @param [clone] - 是否重新生成拷贝
@@ -3481,12 +3492,6 @@ declare class OutlineEffect extends BaseEffect {
      * 如果两个三角面的法线间夹角小于该值 则标记为同一个平面。该值的单位：角度
      */
     planeAngle: number;
-    /**
-     * 重新赋值参数，同构造方法参数一致。
-     * @param options - 参数,与类的构造方法参数相同
-     * @returns 当前对象本身，可以链式调用
-     */
-    setOptions(options: any): OutlineEffect;
     /**
      * 高亮触发的事件类型，默认为单击。
      */
@@ -5536,14 +5541,20 @@ declare class ArcFrustum extends BasePointPrimitive {
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
+ * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
+ * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
+ * @param [options.maxCacheCount = 100] - 保留的坐标点数量, 当为-1时保留所有
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
- * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
- * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.clampToTileset] - 是否进行贴模型。
  * @param [options.frameRateHeight = 30] - clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.maxHeight] - 限定最高高度，避免计算异常数据
+ * @param [options.minHeight] - 限定最低高度，避免计算异常数据
  * @param [options.camera] - 视角模式设置，包括：
  * @param [options.camera.type] - 视角模式类型，包括：'':无、'gs':跟随视角、'dy':第一视角、'sd':上帝视角
  * @param [options.camera.radius] - 'gs'跟随视角时的 初始俯仰距离值（单位：米）
@@ -5593,14 +5604,20 @@ declare class FixedRoute extends Route {
         path?: PathEntity.StyleOptions | any;
         polyline?: PolylineEntity.StyleOptions | any;
         wall?: WallEntity.StyleOptions | any;
+        orientation?: Cesium.Property | any;
+        fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         frameRate?: number;
+        maxCacheCount?: number;
         forwardExtrapolationType?: Cesium.ExtrapolationType;
         backwardExtrapolationType?: Cesium.ExtrapolationType;
-        fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
-        orientation?: Cesium.Property | any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         clampToTileset?: boolean;
         frameRateHeight?: number;
         objectsToExclude?: any;
+        maxHeight?: number;
+        minHeight?: number;
         camera?: {
             type?: string;
             radius?: number;
@@ -5908,12 +5925,15 @@ declare namespace Route {
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
+ * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
+ * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.maxCacheCount = 100] - 保留的坐标点数量, 当为-1时保留所有
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
- * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
- * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.clampToTileset] - 是否进行贴模型。
  * @param [options.frameRateHeight = 30] - clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -5955,12 +5975,15 @@ declare class Route extends BasePointPrimitive {
         path?: PathEntity.StyleOptions | any;
         polyline?: PolylineEntity.StyleOptions | any;
         wall?: WallEntity.StyleOptions | any;
+        orientation?: Cesium.Property | any;
+        fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         frameRate?: number;
         maxCacheCount?: number;
         forwardExtrapolationType?: Cesium.ExtrapolationType;
         backwardExtrapolationType?: Cesium.ExtrapolationType;
-        fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
-        orientation?: Cesium.Property | any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         clampToTileset?: boolean;
         frameRateHeight?: number;
         objectsToExclude?: any;
@@ -6645,6 +6668,12 @@ declare namespace DivGraphic {
  * @param [options.hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
  * @param [options.parentContainer] - 控件加入的父容器，默认为当前图层所在的DOM layer.container
  * @param [options.frameRate = 1] - 多少帧获取更新一次DIV像素位置。用于控制效率，如果卡顿就把该数值调大一些。
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -6671,6 +6700,12 @@ declare class DivGraphic extends BaseGraphic {
         hasCache?: boolean;
         parentContainer?: HTMLElement;
         frameRate?: number;
+        maxCacheCount?: number;
+        forwardExtrapolationType?: Cesium.ExtrapolationType;
+        backwardExtrapolationType?: Cesium.ExtrapolationType;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -7482,6 +7517,7 @@ declare class BaseEntity extends BaseGraphic {
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
  * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -7516,6 +7552,7 @@ declare class BasePointEntity extends BaseEntity {
         objectsToExclude?: any;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -9224,6 +9261,12 @@ declare class EditPolygonEx extends EditPolygon {
 }
 
 /**
+ * Polygon对象Grid视频编辑 标绘处理对应的编辑类
+ */
+declare class EditPolygonGrid extends EditPoly {
+}
+
+/**
  * PolylineVolume对象 标绘处理对应的编辑类
  */
 declare class EditPolylineVolume extends EditPoly {
@@ -10006,6 +10049,7 @@ declare namespace ModelEntity {
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
  * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
@@ -10047,6 +10091,7 @@ declare class ModelEntity extends BasePointEntity {
         objectsToExclude?: any;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         drawShow?: boolean;
         hasEdit?: boolean;
         hasMoveEdit?: boolean;
@@ -13504,6 +13549,9 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -13542,6 +13590,9 @@ declare class BasePointPrimitive extends BasePrimitive {
         clampToTileset?: boolean;
         frameRateHeight?: number;
         objectsToExclude?: any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -15799,6 +15850,9 @@ declare namespace ModelPrimitive {
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -15828,6 +15882,9 @@ declare class ModelPrimitive extends BasePointPrimitive {
         clampToTileset?: boolean;
         frameRateHeight?: number;
         objectsToExclude?: any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -24823,6 +24880,12 @@ declare class MouseEvent {
      * @returns 获取拾取到的Cesium选中对象
      */
     getPicked(event: any): any | undefined;
+    /**
+     * 瓦片图层上的矢量对象，动态获取
+     * @param position - 坐标
+     * @returns 完成时承诺
+     */
+    pickImageryLayerFeatures(position: LngLatPoint | Cesium.Cartesian3 | any): Promise<any>;
 }
 
 declare namespace Map {
@@ -31783,6 +31846,21 @@ declare class Shadows extends BaseThing {
      * @returns 无
      */
     clear(): void;
+    /**
+     * 开始 日照阴影率 分析
+     * @param options - 参数
+     * @param options.startDate - 开始时间
+     * @param options.endDate - 结束时间
+     * @param positions - 分析区域范围坐标
+     * @param step - 间隔（单位米）
+     * @param [minHeight] - 最小高程（单位米）,与maxHeight一起可以设置多层
+     * @param [maxHeight] - 最大高程（单位米）
+     * @returns 分析结果
+     */
+    startRate(options: {
+        startDate: Date;
+        endDate: Date;
+    }, positions: Cesium.Cartesian3[] | LngLatPoint[] | any, step: number, minHeight?: number, maxHeight?: number): Promise<any>;
 }
 
 declare namespace Sightline {
@@ -31897,7 +31975,7 @@ declare class Skyline extends BaseThing {
  * 地下模式类
  * @param [options] - 参数对象，包括以下：
  * @param [options.alpha = 0.5] - 透明度  0.0-1.0
- * @param [options.color = Cesium.Color.BLAC] - 当相机在地下或球体是半透明时，渲染球体背面的颜色
+ * @param [options.color = Cesium.Color.BLACK] - 当相机在地下或球体是半透明时，渲染球体背面的颜色
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35445,6 +35523,27 @@ declare namespace PolyUtil {
      * @returns 坐标集合 ,如： {points:[LngLatPoint,LngLatPoint], size: 500 }
      */
     function getGridPoints(bbox: number[], count: number, alt?: number): any;
+    /**
+     * 获取指定多边形范围内的插值Grid网格点集合
+     * @param positions - 区域范围
+     * @param step - 间隔步长，单位：米
+     * @param [alt] - 高度值
+     * @returns 坐标集合
+     */
+    function getGridPointsByPoly(positions: Cartesian3[], step: number, alt?: number): LngLatPoint[] | undefined;
+    /**
+     * 计算面内最大、最小高度值，并 使用离屏渲染深度图的方式加速计算范围内的任何可见的物体的高度 <br />
+     * @param positions - 坐标数组
+     * @param scene - 三维地图场景对象，一般用map.scene
+     * @param [options = {}] - 参数对象:
+     * @param [options.splitNum = 512] - 网格个数，横纵等比分割的网格个数，理论上：外接矩形的点个数 = splitNum * splitNum
+     * @param [options.cameraHeight = scene.camera.positionCartographic.height] - 相机高度
+     * @returns 异步计算完成的Promise，结果示例：{ maxHeight: 100, minHeight: 21 }
+     */
+    function getHeightRangeByDepth(positions: LngLatPoint[] | Cesium.Cartesian3[] | any[], scene: Cesium.Scene, options?: {
+        splitNum?: number;
+        cameraHeight?: number;
+    }): Promise<any>;
     /**
      * 对面内进行插值，并 使用离屏渲染深度图的方式加速计算范围内的任何可见的物体的高度 <br />
      * 注意事项：<br />
