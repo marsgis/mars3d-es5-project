@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html class="no-js css-menubar" lang="zh-cn">
+  <head>
+    <title>弹窗子页面</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <!-- 移动设备 viewport -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui" />
+    <meta name="author" content="火星科技 http://mars3d.cn " />
+    <!-- 360浏览器默认使用Webkit内核 -->
+    <meta name="renderer" content="webkit" />
+    <!-- Chrome浏览器添加桌面快捷方式（安卓） -->
+    <link rel="icon" type="image/png" href="../../img/favicon/favicon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- Safari浏览器添加到主屏幕（IOS） -->
+    <link rel="icon" sizes="192x192" href="img/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="火星科技MarsGIS" />
+    <!-- Win8标题栏及ICON图标 -->
+    <link rel="apple-touch-icon-precomposed" href="../../img/favicon/apple-touch-icon.png" />
+    <meta name="msapplication-TileImage" content="../../img/favicon/app-icon72x72@2x.png" />
+    <meta name="msapplication-TileColor" content="#62a8ea" />
+
+    <!-- 第3方lib引入 -->
+    <script
+      type="text/javascript"
+      src="../../lib/include-lib.js?time=20220120"
+      libpath="../../lib/"
+      include="jquery,jquery.minicolors,font-awesome,font-marsgis,bootstrap,bootstrap-checkbox,haoutil,admui-frame,localforage"
+    ></script>
+
+    <link href="../../css/widget-win.css" rel="stylesheet" />
+    <link href="css/plot.css?time=20220120" rel="stylesheet" />
+  </head>
+
+  <body class="dark">
+    <div class="mp_box">
+      <div class="mp_head">
+        <ul>
+          <li id="btnCenter"><i class="marsgis marsgis-fxmy" title="定位"></i></li>
+          <li id="btnDelete"><i class="fa fa-trash" title="删除"></i></li>
+          <li id="btn_plot_savefile"><i class="fa fa-save" title="保存文件"></i></li>
+        </ul>
+        <input id="input_plot_file" type="file" accept=".json,.geojson" style="display: none" />
+      </div>
+      <div class="clear"></div>
+
+      <div class="mp_tab_card">
+        <ul class="mp_tab_con">
+          <li>
+            <div class="mp_tree">
+              <div id="attr_style_view">
+                <div class="open"><i class="tree_icon">-</i>样式信息</div>
+                <div class="mp_attr">
+                  <table id="talbe_style"></table>
+                </div>
+              </div>
+
+              <div id="attr_stylelabel_view" class="bdt">
+                <div class="open"><i class="tree_icon">-</i>注记信息</div>
+                <div class="mp_attr">
+                  <table id="talbe_stylelabel"></table>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <ul class="mp_tab_tit">
+          <li id="tab_attr">样式</li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="config/material.js"></script>
+    <script src="config/style.js"></script>
+
+    <script src="js/vew.common.js?time=20220120"></script>
+    <script src="js/vew.work.js?time=20220120"></script>
+  </body>
+</html>
