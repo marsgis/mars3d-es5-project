@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.7
- * 编译日期：2023-05-16 21:11:36
+ * 版本信息：v3.5.8
+ * 编译日期：2023-05-23 19:43:13
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -6435,8 +6435,8 @@ declare namespace DivBoderLabel {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [templateEmptyStr = ""] - 当text存在模版字符串配置时，空值时显示的内容
      */
     type StyleOptions = any | {
@@ -6549,8 +6549,8 @@ declare namespace DivGraphic {
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
      * @property [templateEmptyStr = ''] - html中如果存在模版时，空值时显示的内容
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      */
     type StyleOptions = any | {
         html: string | HTMLDivElement | ((...params: any[]) => any);
@@ -6833,8 +6833,8 @@ declare namespace DivLightPoint {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      */
     type StyleOptions = any | {
         color?: string;
@@ -6945,8 +6945,8 @@ declare namespace DivUpLabel {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      */
     type StyleOptions = any | {
         text: string;
@@ -7793,8 +7793,8 @@ declare namespace BillboardEntity {
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -7972,8 +7972,8 @@ declare namespace BoxEntity {
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 是投射还是接收来自光源的阴影。
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -8116,8 +8116,8 @@ declare namespace CanvasLabelEntity {
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      */
     type StyleOptions = any | {
         text?: string;
@@ -8253,7 +8253,7 @@ declare namespace CircleEntity {
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序。用于排序地面几何。只有在椭圆为常量且没有指定height或exturdedHeight时才有效果。
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -8497,8 +8497,8 @@ declare namespace ConeTrack {
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定圆柱是投射还是接收来自光源的阴影。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -8657,8 +8657,8 @@ declare namespace CorridorEntity {
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序，用于排序。只有在高度和挤压高度未定义，并且走廊是静态的情况下才有效果。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -8774,7 +8774,7 @@ declare class CorridorEntity extends BasePolyEntity {
  * @param options.style - 样式信息
  * //  * @param {number} [options.style.sharpness=0.85] 曲线的弯曲程度
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.getShowPositon] - 自定义计算曲线点回调方法，可以在方法内自定义计算算法。
+ * @param [options.getShowPositions] - 自定义计算曲线点回调方法，可以在方法内自定义计算算法。
  * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
@@ -8805,7 +8805,7 @@ declare class CurveEntity extends PolylineEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        getShowPositon?: (...params: any[]) => any;
+        getShowPositions?: (...params: any[]) => any;
         availability?: Cesium.TimeIntervalCollection;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
@@ -8860,8 +8860,8 @@ declare namespace CylinderEntity {
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定圆柱是投射还是接收来自光源的阴影。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -8999,8 +8999,8 @@ declare namespace DivBillboardEntity {
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -9288,7 +9288,7 @@ declare namespace EllipseEntity {
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序。用于排序地面几何。只有在椭圆为常量且没有指定height或exturdedHeight时才有效果。
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -9427,8 +9427,8 @@ declare namespace EllipsoidEntity {
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定椭球是否投射或接收来自光源的阴影。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -9625,8 +9625,8 @@ declare namespace FontBillboardEntity {
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -9770,8 +9770,8 @@ declare namespace LabelEntity {
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [templateEmptyStr = ""] - 当text存在模版字符串配置时，空值时显示的内容
      */
     type StyleOptions = any | {
@@ -9944,8 +9944,8 @@ declare namespace ModelEntity {
      * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
      * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
      * @property [clippingPlanes] - 用于裁剪模型的Plane平面集合
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -10467,8 +10467,8 @@ declare namespace PlaneEntity {
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定平面是投射还是接收来自光源的阴影。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -10593,8 +10593,8 @@ declare namespace PointEntity {
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -10743,8 +10743,8 @@ declare namespace PolygonEntity {
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序，指定用于排序地面几何的zIndex。只有当多边形是常数且没有指定高度或挤压高度时才有效果。
      * @property [buffer] - 对坐标进行缓冲扩大buffer指定的半径范围，单位：米。如用于单体化建筑物扩大点方便鼠标拾取。
-     * @property [setHeight = 0] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight = 0] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -10785,8 +10785,8 @@ declare namespace PolygonEntity {
         classificationType?: Cesium.ClassificationType;
         zIndex?: number;
         buffer?: number;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string;
+        addHeight?: number | string;
         highlight?: PolygonEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any | any;
     };
@@ -10943,8 +10943,8 @@ declare namespace PolylineEntity {
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序,指定用于排序地面几何的zIndex。只有当' clampToGround '为真且支持地形上的折线时才会有效果。
-     * @property [setHeight = 0] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight = 0] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string} [label.text = "文字"] 文本内容，换行可以用换行符'\n'。
@@ -10977,8 +10977,8 @@ declare namespace PolylineEntity {
         clampToGround?: boolean;
         classificationType?: Cesium.ClassificationType;
         zIndex?: number;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string;
+        addHeight?: number | string;
         highlight?: PolylineEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any | any;
     };
@@ -11083,8 +11083,8 @@ declare namespace PolylineVolumeEntity {
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定管道是否投射或接收来自光源的阴影。
-     * @property [setHeight = 0] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight = 0] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -11112,8 +11112,8 @@ declare namespace PolylineVolumeEntity {
         distanceDisplayCondition_near?: number;
         hasShadows?: boolean;
         shadows?: Cesium.ShadowMode;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string;
+        addHeight?: number | string;
         highlight?: PolylineVolumeEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any;
     };
@@ -11222,8 +11222,8 @@ declare namespace RectangleEntity {
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序，指定用于排序地面几何的zIndex。只有当矩形为常量且没有指定height或extrdedheight时才有效果。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -11783,8 +11783,8 @@ declare namespace WallEntity {
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定墙壁是投射还是接收来自光源的阴影。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -14117,8 +14117,8 @@ declare namespace BoxPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -14250,8 +14250,8 @@ declare namespace CirclePrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示
      */
@@ -14769,8 +14769,8 @@ declare namespace CorridorPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -15982,8 +15982,8 @@ declare namespace PointPrimitive {
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16108,8 +16108,8 @@ declare namespace PolygonPrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [buffer] - 对坐标进行缓冲扩大buffer指定的半径范围，单位：米。如用于单体化建筑物扩大点方便鼠标拾取。
-     * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -16153,8 +16153,8 @@ declare namespace PolygonPrimitive {
         fragmentShaderSource?: string;
         renderState?: any;
         buffer?: number;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string | number[];
+        addHeight?: number | string | number[];
         highlight?: PolygonPrimitive.StyleOptions | any;
         label?: LabelPrimitive.StyleOptions | any | any;
     };
@@ -16260,8 +16260,10 @@ declare namespace PolylinePrimitive {
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
-     * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -16290,8 +16292,10 @@ declare namespace PolylinePrimitive {
         shadows?: Cesium.ShadowMode;
         clampToGround?: boolean;
         classificationType?: Cesium.ClassificationType;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string;
+        addHeight?: number | string;
+        setHeight?: number | string;
+        addHeight?: number | string;
         highlight?: PolylinePrimitive.StyleOptions | any;
         label?: LabelPrimitive.StyleOptions | any | any;
     };
@@ -16389,8 +16393,8 @@ declare namespace PolylineVolumePrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16418,8 +16422,8 @@ declare namespace PolylineVolumePrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string | number[];
+        addHeight?: number | string | number[];
         label?: LabelPrimitive.StyleOptions | any;
     };
 }
@@ -16512,8 +16516,8 @@ declare namespace RectanglePrimitive {
      * @property [clampToGround = false] - 是否贴地
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [classification = false] - 是否为ClassificationPrimitive ，分类基元 表示Scene要高亮显示的包围几何的体积
-     * @property [setHeight] - 指定坐标高度值（常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（常用于图层中配置）,也支持字符串模版配置
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -17205,8 +17209,8 @@ declare namespace Water {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [setHeight] - 指定坐标高度值，或数组指定每个点的高度（常用于图层中配置）
-     * @property [addHeight] - 在现有坐标基础上增加的高度值，或数组指定每个点增加的高度（常用于图层中配置）
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -17246,8 +17250,8 @@ declare namespace Water {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
-        setHeight?: number | number[];
-        addHeight?: number | number[];
+        setHeight?: number | string | number[];
+        addHeight?: number | string | number[];
         highlight?: PolygonPrimitive.StyleOptions | any;
         label?: LabelPrimitive.StyleOptions | any | any;
     };
