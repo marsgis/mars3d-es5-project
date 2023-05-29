@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.8
- * 编译日期：2023-05-23 19:43:13
+ * 版本信息：v3.5.9
+ * 编译日期：2023-05-29 18:07:23
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -6021,6 +6021,10 @@ declare class Route extends BasePointPrimitive {
      * 贴模型分析时，排除的不进行贴模型计算的模型对象，默认是当前本身，可以是： primitives, entities 等
      */
     objectsToExclude: any | undefined;
+    /**
+     * 样式信息 【仅用于标绘，兼容其他graphic统一处理逻辑】
+     */
+    style: any;
     /**
      * 遍历所有矢量数据并将其作为参数传递给回调函数
      * @param method - 回调方法
@@ -17048,6 +17052,12 @@ declare class VideoPrimitive extends BasePolyPrimitive {
      */
     stopEditingGrid(): void;
     /**
+     * 重新渲染
+     * @param [style] - 新的样式信息
+     * @returns 当前对象本身
+     */
+    redraw(style?: any): BasePrimitive;
+    /**
      * 矢量数据对应的 Cesium内部对象 (不同子类中实现)
      */
     readonly czmObject: Cesium.Entity | Cesium.Primitive | Cesium.GroundPrimitive | Cesium.ClassificationPrimitive | any;
@@ -19371,6 +19381,8 @@ declare namespace GraphicLayer {
  * @param [options.isAutoEditing = true] - 完成标绘时是否自动启动编辑(需要hasEdit:true时)
  * @param [options.isContinued = false] - 是否连续标绘,联系标绘状态下无法编辑已有对象。
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
+ * @param [options.drawEndEventType = EventType.dblClick] - 绘制时结束的事件，默认双击
+ * @param [options.drawDelEventType = EventType.rightClick] - 绘制时删除点的事件，默认右键
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效，且只有贴地对象有效)。
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
@@ -19431,6 +19443,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
         isAutoEditing?: boolean;
         isContinued?: boolean;
         isRestorePositions?: boolean;
+        drawEndEventType?: boolean;
+        drawDelEventType?: boolean;
         zIndex?: number;
         symbol?: {
             type?: GraphicType | string;
@@ -29095,6 +29109,12 @@ declare class Satellite extends Route {
         flyOverLongitudeWeight?: number;
         easingFunction?: Cesium.EasingFunction.Callback;
     }): Promise<boolean>;
+    /**
+     * 开始绘制矢量数据，绘制的数据会加载在layer图层。
+     * @param layer - 图层
+     * @returns 无
+     */
+    startDraw(layer: GraphicLayer): void;
 }
 
 declare namespace SatelliteSensor {
