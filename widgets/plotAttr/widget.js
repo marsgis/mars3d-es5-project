@@ -84,7 +84,7 @@
       graphic = this.config.graphic
       lonlats = this.config.lonlats
 
-      let config = { type: graphic.type, ...graphic.options }
+      let config = { ...graphic.options, type: graphic.type, style: graphic.style }
       console.log("开始编辑属性", config)
 
       this.viewWindow.plotEdit.startEditing(config, lonlats)

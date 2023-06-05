@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.9
- * 编译日期：2023-05-29 18:07:23
+ * 版本信息：v3.5.10
+ * 编译日期：2023-06-05 18:30:23
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -17,7 +17,6 @@ declare const update: string
 declare const name: string
 
 declare const proj4: any
-declare const widget: any
 declare const provider: any
 
 
@@ -9915,7 +9914,7 @@ declare namespace ModelEntity {
     /**
      * gltf小模型 支持的样式信息
      * @property [url] - glTF模型的URI的字符串或资源属性。
-     * @property [scale = 1] - 比例
+     * @property [scale = 1.0] - 比例
      * @property [heading = 0] - 方向角 （度数值，0-360度），优先级高于orientation
      * @property [pitch = 0] - 俯仰角（度数值，0-360度），优先级高于orientation
      * @property [roll = 0] - 翻滚角（度数值，0-360度），优先级高于orientation
@@ -9948,6 +9947,7 @@ declare namespace ModelEntity {
      * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
      * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
      * @property [clippingPlanes] - 用于裁剪模型的Plane平面集合
+     * @property [customShader] - A property specifying the {@link CustomShader} to apply to this model.
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
@@ -9992,6 +9992,7 @@ declare namespace ModelEntity {
             [key: string]: number;
         };
         clippingPlanes?: Cesium.ClippingPlaneCollection;
+        customShader?: Cesium.CustomShader;
         setHeight?: number | string;
         addHeight?: number | string;
         highlight?: ModelEntity.StyleOptions | any;
@@ -10239,6 +10240,9 @@ declare namespace PathEntity {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -10269,6 +10273,9 @@ declare class PathEntity extends BasePointEntity {
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
+        maxCacheCount?: number;
+        forwardExtrapolationType?: Cesium.ExtrapolationType;
+        backwardExtrapolationType?: Cesium.ExtrapolationType;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -15746,6 +15753,259 @@ declare class LightCone extends BasePointPrimitive {
     readonly czmObject: Cesium.Entity | Cesium.Primitive | Cesium.GroundPrimitive | Cesium.ClassificationPrimitive | any;
 }
 
+declare namespace ModelPrimitive {
+    /**
+     * gltf小模型 支持的样式信息
+     * @property [url] - glTF模型的URI的字符串或资源属性。
+     * @property [scale = 1] - 整体缩放比例
+     * @property [scaleX = 1] - X轴方向缩放比例
+     * @property [scaleY = 1] - Y轴方向缩放比例
+     * @property [scaleZ = 1] - Z轴方向缩放比例
+     * @property [heading = 0] - 方向角 （度数值，0-360度），优先级高于orientation
+     * @property [pitch = 0] - 俯仰角（度数值，0-360度），优先级高于orientation
+     * @property [roll = 0] - 翻滚角（度数值，0-360度），优先级高于orientation
+     * @property [mergeOrientation = false] - 当存在orientation时（如addDynamicPosition等），设置为true时，可以在orientation基础的方式值上叠加设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的处理
+     * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑缩放。
+     * @property [maximumScale] - 模型的最大比例尺寸。minimumPixelSize的上限。
+     * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
+     * @property [color = "#3388ff"] - 颜色
+     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
+     * @property [colorBlendMode = ColorBlendMode.HIGHLIGHT] - 指定颜色如何与模型混合。
+     * @property [colorBlendAmount = 0.5] - 当colorBlendMode为MIX时指定颜色强度的数字属性。0.0的值表示模型渲染的颜色，1.0的值表示纯色，任何介于两者之间的值表示两者的混合。
+     * @property [silhouette = false] - 是否轮廓
+     * @property [silhouetteColor = "#ff0000"] - 轮廓颜色
+     * @property [silhouetteSize = 2] - 轮廓宽度
+     * @property [silhouetteAlpha = 0.8] - 轮廓透明度
+     * @property [enableShowOutline = true] - Whether to enable outlines for models using the {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension. This can be set false to avoid post-processing geometry at load time. When false, the showOutlines and outlineColor options are ignored.
+     * @property [showOutline = true] - Whether to display the outline for models using the {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} extension. When true, outlines are displayed. When false, outlines are not displayed.
+     * @property [outlineColor = Cesium.Color.BLACK] - The color to use when rendering outlines.
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
+     * @property [distanceDisplayPoint] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 像素点 对象的样式，仅在distanceDisplayCondition设置时有效。
+     * @property [distanceDisplayBillboard] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 图标 对象的样式，仅在distanceDisplayCondition设置时有效。
+     * @property [hasShadows = true] - 是否阴影
+     * @property [shadows = ShadowMode.ENABLED] - 指定模型是投射还是接收来自光源的阴影。
+     * @property [clampToGround = false] - 是否贴地
+     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
+     * @property [incrementallyLoadTextures = true] - 确定模型加载后纹理是否会继续流进来。
+     * @property [runAnimations = true] - 指定模型中指定的glTF动画是否应该启动。
+     * @property [clampAnimations = true] - 指定在没有关键帧的情况下，glTF动画是否应该保持最后一个姿势。
+     * @property [releaseGltfJson = false] - When true, the glTF JSON is released once the glTF is loaded. This is is especially useful for cases like 3D Tiles, where each .gltf model is unique and caching the glTF JSON is not effective.
+     * @property [lightColor] - 在为模型着色时指定光的颜色的属性。当undefined场景的浅色被使用代替。
+     * @property [imageBasedLighting] - The properties for managing image-based lighting on this model.
+     * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
+     * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
+     * @property [clippingPlanes] - 用于裁剪模型的Plane平面集合
+     * @property [allowPicking = true] - 当true时，每个glTF和Primitive都可以用{@link Cesium.Scene#pick}来拾取。
+     * @property [asynchronous = true] - 确定模型WebGL资源创建是否将分散在几个帧或块上，直到所有glTF文件加载完成。
+     * @property [dequantizeInShader = true] - 确定一个{@link https://github.com/google/draco|Draco}编码的模型是否在GPU上被去量化。这减少了编码模型的总内存使用量。
+     * @property [backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除是由材料的双面属性决定的;当为false时，禁用背面剔除。如果{@link Model#color}是半透明的，或者{@link Model#silhouette}大于0.0，则背面不会被剔除。
+     * @property [debugShowBoundingVolume = false] - 仅供调试。查看模型的包围边界球。
+     * @property [enableDebugWireframe = false] - 仅供调试。是否可以通过debugWireframe来切换查看模型的三角网线框图。
+     * @property [debugWireframe = false] - 仅供调试。是否打开模型的三角网线框图。
+     * @property [cull = true] - Whether or not to cull the model using frustum/horizon culling. If the model is part of a 3D Tiles tileset, this property will always be false, since the 3D Tiles culling system is used.
+     * @property [opaquePass = Cesium.Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
+     * @property [upAxis = Cesium.Axis.Y] - The up-axis of the glTF model.
+     * @property [forwardAxis = Cesium.Axis.Z] - The forward-axis of the glTF model.
+     * @property [customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
+     * @property [content] - The tile content this model belongs to. This property will be undefined if model is not loaded as part of a tileset.
+     * @property [showCreditsOnScreen = false] - Whether to display the credits of this model on screen.
+     * @property [splitDirection = Cesium.SplitDirection.NONE] - The {@link SplitDirection} split to apply to this model.
+     * @property [projectTo2D = false] - Whether to accurately project the model's positions in 2D. If this is true, the model will be projected accurately to 2D, but it will use more memory to do so. If this is false, the model will use less memory and will still render in 2D / CV mode, but its positions may be inaccurate. This disables minimumPixelSize and prevents future modification to the model matrix. This also cannot be set after the model has loaded.
+     * @property [featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+     * @property [instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+     * @property [pointCloudShading] - Options for constructing a {@link PointCloudShading} object to control point attenuation and lighting.
+     * @property [classificationType] - Determines whether terrain, 3D Tiles or both will be classified by this model. This cannot be set after the model has loaded.
+     * @property [gltfCallback] - A function that is called with the loaded gltf object once loaded.
+     *
+     * //以下是 以下是 模型动画相关
+     * @property [startTime] - 场景时间开始播放动画。当undefined时，动画从下一帧开始。
+     * @property [delay = 0.0] - 从startTime开始播放的延迟，以秒为单位。
+     * @property [stopTime] - 场景时间停止播放动画。当这是undefined，动画播放它的整个持续时间。
+     * @property [removeOnStop = false] - 当true时，动画在停止播放后被删除。
+     * @property [multiplier = 1.0] - 大于1.0的值增加动画播放的速度相对于场景时钟的速度;小于1.0会降低速度。
+     * @property [reverse = false] - 当true时，动画会反向播放。
+     * @property [loop = Cesium.ModelAnimationLoop.REPEAT] - 决定动画是否循环以及如何循环。
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [label] - 支持附带文字的显示
+     */
+    type StyleOptions = any | {
+        url?: string | Cesium.Resource;
+        scale?: number;
+        scaleX?: number;
+        scaleY?: number;
+        scaleZ?: number;
+        heading?: number;
+        pitch?: number;
+        roll?: number;
+        mergeOrientation?: boolean;
+        minimumPixelSize?: number;
+        maximumScale?: number;
+        fill?: boolean;
+        color?: string | Cesium.Color;
+        opacity?: number;
+        colorBlendMode?: Cesium.ColorBlendMode;
+        colorBlendAmount?: number;
+        silhouette?: boolean;
+        silhouetteColor?: string | Cesium.Color;
+        silhouetteSize?: number;
+        silhouetteAlpha?: number;
+        enableShowOutline?: boolean;
+        showOutline?: boolean;
+        outlineColor?: Cesium.Color;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
+        distanceDisplayCondition_near?: number;
+        distanceDisplayCondition_far?: number;
+        distanceDisplayPoint?: PointEntity.StyleOptions | any;
+        distanceDisplayBillboard?: BillboardEntity.StyleOptions | any;
+        hasShadows?: boolean;
+        shadows?: Cesium.ShadowMode;
+        clampToGround?: boolean;
+        heightReference?: Cesium.HeightReference;
+        incrementallyLoadTextures?: boolean;
+        runAnimations?: boolean;
+        clampAnimations?: boolean;
+        releaseGltfJson?: boolean;
+        lightColor?: Cesium.Color;
+        imageBasedLighting?: Cesium.ImageBasedLighting;
+        nodeTransformations?: Cesium.PropertyBag | {
+            [key: string]: Cesium.TranslationRotationScale;
+        };
+        articulations?: Cesium.PropertyBag | {
+            [key: string]: number;
+        };
+        clippingPlanes?: Cesium.ClippingPlaneCollection;
+        allowPicking?: boolean;
+        asynchronous?: boolean;
+        dequantizeInShader?: boolean;
+        backFaceCulling?: boolean;
+        debugShowBoundingVolume?: boolean;
+        enableDebugWireframe?: boolean;
+        debugWireframe?: boolean;
+        cull?: boolean;
+        opaquePass?: boolean;
+        upAxis?: Cesium.Axis;
+        forwardAxis?: Cesium.Axis;
+        customShader?: Cesium.CustomShader;
+        content?: Cesium.Cesium3DTileContent;
+        showCreditsOnScreen?: boolean;
+        splitDirection?: Cesium.SplitDirection;
+        projectTo2D?: boolean;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
+        pointCloudShading?: any;
+        classificationType?: Cesium.ClassificationType;
+        gltfCallback?: (...params: any[]) => any;
+        startTime?: Cesium.JulianDate;
+        delay?: number;
+        stopTime?: Cesium.JulianDate;
+        removeOnStop?: boolean;
+        multiplier?: number;
+        reverse?: boolean;
+        loop?: Cesium.ModelAnimationLoop;
+        setHeight?: number | string;
+        addHeight?: number | string;
+        highlight?: ModelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
+    };
+}
+
+/**
+ * gltf小模型 Primitive图元矢量对象
+ * @param options - 参数对象，包括以下：
+ * @param options.position - 坐标位置
+ * @param [options.orientation] - 实体方向，仅position是回调属性时有效
+ * @param [options.modelMatrix] - 将图元(所有几何实例)从模型转换为世界坐标的4x4变换矩阵,可以替代position。
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.frameRate = 1] - 当postion为CallbackProperty时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
+ * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
+ * @param [options.attributes] - [cesium原生]每个实例的属性。
+ * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
+ * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
+ * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
+ * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
+ * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class ModelPrimitive extends BasePointPrimitive {
+    constructor(options: {
+        position: LngLatPoint | Cesium.Cartesian3 | number[] | Cesium.PositionProperty;
+        orientation?: Cesium.Property;
+        modelMatrix?: Cesium.Matrix4;
+        style: ModelPrimitive.StyleOptions | any;
+        attr?: any;
+        frameRate?: number;
+        appearance?: Cesium.Appearance;
+        attributes?: Cesium.Appearance;
+        maxCacheCount?: number;
+        forwardExtrapolationType?: Cesium.ExtrapolationType;
+        backwardExtrapolationType?: Cesium.ExtrapolationType;
+        clampToTileset?: boolean;
+        frameRateHeight?: number;
+        objectsToExclude?: any;
+        referenceFrame?: Cesium.ReferenceFrame;
+        numberOfDerivatives?: number;
+        autoMiddleDynamicPosition?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 模型整体的缩放比例
+     */
+    scale: number;
+    /**
+     * X轴方向缩放比例
+     */
+    scaleX: number;
+    /**
+     * Y轴方向缩放比例
+     */
+    scaleY: number;
+    /**
+     * Z轴方向缩放比例
+     */
+    scaleZ: number;
+    /**
+     * 获取图层完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
+     */
+    readonly readyPromise: Promise<Cesium.Model>;
+    /**
+     * 设置透明度
+     * @param value - 透明度
+     * @returns 无
+     */
+    setOpacity(value: number): void;
+}
+
 declare namespace Pit {
     /**
      * 井  支持的样式信息，
@@ -16266,8 +16526,6 @@ declare namespace PolylinePrimitive {
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -16296,10 +16554,8 @@ declare namespace PolylinePrimitive {
         shadows?: Cesium.ShadowMode;
         clampToGround?: boolean;
         classificationType?: Cesium.ClassificationType;
-        setHeight?: number | string;
-        addHeight?: number | string;
-        setHeight?: number | string;
-        addHeight?: number | string;
+        setHeight?: number | string | number[];
+        addHeight?: number | string | number[];
         highlight?: PolylinePrimitive.StyleOptions | any;
         label?: LabelPrimitive.StyleOptions | any | any;
     };
@@ -20530,6 +20786,8 @@ declare namespace TilesetLayer {
  * @param [options.flat] - 模型压平 对象, 可传入{@link TilesetFlat}构造参数
  * @param [options.flood] - 模型淹没 对象, 可传入{@link TilesetFlood}构造参数
  * @param [options.planClip] - 模型Plan裁剪 对象, 可传入{@link TilesetPlanClip}构造参数
+ * @param [options.modelUpAxis = Axis.Y] - Which axis is considered up when loading models for tile contents.
+ * @param [options.modelForwardAxis = Axis.X] - Which axis is considered forward when loading models for tile contents.
  * @param [options.shadows = ShadowMode.ENABLED] - 确定tileset是否投射或接收来自光源的阴影。
  * @param [options.cullWithChildrenBounds = true] - 优化选择。是否使用子绑定卷的并集来筛选贴图。
  * @param [options.cullRequestsWhileMoving = true] - 优化选择。不要要求贴图，当他们回来的时候可能不会使用，因为相机的运动。这个优化只适用于固定瓷砖组。
@@ -20555,13 +20813,34 @@ declare namespace TilesetLayer {
  * @param [options.loadSiblings = false] - 当skipLevelOfDetail = true时，判断遍历过程中是否总是下载可见块的兄弟块。如果为true则不会在已加载完模型后，自动从中心开始超清化模型。
  * @param [options.clippingPlanes] - {@link Cesium.ClippingPlaneCollection}用于选择性地禁用tile集的渲染。
  * @param [options.classificationType] - 确定地形、3D贴图或两者都将被这个贴图集分类。有关限制和限制的详细信息，请参阅{@link cesium3dtilesset #classificationType}。
+ * @param [options.ellipsoid = Ellipsoid.WGS84] - The ellipsoid determining the size and shape of the globe.
  * @param [options.pointCloudShading] - 基于几何误差和光照构造一个{@link Cesium.PointCloudShading}对象来控制点衰减的选项。
  * @param [options.lightColor] - 光的颜色当遮光模型。当undefined场景的浅色被使用代替。表示，rgb的倍数，new Cesium.Cartesian3(100.0,100.0, 100.0)表示白光增强到100倍。对Pbrt材质有效，倾斜摄影不生效。
+ * @param [options.imageBasedLighting] - 用于管理基于图像的光源的属性。
+ * @param [options.luminanceAtZenith = 0.2] - 模型材质亮度，The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
+ * @param [options.enableShowOutline = true] - 是否启用模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 可以将其设置为false，以避免在加载时对几何图形进行额外处理。如果为false，则会忽略showOutlines和outlineColor选项。
+ * @param [options.showOutline = true] - 是否显示模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 当为true时，将显示轮廓。当为false时，不显示轮廓。
+ * @param [options.outlineColor = Color.BLACK] - 渲染outline轮廓时要使用的颜色。
+ * @param [options.vectorClassificationOnly = false] - 是否只应使用瓦片集的向量瓦片进行分类。
+ * @param [options.vectorKeepDecodedPositions = false] - Whether vector tiles should keep decoded positions in memory. This is used with {@link Cesium3DTileFeature.getPolylinePositions}.
+ * @param [options.featureIdLabel = "featureId_0"] - Label of the feature ID set to use for picking and styling. For EXT_mesh_features, this is the feature ID's label property, or "featureId_N" (where N is the index in the featureIds array) when not specified. EXT_feature_metadata did not have a label field, so such feature ID sets are always labeled "featureId_N" where N is the index in the list of all feature Ids, where feature ID attributes are listed before feature ID textures. If featureIdLabel is an integer N, it is converted to the string "featureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.instanceFeatureIdLabel = "instanceFeatureId_0"] - Label of the instance feature ID set used for picking and styling. If instanceFeatureIdLabel is set to an integer N, it is converted to the string "instanceFeatureId_N" automatically. If both per-primitive and per-instance feature IDs are present, the instance feature IDs take priority.
+ * @param [options.showCreditsOnScreen = false] - Whether to display the credits of this tileset on screen.
+ * @param [options.splitDirection = SplitDirection.NONE] - The {@link SplitDirection} split to apply to this tileset.
+ * @param [options.projectTo2D = false] - 是否准确地将贴图集投影到2D。如果这是真的，那么贴图集将被准确地投影到2D，但是这样做会使用更多的内存。如果这是false，贴图集将使用更少的内存，并且仍然会在2D / CV模式下渲染，但是它的投影位置可能不准确。加载磁贴集后不能设置此参数。
  * @param [options.debugHeatmapTilePropertyName] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;作为热图着色的tile变量。所有渲染的贴图都将相对于其他指定的变量值着色。
- * @param [options.pickPrimitive] - 要在拾取过程中呈现的原语，而不是tile集合。
+ * @param [options.debugFreezeFrame = false] - For debugging only. Determines if only the tiles from last frame should be used for rendering.
+ * @param [options.debugColorizeTiles = false] - For debugging only. When true, assigns a random color to each tile.
  * @param [options.enableDebugWireframe = false] - 仅供调试。是否可以通过debugWireframe来切换查看模型的三角网线框图。
  * @param [options.debugWireframe = false] - 仅供调试。是否打开模型的三角网线框图。
+ * @param [options.debugShowBoundingVolume = false] - For debugging only. When true, renders the bounding volume for each tile.
+ * @param [options.debugShowContentBoundingVolume = false] - For debugging only. When true, renders the bounding volume for each tile's content.
+ * @param [options.debugShowViewerRequestVolume = false] - For debugging only. When true, renders the viewer request volume for each tile.
+ * @param [options.debugShowGeometricError = false] - For debugging only. When true, draws labels to indicate the geometric error of each tile.
+ * @param [options.debugShowRenderingStatistics = false] - For debugging only. When true, draws labels to indicate the number of commands, points, triangles and features for each tile.
+ * @param [options.debugShowMemoryUsage = false] - For debugging only. When true, draws labels to indicate the texture and geometry memory in megabytes used by each tile.
+ * @param [options.debugShowUrl = false] - For debugging only. When true, draws labels to indicate the url of each tile.
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -20632,6 +20911,8 @@ declare class TilesetLayer extends BaseGraphicLayer {
         flat?: any;
         flood?: any;
         planClip?: any;
+        modelUpAxis?: Cesium.Axis;
+        modelForwardAxis?: Cesium.Axis;
         shadows?: Cesium.ShadowMode;
         cullWithChildrenBounds?: boolean;
         cullRequestsWhileMoving?: boolean;
@@ -20657,13 +20938,34 @@ declare class TilesetLayer extends BaseGraphicLayer {
         loadSiblings?: boolean;
         clippingPlanes?: Cesium.ClippingPlaneCollection;
         classificationType?: Cesium.ClassificationType;
+        ellipsoid?: Cesium.Ellipsoid;
         pointCloudShading?: any;
         lightColor?: Cesium.Cartesian3;
+        imageBasedLighting?: Cesium.ImageBasedLighting;
+        luminanceAtZenith?: number;
         backFaceCulling?: boolean;
+        enableShowOutline?: boolean;
+        showOutline?: boolean;
+        outlineColor?: Cesium.Color;
+        vectorClassificationOnly?: boolean;
+        vectorKeepDecodedPositions?: boolean;
+        featureIdLabel?: string | number;
+        instanceFeatureIdLabel?: string | number;
+        showCreditsOnScreen?: boolean;
+        splitDirection?: Cesium.SplitDirection;
+        projectTo2D?: boolean;
         debugHeatmapTilePropertyName?: string;
-        pickPrimitive?: any;
+        debugFreezeFrame?: boolean;
+        debugColorizeTiles?: boolean;
         enableDebugWireframe?: boolean;
         debugWireframe?: boolean;
+        debugShowBoundingVolume?: boolean;
+        debugShowContentBoundingVolume?: boolean;
+        debugShowViewerRequestVolume?: boolean;
+        debugShowGeometricError?: boolean;
+        debugShowRenderingStatistics?: boolean;
+        debugShowMemoryUsage?: boolean;
+        debugShowUrl?: boolean;
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
             title?: string;
@@ -20793,6 +21095,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * 是否允许鼠标穿透拾取
      */
     allowDrillPick: boolean | ((...params: any[]) => any);
+    /**
+     * 模型材质亮度，The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
+     */
+    luminanceAtZenith: number;
     /**
      * 模型裁剪 对象
      */
@@ -23046,8 +23352,7 @@ declare class GridLayer extends BaseTileLayer {
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
- * @param [options.crs = CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
- * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
+ * @param [options.crs = CRS.EPSG4326] - 瓦片数据的坐标系信息
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
@@ -23103,7 +23408,6 @@ declare class ImageLayer extends BaseTileLayer {
         bbox?: number[];
         zIndex?: number;
         crs?: CRS;
-        chinaCRS?: ChinaCRS;
         proxy?: string;
         templateValues?: any;
         queryParameters?: any;
@@ -23143,6 +23447,10 @@ declare class ImageLayer extends BaseTileLayer {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+    /**
+     * 图片url地址
+     */
+    url: string;
     /**
      * 创建用于图层的 ImageryProvider对象
      * @param options - Provider参数，同图层构造参数。
@@ -25889,6 +26197,16 @@ declare class Map extends BaseClass {
         easingFunction?: Cesium.EasingFunction.Callback;
     }): void;
     /**
+     * 暂停执行 setCameraViewList
+     * @returns 无
+     */
+    pauseCameraViewList(): void;
+    /**
+     * 继续执行 setCameraViewList
+     * @returns 无
+     */
+    proceedCameraViewList(): void;
+    /**
      * 飞行至Cesium相关矢量对象处，是Cesium本身的flyTo方法。
      *
      * 将相机移至提供的一个或多个实体或数据源。如果数据源仍在加载过程中，或者可视化仍在加载中，此方法在执行飞行之前等待数据准备就绪。
@@ -28397,7 +28715,7 @@ declare class Tle {
      */
     readonly eccentricity: number;
     /**
-     * 近地点幅角，
+     * 近地点角矩(deg)
      * tle2的第35–42列
      */
     readonly perigee: number;
@@ -28500,20 +28818,37 @@ declare class Tle {
      */
     static ecfToEci(positionEcf: Cesium.Cartesian3, datetime: Date | Cesium.JulianDate | number): Cesium.Cartesian3;
     /**
-     * 卫星开普勒六根数转换到两行轨道根数 【测试算法，待验证优化】
-     * @param startYear - 开始年,比如2017年时传入17
-     * @param startTime - 开始时间，每年1月1日0点为0，后逐渐累积，整数部分为日，小数部分为时分秒
-     * @param six - 轨道六根数,顺序为:
-     *   Mean:平均运动（每日绕行圈数）必须小于100,
-     *   Eccentricity:离心率（小数,小于1）,
-     *   Inclination:轨道的交角（deg），不能是负数,
-     *   Argument of perigee :近地点角矩(deg)，不超过360,
-     *   RAAN :升交点赤经（deg），不超过360,
-     *   Mean :在轨圈数
-     * @param name - 卫星两位数编号，如01,最多五位数
+     * 开普勒六根数 转换到 两行轨道根数 【测试算法，待验证优化】
+     * @param options - 参数：
+     * @param options.name - 卫星两位数编号，如01,最多五位数
+     * @param options.epochYear - 发射年份(最后两位数字),比如2017年时传入17
+     * @param options.epochDay - 开始时间，每年1月1日0点为0，后逐渐累积，整数部分为日，小数部分为时分秒
+     * @param options.inclination - 轨道的交角，倾角，单位：度
+     * @param options.rightAscension - 升交点赤经，单位：度
+     * @param options.eccentricity - 轨道偏心率
+     * @param options.perigee - 近地点角矩(deg)
+     * @param options.meanAnomaly - 平近点角，单位：度
+     * @param options.meanMotion - 每天绕地球公转圈数(平均运动)
      * @returns 两行轨道根数
      */
-    static coe2tle(startYear: number, startTime: number, six: number[], name: string): string[];
+    static coe2tle(options: {
+        name: string;
+        epochYear: number;
+        epochDay: number;
+        inclination: number;
+        rightAscension: number;
+        eccentricity: number;
+        perigee: number;
+        meanAnomaly: number;
+        meanMotion: number;
+    }): string[];
+    /**
+     * 两行轨道根数 转换到 开普勒六根数
+     * @param tle1 - 两行轨道根数1
+     * @param tle2 - 两行轨道根数2
+     * @returns 卫星开普勒六根数对象
+     */
+    static tle2coe(tle1: string, tle2: string): any;
 }
 
 declare namespace Tle {
@@ -31888,6 +32223,45 @@ declare class Skyline extends BaseThing {
      * 天际线宽度
      */
     width: number;
+}
+
+/**
+ * 天际线体
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.color = new Cesium.Color(1.0, 0.0, 0.0)] - 边际线颜色
+ * @param [options.width = 2] - 天际线宽度
+ * @param [options.id = createGuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
+ */
+declare class SkylineBody extends BaseThing {
+    constructor(options?: {
+        color?: Cesium.Color;
+        width?: number;
+        id?: string | number;
+        enabled?: boolean;
+        eventParent?: BaseClass | boolean;
+    });
+    /**
+     * 边际线颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 天际线宽度
+     */
+    width: number;
+    /**
+     * 对象添加到地图前创建一些对象的钩子方法，
+     * 只会调用一次
+     * @returns 无
+     */
+    _mountedHook(): void;
+    /**
+     * 销毁当前对象
+     * @param [noDel = false] - false:会自动delete释放所有属性，true：不delete绑定的变量
+     * @returns 无
+     */
+    destroy(noDel?: boolean): void;
 }
 
 /**
@@ -35456,7 +35830,7 @@ declare namespace PolyUtil {
      * @param [alt] - 高度值
      * @returns 坐标集合
      */
-    function getGridPointsByPoly(positions: Cartesian3[], step: number, alt?: number): LngLatPoint[] | undefined;
+    function getGridPointsByPoly(positions: Cesium.Cartesian3[], step: number, alt?: number): LngLatPoint[] | undefined;
     /**
      * 计算面内最大、最小高度值，并 使用离屏渲染深度图的方式加速计算范围内的任何可见的物体的高度 <br />
      * @param positions - 坐标数组

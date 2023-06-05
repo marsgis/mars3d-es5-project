@@ -23,8 +23,7 @@ function initWidgetView(_thisWidget) {
   thisWidget.startEditing()
 }
 
-
-let newAttr = {}// 解决的问题：在updateAttr捕获到内容改变后，会导致仅保留最后一次更改的属性数据
+let newAttr = {} // 解决的问题：在updateAttr捕获到内容改变后，会导致仅保留最后一次更改的属性数据
 
 //属性编辑相关
 var plotEdit = {
@@ -99,6 +98,7 @@ var plotEdit = {
         ...attr.attr
       }
     }
+
     this._last_attr = attr
 
     let config = window.styleConfig[attr.type] || window.styleConfig[attr.styleType] || {}

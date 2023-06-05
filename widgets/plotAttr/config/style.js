@@ -1828,6 +1828,48 @@ const styleConfig = {
       { name: "endFovV", label: "垂直结束角度", type: "slider", min: 0.0, max: 90.0, step: 0.01, defval: 1.0 }
     ]
   },
+
+  satellite: {
+    name: "卫星",
+    primitive: false,
+    style: [
+      { name: "tle1", label: "tle1", type: "text", defval: "" },
+      { name: "tle2", label: "tle2", type: "text", defval: "" },
+
+      { name: "path_width", label: "线宽", type: "number", step: 1, defval: 4.0 },
+      { name: "path_color", label: "颜色", type: "color", defval: "#3388ff" },
+
+      { name: "model_url", label: "路径", type: "text", defval: "" },
+      { name: "model_scale", label: "比例", type: "number", step: 1, defval: 1.0 },
+      { name: "model_minimumPixelSize", label: "最小像素大小", type: "number", step: 1, defval: 0.0 },
+      {
+        name: "model_distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "model_distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show(style, allStyle, graphicType) {
+          return style.model_distanceDisplayCondition
+        }
+      },
+      {
+        name: "model_distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return style.model_distanceDisplayCondition
+        }
+      }
+    ]
+  },
   conicSensor: {
     name: "卫星圆锥体",
     style: [
@@ -2225,8 +2267,8 @@ const styleConfig = {
       { name: "width", label: "墙厚度", type: "number", step: 1, defval: 9999.0 },
       { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
       { name: "opacity", label: "透明度", type: "number", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
-      { name: "closure", label: "是否闭合", type: "radio", defval: false }, 
-      { name: "hasShadows", label: "是否阴影", type: "radio", defval: false }, 
+      { name: "closure", label: "是否闭合", type: "radio", defval: false },
+      { name: "hasShadows", label: "是否阴影", type: "radio", defval: false }
     ]
   },
   diffuseWall: {
