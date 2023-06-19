@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.10
- * 编译日期：2023-06-05 18:30:23
+ * 版本信息：v3.5.12
+ * 编译日期：2023-06-19 10:10:19
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -915,7 +915,11 @@ declare enum Icon {
  * 多语种文本配置，
  * 值为数组，对应{@link LangType}按照固定顺序排列,如：[中文简体,中文繁體,English]
  * @example
- * mars3d.Lang["_单击开始绘制"][mars3d.LangType.ZH] ="新的中文提示语句";
+ * // 更新Lang值
+ * mars3d.Util.setLangText("_右击菜单删除", "新的提示语句", mars3d.LangType.ZH)
+ *
+ * // 获取Lang值
+ * const text = mars3d.Util.getLangText("_右击菜单删除", mars3d.LangType.ZH)
  */
 declare enum Lang {
     "_放大" = "[\"\u653E\u5927\",\"\u653E\u5927\",\"Zoom In\"]",
@@ -7964,6 +7968,7 @@ declare namespace BoxEntity {
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`material材质参数`将被覆盖。
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1.0] - 边框宽度
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -7994,6 +7999,7 @@ declare namespace BoxEntity {
         material?: Cesium.MaterialProperty | BaseMaterialProperty | Cesium.Color;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineWidth?: string;
         outlineColor?: string | Cesium.Color;
@@ -8237,6 +8243,7 @@ declare namespace CircleEntity {
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`material材质参数`将被覆盖。
      * @property [color = "#3388ff"] - 填充颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -8273,6 +8280,7 @@ declare namespace CircleEntity {
         material?: Cesium.MaterialProperty | BaseMaterialProperty | Cesium.Color;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
@@ -8647,6 +8655,7 @@ declare namespace CorridorEntity {
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -8679,6 +8688,7 @@ declare namespace CorridorEntity {
         material?: Cesium.MaterialProperty | BaseMaterialProperty | Cesium.Color;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
@@ -10469,6 +10479,7 @@ declare namespace PlaneEntity {
      * @property [randomColor = false] - 是否随机颜色
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -10500,6 +10511,7 @@ declare namespace PlaneEntity {
         randomColor?: boolean;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
@@ -10726,6 +10738,7 @@ declare namespace PolygonEntity {
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [outline = false] - 是否边框
@@ -10769,6 +10782,7 @@ declare namespace PolygonEntity {
         color?: string | Cesium.Color;
         opacity?: number;
         randomColor?: boolean;
+        image?: string;
         stRotation?: number;
         stRotationDegree?: number;
         outline?: boolean;
@@ -11210,6 +11224,7 @@ declare namespace RectangleEntity {
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -11245,6 +11260,7 @@ declare namespace RectangleEntity {
         material?: Cesium.MaterialProperty | BaseMaterialProperty | Cesium.Color;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineWidth?: number;
         outlineColor?: string | Cesium.Color;
@@ -11783,6 +11799,7 @@ declare namespace WallEntity {
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [closure = false] - 是否闭合, 在positions是属性机制的回调对象时无效
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
@@ -11812,6 +11829,7 @@ declare namespace WallEntity {
         material?: Cesium.MaterialProperty | BaseMaterialProperty | Cesium.Color;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         closure?: boolean;
         outline?: boolean;
         outlineWidth?: number;
@@ -12648,6 +12666,19 @@ declare class Sector extends PolygonEntity {
      * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象 或 Cesium.PolygonHierarchy
      */
     positions: Cesium.Cartesian3[];
+    /**
+     * 异步计算更新坐标高度进行贴地(或贴模型)，内部自动调用{@link PolyUtil#computeSurfacePoints}方法处理。
+     * @param [options = {}] - 参数对象:
+     * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+     * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+     * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
+     * @returns 异步计算完成的Promise
+     */
+    autoSurfaceHeight(options?: {
+        has3dtiles?: boolean;
+        objectsToExclude?: any;
+        offset?: number;
+    }): Promise<any>;
 }
 
 /**
@@ -14115,6 +14146,7 @@ declare namespace BoxPrimitive {
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
@@ -14146,6 +14178,7 @@ declare namespace BoxPrimitive {
         material?: Cesium.Material;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
@@ -14244,6 +14277,7 @@ declare namespace CirclePrimitive {
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
@@ -14279,6 +14313,7 @@ declare namespace CirclePrimitive {
         material?: Cesium.Material;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
@@ -14762,6 +14797,7 @@ declare namespace CorridorPrimitive {
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
      * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
@@ -14795,6 +14831,7 @@ declare namespace CorridorPrimitive {
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         outlineOpacity?: number;
+        image?: string;
         height?: number;
         diffHeight?: number;
         extrudedHeight?: number;
@@ -16108,6 +16145,7 @@ declare namespace PlanePrimitive {
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
@@ -16137,6 +16175,7 @@ declare namespace PlanePrimitive {
         roll?: number;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         materialType?: string;
         materialOptions?: any;
         material?: Cesium.Material;
@@ -16246,6 +16285,7 @@ declare namespace PointPrimitive {
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
+     * @property [clampToGround = false] - 是否贴地, 仅限普通坐标. 提示：Cesium默认不支持贴地，是内部计算了贴地高度值。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
@@ -16269,6 +16309,7 @@ declare namespace PointPrimitive {
         visibleDepth?: boolean;
         disableDepthTestDistance?: number;
         translucencyByDistance?: Cesium.NearFarScalar;
+        clampToGround?: boolean;
         setHeight?: number | string;
         addHeight?: number | string;
         label?: LabelPrimitive.StyleOptions | any;
@@ -16328,6 +16369,10 @@ declare class PointPrimitive extends BasePointPrimitive {
      * 当加载primitive数据的内部Cesium容器
      */
     readonly primitiveCollection: Cesium.PointPrimitiveCollection;
+    /**
+     * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
+     */
+    position: Cesium.Cartesian3 | LngLatPoint;
 }
 
 declare namespace PolygonPrimitive {
@@ -16339,7 +16384,7 @@ declare namespace PolygonPrimitive {
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
-     * @property [image] - 当为贴图时，贴图的url
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [outline = false] - 是否边框
@@ -16759,7 +16804,7 @@ declare namespace RectanglePrimitive {
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
-     * @property [image] - 当为贴图时，贴图的url
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
@@ -17328,6 +17373,7 @@ declare namespace WallPrimitive {
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [color = "#3388ff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
+     * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [closure = false] - 是否闭合
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -17355,6 +17401,7 @@ declare namespace WallPrimitive {
         material?: Cesium.Material;
         color?: string | Cesium.Color;
         opacity?: number;
+        image?: string;
         closure?: boolean;
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
@@ -18642,7 +18689,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
         wkid?: number;
         parameters?: any;
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: string | Cesium.DefaultProxy;
         IdField?: string;
         minimumLevel?: number;
         maximumLevel?: number;
@@ -19823,6 +19870,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * 是否自动激活编辑（true时，单击后自动激活编辑）
      */
     hasEdit: boolean;
+    /**
+     * 是否正在编辑状态
+     */
+    readonly isDrawing: boolean;
     /**
      * 是否正在编辑状态
      */
@@ -21365,7 +21416,7 @@ declare class WfsLayer extends LodGraphicLayer {
         };
         geometryName?: string;
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: string | Cesium.DefaultProxy;
         layer: string;
         IdField?: string;
         getCapabilities?: boolean;
@@ -21609,7 +21660,7 @@ declare class GroupLayer extends BaseGraphicLayer {
 declare class TerrainLayer extends BaseLayer {
     constructor(options?: {
         terrain: {
-            type?: TerrainType;
+            type?: string | TerrainType;
             url: string | Cesium.Resource;
             requestVertexNormals?: boolean;
             requestWaterMask?: boolean;
@@ -25411,7 +25462,7 @@ declare namespace Map {
      * @property [requestMetadata = true] - 是否应该从服务器请求每个块元数据(如果可用)。
      */
     type terrainOptions = {
-        type?: TerrainType;
+        type?: string | TerrainType;
         url: string | Cesium.Resource;
         show?: boolean;
         requestVertexNormals?: boolean;
@@ -30855,7 +30906,7 @@ declare class BaiduPOI {
         key?: string[];
         city?: string;
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: Cesium.DefaultProxy;
     });
     /**
      * 百度key数组，内部轮询使用
@@ -31029,7 +31080,7 @@ declare class GaodePOI {
     constructor(options?: {
         key?: string[];
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: Cesium.DefaultProxy;
     });
     /**
      * 高德key数组，内部轮询使用
@@ -31192,7 +31243,7 @@ declare class GaodeRoute {
     constructor(options?: {
         key?: string[];
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: Cesium.DefaultProxy;
     });
     /**
      * 高德key数组，内部轮询使用
@@ -31338,7 +31389,7 @@ declare class QueryArcServer extends BaseClass {
         url: string;
         pageSize?: number;
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: Cesium.DefaultProxy;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -31450,7 +31501,7 @@ declare class QueryGeoServer extends BaseClass {
         layer: string;
         crs?: string;
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: Cesium.DefaultProxy;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -31532,7 +31583,7 @@ declare class TdtPOI {
     constructor(options?: {
         key?: string[];
         headers?: any;
-        proxy?: Cesium.Proxy;
+        proxy?: Cesium.DefaultProxy;
     });
     /**
      * 天地图key数组，内部轮询使用
@@ -34723,7 +34774,7 @@ declare namespace LayerUtil {
      * @returns 地形对象
      */
     function createTerrainProvider(options: {
-        type: TerrainType;
+        type: string | TerrainType;
         url: string | Cesium.Resource;
         proxy?: string;
         templateValues?: any;
@@ -36399,10 +36450,18 @@ declare namespace Util {
     /**
      * 根据设置的lang参数，获取当前key对应语言的文本内容。
      * @param key - 文本key
-     * @param langType - 使用的语言
+     * @param [langType = 0] - 使用的语言
      * @returns lang参数指定的对应文本内容
      */
-    function getLangText(key: string, langType: LangType): void;
+    function getLangText(key: string, langType?: LangType): void;
+    /**
+     * 更新Lang值，设置当前key对应语言的文本内容。
+     * @param key - 文本key
+     * @param text - 文本内容
+     * @param [langType = 0] - 使用的语言
+     * @returns 是否更新成功
+     */
+    function setLangText(key: string, text: string, langType?: LangType): void;
     /**
      * 进入全屏
      * @param container - 指定DOM元素，如 map.container
