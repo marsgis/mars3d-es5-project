@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.12
- * 编译日期：2023-06-19 10:10:19
+ * 版本信息：v3.5.13
+ * 编译日期：2023-06-26 22:26:47
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -6137,6 +6137,72 @@ declare class Route extends BasePointPrimitive {
         has3dtiles?: boolean;
         objectsToExclude?: any;
     }): Promise<any>;
+}
+
+/**
+ * 天际线体 矢量对象 <br>
+ * 说明：自动计算当前相机所视区域的天际线闭合区域
+ * @param options - 参数对象，包括以下：
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
+ * @param [options.attributes] - [cesium原生]每个实例的属性。
+ * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
+ * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
+ * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
+ * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
+ * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
+ * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
+ * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
+ * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
+ * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
+ * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class SkylineBody extends PolygonPrimitive {
+    constructor(options: {
+        style: PolygonPrimitive.StyleOptions | any;
+        attr?: any;
+        appearance?: Cesium.Appearance;
+        attributes?: Cesium.Appearance;
+        depthFailAppearance?: Cesium.Appearance;
+        vertexCacheOptimize?: boolean;
+        interleave?: boolean;
+        compressVertices?: boolean;
+        releaseGeometryInstances?: boolean;
+        allowPicking?: boolean;
+        cull?: boolean;
+        asynchronous?: boolean;
+        debugShowBoundingVolume?: boolean;
+        debugShowShadowVolume?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 相机位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
+     */
+    position: Cesium.Cartesian3 | LngLatPoint;
 }
 
 declare namespace Tetrahedron {
@@ -25112,6 +25178,10 @@ declare class KeyboardRoam extends BaseControl {
      * 相机旋转的类型
      */
     static MoveType: MoveType;
+    /**
+     * 设置对象的启用和禁用状态。
+     */
+    enabled: boolean;
 }
 
 /**
@@ -32277,45 +32347,6 @@ declare class Skyline extends BaseThing {
 }
 
 /**
- * 天际线体
- * @param [options] - 参数对象，包括以下：
- * @param [options.color = new Cesium.Color(1.0, 0.0, 0.0)] - 边际线颜色
- * @param [options.width = 2] - 天际线宽度
- * @param [options.id = createGuid()] - 对象的id标识
- * @param [options.enabled = true] - 对象的启用状态
- * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
- */
-declare class SkylineBody extends BaseThing {
-    constructor(options?: {
-        color?: Cesium.Color;
-        width?: number;
-        id?: string | number;
-        enabled?: boolean;
-        eventParent?: BaseClass | boolean;
-    });
-    /**
-     * 边际线颜色
-     */
-    color: Cesium.Color;
-    /**
-     * 天际线宽度
-     */
-    width: number;
-    /**
-     * 对象添加到地图前创建一些对象的钩子方法，
-     * 只会调用一次
-     * @returns 无
-     */
-    _mountedHook(): void;
-    /**
-     * 销毁当前对象
-     * @param [noDel = false] - false:会自动delete释放所有属性，true：不delete绑定的变量
-     * @returns 无
-     */
-    destroy(noDel?: boolean): void;
-}
-
-/**
  * 地下模式类
  * @param [options] - 参数对象，包括以下：
  * @param [options.alpha = 0.5] - 透明度  0.0-1.0
@@ -35241,7 +35272,7 @@ declare namespace PointUtil {
      * 获取position的最终value值，
      * 因为cesium经常属性或绑定一层，通过该方法可以内部去判断是否有getValue或_value进行取最终value值。
      * @param position - 各种位置属性对象
-     * @param [time = Cesium.JulianDate.now()] - 指定的时间值
+     * @param [time = Cesium.JulianDate.now()] - 指定的时间值 ,如 map.clock.currentTime
      * @returns 具体的Cartesian3对象坐标值
      */
     function getPositionValue(position: Cesium.Cartesian3 | Cesium.SampledPositionProperty | any, time?: Cesium.JulianDate): Cesium.Cartesian3;
