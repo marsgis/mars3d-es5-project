@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.13
- * 编译日期：2023-06-26 22:26:47
+ * 版本信息：v3.5.14
+ * 编译日期：2023-07-03 18:40:07
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -9327,6 +9327,12 @@ declare class EditTileset extends EditBase {
 }
 
 /**
+ * Video2D对象 标绘处理对应的编辑类
+ */
+declare class EditVideo2D extends EditBase {
+}
+
+/**
  * Wall对象 标绘处理对应的编辑类，
  */
 declare class EditWall extends EditPoly {
@@ -11770,6 +11776,10 @@ declare class Video2D extends PolygonEntity {
         flyToOptions?: any;
     });
     /**
+     * 编辑处理类
+     */
+    readonly EditClass: EditVideo2D;
+    /**
      * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
      */
     position: Cesium.Cartesian3 | LngLatPoint;
@@ -12573,7 +12583,8 @@ declare class Lune extends PolygonEntity {
 /**
  * 正多边形  Entity矢量数据
  * @param options - 参数对象，包括以下：
- * @param options.positions - 坐标位置
+ * @param options.position - 中心点坐标位置
+ * @param [options.positions] - 坐标位置
  * @param options.style - 样式信息,还包括：
  * @param [options.style.border = 3] - 边数量
  * @param options.style.radius - 区域的半径（单位：米）
@@ -12600,7 +12611,8 @@ declare class Lune extends PolygonEntity {
  */
 declare class Regular extends PolygonEntity {
     constructor(options: {
-        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
+        position: LngLatPoint | Cesium.Cartesian3 | any[];
+        positions?: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: {
             border?: number;
             radius: number;
@@ -12653,7 +12665,8 @@ declare class Regular extends PolygonEntity {
 /**
  * 扇形(3个点)  Entity矢量数据
  * @param options - 参数对象，包括以下：
- * @param options.positions - 坐标位置
+ * @param options.position - 中心点坐标位置
+ * @param [options.positions] - 坐标位置
  * @param options.style - 样式信息,还包括：
  * @param options.style.radius - 扇形区域的半径（单位：米）
  * @param options.style.startAngle - 扇形区域的开始角度(正东方向为0,顺时针到360度)
@@ -12681,7 +12694,8 @@ declare class Regular extends PolygonEntity {
  */
 declare class Sector extends PolygonEntity {
     constructor(options: {
-        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
+        position: LngLatPoint | Cesium.Cartesian3 | any[];
+        positions?: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: {
             radius: number;
             startAngle: number;
@@ -31522,6 +31536,7 @@ declare class QueryArcServer extends BaseClass {
      * @param [queryOptions.where] - 自定义的检索条件，与text二选一
      * @param [queryOptions.graphic] - 限定的搜索区域
      * @param [queryOptions.page = true] - 是否分页查询,false时不分页，一次性查询返回
+     * @param [queryOptions.parameters] - 其他参数，arcgis服务本身支持的参数均支持
      * @param [queryOptions.success] - 查询完成的回调方法
      * @param [queryOptions.error] - 查询失败的回调方法
      * @returns 查询完成的Promise,等价于success参数
@@ -31533,6 +31548,7 @@ declare class QueryArcServer extends BaseClass {
         where?: string;
         graphic?: BaseGraphic | any;
         page?: boolean;
+        parameters?: any;
         success?: (...params: any[]) => any;
         error?: (...params: any[]) => any;
     }): Promise<any>;
@@ -33205,6 +33221,7 @@ declare type getSlope_endItem = (event: {
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
  * @param [options.diffHeight] - 当显示开挖区域的井时，设置所有区域的挖掘深度（单位：米）
  * @param [options.splitNum = 30] - 当显示开挖区域的井时，井墙面每两点之间插值个数(概略值，有经纬网网格来插值)
+ * @param [options.dynamicView = true] - 是否监听事件，动态隐藏非视域内区域
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -33217,6 +33234,7 @@ declare class TerrainClip extends TerrainOldEditBase {
         imageBottom?: string;
         diffHeight?: number;
         splitNum?: number;
+        dynamicView?: boolean;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
