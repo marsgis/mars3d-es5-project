@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.5.14
- * 编译日期：2023-07-03 18:40:07
+ * 版本信息：v3.5.15
+ * 编译日期：2023-07-10 19:15:42
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -1847,6 +1847,7 @@ declare class Compass extends BaseControl {
 /**
  * 时钟仪表控制 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
+ * @param [ticks = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0]] - 可选的步长
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -1856,7 +1857,7 @@ declare class Animation extends BaseCzmControl {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
-    });
+    }, ticks?: number[]);
 }
 
 /**
@@ -1934,12 +1935,14 @@ declare class Geocoder extends BaseCzmControl {
 /**
  * 全屏按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
+ * @param [options.title = "初始视图"] - 提示信息
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
  */
 declare class HomeButton extends BaseCzmControl {
     constructor(options?: {
+        title?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2545,9 +2548,9 @@ declare class BaseClass {
     /**
      * 是否绑定了抛出事件到指定父类
      * @param obj - 父类对象
-     * @returns 当前对象本身,可以链式调用
+     * @returns 是否绑定了抛出事件
      */
-    hasEventParent(obj: any): BaseClass;
+    hasEventParent(obj: any): boolean;
 }
 
 /**
@@ -6139,72 +6142,6 @@ declare class Route extends BasePointPrimitive {
     }): Promise<any>;
 }
 
-/**
- * 天际线体 矢量对象 <br>
- * 说明：自动计算当前相机所视区域的天际线闭合区域
- * @param options - 参数对象，包括以下：
- * @param options.style - 样式信息
- * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
- * @param [options.attributes] - [cesium原生]每个实例的属性。
- * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
- * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
- * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
- * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
- * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
- * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
- * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
- * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
- * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
- * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
- * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
- * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
- * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
- * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
- * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
- * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
- * @param [options.show = true] - 矢量数据是否显示
- * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
- * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
- * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
- */
-declare class SkylineBody extends PolygonPrimitive {
-    constructor(options: {
-        style: PolygonPrimitive.StyleOptions | any;
-        attr?: any;
-        appearance?: Cesium.Appearance;
-        attributes?: Cesium.Appearance;
-        depthFailAppearance?: Cesium.Appearance;
-        vertexCacheOptimize?: boolean;
-        interleave?: boolean;
-        compressVertices?: boolean;
-        releaseGeometryInstances?: boolean;
-        allowPicking?: boolean;
-        cull?: boolean;
-        asynchronous?: boolean;
-        debugShowBoundingVolume?: boolean;
-        debugShowShadowVolume?: boolean;
-        popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions | any;
-        tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions | any;
-        contextmenuItems?: any;
-        id?: string | number;
-        name?: string;
-        show?: boolean;
-        eventParent?: BaseClass | boolean;
-        allowDrillPick?: boolean | ((...params: any[]) => any);
-        flyTo?: boolean;
-        flyToOptions?: any;
-    });
-    /**
-     * 相机位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
-     */
-    position: Cesium.Cartesian3 | LngLatPoint;
-}
-
 declare namespace Tetrahedron {
     /**
      * 四面体（顶部正方形+倒立的三角椎体） 支持的样式信息
@@ -9291,13 +9228,6 @@ declare class EditPolygon extends EditPoly {
 }
 
 /**
- * Polygon对象 标绘处理对应的编辑类，
- * 用于外部扩展使用，绘制的点与显示的点不一致的标号
- */
-declare class EditPolygonEx extends EditPolygon {
-}
-
-/**
  * Polygon对象Grid视频编辑 标绘处理对应的编辑类
  */
 declare class EditPolygonGrid extends EditPoly {
@@ -11010,6 +10940,11 @@ declare class PolygonEntity extends BasePolyEntity {
      * @returns 当前坐标集合
      */
     setCallbackPositions(positions?: string[] | any[][] | LngLatPoint[]): Cesium.Cartesian3[];
+    /**
+     * 获取数据的最大高度
+     * @returns 高度
+     */
+    getMaxHeight(): number;
 }
 
 declare namespace PolylineEntity {
@@ -15224,6 +15159,7 @@ declare namespace DoubleSidedPlane {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
+     * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
         dimensions_x?: number;
@@ -15245,6 +15181,7 @@ declare namespace DoubleSidedPlane {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -18728,6 +18665,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.clustering] - 设置聚合相关参数[entity点类型时]：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
@@ -18802,6 +18740,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             style?: BillboardEntity.StyleOptions | any;
             radius?: number;
@@ -19005,6 +18944,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.clustering] - 设置聚合相关参数（仅对Entity点数据有效）：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
@@ -19077,6 +19017,7 @@ declare class BusineDataLayer extends GraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             style?: BillboardEntity.StyleOptions | any;
             radius?: number;
@@ -19165,6 +19106,7 @@ declare class BusineDataLayer extends GraphicLayer {
  * @param [options.clustering] - 设置聚合相关参数：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
@@ -19216,6 +19158,7 @@ declare class GeodePoiLayer extends LodGraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             style?: BillboardEntity.StyleOptions | any;
             radius?: number;
@@ -19354,6 +19297,7 @@ declare namespace GeoJsonLayer {
  * @param [options.clustering] - 设置聚合相关参数（仅对Entity点数据有效）：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
@@ -19429,6 +19373,7 @@ declare class GeoJsonLayer extends GraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             style?: BillboardEntity.StyleOptions | any;
             radius?: number;
@@ -19777,6 +19722,7 @@ declare namespace GraphicLayer {
  * @param [options.clustering] - 设置聚合相关参数（仅对Entity点数据有效）：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
@@ -19840,6 +19786,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             style?: BillboardEntity.StyleOptions | any;
             radius?: number;
@@ -20311,11 +20258,10 @@ declare namespace I3SLayer {
  *
  * //以下是3dtiles图层参数
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
- * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
- * 解释：
- * 这个参数默认是512，也即是当几何体和纹理资源大于512MB的时候，cesium就会淘汰掉当前帧中没有visited的所有块，这个值其实很小，也是cesium为了避免资源占用过高的一个保障.<br />
- * 这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。<br />
- * 这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。<br />
+ * @param [options.cacheBytes = 536870912] - 如果缓存包含当前视图不需要的块，则块缓存将被修剪到的大小(以字节为单位)。
+ * @param [options.maximumCacheOverflowBytes = 536870912] - 如果当前视图需要超过{@link Cesium3DTileset#cacheBytes}，则允许缓存净空的最大额外内存(以字节为单位)。
+ * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
+ * *
  * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
  * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式。
  * @param [options.customShader] - 自定义shader效果
@@ -20384,6 +20330,8 @@ declare class I3SLayer extends BaseGraphicLayer {
         traceFetches?: boolean;
         geoidTiledTerrainProvider?: any | Cesium.ArcGISTiledElevationTerrainProvider;
         maximumScreenSpaceError?: number;
+        cacheBytes?: number;
+        maximumCacheOverflowBytes?: number;
         maximumMemoryUsage?: number;
         style?: any | Cesium.Cesium3DTileStyle | ((...params: any[]) => any);
         marsJzwStyle?: boolean | string;
@@ -20586,6 +20534,7 @@ declare namespace LodGraphicLayer {
  * @param [options.clustering] - 设置聚合相关参数：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
  * @param [options.clustering.radiusIn = radius-5] - 圆形图标的内圆半径大小（单位：像素）
@@ -20652,6 +20601,7 @@ declare class LodGraphicLayer extends GraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             radius?: number;
             radiusIn?: number;
@@ -20732,7 +20682,9 @@ declare class LodGraphicLayer extends GraphicLayer {
  * OSM在线 建筑物模型
  * @param options - 参数对象，参数包括以下：
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。数值加大，能让最终成像变模糊
- * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)。这个参数默认是512，也即是当几何体和纹理资源大于512MB的时候，Cesium就会淘汰掉当前帧中没有visited的所有块，这个值其实很小，也是cesium为了避免资源占用过高的一个保障，不过上述我们也估算过最差情况下，没有做纹理crn压缩的情况下，这个值很容易被超过，导致很多人误以为cesium的淘汰没有效果。这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。结论：这个参数要根据当前显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50 % 左右，比如我的显存是6G，这个可以设置到3000左右。那么既保证不超过显存限制，又可以最大利用显存缓存，配合crn压缩之后，这个几乎可以保证你第二次查看模型同一位置的时候，看不到加载过程，非常棒。
+ * @param [options.cacheBytes = 536870912] - 如果缓存包含当前视图不需要的块，则块缓存将被修剪到的大小(以字节为单位)。
+ * @param [options.maximumCacheOverflowBytes = 536870912] - 如果当前视图需要超过{@link Cesium3DTileset#cacheBytes}，则允许缓存净空的最大额外内存(以字节为单位)。
+ * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
  * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
  * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式。
  * @param [options.customShader] - 自定义shader效果
@@ -20778,6 +20730,8 @@ declare class LodGraphicLayer extends GraphicLayer {
 declare class OsmBuildingsLayer extends TilesetLayer {
     constructor(options: {
         maximumScreenSpaceError?: number;
+        cacheBytes?: number;
+        maximumCacheOverflowBytes?: number;
         maximumMemoryUsage?: number;
         style?: any | Cesium.Cesium3DTileStyle | ((...params: any[]) => any);
         marsJzwStyle?: boolean | string;
@@ -20882,11 +20836,9 @@ declare namespace TilesetLayer {
  * @param options - 参数对象， 构造参数建议从{@link http://mars3d.cn/editor-vue.html?id=layer-tileset/manager/edit|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
  * @param options.url - tileset的主JSON文件的 url ，ION资源时可以写 url: Cesium.IonResource.fromAssetId(8564),
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
- * @param [options.maximumMemoryUsage = 512] - 数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
- * 解释：
- * 这个参数默认是512，也即是当几何体和纹理资源大于512MB的时候，cesium就会淘汰掉当前帧中没有visited的所有块，这个值其实很小，也是cesium为了避免资源占用过高的一个保障.<br />
- * 这个值如果设置的过小，导致cesium几乎每帧都在尝试淘汰数据，增加了遍历的时间，也同时增加了崩溃的风险。<br />
- * 这个值如果设置的过大，cesium的淘汰机制失效，那么容易导致显存超过显卡内存，也会导致崩溃。 这个值应该处于最差视角下资源占用 和 显存最大量之间。<br />
+ * @param [options.cacheBytes = 536870912] - 如果缓存包含当前视图不需要的块，则块缓存将被修剪到的大小(以字节为单位)。
+ * @param [options.maximumCacheOverflowBytes = 536870912] - 如果当前视图需要超过{@link Cesium3DTileset#cacheBytes}，则允许缓存净空的最大额外内存(以字节为单位)。
+ * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
  * @param [options.position] - 自定义新的中心点位置（移动模型）
  * @param [options.position.lng] - 经度值, 180 - 180
  * @param [options.position.lat] - 纬度值, -90 - 90
@@ -21008,6 +20960,8 @@ declare class TilesetLayer extends BaseGraphicLayer {
     constructor(options: {
         url: string | Cesium.Resource | Cesium.IonResource;
         maximumScreenSpaceError?: number;
+        cacheBytes?: number;
+        maximumCacheOverflowBytes?: number;
         maximumMemoryUsage?: number;
         position?: {
             lng?: number;
@@ -21442,6 +21396,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.clustering] - Entity点数据时，设置聚合相关参数：
  * @param [options.clustering.enabled = false] - 是否开启聚合
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
@@ -21530,6 +21485,7 @@ declare class WfsLayer extends LodGraphicLayer {
         clustering?: {
             enabled?: boolean;
             pixelRange?: number;
+            minimumClusterSize?: number;
             clampToGround?: boolean;
             style?: BillboardEntity.StyleOptions | any;
             radius?: number;
@@ -25431,7 +25387,6 @@ declare namespace Map {
      * @property [distanceLegend] - 比例尺, 对应 {@link DistanceLegend}构造参数
      * @property [clockAnimate] - 时钟控制, 对应{@link ClockAnimate}构造参数
      * @property [animation = true] - 时钟仪表控制(Cesium原生)
-     * @property [animationTicks] - 时钟仪表控制(Cesium原生)的可选步长
      * @property [timeline = true] - 时间线, 是否创建下侧时间线控件面板
      * @property [overviewMap] - 鹰眼地图, 对应{@link OverviewMap }构造参数
      * @property [mapSplit] - 卷帘对比, 对应{@link MapSplit }构造参数
@@ -25472,7 +25427,6 @@ declare namespace Map {
         distanceLegend?: any;
         clockAnimate?: any;
         animation?: boolean;
-        animationTicks?: number[];
         timeline?: boolean;
         overviewMap?: any;
         mapSplit?: any;
@@ -25821,20 +25775,6 @@ declare class Map extends BaseClass {
      * 是否只拾取地形上的点，忽略模型和矢量数据
      */
     onlyPickTerrainPosition: boolean;
-    /**
-     * 整个Map场景中Cesium3DTiles使用的总显存数量
-     * <pre>
-     * 这个可以设置到显存的50% 左右，合理设置此值可以有效的减少甚至避免 WebGL 由于爆显存而导致的报错。
-     *
-     * 值得注意的是：
-     *    这里设置的最大使用显存并不是一个强制性的值，它仅仅起到一个阈值的作用。
-     *    也就是当场景中 3DTiles 使用的显存超过该值时，才会触发缓存回收机制。
-     *    而缓存回收后，使用的总显存并不一定会降到该值以下。
-     *    比如，在当前相机视角下，3DTiles 需要 200MB 才能达到对应的显示精度，
-     *    而最大使用显存设置到 100MB 时，最终使用的显存将以 Cesium 需要的显存为准，也就是 200MB。
-     * <pre>
-     */
-    tilesetMaxTotalMemory: number;
     /**
      * 获取鼠标事件控制器
      */
@@ -30914,7 +30854,6 @@ declare namespace WindLayer {
  * @param [options.dropRateBump = 0.01] - 下降速度
  * @param [options.speedFactor = 0.5] - 速度系数
  * @param [options.lineWidth = 2.0] - 线宽度
- * @param [options.fixedHeight = 0] - 粒子点的固定的海拔高度
  * @param [options.colors = ["rgb(206,255,255)"]] - 颜色色带数组
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
@@ -30939,7 +30878,6 @@ declare class WindLayer extends BaseLayer {
         dropRateBump?: number;
         speedFactor?: number;
         lineWidth?: number;
-        fixedHeight?: number;
         colors?: string[];
         id?: string | number;
         pid?: string | number;
@@ -36267,7 +36205,7 @@ declare namespace Util {
      * @param [options.symbol] - symbol配置，与style二选一
      * @param [options.symbol.type] - 标识数据类型
      * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并，仅适用symbol配置。
-     * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
+     * @param [options.symbol.styleOptions] - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
      * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
      * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
      * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
@@ -36281,7 +36219,7 @@ declare namespace Util {
         symbol?: {
             type?: GraphicType | string;
             merge?: boolean;
-            styleOptions: any;
+            styleOptions?: any;
             styleField?: string;
             styleFieldOptions?: any;
             callback?: (...params: any[]) => any;
