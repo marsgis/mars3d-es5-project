@@ -462,6 +462,10 @@ textarea {
   border-left: none;
 }
 
+.mp_label {
+  overflow: auto;
+}
+
 .mp_input {
   height: 28px;
   line-height: 22px;
