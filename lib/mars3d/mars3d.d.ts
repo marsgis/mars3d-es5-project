@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.0
- * 编译日期：2023-08-04 12:47:12
+ * 版本信息：v3.6.1
+ * 编译日期：2023-08-14 21:45:40
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -2020,6 +2020,7 @@ declare class SceneModePicker extends BaseCzmControl {
 /**
  * 时间线 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
+ * @param [options.zoom = true] - 刻度面板是否可以鼠标滚轮进行缩放
  * @param [options.maxSpan = 1] - 刻度放大的最大刻度跨度，单位：秒
  * @param [options.style] - 可以CSS样式，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
@@ -2032,6 +2033,7 @@ declare class SceneModePicker extends BaseCzmControl {
  */
 declare class Timeline extends BaseCzmControl {
     constructor(options?: {
+        zoom?: boolean;
         maxSpan?: number;
         style?: {
             top?: string;
@@ -2695,6 +2697,32 @@ declare class BaseThing extends BaseClass {
 }
 
 /**
+ * 颜色色带 控制类
+ * @example
+ * const colorRamp = new mars3d.ColorRamp({
+ *   steps: [0.05, 0.15, 0.25, 0.35, 0.5, 0.8],
+ *   colors: ["rgb(0, 228, 0)", "rgb(256, 256, 0)", "rgb(256, 126, 0)", "rgb(256, 0, 0)", "rgb(153, 0, 76)", "rgb(126, 0, 35)"]
+ * })
+ * let color = colorRamp.getColor(rate)
+ * @param [options] - 参数对象，包括以下：
+ * @param options.colors - 色带的颜色数组,比如
+ * @param options.steps - 色带对应的数值数组
+ */
+declare class ColorRamp {
+    constructor(options?: {
+        colors: string[];
+        steps: number[];
+    });
+    /**
+     * 获取对应值的色带上的颜色值
+     * @param val - 数值
+     * @param [alpha = 0.8] - 颜色的透明度
+     * @returns 该值在色带上对应的颜色值，比如 "rgba(256, 0, 0, 0.8)"
+     */
+    getColor(val: number, alpha?: number): string;
+}
+
+/**
  * 近地天空盒, 在场景周围绘制星星等太空背景。
  * 天空盒子是用真正的赤道平均春分点(TEME)轴定义的。仅在3D中支持。当转换为2D或哥伦布视图时，天空盒会淡出。
  * 天空盒子的大小不能超过{@link Cesium.Scene#maximumCubeMapSize}。
@@ -3339,7 +3367,7 @@ declare class BloomTargetEffect extends BaseEffect {
      */
     eventType: EventType | string;
     /**
-     * 选中对象
+     * 选中对象 ,仅支持Primitive、3DTiles Feature等部分对象
      */
     selected: any | any | undefined;
 }
@@ -3504,7 +3532,7 @@ declare class OutlineEffect extends BaseEffect {
         enabled?: boolean;
     });
     /**
-     * 选中对象
+     * 选中对象 ,仅支持Primitive、3DTiles Feature等部分对象
      */
     selected: any | any | undefined;
     /**
@@ -4006,7 +4034,7 @@ declare class BaseGraphic extends BaseClass {
      * @param [event] - 用于抛出事件时的相关额外属性
      * @returns 当前对象本身，可以链式调用
      */
-    openPopup(position?: LngLatPoint | Cesium.Cartesian3 | number[], event?: any): BaseGraphic | any;
+    openPopup(position?: LngLatPoint | Cesium.Cartesian3 | number[] | any, event?: any): BaseGraphic | any;
     /**
      * 关闭弹窗
      * @returns 当前对象本身，可以链式调用
@@ -4272,6 +4300,13 @@ declare class BasePointCombine extends BasePolyCombine {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+    /**
+     * 打开绑定的弹窗
+     * @param index - 更新的instances对象index值
+     * @param [event] - 用于抛出事件时的相关额外属性
+     * @returns 当前对象本身，可以链式调用
+     */
+    openPopup(index: number, event?: any): BaseGraphic | any;
 }
 
 /**
@@ -4362,6 +4397,13 @@ declare class BasePolyCombine extends BaseCombine {
      * @returns 无
      */
     closeHighlight(): void;
+    /**
+     * 打开绑定的弹窗
+     * @param index - 更新的instances对象index值
+     * @param [event] - 用于抛出事件时的相关额外属性
+     * @returns 当前对象本身，可以链式调用
+     */
+    openPopup(index: number, event?: any): BaseGraphic | any;
 }
 
 /**
@@ -10590,12 +10632,14 @@ declare class ModelEntity extends BasePointEntity {
      * @param [options = {}] - 参数包括：
      * @param options.position - 指定目标位置的坐标
      * @param [options.time = 5] - 移动的时长(单位 秒)，控制速度
+     * @param [options.orientation] - 是否设置为路线方向的角度
      * @param [options.onEnd] - 移动完成的回调方法
      * @returns 绘制创建完成的Promise,等价于onEnd参数
      */
     moveTo(options?: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         time?: number;
+        orientation?: boolean;
         onEnd?: (...params: any[]) => any;
     }): Promise<ModelEntity | any>;
     /**
@@ -16759,7 +16803,7 @@ declare namespace PointPrimitive {
      * @property [visibleDepth = true] - 是否被遮挡
      * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
-     * @property [clampToGround = false] - 是否贴地, 仅限普通坐标. 提示：Cesium默认不支持贴地，是内部计算了贴地高度值。
+     * @property [clampToGround = false] - 是否贴地, 仅限普通坐标. 提示：Cesium默认不支持贴地，是内部计算了贴地高度值。【大量数据时可能卡死，注意大数据下不用为ture】
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
@@ -21802,7 +21846,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param options.url - WFS服务地址
  * @param [options.parameters] - 要在URL中 传递给WFS服务GetFeature请求的其他参数。
  * @param [options.parameters.maxFeatures] - 返回结果最大数量
- * @param [options.parameters.cql_filter] - 筛选服务数据的[SQL语句]{@link https://docs.geoserver.org/2.12.2/user/services/wfs/vendor.html#wfs-vendor-parameters}
+ * @param [options.parameters.cql_filter] - 筛选服务数据的SQL语句
  * @param [options.parameters.sortBy] - 排序的属性名称，默认升序，降序时+D
  * @param [options.parameters.service = 'WFS'] - 服务类型
  * @param [options.parameters.version = '1.0.0'] - 服务版本
@@ -24934,6 +24978,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.parameters.version = '1.1.1'] - 服务版本
  * @param [options.parameters.request = 'GetMap'] - 请求方法
  * @param [options.parameters.styles = ''] - 样式
+ * @param [options.toLowerCase = true] - 请求参数名称是否转为小写，false时保留原样大小写
  * @param [options.crs = 'EPSG:3857'] - 瓦片数据的坐标系信息，默认为墨卡托投影，CRS规范，用于WMS规范>= 1.3.0。
  * @param [options.srs] - SRS规范，与WMS规范1.1.0或1.1.1一起使用
  * @param [options.getCapabilities = true] - 是否通过服务本身的GetCapabilities来读取一些参数，减少options配置项
@@ -25014,6 +25059,7 @@ declare class WmsLayer extends BaseTileLayer {
             request?: string;
             styles?: string;
         };
+        toLowerCase?: boolean;
         crs?: string | CRS;
         srs?: string;
         getCapabilities?: boolean;
@@ -26320,6 +26366,12 @@ declare class Map extends BaseClass {
         formatNum?: boolean;
         scale?: number;
     }): any;
+    /**
+     * 判断坐标点是否在当前视域内
+     * @param position - 坐标
+     * @returns 当前视域边界
+     */
+    isInView(position: Cesium.Cartesian3): boolean;
     /**
      * 当存在地形夸张时，获取其实际的高度值
      * @param alt - 鼠标拾取的高度值
@@ -30758,9 +30810,11 @@ declare namespace CanvasWindLayer {
  * @param [options.particlesnumber = 4096] - 初始粒子总数
  * @param [options.maxAge = 120] - 每个粒子的最大生存周期
  * @param [options.frameRate = 10] - 每秒刷新次数，因为requestAnimationFrame固定每秒60次的渲染，所以如果不想这么快，就把该数值调小一些
- * @param [options.color = '#ffffff'] - 线颜色
  * @param [options.lineWidth = 1] - 线宽度
  * @param [options.fixedHeight = 0] - 点的固定的海拔高度
+ * @param [options.color = '#ffffff'] - 线颜色
+ * @param [options.colors] - 线多颜色时，色带的颜色数组
+ * @param [options.steps] - 线多颜色时，色带对应的数值数组
  * @param [options.mouseHidden] - 鼠标按下时是否隐藏渲染
  * @param [options.worker] - 处理计算粒子点的多线程JS文件地址
  * @param [options.reverseY = false] - 是否翻转纬度数组顺序，正常数据是从北往南的（纬度从大到小），如果反向时请传reverseY为true
@@ -30787,9 +30841,11 @@ declare class CanvasWindLayer extends BaseLayer {
         particlesnumber?: number;
         maxAge?: number;
         frameRate?: number;
-        color?: string;
         lineWidth?: number;
         fixedHeight?: number;
+        color?: string;
+        colors?: string[];
+        steps?: number[];
         mouseHidden?: boolean;
         worker?: string;
         reverseY?: boolean;
@@ -31448,7 +31504,6 @@ declare class GaodeRoute {
      * @param queryOptions - 查询参数
      * @param queryOptions.points - 按起点、途经点、终点 顺序的坐标数组,如[[117.500244, 40.417801],[117.500244, 40.417801]]
      * @param queryOptions.avoidpolygons - 区域避让数组(支持多个)，支持32个避让区域，每个区域最多可有16个顶点。避让区域不能超过81平方公里，否则避让区域会失效。
-     * @param [queryOptions.extensions = 'base'] - 返回结果控制,可选值：core/all  base:返回基本信息；all：返回全部信息
      * @param [queryOptions.strategy = 0] - 驾车选择策略，参考高德官网说明，默认为0：速度优先，不考虑当时路况，此路线不一定距离最短
      * @param [queryOptions.success] - 查询完成的回调方法
      * @param [queryOptions.error] - 查询失败的回调方法
@@ -31457,7 +31512,6 @@ declare class GaodeRoute {
     queryDriving(queryOptions: {
         points: any[][];
         avoidpolygons: any[][];
-        extensions?: string;
         strategy?: string;
         success?: (...params: any[]) => any;
         error?: (...params: any[]) => any;
@@ -36880,8 +36934,6 @@ declare namespace layer {
   export { EchartsLayer }
   export { HeatLayer }
   export { MapVLayer }
-  export { SmImgLayer }
-  export { SmMvtLayer }
   export { TdtDmLayer }
 }
 
@@ -36939,7 +36991,7 @@ declare namespace thing {
 
 export {
   name, update, version, proj4, Tle, widget,
-  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType, Icon,
+  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType, Icon,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
   material, graphic, provider, layer, thing, effect, control, query,
