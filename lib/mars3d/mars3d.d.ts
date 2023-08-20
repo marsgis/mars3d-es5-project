@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.1
- * 编译日期：2023-08-14 21:45:40
+ * 版本信息：v3.6.2
+ * 编译日期：2023-08-20 20:28:31
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -1854,17 +1854,18 @@ declare class Compass extends BaseControl {
 /**
  * 时钟仪表控制 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
- * @param [ticks = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0]] - 可选的步长
+ * @param [options.ticks = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0]] - 可选的步长
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
  */
 declare class Animation extends BaseCzmControl {
     constructor(options?: {
+        ticks?: number[];
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
-    }, ticks?: number[]);
+    });
 }
 
 /**
@@ -2705,7 +2706,7 @@ declare class BaseThing extends BaseClass {
  * })
  * let color = colorRamp.getColor(rate)
  * @param [options] - 参数对象，包括以下：
- * @param options.colors - 色带的颜色数组,比如
+ * @param options.colors - 色带的颜色数组
  * @param options.steps - 色带对应的数值数组
  */
 declare class ColorRamp {
@@ -17628,6 +17629,8 @@ declare namespace ScrollWall {
      * @property [reverse = false] - 方向：true往上、false往下
      * @property [style = 1] - 样式，可选值：1、2
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
         diffHeight?: number;
@@ -17637,6 +17640,8 @@ declare namespace ScrollWall {
         reverse?: boolean;
         style?: number;
         shadows?: Cesium.ShadowMode;
+        highlight?: ScrollWall.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -17677,6 +17682,10 @@ declare class ScrollWall extends BasePolyPrimitive {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+    /**
+     * 中心点坐标 （笛卡尔坐标）
+     */
+    readonly center: Cesium.Cartesian3;
     /**
      * 矢量数据对应的 Cesium内部对象 (不同子类中实现)
      */
@@ -25746,6 +25755,8 @@ declare namespace Map {
      * @property [terrainShadows = Cesium.ShadowMode.RECEIVE_ONLY] - 确定地形是否投射或接收来自光源的阴影。
      * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [maximumRenderTimeChange = 0.0] - 如果requestRenderMode为true，这个值定义了在请求渲染之前允许的模拟时间的最大变化。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
+     * @property [depthPlaneEllipsoidOffset = 0.0] - 调整DepthPlane以处理椭球体零标高以下的渲染伪影。
+     * @property [msaaSamples = 1] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
      *
      * 以下是Cesium.Globe对象相关参数
      * @property [globe] - globe地球相关参数
@@ -25829,6 +25840,8 @@ declare namespace Map {
         terrainShadows?: Cesium.ShadowMode;
         requestRenderMode?: boolean;
         maximumRenderTimeChange?: number;
+        depthPlaneEllipsoidOffset?: number;
+        msaaSamples?: number;
         globe?: {
             show?: boolean;
             baseColor?: string;
