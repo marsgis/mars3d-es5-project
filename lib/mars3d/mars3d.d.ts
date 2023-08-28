@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.2
- * 编译日期：2023-08-22 10:37:49
+ * 版本信息：v3.6.3
+ * 编译日期：2023-08-28 19:38:39
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -1104,7 +1104,8 @@ declare enum LayerType {
     wfs,
     arcgis_wfs,
     arcgis_wfs_single,
-    tileset或3dtiles,
+    tileset,
+    i3s,
     czmGeojson,
     kml,
     czml,
@@ -2002,12 +2003,14 @@ declare class ProjectionPicker extends BaseCzmControl {
 /**
  * 二三维切换按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
+ * @param [options.duration = 0] - 切换时动画的秒数
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
  */
 declare class SceneModePicker extends BaseCzmControl {
     constructor(options?: {
+        duration?: number;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2036,7 +2039,7 @@ declare class Timeline extends BaseCzmControl {
     constructor(options?: {
         zoom?: boolean;
         maxSpan?: number;
-        style?: {
+        style?: any | {
             top?: string;
             bottom?: string;
             left?: string;
@@ -2181,7 +2184,7 @@ declare class LocationBar extends BaseControl {
         latDecimal?: number;
         crs?: string | CRS | boolean;
         crsDecimal?: number;
-        style?: {
+        style?: any | {
             top?: string;
             bottom?: string;
             left?: string;
@@ -2363,7 +2366,7 @@ declare class OverviewMap extends BaseControl {
         scene?: Map.sceneOptions;
         control?: Map.controlOptions;
         rectangle?: RectangleEntity.StyleOptions | any;
-        style?: {
+        style?: any | {
             top?: string;
             bottom?: string;
             left?: string;
@@ -2514,7 +2517,7 @@ declare class BaseClass {
     /**
      * 解除绑定指定类型事件监听器
      * @param [types] - 事件类型,未传值时解绑所有事件
-     * @param [fn] - 绑定的监听器回调方法,未传值时解绑所有指定类型对应事件
+     * @param [fn] - 绑定的监听器回调方法,未传值时解绑所有指定类型对应事件，特殊说明：map.on监听的Cesium相关原生事件时必须传入该参数
      * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
      * @returns 当前对象本身,可以链式调用
      */
@@ -3831,6 +3834,38 @@ declare class BaseGraphic extends BaseClass {
      */
     show: boolean;
     /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * graphic.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * graphic.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * graphic.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
+    /**
      * 名称
      */
     name: string;
@@ -4219,7 +4254,7 @@ declare class BaseCombine extends BasePrimitive {
     /**
      * 更新颜色, 只对纯色材质有效，其他材质无法单独更新，需要setStle方法调用(全部更新渲染)。
      * @param style - 样式信息
-     * @param [style.color = "#3388ff"] - 颜色
+     * @param [style.color = "#ffffff"] - 颜色
      * @param [style.opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @param [index] - 更新的instances对象index值，为空时更新所有对象。
      * @returns 空
@@ -4260,6 +4295,7 @@ declare class BaseCombine extends BasePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4296,6 +4332,7 @@ declare class BasePointCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4340,6 +4377,7 @@ declare class BasePointCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4376,6 +4414,7 @@ declare class BasePolyCombine extends BaseCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4437,6 +4476,7 @@ declare class BasePolyCombine extends BaseCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4473,6 +4513,7 @@ declare class BoxCombine extends BasePointCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4510,6 +4551,7 @@ declare class BoxCombine extends BasePointCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4546,6 +4588,7 @@ declare class CircleCombine extends BasePointCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4583,6 +4626,7 @@ declare class CircleCombine extends BasePointCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4619,6 +4663,7 @@ declare class CorridorCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4656,6 +4701,7 @@ declare class CorridorCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4692,6 +4738,7 @@ declare class CylinderCombine extends BasePointCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4729,6 +4776,7 @@ declare class CylinderCombine extends BasePointCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4765,6 +4813,7 @@ declare class EllipsoidCombine extends BasePointCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4802,6 +4851,7 @@ declare namespace FlatBillboard {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4821,6 +4871,7 @@ declare class FlatBillboard extends BaseCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4879,6 +4930,7 @@ declare class FlatBillboard extends BaseCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4915,6 +4967,7 @@ declare class FrustumCombine extends BasePointCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -4952,6 +5005,7 @@ declare class FrustumCombine extends BasePointCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -4988,6 +5042,7 @@ declare class PlaneCombine extends BasePointCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5025,6 +5080,7 @@ declare class PlaneCombine extends BasePointCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -5059,6 +5115,7 @@ declare class PolygonCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5096,6 +5153,7 @@ declare class PolygonCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -5132,6 +5190,7 @@ declare class PolylineCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5169,6 +5228,7 @@ declare class PolylineCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -5205,6 +5265,7 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5242,6 +5303,7 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -5278,6 +5340,7 @@ declare class RectangleCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5315,6 +5378,7 @@ declare class RectangleCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -5351,6 +5415,7 @@ declare class WallCombine extends BasePolyCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5386,6 +5451,7 @@ declare class WallCombine extends BasePolyCombine {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -5419,6 +5485,7 @@ declare class WaterCombine extends PolygonCombine {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -5587,6 +5654,16 @@ declare class ConeVisibility extends PointVisibility {
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
+ * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+ * @param [highlight.label] - 使用 文本 对象，及其对应的样式
+ * @param [highlight.billboard] - 使用 图标 对象，及其对应的样式
+ * @param [highlight.point] - 使用 图标 对象，及其对应的样式
+ * @param [highlight.model] - 使用 gltf模型 对象，及其对应的样式
+ * @param [highlight.circle] - 使用 圆 对象，及其对应的样式
+ * @param [highlight.coneTrack] - 使用 圆锥体 对象，及其对应的样式
+ * @param [highlight.path] - 使用 path轨迹 对象，及其对应的样式
+ * @param [highlight.polyline] - 使用 polyline路线 对象，及其对应的样式
+ * @param [highlight.wall] - 使用 墙体 对象，及其对应的样式
  * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
@@ -5687,6 +5764,16 @@ declare class FixedRoute extends Route {
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
         flyToOptions?: any;
+    }, highlight?: {
+        label?: LabelPrimitive.StyleOptions | any;
+        billboard?: BillboardEntity.StyleOptions | any;
+        point?: PointPrimitive.StyleOptions | any;
+        model?: ModelPrimitive.StyleOptions | any;
+        circle?: CircleEntity.StyleOptions | any;
+        coneTrack?: ConeTrack.StyleOptions | any;
+        path?: PathEntity.StyleOptions | any;
+        polyline?: PolylineEntity.StyleOptions | any;
+        wall?: WallEntity.StyleOptions | any;
     });
     /**
      * 开始时间
@@ -6093,6 +6180,16 @@ declare namespace Route {
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
+ * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+ * @param [highlight.label] - 使用 文本 对象，及其对应的样式
+ * @param [highlight.billboard] - 使用 图标 对象，及其对应的样式
+ * @param [highlight.point] - 使用 图标 对象，及其对应的样式
+ * @param [highlight.model] - 使用 gltf模型 对象，及其对应的样式
+ * @param [highlight.circle] - 使用 圆 对象，及其对应的样式
+ * @param [highlight.coneTrack] - 使用 圆锥体 对象，及其对应的样式
+ * @param [highlight.path] - 使用 path轨迹 对象，及其对应的样式
+ * @param [highlight.polyline] - 使用 polyline路线 对象，及其对应的样式
+ * @param [highlight.wall] - 使用 墙体 对象，及其对应的样式
  * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
@@ -6180,6 +6277,16 @@ declare class Route extends BasePointPrimitive {
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
         flyToOptions?: any;
+    }, highlight?: {
+        label?: LabelPrimitive.StyleOptions | any;
+        billboard?: BillboardEntity.StyleOptions | any;
+        point?: PointPrimitive.StyleOptions | any;
+        model?: ModelPrimitive.StyleOptions | any;
+        circle?: CircleEntity.StyleOptions | any;
+        coneTrack?: ConeTrack.StyleOptions | any;
+        path?: PathEntity.StyleOptions | any;
+        polyline?: PolylineEntity.StyleOptions | any;
+        wall?: WallEntity.StyleOptions | any;
     });
     /**
      * 时序动态坐标对象
@@ -6979,6 +7086,7 @@ declare namespace DivBoderLabel {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
@@ -7004,6 +7112,7 @@ declare class DivBoderLabel extends DivGraphic {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         flyTo?: boolean;
         flyToOptions?: any;
@@ -7096,6 +7205,7 @@ declare namespace DivGraphic {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
@@ -7129,6 +7239,7 @@ declare class DivGraphic extends BaseGraphic {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         flyTo?: boolean;
         flyToOptions?: any;
@@ -7373,6 +7484,7 @@ declare namespace DivLightPoint {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
@@ -7398,6 +7510,7 @@ declare class DivLightPoint extends DivGraphic {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         flyTo?: boolean;
         flyToOptions?: any;
@@ -7486,6 +7599,7 @@ declare namespace DivUpLabel {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
@@ -7511,6 +7625,7 @@ declare class DivUpLabel extends DivGraphic {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         flyTo?: boolean;
         flyToOptions?: any;
@@ -7638,6 +7753,7 @@ declare namespace Popup {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  */
 declare class Popup extends DivGraphic {
     constructor(options: {
@@ -7656,6 +7772,7 @@ declare class Popup extends DivGraphic {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
     });
     /**
      * 关联的触发对象
@@ -7742,6 +7859,7 @@ declare namespace Tooltip {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  */
 declare class Tooltip extends Popup {
     constructor(options: {
@@ -7757,6 +7875,7 @@ declare class Tooltip extends Popup {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
     });
 }
 
@@ -7767,7 +7886,7 @@ declare class Tooltip extends Popup {
  * @param options.positions - 【线面状（多点）】矢量数据时的坐标位置，具体看子类实现
  * @param options.style - 矢量数据的 样式信息，具体见各类数据的说明
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -7791,7 +7910,7 @@ declare class BaseEntity extends BaseGraphic {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         style: any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -7829,14 +7948,6 @@ declare class BaseEntity extends BaseGraphic {
      * 是否正在编辑状态
      */
     readonly isEditing: boolean;
-    /**
-     * 与该对象关联的可用性,可以控制在某些时间段内展示对象
-     * @example
-     * const startTime = Cesium.JulianDate.addSeconds(map.clock.currentTime, 5, new Cesium.JulianDate())
-     * const stopTime = Cesium.JulianDate.addSeconds(map.clock.currentTime, 15, new Cesium.JulianDate())
-     * graphic.availability = new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({ start: startTime, stop: stopTime })])
-     */
-    availability: Cesium.TimeIntervalCollection;
     /**
      * 重新渲染对象
      * @returns 无
@@ -7929,7 +8040,7 @@ declare class BaseEntity extends BaseGraphic {
  * @param [options.orientation] - 指定实体方向的属性。
  * @param options.style - 矢量数据的 样式信息，具体见各类数据的说明
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -7965,7 +8076,7 @@ declare class BasePointEntity extends BaseEntity {
         orientation?: Cesium.Property;
         style: any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -8111,7 +8222,7 @@ declare class BasePointEntity extends BaseEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 矢量数据的 样式信息，具体见各类数据的说明
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -8142,7 +8253,7 @@ declare class BasePolyEntity extends BaseEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -8340,7 +8451,7 @@ declare namespace BillboardEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -8376,7 +8487,7 @@ declare class BillboardEntity extends BasePointEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: BillboardEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -8514,7 +8625,7 @@ declare namespace BoxEntity {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -8541,7 +8652,7 @@ declare class BoxEntity {
         style: BoxEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -8668,7 +8779,7 @@ declare namespace CanvasLabelEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -8694,7 +8805,7 @@ declare class CanvasLabelEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: CanvasLabelEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -8730,7 +8841,7 @@ declare namespace CircleEntity {
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`material材质参数`将被覆盖。
-     * @property [color = "#3388ff"] - 填充颜色
+     * @property [color = "#ffffff"] - 填充颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
@@ -8801,7 +8912,7 @@ declare namespace CircleEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -8830,7 +8941,7 @@ declare class CircleEntity extends BasePointEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: CircleEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -9041,7 +9152,7 @@ declare namespace ConeTrack {
  * @param [options.targetPosition] - 追踪的目标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -9065,7 +9176,7 @@ declare class ConeTrack extends CylinderEntity {
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: ConeTrack.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -9142,7 +9253,7 @@ declare namespace CorridorEntity {
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
@@ -9204,7 +9315,7 @@ declare namespace CorridorEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -9234,7 +9345,7 @@ declare class CorridorEntity extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: CorridorEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -9277,7 +9388,7 @@ declare class CorridorEntity extends BasePolyEntity {
  * //  * @param {number} [options.style.sharpness=0.85] 曲线的弯曲程度
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.getShowPositions] - 自定义计算曲线点回调方法，可以在方法内自定义计算算法。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -9308,7 +9419,7 @@ declare class CurveEntity extends PolylineEntity {
         style: PolylineEntity.StyleOptions | any;
         attr?: any;
         getShowPositions?: (...params: any[]) => any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -9406,7 +9517,7 @@ declare namespace CylinderEntity {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -9432,7 +9543,7 @@ declare class CylinderEntity extends BasePointEntity {
         style: CylinderEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -9553,7 +9664,7 @@ declare namespace DivBillboardEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -9579,7 +9690,7 @@ declare class DivBillboardEntity extends BillboardEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: DivBillboardEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -9768,7 +9879,7 @@ declare namespace EllipseEntity {
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 填充颜色
+     * @property [color = "#ffffff"] - 填充颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度
@@ -9838,7 +9949,7 @@ declare namespace EllipseEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -9864,7 +9975,7 @@ declare class EllipseEntity extends CircleEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: EllipseEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -10005,7 +10116,7 @@ declare namespace EllipsoidEntity {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
  * @param [options.scanPlane] - 动态扫描面
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -10035,7 +10146,7 @@ declare class EllipsoidEntity extends BasePointEntity {
         attr?: any;
         orientation?: Cesium.Property;
         scanPlane?: EllipsoidEntity.ScanPlaneOptions | EllipsoidEntity.ScanPlaneOptions[];
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -10180,7 +10291,7 @@ declare namespace FontBillboardEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -10206,7 +10317,7 @@ declare class FontBillboardEntity extends BasePointEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: FontBillboardEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -10327,7 +10438,7 @@ declare namespace LabelEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -10353,7 +10464,7 @@ declare class LabelEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: LabelEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -10421,7 +10532,7 @@ declare namespace ModelEntity {
      * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑缩放。
      * @property [maximumScale] - 模型的最大比例尺寸。minimumPixelSize的上限。
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [colorBlendMode = ColorBlendMode.HIGHLIGHT] - 指定颜色如何与模型混合。
      * @property [colorBlendAmount = 0.5] - 当colorBlendMode为MIX时指定颜色强度的数字属性。0.0的值表示模型渲染的颜色，1.0的值表示纯色，任何介于两者之间的值表示两者的混合。
@@ -10505,7 +10616,7 @@ declare namespace ModelEntity {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -10548,7 +10659,7 @@ declare class ModelEntity extends BasePointEntity {
         style: ModelEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -10739,7 +10850,7 @@ declare namespace PathEntity {
  * @param [options.orientation] - 实体方向
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -10772,7 +10883,7 @@ declare class PathEntity extends BasePointEntity {
         orientation?: Cesium.Property;
         style: PathEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -10907,7 +11018,7 @@ declare namespace PitEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -10930,7 +11041,7 @@ declare class PitEntity extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         style: PitEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -11029,7 +11140,7 @@ declare namespace PlaneEntity {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -11056,7 +11167,7 @@ declare class PlaneEntity {
         style: PlaneEntity.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -11091,7 +11202,7 @@ declare namespace PointEntity {
     /**
      * 像素点 支持的样式信息
      * @property [pixelSize = 10] - 像素大小
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -11149,7 +11260,7 @@ declare namespace PointEntity {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -11185,7 +11296,7 @@ declare class PointEntity extends BasePointEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: PointEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -11229,7 +11340,7 @@ declare namespace PolygonEntity {
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
@@ -11317,7 +11428,7 @@ declare namespace PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -11348,7 +11459,7 @@ declare class PolygonEntity extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -11446,7 +11557,7 @@ declare namespace PolylineEntity {
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
      * @property [width = 4] - 线宽
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
      * @property [depthFailMaterial] - 指定当折线位于地形之下时用于绘制折线的材质。
@@ -11514,7 +11625,7 @@ declare namespace PolylineEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -11545,7 +11656,7 @@ declare class PolylineEntity extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[] | Cesium.PositionProperty | any;
         style: PolylineEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -11649,7 +11760,7 @@ declare namespace PolylineVolumeEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -11679,7 +11790,7 @@ declare class PolylineVolumeEntity extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolylineVolumeEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -11721,7 +11832,7 @@ declare namespace RectangleEntity {
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material = Cesium.Color.WHITE] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
@@ -11797,7 +11908,7 @@ declare namespace RectangleEntity {
  * @param [options.rectangle] - 矩形范围，与positions二选一。
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -11828,7 +11939,7 @@ declare class RectangleEntity extends BasePolyEntity {
         rectangle?: Cesium.Rectangle | Cesium.PositionProperty | Cesium.CallbackProperty;
         style: RectangleEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12048,7 +12159,7 @@ declare namespace RectangularSensor {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12075,7 +12186,7 @@ declare class RectangularSensor {
         style: RectangularSensor.StyleOptions | any;
         attr?: any;
         orientation?: Cesium.Property;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12363,7 +12474,7 @@ declare namespace WallEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12393,7 +12504,7 @@ declare class WallEntity extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: WallEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12434,7 +12545,7 @@ declare class WallEntity extends BasePolyEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12458,7 +12569,7 @@ declare class AttackArrow extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12485,7 +12596,7 @@ declare class AttackArrow extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12509,7 +12620,7 @@ declare class AttackArrowPW extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12543,7 +12654,7 @@ declare class AttackArrowPW extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12567,7 +12678,7 @@ declare class AttackArrowYW extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12601,7 +12712,7 @@ declare class AttackArrowYW extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12625,7 +12736,7 @@ declare class CloseVurve extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12659,7 +12770,7 @@ declare class CloseVurve extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12683,7 +12794,7 @@ declare class DoubleArrow extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12729,7 +12840,7 @@ declare class EditSector extends EditPolygon {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12753,7 +12864,7 @@ declare class FineArrow extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12787,7 +12898,7 @@ declare class FineArrow extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12811,7 +12922,7 @@ declare class FineArrowYW extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12845,7 +12956,7 @@ declare class FineArrowYW extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12869,7 +12980,7 @@ declare class GatheringPlace extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12903,7 +13014,7 @@ declare class GatheringPlace extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12927,7 +13038,7 @@ declare class IsosTriangle extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -12961,7 +13072,7 @@ declare class IsosTriangle extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -12985,7 +13096,7 @@ declare class Lune extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13023,7 +13134,7 @@ declare class Lune extends PolygonEntity {
  * @param options.style.radius - 区域的半径（单位：米）
  * @param [options.style.startAngle = 0] - 区域的开始角度(正东方向为0,顺时针到360度)
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13052,7 +13163,7 @@ declare class Regular extends PolygonEntity {
             startAngle?: number;
         };
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13106,7 +13217,7 @@ declare class Regular extends PolygonEntity {
  * @param options.style.endAngle - 扇形区域的结束角度(正东方向为0,顺时针到360度)
  * @param [options.style.noCenter] - 不连中心点
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13136,7 +13247,7 @@ declare class Sector extends PolygonEntity {
             noCenter?: boolean;
         };
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13200,7 +13311,7 @@ declare class Sector extends PolygonEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13224,7 +13335,7 @@ declare class StraightArrow extends PolygonEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13262,7 +13373,7 @@ declare class StraightArrow extends PolygonEntity {
  * @param [options.label] - 测量结果文本的样式
  * @param [options.angleDecimal = 1] - 显示的 角度值 文本中保留的小数位
  * @param [options.decimal = 2] - 显示的 距离值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13295,7 +13406,7 @@ declare class AngleMeasure extends PolylineEntity {
         label?: LabelEntity.StyleOptions | any;
         angleDecimal?: number;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13341,7 +13452,7 @@ declare class AngleMeasure extends PolylineEntity {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 面积值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13373,7 +13484,7 @@ declare class AreaMeasure extends PolygonEntity {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13425,7 +13536,7 @@ declare class AreaMeasure extends PolygonEntity {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 面积值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13457,7 +13568,7 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13493,7 +13604,7 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13525,7 +13636,7 @@ declare class DistanceMeasure extends PolylineEntity {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13571,7 +13682,7 @@ declare class DistanceMeasure extends PolylineEntity {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13603,7 +13714,7 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13639,7 +13750,7 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离和高度值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13671,7 +13782,7 @@ declare class HeightMeasure extends PolylineEntity {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13717,7 +13828,7 @@ declare class HeightMeasure extends PolylineEntity {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离和高度值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13749,7 +13860,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13790,7 +13901,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
  * @param options.position - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13817,7 +13928,7 @@ declare class PointMeasure extends PointEntity {
         position: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[] | string;
         style: PointEntity.StyleOptions | any;
         attr?: any;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -13849,7 +13960,7 @@ declare class PointMeasure extends PointEntity {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离值 文本中保留的小数位
- * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
@@ -13882,7 +13993,7 @@ declare class SectionMeasure extends DistanceMeasure {
         attr?: any;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
@@ -14147,6 +14258,7 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -14189,6 +14301,7 @@ declare class BasePointPrimitive extends BasePrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -14322,6 +14435,7 @@ declare class BasePointPrimitive extends BasePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -14352,6 +14466,7 @@ declare class BasePolyPrimitive extends BasePrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -14451,6 +14566,7 @@ declare class BasePolyPrimitive extends BasePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -14482,6 +14598,7 @@ declare class BasePrimitive extends BaseGraphic {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -14602,6 +14719,7 @@ declare class BasePrimitive extends BaseGraphic {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -14625,6 +14743,7 @@ declare class BillboardPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -14739,6 +14858,7 @@ declare namespace BoxPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -14770,6 +14890,7 @@ declare class BoxPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -14878,6 +14999,7 @@ declare namespace CirclePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -14909,6 +15031,7 @@ declare class CirclePrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15029,6 +15152,7 @@ declare namespace CloudPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
@@ -15046,6 +15170,7 @@ declare class CloudPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         stopPropagation?: boolean;
         flyTo?: boolean;
         flyToOptions?: any;
@@ -15245,6 +15370,7 @@ declare namespace ConeTrackPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15276,6 +15402,7 @@ declare class ConeTrackPrimitive extends CylinderPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15307,7 +15434,7 @@ declare namespace CorridorPrimitive {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -15394,6 +15521,7 @@ declare namespace CorridorPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15424,6 +15552,7 @@ declare class CorridorPrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15516,6 +15645,7 @@ declare namespace CylinderPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15547,6 +15677,7 @@ declare class CylinderPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15558,7 +15689,7 @@ declare namespace DiffuseWall {
     /**
      * 立体面(或圆)散射效果  支持的样式信息
      * @property [diffHeight = 100] - 墙高
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [speed = 10] - 扩散的速度，值越大越快
      * @property [maxScale = 1] - 扩散的最大比例
@@ -15589,6 +15720,7 @@ declare namespace DiffuseWall {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15608,6 +15740,7 @@ declare class DiffuseWall extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15712,6 +15845,7 @@ declare namespace DoubleSidedPlane {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15743,6 +15877,7 @@ declare class DoubleSidedPlane extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15783,6 +15918,7 @@ declare namespace DynamicRiver {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15796,6 +15932,7 @@ declare class DynamicRiver extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -15961,6 +16098,7 @@ declare namespace EllipsoidPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -15992,6 +16130,7 @@ declare class EllipsoidPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16083,6 +16222,7 @@ declare namespace FrustumPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16115,6 +16255,7 @@ declare class FrustumPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16192,6 +16333,7 @@ declare namespace LabelPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16215,6 +16357,7 @@ declare class LabelPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16268,6 +16411,7 @@ declare namespace LightCone {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16286,6 +16430,7 @@ declare class LightCone extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16322,7 +16467,7 @@ declare namespace ModelPrimitive {
      * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑缩放。
      * @property [maximumScale] - 模型的最大比例尺寸。minimumPixelSize的上限。
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [colorBlendMode = ColorBlendMode.HIGHLIGHT] - 指定颜色如何与模型混合。
      * @property [colorBlendAmount = 0.5] - 当colorBlendMode为MIX时指定颜色强度的数字属性。0.0的值表示模型渲染的颜色，1.0的值表示纯色，任何介于两者之间的值表示两者的混合。
@@ -16496,6 +16641,7 @@ declare namespace ModelPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16529,6 +16675,7 @@ declare class ModelPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16607,6 +16754,7 @@ declare namespace Pit {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16637,6 +16785,7 @@ declare class Pit extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16741,6 +16890,7 @@ declare namespace PlanePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16772,6 +16922,7 @@ declare class PlanePrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16787,7 +16938,7 @@ declare namespace PointPrimitive {
     /**
      * 像素点 支持的样式信息
      * @property [pixelSize = 10] - 像素大小
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -16855,6 +17006,7 @@ declare namespace PointPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -16879,6 +17031,7 @@ declare class PointPrimitive extends BasePointPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -16900,7 +17053,7 @@ declare namespace PolygonPrimitive {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
@@ -17014,6 +17167,7 @@ declare namespace PolygonPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17044,6 +17198,7 @@ declare class PolygonPrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17070,7 +17225,7 @@ declare namespace PolylinePrimitive {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
      * @property [colors] - 定义每顶点或每段颜色 的数组。
@@ -17151,6 +17306,7 @@ declare namespace PolylinePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17181,6 +17337,7 @@ declare class PolylinePrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17202,7 +17359,7 @@ declare namespace PolylineVolumePrimitive {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [cornerType = CornerType.ROUNDED] - 指定边角的样式。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
@@ -17278,6 +17435,7 @@ declare namespace PolylineVolumePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17308,6 +17466,7 @@ declare class PolylineVolumePrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17321,7 +17480,7 @@ declare namespace RectanglePrimitive {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [outline = false] - 是否边框
@@ -17400,6 +17559,7 @@ declare namespace RectanglePrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17431,6 +17591,7 @@ declare class RectanglePrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17535,6 +17696,7 @@ declare namespace ReflectionWater {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17563,6 +17725,7 @@ declare class ReflectionWater extends PolygonPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17599,6 +17762,7 @@ declare namespace Road {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17612,6 +17776,7 @@ declare class Road extends DynamicRiver {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17623,7 +17788,7 @@ declare namespace ScrollWall {
     /**
      * 走马灯围墙效果 支持的样式信息
      * @property [diffHeight = 100] - 墙高
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [speed = 10] - 速度，值越大越快
      * @property [reverse = false] - 方向：true往上、false往下
@@ -17659,6 +17824,7 @@ declare namespace ScrollWall {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17677,6 +17843,7 @@ declare class ScrollWall extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17700,7 +17867,7 @@ declare namespace ThickWall {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [closure = false] - 是否闭合
      * @property [hasShadows = false] - 是否阴影
@@ -17755,6 +17922,7 @@ declare namespace ThickWall {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17773,6 +17941,7 @@ declare class ThickWall extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17828,6 +17997,7 @@ declare namespace VideoPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -17858,6 +18028,7 @@ declare class VideoPrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -17898,7 +18069,7 @@ declare namespace WallPrimitive {
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
-     * @property [color = "#3388ff"] - 颜色
+     * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [closure = false] - 是否闭合
@@ -17973,6 +18144,7 @@ declare namespace WallPrimitive {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -18003,6 +18175,7 @@ declare class WallPrimitive extends BasePolyPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -18120,6 +18293,7 @@ declare namespace Water {
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -18147,6 +18321,7 @@ declare class Water extends PolygonPrimitive {
         id?: string | number;
         name?: string;
         show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         eventParent?: BaseClass | boolean;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
@@ -20105,7 +20280,7 @@ declare class GraphicGroupLayer extends GroupLayer {
      * @param [options.maxPointNum] - 线面数据时限定的最大坐标个数
      * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
-     * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+     * @param [options.availability] - 指定时间范围内显示该对象
      * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
      * @returns 绘制创建完成的Promise,等价于success参数
      */
@@ -20118,7 +20293,7 @@ declare class GraphicGroupLayer extends GroupLayer {
         maxPointNum?: number;
         drawShow?: boolean;
         addHeight?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
     }): Promise<BaseGraphic | any>;
     /**
@@ -20594,7 +20769,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.validDrawPosition] - 外部自定义校验坐标,比如判断限定在指定区域内绘制。
      * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
-     * @param [options.availability] - 与该对象关联的可用性(如果有的话)。
+     * @param [options.availability] - 指定时间范围内显示该对象
      * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
      * @returns 绘制创建完成的Promise,等价于success参数
      */
@@ -20609,7 +20784,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         validDrawPosition?: (...params: any[]) => any;
         drawShow?: boolean;
         addHeight?: number;
-        availability?: Cesium.TimeIntervalCollection;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
     }): Promise<BaseGraphic | any>;
     /**
@@ -26668,6 +26843,22 @@ declare class Map extends BaseClass {
         cancel?: Cesium.Camera.FlightCancelledCallback;
     }): Promise<boolean>;
     /**
+     * 设置相机pitch值，保持地图中心位置不变。
+     * @param heading - 方向角度值， 0-360
+     * @param [options] - 具有以下属性的对象:
+     * @param [options.pitch] - 俯仰角度值，绕垂直于地心的轴旋转角度, -90至90
+     * @param [options.duration] - 飞行持续时间（秒）。如果省略，内部会根据飞行距离计算出理想的飞行时间。
+     * @param [options.complete] - 飞行完成后要执行的函数。
+     * @param [options.cancel] - 飞行取消时要执行的函数。
+     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
+     */
+    setHeading(heading: number, options?: {
+        pitch?: number;
+        duration?: number;
+        complete?: Cesium.Camera.FlightCompleteCallback;
+        cancel?: Cesium.Camera.FlightCancelledCallback;
+    }): Promise<boolean>;
+    /**
      * 停止视角定位等操作
      * @returns 当前对象本身，可以链式调用
      */
@@ -27148,7 +27339,7 @@ declare class Map extends BaseClass {
     /**
      * 解除绑定指定类型事件监听器
      * @param [types] - 事件类型,未传值时解绑所有事件
-     * @param [fn] - 绑定的监听器回调方法,未传值时解绑所有指定类型对应事件
+     * @param [fn] - 绑定的监听器回调方法,未传值时解绑所有指定类型对应事件，特殊说明：map.on监听的Cesium相关原生事件时必须传入该参数
      * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
      * @returns 当前对象本身,可以链式调用
      */
@@ -28949,12 +29140,13 @@ declare class EchartsLayer extends BaseLayer {
  * @param [options.style.type] - 渲染类型，支持："image"：ImageLayer图片展示, "graphic"：普通RectanglePrimitive矢量矩形展示, "arc"：曲面RectanglePrimitive矢量矩形展示
  * @param [options.style.opacity = 1] - 透明度
  * @param [options.style.height = 0] - 高度，相对于椭球面的高度。
+ * @param [options.style.clampToGround = false] - 是否贴地
+ * @param [options.style.多个参数] - rectangle矩形支持的样式, tip: 是指支持多个其他参数
  * @param [options.style.arc = false] - 是否显示曲面热力图，同 type:"arc"
  * @param [options.style.arcRadiusScale = 1.5] - 曲面热力图时，radius扩大比例
  * @param [options.style.arcBlurScale = 1.5] - 曲面热力图时，blur扩大比例
  * @param [options.style.arcDirection = 1] - 曲面热力图时，凹陷的方向，1向上，-1向下，0双面
  * @param [options.style.diffHeight] - 曲面热力图时，曲面的起伏差值高，默认根据数据范围的比例自动计算。
- * @param [options.style.多个参数] - rectangle矩形支持的样式
  * @param [options.maxCanvasSize = 5000] - Canvas最大尺寸（单位：像素），调大精度更高，但过大容易内存溢出
  * @param [options.minCanvasSize = 700] - Canvas最小尺寸（单位：像素）
  * @param [options.delayTime = 2] - 显示数据时的过渡动画时长（单位：秒）
@@ -28991,16 +29183,17 @@ declare class HeatLayer extends BaseLayer {
             radius?: number;
             gradient?: any;
         };
-        style?: {
+        style?: any | {
             type?: string;
             opacity?: number;
             height?: number;
+            clampToGround?: boolean;
+            多个参数?: any;
             arc?: boolean;
             arcRadiusScale?: number;
             arcBlurScale?: number;
             arcDirection?: number;
             diffHeight?: number;
-            多个参数?: RectanglePrimitive.StyleOptions | any;
         };
         maxCanvasSize?: number;
         minCanvasSize?: number;
@@ -29954,6 +30147,13 @@ declare namespace Satellite {
  * @param [options.cone] - 设置是否显示 卫星视锥体 和对应的样式
  * @param [options.path] - 设置是否显示 卫星轨迹路线 和对应的样式，属性还包含：<br />
  * //  * @param {boolean} [options.path.closure=false]  是否闭合轨道圆
+ * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+ * @param [highlight.model] - 设置是否显示 gltf卫星模型 和对应的样式
+ * @param [highlight.label] - 设置是否显示 文本 和对应的样式
+ * @param [highlight.billboard] - 设置是否显示 图标点 和对应的样式
+ * @param [highlight.point] - 设置是否显示 像素点 和对应的样式
+ * @param [highlight.cone] - 设置是否显示 卫星视锥体 和对应的样式
+ * @param [highlight.path] - 设置是否显示 卫星轨迹路线 和对应的样式
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
@@ -29978,6 +30178,13 @@ declare class Satellite extends Route {
         id?: string | number;
         name?: string;
         show?: boolean;
+    }, highlight?: {
+        model?: ModelEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
+        billboard?: BillboardEntity.StyleOptions | any;
+        point?: PointEntity.StyleOptions | any;
+        cone?: SatelliteSensor.StyleOptions | any | any;
+        path?: PolylineEntity.StyleOptions | any;
     });
     /**
      * 卫星TLE算法类对象
@@ -31946,8 +32153,8 @@ declare namespace Measure {
      * @property change - 测量值变化了
      * @property start - 异步测量中，开始测量
      * @property end - 异步测量中，完成了测量后
-     * @property add - 添加对象
-     * @property remove - 移除对象
+     * @property addGraphic - 添加了矢量对象
+     * @property removeGraphic - 移除了矢量对象
      * @property show - 显示了对象
      * @property hide - 隐藏了对象
      * @property click - 左键单击 鼠标事件
@@ -31978,8 +32185,8 @@ declare namespace Measure {
         change: string;
         start: string;
         end: string;
-        add: string;
-        remove: string;
+        addGraphic: string;
+        removeGraphic: string;
         show: string;
         hide: string;
         click: string;
@@ -32977,6 +33184,14 @@ declare class ContourLine extends TerrainEditBase {
      */
     color: Cesium.Color | string;
     /**
+     * 地表渲染配色方案中的 最低海拔高度
+     */
+    minHeight: number;
+    /**
+     * 地表渲染配色方案中的 最高海拔高度
+     */
+    maxHeight: number;
+    /**
      * 是否显示区域外的地图
      */
     showElseArea: boolean;
@@ -33546,7 +33761,7 @@ declare class TerrainUplift extends TerrainEditBase {
  * @param [options.positions] - 限高区域坐标数组
  * @param [options.height] - 限高高度（单位米）,相对于bottomHeight模型地面的海拔高度的相对高度。
  * @param [options.bottomHeight] - 模型地面的海拔高度（单位米）
- * @param [options.color = "#3388ff"] - 颜色
+ * @param [options.color = "#ffffff"] - 颜色
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35623,6 +35838,14 @@ declare namespace PointUtil {
      * @returns 反射向量
      */
     function getReflectVector(view: Cesium.Cartesian3, normal: Cesium.Cartesian3): Cesium.Cartesian3;
+    /**
+     * 获取属性坐标对应时间的index和坐标值
+     * @param property - 属性坐标
+     * @param time - 指定时间
+     * @param [result] - 坐标对象
+     * @returns 返回index和坐标值 , 示例：{ position: xx, index:xx }
+     */
+    function getPropertyIndex(property: Cesium.SampledPositionProperty, time: Cesium.JulianDate, result?: Cesium.Cartesian3): any;
 }
 
 /**
@@ -36296,6 +36519,25 @@ declare namespace Util {
         opacity?: number;
         randomColor?: boolean;
     }, defval?: Cesium.Color): Cesium.Color;
+    /**
+     * 获取JulianDate时间
+     * @param currTime - 指定时间。当为String时，可以传入 '2021-01-01 12:13:00';
+     * @returns JulianDate时间
+     */
+    function getJulianDate(currTime: Cesium.JulianDate | Date | string): Cesium.JulianDate;
+    /**
+     * 指定时间范围内显示对象所用到的TimeIntervalCollection对象
+     * @example
+     * graphic.availability = mars3d.Util.getAvailability([
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ])
+     *
+     * graphic.availability = mars3d.Util.getAvailability({ start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false })
+     * @param availability - 指定时间范围
+     * @returns JulianDate时间
+     */
+    function getAvailability(availability: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any): Cesium.TimeIntervalCollection;
     /**
      * 取属性值，简化Cesium内的属性，去掉getValue等，取最简的键值对。
      * 方便popup、tooltip等构造方法使用
