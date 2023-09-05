@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.3
- * 编译日期：2023-08-28 19:38:39
+ * 版本信息：v3.6.4
+ * 编译日期：2023-09-01 17:21:25
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -2162,6 +2162,7 @@ declare namespace LocationBar {
  * 【鼠标所在位置】 经度:{lng}， 纬度:{lat}， 海拔：{alt}米， 横{crsx}  纵{crsy}
  * 【相机的】 方向角度：{heading}， 俯仰角度：{pitch}， 视高：{cameraHeight}米，
  * 【地图的】 层级：{level}
+ * 【地图的】 每秒帧率：{fps} (越高越流畅)，延迟：{ms} 毫秒 (越小越流畅)
  * @param [options.latDecimal = LngLatPoint.FormatLength] - 保留的{lat}和{lng}的小数位
  * @param [options.crs] - 按指定坐标系显示坐标值,true时取值CRS.CGCS2000_GK_Zone_3，配置后template可以加模板：【鼠标所在位置对应的crs坐标系】 X或经度值：{crsx}， Y或纬度值：{crsy}
  * @param [options.crsDecimal = 1] - 保留的{crsx}和{crsy}的小数位
@@ -2170,7 +2171,6 @@ declare namespace LocationBar {
  * @param [options.style.bottom] - css定位bottom位置
  * @param [options.style.left] - css定位left位置
  * @param [options.style.right] - css定位right位置
- * @param [options.fps = false] - 是否显示实时FPS帧率
  * @param [options.cacheTime = 50] - 鼠标移动的缓存时间
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -2190,7 +2190,6 @@ declare class LocationBar extends BaseControl {
             left?: string;
             right?: string;
         };
-        fps?: boolean;
         cacheTime?: number;
         id?: string | number;
         enabled?: boolean;
@@ -3336,13 +3335,13 @@ declare class BloomEffect extends BaseEffect {
  * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
  * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
  * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
+ * @param [options.ratio = 2.0] - 亮度增强比例
+ * @param [options.threshold = 0.0] - 亮度阈值
+ * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
  * @param [options.blurSamples = 32.0] - 模糊样本
  * @param [options.delta = 1.0] - 增量
  * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
  * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
- * @param [options.ratio = 2.0] - 亮度增强比例
- * @param [options.threshold = 0.0] - 亮度阈值
- * @param [options.smoothWidth = 0.01] - 亮度光滑的宽度
  * @param [options.objectsToExclude] - 排除不拾取的对象,支持TilesetLayer或Graphic对象
  * @param [options.enabled = true] - 对象的启用状态
  */
@@ -3352,24 +3351,60 @@ declare class BloomTargetEffect extends BaseEffect {
         color?: Cesium.Color;
         contrast?: number;
         brightness?: number;
+        ratio?: number;
+        threshold?: number;
+        smoothWidth?: number;
         blurSamples?: number;
         delta?: number;
         sigma?: number;
         stepSize?: number;
-        ratio?: number;
-        threshold?: number;
-        smoothWidth?: number;
         objectsToExclude?: any[];
         enabled?: boolean;
     });
+    /**
+     * 高亮触发的事件类型，默认为单击。
+     */
+    eventType: EventType | string;
     /**
      * 发光颜色
      */
     color: Cesium.Color;
     /**
-     * 高亮触发的事件类型，默认为单击。
+     * 对比度,取值范围[-255.0,255.0]
      */
-    eventType: EventType | string;
+    contrast: number;
+    /**
+     * 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
+     */
+    brightness: number;
+    /**
+     * 模糊样本
+     */
+    blurSamples: number;
+    /**
+     * 增量
+     */
+    delta: number;
+    /**
+     * delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
+     */
+    sigma: number;
+    /**
+     * 步长,是下一个texel的距离
+     */
+    stepSize: number;
+    /**
+     * 亮度增强比例
+     */
+    ratio: number;
+    /**
+     * 亮度阈值
+     */
+    threshold: number;
+    /**
+     * 亮度光滑的宽度
+     */
+    smoothWidth: number;
     /**
      * 选中对象 ,仅支持Primitive、3DTiles Feature等部分对象
      */
@@ -3504,7 +3539,7 @@ declare namespace OutlineEffect {
      * @property [width = 6] - 线宽，单位：像素px
      * @property [color = Cesium.Color.WHITE] - 轮廓线 颜色
      * @property [colorHidden = color] - 被遮挡的轮廓线 颜色
-     * @property [showPlane = false] - 是否显示边缘同一个平面（按thresholdAngle属性定义）
+     * @property [showPlane = false] - 是否显示边缘同一个平面（按planeAngle属性定义）
      * @property [planeAngle = 10] - 如果两个三角面的法线间夹角小于该值 则标记为同一个平面。该值的单位：角度
      * @property [glow = false] - 是否显示发光
      * @property [glowPower = 1] - 发光强度
@@ -3540,6 +3575,10 @@ declare class OutlineEffect extends BaseEffect {
      */
     selected: any | any | undefined;
     /**
+     * 线宽，单位：像素px
+     */
+    width: number;
+    /**
      * 轮廓线 颜色
      */
     color: string | Cesium.Color;
@@ -3548,21 +3587,13 @@ declare class OutlineEffect extends BaseEffect {
      */
     colorHidden: string | Cesium.Color;
     /**
+     * 是否显示边缘同一个平面（按planeAngle属性定义）
+     */
+    showPlane: boolean;
+    /**
      * 如果两个三角面的法线间夹角小于该值 则标记为同一个平面。该值的单位：角度
      */
     planeAngle: number;
-    /**
-     * 高亮触发的事件类型，默认为单击。
-     */
-    eventType: EventType | string;
-    /**
-     * 轮廓线 宽度，单位：像素px
-     */
-    width: number;
-    /**
-     * 是否显示边缘同一个平面（按thresholdAngle属性定义）
-     */
-    showPlane: boolean;
     /**
      * 是否显示发光
      */
@@ -3576,9 +3607,9 @@ declare class OutlineEffect extends BaseEffect {
      */
     glowStrength: number;
     /**
-     * 只显示选中构件
+     * 高亮触发的事件类型，默认为单击。
      */
-    onlySelected: boolean;
+    eventType: EventType | string;
 }
 
 /**
@@ -3640,12 +3671,18 @@ declare class SnowCoverEffect extends BaseEffect {
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.speed = 10] - 速度
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果
  */
 declare class SnowEffect extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         speed?: number;
+        maxHeight?: number;
     });
+    /**
+     * 最高限定高度，超出该高度不显示积雪效果
+     */
+    maxHeight: number;
     /**
      * 速度
      */
@@ -6450,7 +6487,7 @@ declare class Route extends BasePointPrimitive {
      * 更新视角模式,传入空值代表取消。
      * @param [cameraOptions] - 参数，包括：
      * @param [cameraOptions.type] - 视角模式类型，包括：'':无、'gs':跟随视角、'dy':第一视角、'sd':上帝视角
-     * @param [cameraOptions.radius] - 'gs'跟随视角时的 初始俯仰距离值（单位：米）
+     * @param [cameraOptions.radius] - 'gs'跟随视角时的 离目标的距离值（单位：米）
      * @param [cameraOptions.heading] - 'gs'跟随视角时的 初始方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [cameraOptions.pitch] - 'gs'跟随视角时的 初始俯仰角度值，绕纬度线旋转角度, 0至360 *
      * @param [cameraOptions.followedX = 50] - 'dy'锁定第一视角时，距离运动点的距离（后方）
@@ -8550,6 +8587,38 @@ declare class BillboardEntity extends BasePointEntity {
      * @returns 无
      */
     stopBounce(): void;
+    /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * graphic.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * graphic.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * graphic.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
 }
 
 declare namespace BoxEntity {
@@ -10813,6 +10882,38 @@ declare class ModelEntity extends BasePointEntity {
      * 四周方向角，0-360度角度值
      */
     heading: number;
+    /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * graphic.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * graphic.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * graphic.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
 }
 
 declare namespace PathEntity {
@@ -10991,6 +11092,38 @@ declare class PathEntity extends BasePointEntity {
      * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
      */
     position: Cesium.Cartesian3 | LngLatPoint;
+    /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * graphic.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * graphic.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * graphic.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
 }
 
 declare namespace PitEntity {
@@ -11331,6 +11464,38 @@ declare class PointEntity extends BasePointEntity {
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: Cesium.PointGraphics;
+    /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * graphic.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * graphic.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * graphic.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
 }
 
 declare namespace PolygonEntity {
@@ -36538,6 +36703,12 @@ declare namespace Util {
      * @returns JulianDate时间
      */
     function getAvailability(availability: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any): Cesium.TimeIntervalCollection;
+    /**
+     * 获取时间范围的简单对象数组，用于对象的编辑
+     * @param availability - 指定时间范围
+     * @returns JulianDate时间
+     */
+    function getAvailabilityJson(availability: Cesium.TimeIntervalCollection): any;
     /**
      * 取属性值，简化Cesium内的属性，去掉getValue等，取最简的键值对。
      * 方便popup、tooltip等构造方法使用
