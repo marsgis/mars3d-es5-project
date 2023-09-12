@@ -2,12 +2,39 @@
 
 /*init*/
 
-html, body, div, ol, ul, li, dl, dt, dd, h1, h2, h3, h4, h5, h6, input, button, textarea, p, span, table, th, td, from {
+html,
+body,
+div,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+button,
+textarea,
+p,
+span,
+table,
+th,
+td,
+from {
   margin: 0;
   padding: 0
 }
 
-body, input, button, select, textarea {
+body,
+input,
+button,
+select,
+textarea {
   font: 14px/22px "Microsoft Yahei", "Helvetica Neue";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -16,7 +43,8 @@ body, input, button, select, textarea {
 
 /*scrollbar*/
 
-body, html {
+body,
+html {
   scrollbar-base-color: #f4f7fc;
   scrollbar-track-color: #f4f7fc;
   scrollbar-face-color: #797979;
@@ -37,7 +65,8 @@ body, html {
   background: transparent
 }
 
-::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
   border: 0
 }
 
@@ -57,7 +86,8 @@ body, html {
   background-clip: padding-box
 }
 
-::-webkit-scrollbar-track, ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-thumb {
   border: 0
 }
 
@@ -76,7 +106,8 @@ table {
   border-spacing: 0
 }
 
-img, a img {
+img,
+a img {
   border: 0
 }
 
@@ -93,11 +124,18 @@ a:hover {
   text-decoration: none
 }
 
-ol, ul, li, dl, dt, dd {
+ol,
+ul,
+li,
+dl,
+dt,
+dd {
   list-style: none
 }
 
-em, cite, i {
+em,
+cite,
+i {
   font-style: normal
 }
 
@@ -109,7 +147,8 @@ p {
   word-break: normal
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   outline: none
 }
 
@@ -223,7 +262,8 @@ textarea {
   margin-left: 10px;
 }
 
-.mp_head .active i, .mp_head ul li i:hover {
+.mp_head .active i,
+.mp_head ul li i:hover {
   background: #3374e0;
   color: #fff;
   border-color: #3374e0;
@@ -275,7 +315,8 @@ textarea {
   display: none;
 }
 
-.mp_tab_con>li, .mp_tab_con>div {
+.mp_tab_con>li,
+.mp_tab_con>div {
   display: none
 }
 
@@ -359,9 +400,10 @@ textarea {
   background: #ecf1f8
 }
 
-.mp_select_ul .selecton, .mp_select_ul .selecton:hover {
-  background: #3374e0!important;
-  color: #fff!important
+.mp_select_ul .selecton,
+.mp_select_ul .selecton:hover {
+  background: #3374e0 !important;
+  color: #fff !important
 }
 
 /*mp_mark*/
@@ -394,7 +436,8 @@ textarea {
   padding: 0;
 }
 
-.mp_mark .markon i, .mp_mark ul li i:hover {
+.mp_mark .markon i,
+.mp_mark ul li i:hover {
   background: #3374e0;
   border: #3374e0 1px solid;
   color: #fff;
@@ -483,11 +526,11 @@ textarea {
 }
 
 .mp_input:hover {
-  border-color: #c9c9c9!important
+  border-color: #c9c9c9 !important
 }
 
 .mp_input:focus {
-  border-color: #3374e0!important
+  border-color: #3374e0 !important
 }
 
 .ptb5 {
@@ -602,9 +645,10 @@ textarea {
   background-color: rgba(63, 72, 84, 1);
 }
 
-.dark .mp_select_ul .selecton, .mp_select_ul .selecton:hover {
-  background: rgba(63, 72, 84, 1)!important;
-  color: #fff!important
+.dark .mp_select_ul .selecton,
+.mp_select_ul .selecton:hover {
+  background: rgba(63, 72, 84, 1) !important;
+  color: #fff !important
 }
 
 .dark .open {
@@ -643,4 +687,47 @@ textarea {
 
 .minicolors-theme-default.minicolors {
   display: block;
+}
+
+.tools-btn {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.ava-title {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 16px;
+  margin-top: 10px;
+}
+
+.mars-table {
+  margin-left: 16px;
+  width: calc(100% - 32px);
+}
+
+.mars-table tr td {
+  padding: 5px 5px 5px 10px;
+  text-align: left;
+  border: 1px solid #cde1de;
+  max-width: 150px;
+  word-wrap: break-word;
+}
+
+.table-box {
+  margin-top: 10px;
+}
+
+.ava-tools {
+  margin-right: 10px;
+}
+
+.ava-btn {
+  display: inline-block;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.timepane {
+  height: 247px;
 }

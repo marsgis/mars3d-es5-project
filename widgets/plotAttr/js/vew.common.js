@@ -16,7 +16,6 @@ $(function () {
       localforage.setItem(storageName, _id)
     }
   })
-  $("#tab_attr").click()
 
   // mp_tree
   $(".open").click(changeOpenShowHide)

@@ -1,5 +1,6 @@
 /* eslint-disable no-var */
 let thisWidget
+let availabilityList = []
 
 //当前页面业务
 function initWidgetView(_thisWidget) {
@@ -19,15 +20,46 @@ function initWidgetView(_thisWidget) {
     haoutil.file.downloadFile("标绘item.json", JSON.stringify(data))
   })
 
+  $("#btn_avali_add").click(function () {
+    let newTimeSlot = { start: null, stop: null }
+    const avaLength = availabilityList.length
+    if (!avaLength) {
+      newTimeSlot = thisWidget.getAndSetMapTime()
+    } else {
+      const copiedTime = availabilityList[avaLength - 1]
+
+      newTimeSlot.start = thisWidget.getAndSetMapTime(copiedTime.stop)
+      newTimeSlot.stop = thisWidget.getAndSetMapTime(newTimeSlot.start)
+    }
+
+    availabilityList.push(newTimeSlot)
+    changeAvali(availabilityList)
+  })
+
+  $("#btn_avali_delete").click(function () {
+    $("#table-box").empty()
+    availabilityList = []
+    changeAvali(availabilityList)
+  })
+
   plotEdit.initEvent()
   thisWidget.startEditing()
+
+  availabilityList = thisWidget.getAvailability() || []
+  if (availabilityList && !thisWidget.config?.hideAvaliability) {
+    changeAvali(availabilityList)
+  }
+
+  if (thisWidget.config?.hideAvaliability) {
+    $("#tab_availability").hide()
+  }
 }
 
 let newAttr = {} // 解决的问题：在updateAttr捕获到内容改变后，会导致仅保留最后一次更改的属性数据
-
 //属性编辑相关
 var plotEdit = {
   hasEditSylte: true,
+
   initEvent: function () {
     let that = this
     if (!this.hasEditSylte) {
@@ -767,5 +799,152 @@ var plotEdit = {
     }
 
     return true
+  }
+}
+
+// 时序相关
+function changeAvali() {
+  $("#table-box").empty()
+  //   <li id="btnAdd" onclick="addAvaliItem('ava-title${index + 1}')" class="ava-btn"><i class="fa fa-plus" title="新增"></i></li>
+
+  availabilityList.forEach((item, index) => {
+    const span = $(`
+        <span class="ava-title" id="ava-title${index + 1}">第${index + 1}个时间段
+        <ul class="ava-tools">
+        <li id="btnDelete" onclick="deleteAvali('ava-title${index + 1}')" class="ava-btn"><i class="fa fa-trash" title="删除"></i></li>
+        </ul>
+        </span>
+        `)
+    const table = $(
+      `<table id='ava-table' class='mars-table'>
+        <tbody>
+          <tr>
+            <td>开始时间</td>
+            <td><input type='text' class='form-control' id='startTime${index + 1}' placeholder='YYYY-MM-DD' /></td>
+        </tr>
+        <tr>
+            <td>结束时间</td>
+            <td><input type='text' class='form-control' id='endTime${index + 1}' placeholder='YYYY-MM-DD' /></td>
+        </tr>
+        </tbody>
+        </table>`
+    )
+    $("#table-box").append(span)
+    $("#table-box").append(table)
+
+    const startMinmaxData = getMinData(availabilityList, index, "start")
+    jeDate(`#startTime${index + 1}`, {
+      theme: {
+        bgcolor: "#135b91",
+        pnColor: "#00CCFF"
+      },
+      format: "YYYY-MM-DD hh:mm:ss",
+      isClear: false,
+      minDate: startMinmaxData.minDate,
+      maxDate: startMinmaxData.maxDate,
+      donefun: function (obj) {
+        const { isChange, message } = getMinData(availabilityList, index, "start", obj.val)
+        if (isChange) {
+          availabilityList[index].start = obj.val
+          thisWidget.availabilityChange(availabilityList)
+        } else {
+          toastr.warning(message)
+          $(obj.elem).val(availabilityList[index].start)
+        }
+      }
+    })
+
+    const endMinmaxData = getMinData(availabilityList, index, "stop")
+    jeDate(`#endTime${index + 1}`, {
+      theme: {
+        bgcolor: "#135b91",
+        pnColor: "#00CCFF"
+      },
+      format: "YYYY-MM-DD hh:mm:ss",
+      isClear: false,
+      minDate: endMinmaxData.minDate,
+      maxDate: endMinmaxData.maxDate,
+      donefun: function (obj) {
+        const { isChange, message } = getMinData(availabilityList, index, "stop", obj.val)
+        if (isChange) {
+          availabilityList[index].stop = obj.val
+          thisWidget.availabilityChange(availabilityList)
+        } else {
+          toastr.warning(message)
+          $(obj.elem).val(availabilityList[index].stop)
+        }
+      }
+    })
+
+    $(`#startTime${index + 1}`).val(availabilityList[index].start)
+    $(`#endTime${index + 1}`).val(availabilityList[index].stop)
+  })
+
+  thisWidget.availabilityChange(availabilityList)
+}
+
+// function addAvaliItem(pos) {
+//   const arr = [...pos]
+//   const index = Number(arr[arr.length - 1])
+
+//   const start = $(`#startTime${index}`).val()
+//   const stop = $(`#endTime${index}`).val()
+
+//   availabilityList.splice(index, 0, {
+//     start: start,
+//     stop: stop
+//   })
+//   changeAvali(availabilityList)
+// }
+
+function deleteAvali(domId) {
+  const arr = [...domId]
+  const index = arr[arr.length - 1]
+  availabilityList.splice(index - 1, 1)
+  changeAvali(availabilityList)
+}
+
+function getMinData(avaList, index, key, val) {
+  let startTime = null
+  let endTime = null
+
+  const lastTimeSlot = avaList[index - 1]
+  const currentTimeSlot = avaList[index]
+  const nextTimeSlot = avaList[index + 1]
+
+  switch (key) {
+    case "start":
+      if (lastTimeSlot) {
+        startTime = lastTimeSlot.stop
+      }
+      endTime = currentTimeSlot.stop
+      break
+    case "stop":
+      startTime = currentTimeSlot.start
+      if (nextTimeSlot) {
+        endTime = nextTimeSlot.start
+      }
+
+      break
+
+    default:
+      break
+  }
+
+  if (val) {
+    if (startTime && new Date(val) < new Date(startTime)) {
+      console.log(`选中时间小于开始时间！\n选中：${val}\n 开始时间：${startTime}`)
+      return { isChange: false, message: `请重新选择时间，须大于${startTime}` }
+    } else if (endTime && new Date(val) > new Date(endTime)) {
+      console.log(`选中时间大于结束时间！\n选中：${val}\n 结束时间：${endTime}`)
+      return { isChange: false, message: `请重新选择时间，须小于${endTime}` }
+    } else {
+      return { isChange: true, message: "" }
+    }
+  } else {
+    return {
+      minDate: startTime || jeDate.nowDate({ DD: -360 * 100 }),
+      maxDate: endTime || jeDate.nowDate({ DD: 360 * 100 })
+    }
   }
 }

@@ -10,7 +10,7 @@
         style: "dark",
         windowOptions: {
           skin: "layer-mars-dialog animation-scale-up",
-          width: 250,
+          width: 315,
           position: {
             top: 10,
             left: 5,
@@ -68,6 +68,11 @@
       let graphic = this.config.graphic
       return graphic?._layer?.name || ""
     }
+    getAvailability() {
+      let graphic = this.config.graphic
+
+      return mars3d.Util.getAvailabilityJson(graphic.availability)
+    }
 
     startEditing(graphic, lonlats) {
       if (graphic) {
@@ -112,6 +117,22 @@
       let graphic = this.config.graphic
       graphic.flyTo()
     }
+    getAndSetMapTime(date) {
+      if (!date) {
+        const start = map.clock.currentTime.clone()
+        const stop = Cesium.JulianDate.addSeconds(start, 10, new Cesium.JulianDate())
+        return { start: this.formatDate(Cesium.JulianDate.toDate(start)), stop: this.formatDate(Cesium.JulianDate.toDate(stop)) }
+      } else {
+        const toJulian = Cesium.JulianDate.fromDate(new Date(date))
+        const stop = Cesium.JulianDate.addSeconds(toJulian, 5, new Cesium.JulianDate())
+        return this.formatDate(Cesium.JulianDate.toDate(stop))
+      }
+    }
+
+    formatDate(time) {
+      return mars3d.Util.formatDate(time, "yyyy-MM-dd HH:mm:ss")
+    }
+
     deleteEntity() {
       let graphic = this.config.graphic
       if (graphic.stopEditing) {
@@ -129,6 +150,17 @@
       geojson.properties._layer = graphic._layer.name //记录分组信息
 
       return geojson
+    }
+    //时序
+    availabilityChange(availability) {
+      // console.log("availability", availability)
+      let graphic = this.config.graphic
+
+      if (availability && availability.length) {
+        graphic.availability = availability
+      } else {
+        graphic.availability = null
+      }
     }
   }
 

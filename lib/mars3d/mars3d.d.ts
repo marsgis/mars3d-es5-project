@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.6.5
- * 编译日期：2023-09-08 17:09:17
+ * 编译日期：2023-09-12 12:23:11
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -4941,6 +4941,83 @@ declare class FlatBillboard extends BaseCombine {
      * @returns 当前对象本身
      */
     redraw(style?: any): BasePrimitive;
+}
+
+/**
+ * 大数据 四棱锥体 集合 (合并渲染) Primitive图元 矢量对象
+ * @param options - 参数对象，包括以下：
+ * @param [options.instances] - 面信息数组，单个对象包括：
+ * @param options.instances.position - 坐标位置
+ * @param [options.instances.style] - 样式信息
+ * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
+ * @param [options.style] - 所有面的公共样式信息
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
+ * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.fixedFrameTransform = Cesium.Transforms.northEastDownToFixedFrame] - 参考系
+ * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
+ * @param [options.attributes] - [cesium原生]每个实例的属性。
+ * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
+ * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
+ * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
+ * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
+ * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
+ * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
+ * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
+ * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
+ * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
+ * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class FrustumCombine extends BasePointCombine {
+    constructor(options: {
+        instances?: {
+            position: LngLatPoint | Cesium.Cartesian3 | any[] | any;
+            style?: FrustumPrimitive.StyleOptions | any;
+            attr?: any;
+        }[];
+        style?: FrustumPrimitive.StyleOptions | any;
+        highlight?: {
+            type?: string;
+        };
+        fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
+        appearance?: Cesium.Appearance;
+        attributes?: Cesium.Appearance;
+        depthFailAppearance?: Cesium.Appearance;
+        vertexCacheOptimize?: boolean;
+        interleave?: boolean;
+        compressVertices?: boolean;
+        releaseGeometryInstances?: boolean;
+        allowPicking?: boolean;
+        cull?: boolean;
+        asynchronous?: boolean;
+        debugShowBoundingVolume?: boolean;
+        debugShowShadowVolume?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
 }
 
 /**
@@ -25627,6 +25704,9 @@ declare class WmtsLayer extends BaseTileLayer {
  *     <li><code>{northProjected}</code>:图块方案的墨卡托投影坐标中图块的北边缘。</li>
  *     <li><code>{width}</code>:每个图块的宽度（以像素为单位）。</li>
  *     <li><code>{height}</code>: 每个图块的高度（以像素为单位）。</li>
+ *     <li><code>{scale}</code>: z层级对应的scale值。</li>
+ *     <li><code>{origin}</code>: 该坐标系对应的origin原点坐标。</li>
+ *
  * </ul>
  * @param [options.urlSchemeZeroPadding] - 为每个图块坐标获取URL方案零填充。格式为' 000'，其中每个坐标将在左侧用零填充，以匹配传递的零字符串的宽度。例如设置:
  * urlSchemeZeroPadding:{'{x}':'0000'}将导致'x'值为12，以在生成的URL中返回{x}的字符串'0012'。传递的对象具有以下关键字:
@@ -30546,532 +30626,6 @@ declare class TdtTerrainProvider extends Cesium.TerrainProvider {
         subdomains?: string;
         key?: string;
     });
-}
-
-declare namespace BaseWidget {
-    /**
-     * widget 配置参数
-     * @property name - 必须，中文名称，用于标识和弹窗标题。
-     * @property uri - 必须，JS文件路径，路径是相对于widgets目录的路径。如："widgets/bookmark/widget.js"
-     * @property [id] - 定义该插件的唯一标识,方便后续判断。
-     * @property [autoDisable = true] - 激活其他新插件时，是否自动释放本插件
-     * @property [disableOther = true] - 激活本插件时，是否释放其它已激活的插件
-     * @property [group] - 配置group后，同group下的widget互斥，打开任意一个会自动释放其他的
-     * @property [windowOptions] - 存在弹窗的插件的弹窗相关参数配置，更多参数请参考 [layer弹窗API]{@link https://layui.gitee.io/v2/docs/modules/layer.html} 包括：
-     * @property [windowOptions.width] - 窗口宽度，可以是 像素数字(像素值) 或者 字符串(屏幕宽度百分比)，示例：200 或 "20%"
-     * @property [windowOptions.height] - 窗口高度，可以是 像素数字(像素值) 或者 字符串(屏幕高度百分比)，示例：600 或 "50%"
-     * @property [windowOptions.position = 'auto'] - 窗口所在位置坐标，配置字符串可选值：auto垂直水平居中，t顶部,b底部,r右边缘,l左边缘,lt左上角,lb左下角,rt右上角,rb右下角；也可以配置对象：
-     * @property [windowOptions.position.top] - 位置css的top值，可以是 像素数字(像素值) 或者 字符串(屏幕高度百分比)，示例：10 或 "5%"
-     * @property [windowOptions.position.bottom] - 位置css的top值，可以是 像素数字(像素值) 或者 字符串(屏幕高度百分比)，示例：10 或 "5%"
-     * @property [windowOptions.position.left] - 位置css的top值，可以是 像素数字(像素值) 或者 字符串(屏幕宽度百分比)，示例：10 或 "5%"
-     * @property [windowOptions.position.right] - 位置css的top值，可以是 像素数字(像素值) 或者 字符串(屏幕宽度百分比)，示例：10 或 "5%"
-     * @property [windowOptions.minHeight] - 限定的窗口最小高度(像素值)，默认不限制
-     * @property [windowOptions.maxHeight] - 限定的窗口最大高度(像素值)，默认不限制
-     * @property [windowOptions.minWidth] - 限定的窗口最小宽度(像素值)，默认不限制
-     * @property [windowOptions.maxWidth] - 限定的窗口最大宽度(像素值)，默认不限制
-     * @property [windowOptions.maxmin = true] - 是否可以在弹层右下角拖动来拉伸尺寸
-     * @property [windowOptions.shade = 0] - 遮罩，默认为0不显示，可配置数字0.3透明度的黑色背景（'#000'），其他颜色，可以shade: [0.8, '#393D49']
-     * @property [windowOptions.shadeClose = false] - 当shade是存在的，点击弹层外区域后是否关闭弹窗。
-     * @property [windowOptions.closeBtn = 1] - 当为0时，不显示关闭按钮，配置1和2来展示两种风格的关闭按钮
-     * @property [windowOptions.noTitle = false] - 是否不显示标题，为true是不显示标题
-     * @property [windowOptions.show = true] - 激活后是否显示弹窗，false时激活后自动隐藏弹窗。
-     * @property [openAtStart = false] - 打开系统后是否自动启动本插件
-     * @property [style] - 添加到widget的view中的class样式名
-     * @property [css] - 添加到widget的css值
-     * @property [多个参数] - 传入数据等，定义的任意参数在widget内部方法中都可以通过this.config获取到
-     */
-    type widgetOptions = {
-        name: string;
-        uri: string;
-        id?: string;
-        autoDisable?: boolean;
-        disableOther?: boolean;
-        group?: string;
-        windowOptions?: {
-            width?: number | string;
-            height?: number | string;
-            position?: {
-                top?: number | string;
-                bottom?: number | string;
-                left?: number | string;
-                right?: number | string;
-            };
-            minHeight?: number;
-            maxHeight?: number;
-            minWidth?: number;
-            maxWidth?: number;
-            maxmin?: boolean;
-            shade?: number | any[];
-            shadeClose?: boolean;
-            closeBtn?: number;
-            noTitle?: number;
-            show?: boolean;
-        };
-        openAtStart?: boolean;
-        style?: string;
-        css?: any;
-        多个参数?: any;
-    };
-}
-
-/**
- * widget基础类,
- * 需要继承后使用，不用手动实例化，框架内部自动实例化及相关处理。
- * 【需要引入  mars3d-widget 插件库】
- * @example
- * //使用示例
- * class MyWidget extends mars3d.widget.BaseWidget {
- *   //外部资源配置
- *   get resources() {
- *     return [
- *       'js/test.js', //当前同目录下
- *       './lib/dom2img/dom-to-image.js', //主页面相同目录下
- *     ]
- *   }
- *   //弹窗配置
- *   get view() {
- *     return {
- *       type: 'window',
- *       url: 'view.html',
- *       windowOptions: {  width: 250 },
- *     }
- *   }
- *   //初始化[仅执行1次]
- *   create() {}
- *   //每个窗口创建完成后调用
- *   winCreateOK(opt, result) {
- *     this.viewWindow = result
- *   }
- *   //打开激活
- *   activate() {}
- *   //关闭释放
- *   disable() {
- *     this.viewWindow = null
- *   }
- * }
- *
- * //注册到widget管理器中。
- * mars3d.widget.bindClass(MyWidget)
- * @param map - 地图对象
- * @param options - 配置参数
- */
-declare class BaseWidget extends BaseClass {
-    constructor(map: Map, options: BaseWidget.widgetOptions);
-    /**
-     * 获取当前地图
-     */
-    readonly map: Map;
-    /**
-     * 获取当前配置参数
-     */
-    readonly options: BaseWidget.widgetOptions;
-    /**
-     * 获取当前配置参数，别名，同options
-     */
-    readonly config: BaseWidget.widgetOptions;
-    /**
-     * 获取当前widget的目录路径
-     */
-    readonly path: string;
-    /**
-     * 是否激活状态
-     */
-    readonly isActivate: boolean;
-    /**
-     * 是否已创建
-     */
-    readonly isCreate: boolean;
-    /**
-     * 该模块依赖的外部js、css资源文件，会在实例化之前加入的页面中。
-     * 默认引用是当前widget所在同path目录的资源，
-     * 相当于html主页面的资源 或 外部资源 请 以 “/” 或 “.” 或 “http” 开始的url
-     */
-    readonly resources: string[];
-    /**
-     * 定义关联的view弹窗或页面配置信息，目前支持3种类型，
-     * （1）type:'window'，iframe模式弹窗 ,参考_example示例， 独立的html子页面，比较自由，简单粗暴、无任何限制；可以每个页面用不同的UI和第三方插件不用考虑冲突问题；任何水平的开发人员均容易快速开发。
-     * （2）type:'divwindow'，div元素模式弹窗 参考_example_divwin示例，可直接互相访问，这种模式弊端是易引起模块间id命名冲突，在css和html中命名时需注意。
-     * （3）type:'append'，任意html元素 参考_example_append示例，任意div节点，比较自由。
-     * 为空时表示当前模块无关联的view页面，
-     * 其中url地址规则，参考resources说明
-     */
-    readonly view: any | any;
-    /**
-     * 激活widget，同 mars3d.widget.activate方法
-     * @returns 无
-     */
-    activateBase(): void;
-    /**
-     * 构造方法完成后的钩子方法，子类继承后按需使用
-     * @returns 无
-     */
-    init(): void;
-    /**
-     * 模块初始化，仅首次初始化执行1次
-     * @param [endfun] - 当create内存在异步时，可以异步后调用下endfun
-     * @returns 无
-     */
-    create(endfun?: (...params: any[]) => any): void;
-    /**
-     * 遍历所有view配置
-     * @param callback - 回调方法
-     * @param [index] - 当有多个view时，可以指定单个操作的view的index
-     * @returns callback执行的返回结果
-     */
-    eachView(callback: (...params: any[]) => any, index?: number): any;
-    /**
-     * 更新窗口大小或位置，改变了主页面尺寸后需要调用(内部已自动调用)。
-     * @returns 无
-     */
-    indexResize(): void;
-    /**
-     * 每个view窗口或页面创建完成后调用的钩子方法
-     * @param opt - 对应的view配置
-     * @param result - 得到iframe页的窗口对象 或 view的html内容
-     * @returns 无
-     */
-    winCreateOK(opt: any, result: any | string): void;
-    /**
-     * 窗口最大化后触发后 的钩子方法
-     * @returns 无
-     */
-    winFull(): void;
-    /**
-     * 窗口最小化后触发 的钩子方法
-     * @returns 无
-     */
-    winMin(): void;
-    /**
-     * 最小化窗口
-     * @returns 无
-     */
-    minView(): void;
-    /**
-     * 还原窗口
-     * @returns 无
-     */
-    restoreView(): void;
-    /**
-     * 最大化窗口
-     * @returns 无
-     */
-    fullView(): void;
-    /**
-     * 窗口还原后触发 的钩子方法
-     * @returns 无
-     */
-    winRestore(): void;
-    /**
-     * 激活模块之前 的钩子方法
-     * @returns 无
-     */
-    beforeActivate(): void;
-    /**
-     * 激活模块【类内部实现方法】
-     * @returns 无
-     */
-    activate(): void;
-    /**
-     * 释放插件，同 mars3d.widget.disable方法
-     * @returns 无
-     */
-    disableBase(): void;
-    /**
-     * 释放模块前
-     * @returns 无
-     */
-    beforeDisable(): void;
-    /**
-     * 释放模块【类内部实现方法】
-     * @returns 无
-     */
-    disable(): void;
-    /**
-     * 还原配置为初始状态
-     * @returns 无
-     */
-    resetConfig(): void;
-    /**
-     * 设置view弹窗的显示和隐藏，基于修改css实现
-     * @param show - 是否显示
-     * @param [index] - 当有多个view时，可以指定单个操作的view的index
-     * @returns 无
-     */
-    setViewShow(show: boolean, index?: number): void;
-    /**
-     * 设置view弹窗的css
-     * @param style - css值
-     * @param [index] - 当有多个view时，可以指定单个操作的view的index
-     * @returns 无
-     */
-    setViewCss(style: any, index?: number): void;
-    /**
-     * 设置view弹窗的标题
-     * @param title - css值
-     * @param [index] - 当有多个view时，可以指定单个操作的view的index
-     * @returns 无
-     */
-    setTitle(title: string, index?: number): void;
-    /**
-     * 读取html页面的内容
-     * @param url - html页面的url
-     * @param callback - 读取完成后的回调方法
-     * @returns 无
-     */
-    getHtml(url: string, callback: (...params: any[]) => any): void;
-}
-
-/**
- * widget事件类型枚举, mars3d.widget.EventType
- * 【需要引入  mars3d-widget 插件库】
- */
-declare enum WidgetEventType {
-    /**
-     * 在实例初始化之后、创建之前执行
-     */
-    beforeCreate = "beforeCreate",
-    /**
-     * 实例创建后执行
-     */
-    created = "created",
-    /**
-     * 在activat挂载开始之前调用
-     */
-    beforeActivate = "beforeActivate",
-    /**
-     * activate方法调用后
-     */
-    activated = "activated",
-    /**
-     * view弹窗构造完成后后调用
-     */
-    openView = "openView",
-    /**
-     * 实例销毁之前调用
-     */
-    beforeDisable = "beforeDisable",
-    /**
-     * 实例销毁完成调用
-     */
-    disabled = "disabled",
-    /**
-     * 加载完成 未做任何其他处理前
-     */
-    loadBefore = "loadBefore",
-    /**
-     * 加载完成，执行所有内部处理后
-     */
-    load = "load"
-}
-
-/**
- * widget模块化框架，公共处理类
- * 【需要引入  mars3d-widget 插件库】
- */
-declare namespace widget {
-    /**
-     * 初始化widget管理器，在构造完成map后调用一次即可。
-     * @example
-     * let widgetCfg ={
-     *   "version": "2017",
-     *   "defaultOptions": {
-     *     "style": "dark",
-     *     "windowOptions": {
-     *       "skin": "layer-mars-dialog animation-scale-up",
-     *       "position": {
-     *         "top": 50,
-     *         "right": 10
-     *       },
-     *       "maxmin": false,
-     *       "resize": true
-     *     },
-     *     "autoReset": false,
-     *     "autoDisable": true,
-     *     "disableOther": true
-     *   },
-     *   "openAtStart": [
-     *     {
-     *       "name": "放大缩小按钮",
-     *       "uri": "widgets/toolButton/zoom.js"
-     *     }
-     *   ],
-     *   "widgets": [
-     *     {
-     *       "name": "模板-div弹窗",
-     *       "uri": "widgets/_example_divwin/widget.js"
-     *     },
-     *     {
-     *       "name": "模板-append模板",
-     *       "uri": "widgets/_example_append/widget.js"
-     *     }
-     *   ]
-     * }
-     * mars3d.widget.init(map, widgetCfg, './')
-     * @param map - 地图对象
-     * @param [widgetcfg = {}] - 全局配置(一般存放在widget.json)，包括：
-     * @param [widgetcfg.defaultOptions] - 所有widget的默认参数值，可以系统内所有widget相同配置统一在此处传入，额外的个性化的再配置到各widget中。
-     * @param [widgetcfg.openAtStart] - 默认自启动并不可释放的插件，其中autoDisable和openAtStart固定，设置无效。
-     * @param [widgetcfg.widgets] - 所有插件配置，传入后后续激活时，只用传入uri即可。
-     * @param [widgetcfg.version] - 加载资源时，附加的参数，主要为了清理浏览器缓存，可选值："time"（实时时间戳）或固定的字符串值，每次发布新版本换下固定值。
-     * @param [widgetcfg.debugger] - 是否显示插件测试栏，true时会在地图下侧显示所有插件测试按钮，方便测试。
-     * @param [_basePath = ''] - widgets目录所在的主路径(统一前缀), 如果widgets目录不在主页面一起或存在路由时，可以传入自定义主目录，值为 widgets目录相对于当前html页面的相对路径。
-     * @returns 无
-     */
-    function init(map: Map, widgetcfg?: {
-        defaultOptions?: BaseWidget.widgetOptions;
-        openAtStart?: BaseWidget.widgetOptions[];
-        widgets?: BaseWidget.widgetOptions[];
-        version?: string;
-        debugger?: boolean;
-    }, _basePath?: string): void;
-    /**
-     * 获取默认init时中传入配置的 windowOptions 参数
-     * @returns windowOptions参数默认值
-     */
-    function getDefWindowOptions(): any;
-    /**
-     * 激活指定 widget模块
-     * @example
-     * //常用方式，直接使用uri
-     * mars3d.widget.activate("widgets/bookmark/widget.js");
-     *
-     * //使用对象，可以传入更多参数，具体参数参看配置项手册，。
-     * mars3d.widget.activate({
-     *   name:"视角书签"
-     *   uri: "widgets/bookmark/widget.js",
-     *   autoDisable: true,
-     *   testdata:'测试数据1987', //传数据进widget内部，widget内部使用this.config.testdata获取到传的数据
-     *   success:function(thisWidget){
-     *     //创建完成的回调方法
-     *   }
-     * });
-     * @param item - 指widget模块的uri 或 指模块的配置参数,当有配置参数时，参数优先级是：
-     * 【activate方法传入的配置 > init方法传入的配置(widget.json) > widget.js内部配置的】
-     * @param [item.map] - 当单页面简单场景没有init时，也可以传入map来使用单个widget
-     * @param [noDisableOther = false] - 不释放其他已激活的widget
-     * @returns 指widget模块对象
-     */
-    function activate(item: {
-        map?: Map;
-    }, noDisableOther?: boolean): BaseWidget.widgetOptions;
-    /**
-     * 获取指定的widget配置信息
-     * @param uri - widget的uri 或 id
-     * @returns widget配置信息
-     */
-    function getWidget(uri: string): BaseWidget.widgetOptions;
-    /**
-     * 获取指定的widget 对应的实例化对象
-     * @param uri - widget的uri 或 id
-     * @returns widget对应的实例化对象
-     */
-    function getClass(uri: string): BaseWidget;
-    /**
-     * 获取widget的当前激活状态
-     * @param uri - widget的uri 或 id
-     * @returns 是否激活
-     */
-    function isActivate(uri: string): boolean;
-    /**
-     * 设置view弹窗的显示和隐藏，基于修改css实现
-     * @param uri - widget的uri 或 id
-     * @param show - 是否显示
-     * @param [index] - 当有多个view时，可以指定单个操作的view的index
-     * @returns 是否成功设置
-     */
-    function setViewShow(uri: string, show: boolean, index?: number): boolean;
-    /**
-     * 释放指定的widget
-     * @param uri - widget的uri 或 id
-     * @returns 是否成功调用了释放
-     */
-    function disable(uri: string | string[]): boolean;
-    /**
-     * 关闭释放所有widget
-     * @param [nodisable] - 传string时 指定不释放的widget的uri或id ，传true值强制释放所有widget(默认autoDisable为false的widet不会释放)
-     * @param [group] - 指定强制释放的group名(默认autoDisable为false的widet不会释放)，传入group值后会强制释放所有同group组的widget
-     * @returns 无
-     */
-    function disableAll(nodisable?: string | boolean, group?: string): void;
-    /**
-     * 关闭释放同组widget
-     * @param group - 指定强制释放的group名
-     * @param [nodisable] - 指定不释放的widget的uri或id
-     * @returns 无
-     */
-    function disableGroup(group: string, nodisable?: string): void;
-    /**
-     * 遍历所有widget
-     * @param method - 回调方法
-     * @returns 无
-     */
-    function eachWidget(method: (...params: any[]) => any): void;
-    /**
-     * 绑定类到当前对应js的widget中。
-     * @param _class - 定义的BaseWidget子类
-     * @returns 实例化后的对象
-     */
-    function bindClass(_class: BaseWidget): any;
-    /**
-     * 移除Widget测试栏（当有开启debugger时）
-     * @returns 无
-     */
-    function removeDebugeBar(): void;
-    /**
-     * 获取配置的version配置参数，用于附加清除浏览器缓存
-     * @returns 配置的version参数
-     */
-    function getCacheVersion(): string;
-    /**
-     * 获取init方法传入的主目录配置参数
-     * @returns 主目录配置参数
-     */
-    function getBasePath(): string;
-    /**
-     * 销毁对象
-     * @returns 无
-     */
-    function destroy(): void;
-    /**
-     * 绑定指定类型事件监听器
-     * @param types - 事件类型
-     * @param [fn] - 绑定的监听器回调方法
-     * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
-     * @returns 无
-     */
-    function on(types: WidgetEventType | WidgetEventType[], fn?: (...params: any[]) => any, context?: any): void;
-    /**
-     * 解除绑定指定类型事件监听器
-     * @param types - 事件类型
-     * @param [fn] - 绑定的监听器回调方法
-     * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
-     * @returns 无
-     */
-    function off(types: WidgetEventType | WidgetEventType[], fn?: (...params: any[]) => any, context?: any): void;
-    /**
-     * 触发指定类型的事件。
-     * @param type - 事件类型
-     * @param data - 传输的数据或对象，可在事件回调方法中event对象中获取进行使用
-     * @param [propagate] - 将事件传播给父类 (用addEventParent设置)
-     * @returns 无
-     */
-    function fire(type: WidgetEventType, data: any, propagate?: BaseClass | any): void;
-    /**
-     * 绑定一次性执行的指定类型事件监听器
-     * 与on类似，监听器只会被触发一次，然后被删除。
-     * @param types - 事件类型
-     * @param [fn] - 绑定的监听器回调方法
-     * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
-     * @returns 无
-     */
-    function once(types: WidgetEventType | WidgetEventType[], fn?: (...params: any[]) => any, context?: any): void;
-    /**
-     * 是否有绑定指定的事件
-     * @param type - 事件类型
-     * @param [propagate] - 是否判断指定的父类 (用addEventParent设置的)
-     * @returns 是否存在
-     */
-    function listens(type: WidgetEventType, propagate?: BaseClass): boolean;
 }
 
 declare namespace CanvasWindLayer {
@@ -36954,7 +36508,7 @@ declare namespace Util {
      * @param [langType = 0] - 使用的语言
      * @returns lang参数指定的对应文本内容
      */
-    function getLangText(key: string, langType?: LangType): void;
+    function getLangText(key: string, langType?: LangType): string;
     /**
      * 更新Lang值，设置当前key对应语言的文本内容。
      * @param key - 文本key
