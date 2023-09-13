@@ -176,7 +176,7 @@ npm run serve:dist  //测试dist运行状态
 ## 3. widget初始化及管理
 
  目前平台示例和项目中使用到的[widget.json](http://mars3d.cn/project/jcxm/config/widget.json) 是静态json文件方式
- 文件中配置参数与[mars3d.widget.init方法API](http://mars3d.cn/api/widget.html#.init)的方法参数是完成相同一致的，代码中加载json后传入到init方法中。
+ 文件中配置参数与`mars3d.widget.init`的方法参数是完成相同一致的，代码中加载json后传入到init方法中。
  
  widget初始化方法：
  ```js
@@ -185,9 +185,9 @@ mars3d.widget.init(map, widgetCfg, './') //tip: 第3个参数支持定义widget�
 ```
 
 ### 3.1 widget的管理
-在外部调用widget功能，都是通过[mars3d.widget静态类](http://mars3d.cn/api/widget.html)来统一管理的，更多方法可以参阅该类的API文档。
+在外部调用widget功能，都是通过 mars3d.widget静态类 来统一管理的，更多方法可以参阅该类的API文档。
  
-比如激活widet：在需要外部使用的地方通过 mars3d.widget.activate([参数](http://mars3d.cn/api/widget.html#.WidgetOptions)) 来激活widget模块, 参数支持多种模式可多样化兼容使用, 比如：
+比如激活widet：在需要外部使用的地方通过 mars3d.widget.activate(options) 来激活widget模块, 参数支持多种模式可多样化兼容使用, 比如：
  ```js
 //常用，直接使用uri
 mars3d.widget.activate("widgets/bookmark/widget.js"); 
@@ -199,7 +199,7 @@ mars3d.widget.activate({name:"书签", uri: "widgets/bookmark/widget.js "});
 
 ### 4. 单个widget模块组成
 
-每个widget模块必须存在 widget.js 文件，该文件内部定义了一个继承了 [BaseWidget类](http://mars3d.cn/api/BaseWidget.html)的子类。
+每个widget模块必须存在 widget.js 文件，该文件内部定义了一个继承了  BaseWidget类 的子类。
 
 类内最重要的几个属性和方法如下：
 |  分类  |名称  | 功能| 
