@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.5
- * 编译日期：2023-09-12 12:23:11
+ * 版本信息：v3.6.6
+ * 编译日期：2023-09-18 16:29:59
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -588,6 +588,7 @@ declare enum GraphicType {
     satellite,
     polyline,
     curve,
+    brushLine,
     polylineP,
     polylineC,
     polylineVolume,
@@ -645,7 +646,8 @@ declare enum GraphicType {
     regular,
     isosTriangle,
     closeVurve,
-    gatheringPlace
+    gatheringPlace,
+    group
 }
 
 /**
@@ -5890,6 +5892,105 @@ declare class FixedRoute extends Route {
     }): Promise<any>;
 }
 
+/**
+ * group组对象,可用于矢量数据树结构的虚拟节点
+ * @param options - 参数对象，包括以下：
+ * @param [options.graphics] - 子矢量对象数组，每个矢量对象的配置见按各类型API即可。
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class GroupGraphic extends BaseGraphic {
+    constructor(options: {
+        graphics?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 是否空组 ，空组目前就图层管理用于图层分组节点（虚拟节点）。
+     */
+    readonly hasEmptyGroup: boolean;
+    /**
+     * 是否有子图层
+     */
+    readonly hasChildGraphic: boolean;
+    /**
+     * 子图层的个数
+     */
+    readonly length: number;
+    /**
+     * 添加所有子图层到map上
+     * @returns 当前对象本身，可以链式调用
+     */
+    addChildsToMap(): GroupGraphic;
+    /**
+     * 将所有子图层从map中移除
+     * @returns 当前对象本身，可以链式调用
+     */
+    removeMapChilds(): GroupGraphic;
+    /**
+     * 添加子图层，并绑定关联关系。
+     * @param childgraphic - 子图层对象
+     * @returns 当前对象本身，可以链式调用
+     */
+    addGraphic(childgraphic: BaseGraphic | any): GroupGraphic;
+    /**
+     * 移除子图层，并解除关联关系。
+     * @param childgraphic - 子图层对象
+     * @returns 当前对象本身，可以链式调用
+     */
+    removeGraphic(childgraphic: BaseGraphic | any): GroupGraphic;
+    /**
+     * 移除所有子图层
+     */
+    removeAllGraphic(): void;
+    /**
+     * 遍历每一个子图层并将其作为参数传递给回调函数
+     * @param method - 回调方法
+     * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
+     * @returns 当前对象本身,可以链式调用
+     */
+    eachGraphic(method: (...params: any[]) => any, context?: any): GroupGraphic;
+    /**
+     * 获取所有内置子图层对象
+     * @returns 所有子图层对象
+     */
+    getGraphics(): BaseGraphic[] | any;
+    /**
+     * 获取地图所有的子图层对象(包括pid和id关联的图层)
+     * @returns 所有子图层对象
+     */
+    getInMapChilds(): BaseGraphic[] | any;
+    /**
+     * 根据ID或取图层
+     * @param id - 图层id或uuid
+     * @returns 图层对象
+     */
+    getGraphicById(id: string | number): BaseGraphic | any | any;
+    /**
+     * 根据id或name属性获取图层
+     * @param name - 图层id或uuid或name值
+     * @returns 图层对象
+     */
+    getGraphic(name: string | number): BaseGraphic | any;
+    /**
+     * 是否有同名的子图层，一般用于新增时判断
+     * @param name - 图层名称
+     * @param [excludedGraphic] - 可以指定不进行判断的图层，比如当前图层本身
+     * @returns 是否同名
+     */
+    hasGraphic(name: string, excludedGraphic?: BaseGraphic): boolean;
+}
+
 declare namespace ParticleSystem {
     /**
      * 粒子效果 支持的样式信息
@@ -8434,6 +8535,7 @@ declare namespace BillboardEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定该广告牌将显示在与摄像机的多大距离
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [distanceDisplayPoint] - 当视角距离超过一定距离后(distanceDisplayCondition_far定义的) 后显示为 像素点 对象的样式，仅在distanceDisplayCondition设置时有效。
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [visibleDepth = true] - 是否被遮挡
@@ -8472,6 +8574,7 @@ declare namespace BillboardEntity {
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
+        distanceDisplayPoint?: PointEntity.StyleOptions | any;
         clampToGround?: boolean;
         heightReference?: Cesium.HeightReference;
         visibleDepth?: boolean;
@@ -8758,6 +8861,69 @@ declare class BoxEntity {
      * 编辑处理类
      */
     readonly EditClass: EditBox;
+}
+
+/**
+ * 自由绘制线
+ * @param options - 参数对象，包括以下：
+ * @param options.positions - 坐标位置
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
+ * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
+ * @param [options.parent] - 要与此实体关联的父实体。
+ * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.minPointNum = 2] - 绘制时，至少需要点的个数
+ * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
+ * @param [options.validDrawPosition] - 绘制时，外部自定义校验坐标,比如判断限定在指定区域内绘制。
+ * @param [options.hasEdit = true] - 是否允许编辑
+ * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
+ * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
+ * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class BrushLineEntity extends PolylineEntity {
+    constructor(options: {
+        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
+        style: PolylineEntity.StyleOptions | any;
+        attr?: any;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        description?: Cesium.Property | string;
+        viewFrom?: Cesium.Property;
+        parent?: Cesium.Entity;
+        onBeforeCreate?: (...params: any[]) => any;
+        minPointNum?: number;
+        maxPointNum?: number;
+        validDrawPosition?: (...params: any[]) => any;
+        hasEdit?: boolean;
+        hasEditContextMenu?: boolean;
+        hasMoveEdit?: boolean;
+        hasHeightEdit?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
 }
 
 declare namespace CanvasLabelEntity {
@@ -13721,6 +13887,7 @@ declare class AreaMeasure extends PolygonEntity {
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -13753,6 +13920,7 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
         hasEditContextMenu?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
+        exact?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -13867,6 +14035,7 @@ declare class DistanceMeasure extends PolylineEntity {
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -13899,6 +14068,7 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
         hasEditContextMenu?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
+        exact?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -14146,6 +14316,7 @@ declare class PointMeasure extends PointEntity {
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -14179,6 +14350,7 @@ declare class SectionMeasure extends DistanceMeasure {
         hasEditContextMenu?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
+        exact?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -19606,7 +19778,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any;
+            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             radiusIn?: number;
             fontColor?: string;
@@ -19883,7 +20055,7 @@ declare class BusineDataLayer extends GraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any;
+            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -20024,7 +20196,7 @@ declare class GeodePoiLayer extends LodGraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any;
+            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             radiusIn?: number;
             fontColor?: string;
@@ -20239,7 +20411,7 @@ declare class GeoJsonLayer extends GraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any;
+            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -20652,7 +20824,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any;
+            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -20740,12 +20912,12 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     zIndex: number;
     /**
-     * 将当前图层在map中层级进行 置顶
+     * 将当前图层在map中层级进行 置顶 (只对同类型图层间+贴地对象 有效)。
      * @returns 无
      */
     toTop(): void;
     /**
-     * 将当前图层在map中层级进行 置底
+     * 将当前图层在map中层级进行 置底 (只对同类型图层间+贴地对象 有效)。
      * @returns 无
      */
     toBottom(): void;
@@ -21273,7 +21445,7 @@ declare class I3SLayer extends BaseGraphicLayer {
     /**
      * 模型的向上轴，比如Cesium.Axis.Z 或 Cesium.Axis.Y
      */
-    readonly upAxis: Cesium.Axis;
+    readonly modelUpAxis: Cesium.Axis;
     /**
      * 遍历每一个Tileset子图层并将其作为参数传递给回调函数
      * @param method - 回调方法
@@ -21719,6 +21891,7 @@ declare namespace TilesetLayer {
  * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
  * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式。
  * @param [options.customShader] - 自定义shader效果
+ * @param [options.editUpAxis = Cesium.Axis.Z] - 标识模型的轴方向(建筑物特效、模型压平等功能中使用)
  * @param [options.highlight] - 高亮及其样式配置
  * @param [options.highlight.type] - 鼠标移入高亮 或 单击高亮(type:'click')
  * @param [options.highlight.color = '#FFFF00'] - 颜色，支持rgba字符串
@@ -21726,15 +21899,15 @@ declare namespace TilesetLayer {
  * @param [options.highlight.filter] - 可以设置筛选排除一些构件, 排除的构件在filter方法内返回false
  * @param [options.highlight.all] - 是否按整体高亮， true:模型整体全部高亮，false:单个构件高亮
  * @param [options.highlight.uniqueKey] - 按指定字段进行对应相关构件的整体高亮，对outlineEffect时无效
- * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取. 字符串时为固定内置判断，目前有： "alpha":鼠标不拾取前面遮挡的透明的构件，穿透拾取其后方不透明构件。
  * @param [options.clampToGround] - 是否贴地,true时自动调用贴地计算，但此属性只适合标准的与地形数据匹配的模型，并不精确，建议通过模型编辑页面调试给具体高度值。
  * @param [options.chinaCRS] - 标识模型的国内坐标系（用于自动纠偏或加偏）
  * @param [options.clip] - 模型裁剪 对象, 可传入{@link TilesetClip}构造参数
  * @param [options.flat] - 模型压平 对象, 可传入{@link TilesetFlat}构造参数
  * @param [options.flood] - 模型淹没 对象, 可传入{@link TilesetFlood}构造参数
  * @param [options.planClip] - 模型Plan裁剪 对象, 可传入{@link TilesetPlanClip}构造参数
- * @param [options.modelUpAxis = Axis.Y] - Which axis is considered up when loading models for tile contents.
- * @param [options.modelForwardAxis = Axis.X] - Which axis is considered forward when loading models for tile contents.
+ * @param [options.modelUpAxis = Cesium.Axis.Y] - Which axis is considered up when loading models for tile contents.
+ * @param [options.modelForwardAxis = Cesium.Axis.X] - Which axis is considered forward when loading models for tile contents.
  * @param [options.shadows = ShadowMode.ENABLED] - 确定tileset是否投射或接收来自光源的阴影。
  * @param [options.cullWithChildrenBounds = true] - 优化选择。是否使用子绑定卷的并集来筛选贴图。
  * @param [options.cullRequestsWhileMoving = true] - 优化选择。不要要求贴图，当他们回来的时候可能不会使用，因为相机的运动。这个优化只适用于固定瓷砖组。
@@ -21845,6 +22018,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         style?: any | Cesium.Cesium3DTileStyle | ((...params: any[]) => any);
         marsJzwStyle?: boolean | string;
         customShader?: Cesium.CustomShader;
+        editUpAxis?: Cesium.Axis;
         highlight?: {
             type?: string;
             color?: string | ((...params: any[]) => any);
@@ -21853,7 +22027,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
             all?: boolean;
             uniqueKey?: string;
         };
-        allowDrillPick?: boolean | ((...params: any[]) => any);
+        allowDrillPick?: boolean | ((...params: any[]) => any) | string;
         clampToGround?: boolean;
         chinaCRS?: ChinaCRS;
         clip?: any;
@@ -22015,7 +22189,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
     /**
      * 模型的向上轴，比如Cesium.Axis.Z 或 Cesium.Axis.Y
      */
-    readonly upAxis: Cesium.Axis;
+    readonly modelUpAxis: Cesium.Axis;
     /**
      * 旋转方向，示例：{ x: 0, y: 0, z: 0 }
      */
@@ -22337,7 +22511,7 @@ declare class WfsLayer extends LodGraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any;
+            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             fontColor?: string;
             color?: string;
@@ -22520,12 +22694,12 @@ declare class GroupLayer extends BaseGraphicLayer {
      */
     getRectangle(isFormat?: boolean): Cesium.Rectangle | any;
     /**
-     * 将当前图层在map中层级进行 置顶
+     * 将当前图层在map中层级进行 置顶(只对同类型图层间有效)。
      * @returns 无
      */
     toTop(): void;
     /**
-     * 将当前图层在map中层级进行 置底
+     * 将当前图层在map中层级进行 置底(只对同类型图层间有效)
      * @returns 无
      */
     toBottom(): void;
@@ -23435,12 +23609,12 @@ declare class BaseTileLayer extends BaseLayer {
      */
     setOpacity(value: number): void;
     /**
-     * 将当前图层在map中层级进行 置顶
+     * 将当前图层在map中层级进行 置顶(只对同类型图层间有效)。
      * @returns 无
      */
     toTop(): void;
     /**
-     * 将当前图层在map中层级进行 置底
+     * 将当前图层在map中层级进行 置底(只对同类型图层间有效)
      * @returns 无
      */
     toBottom(): void;
@@ -36633,6 +36807,7 @@ declare namespace material {
  */
 declare namespace graphic {
   export { BaseGraphic }
+  export { GroupGraphic }
   export { BaseEntity }
   export { BasePointEntity }
   export { BasePolyEntity }
@@ -36656,6 +36831,7 @@ declare namespace graphic {
   export { EllipsoidEntity }
   export { PolylineEntity }
   export { CurveEntity }
+  export { BrushLineEntity }
   export { PolylineVolumeEntity }
   export { PathEntity }
   export { CorridorEntity }
@@ -36886,7 +37062,7 @@ declare namespace thing {
 }
 
 export {
-  name, update, version, proj4, Tle, widget,
+  name, update, version, proj4, Tle,
   BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType, Icon,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
