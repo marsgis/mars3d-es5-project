@@ -46,7 +46,7 @@ function initWidgetView(_thisWidget) {
 }
 
 function _getNodeConfig(layer) {
-  if (layer == null || !layer.options || layer.isPrivate) {
+  if (layer == null || !layer.options || layer.isPrivate || layer.parent) {
     return
   }
 
@@ -235,7 +235,7 @@ function addOpacityRangeDom(treeId, tNode) {
   //if (tNode.icon == "images/folder.png") return;
 
   let layer = layersObj[tNode.id]
-  if (!layer || !layer.hasOpacity) {
+  if (!layer || (!layer.hasOpacity && !layer.options.hasOpacity)) {
     return
   }
 

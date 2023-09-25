@@ -510,7 +510,7 @@ const styleConfig = {
   billboard: {
     name: "图标点标记",
     primitive: true,
-    extends: ["divBillboard"],
+    extends: ["divBillboard", "canvasBillboard"],
     style: [
       { name: "image", label: "图标", type: "label", defval: "" },
       { name: "opacity", label: "透明度", type: "slider", defval: 1.0, min: 0, max: 1, step: 0.01 },
@@ -1933,7 +1933,7 @@ const styleConfig = {
     name: "圆形可视域区域",
     style: [
       { name: "radius", label: "半径", type: "slider", min: 1.0, max: 3000.0, step: 1, defval: 1.0 },
-      { name: "showFrustum", label: "视椎体框线",   type: "radio",  defval: false, }
+      { name: "showFrustum", label: "视椎体框线", type: "radio", defval: false }
     ]
   },
   coneVisibility: {
@@ -1943,7 +1943,7 @@ const styleConfig = {
       { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "showFrustum", label: "视椎体框线",   type: "radio",  defval: false, }
+      { name: "showFrustum", label: "视椎体框线", type: "radio", defval: false }
     ]
   },
 
@@ -1960,7 +1960,7 @@ const styleConfig = {
   polyline: {
     name: "线",
     primitive: true,
-    extends: ["curve", "distanceMeasure", "heightMeasure"],
+    extends: ["curve","brushLine", "distanceMeasure", "heightMeasure"],
     style: [
       { name: "width", label: "线宽", type: "number", step: 1, defval: 4.0 },
       {
@@ -3077,6 +3077,8 @@ const styleConfig = {
       { name: "reflectivity", label: "反射率", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.5 },
       { name: "ripple", label: "波纹大小", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 50.0 },
       { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },
+      { name: "animationSpeed", label: "动画速度", type: "number", min: 0.1, max: 10.0, step: 0.1, defval: 1.0 },
+      { name: "specularIntensity", label: "反射强度", type: "slider", min: 0.00, max: 0.90, step: 0.01, defval: 0.3 },
       { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 }
     ]
   }

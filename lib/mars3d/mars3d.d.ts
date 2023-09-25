@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.6
- * 编译日期：2023-09-18 16:29:59
+ * 版本信息：v3.6.7
+ * 编译日期：2023-09-24 21:28:47
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -2645,6 +2645,10 @@ declare class BaseThing extends BaseClass {
      * 是否已添加到地图
      */
     readonly isAdded: boolean;
+    /**
+     * 是否已经销毁了
+     */
+    readonly isDestroy: boolean;
     /**
      * 对象的id标识
      */
@@ -5701,16 +5705,16 @@ declare class ConeVisibility extends PointVisibility {
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
- * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
- * @param [highlight.label] - 使用 文本 对象，及其对应的样式
- * @param [highlight.billboard] - 使用 图标 对象，及其对应的样式
- * @param [highlight.point] - 使用 图标 对象，及其对应的样式
- * @param [highlight.model] - 使用 gltf模型 对象，及其对应的样式
- * @param [highlight.circle] - 使用 圆 对象，及其对应的样式
- * @param [highlight.coneTrack] - 使用 圆锥体 对象，及其对应的样式
- * @param [highlight.path] - 使用 path轨迹 对象，及其对应的样式
- * @param [highlight.polyline] - 使用 polyline路线 对象，及其对应的样式
- * @param [highlight.wall] - 使用 墙体 对象，及其对应的样式
+ * @param [options.highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+ * @param [options.highlight.label] - 使用 文本 对象，及其对应的样式
+ * @param [options.highlight.billboard] - 使用 图标 对象，及其对应的样式
+ * @param [options.highlight.point] - 使用 图标 对象，及其对应的样式
+ * @param [options.highlight.model] - 使用 gltf模型 对象，及其对应的样式
+ * @param [options.highlight.circle] - 使用 圆 对象，及其对应的样式
+ * @param [options.highlight.coneTrack] - 使用 圆锥体 对象，及其对应的样式
+ * @param [options.highlight.path] - 使用 path轨迹 对象，及其对应的样式
+ * @param [options.highlight.polyline] - 使用 polyline路线 对象，及其对应的样式
+ * @param [options.highlight.wall] - 使用 墙体 对象，及其对应的样式
  * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
@@ -5774,6 +5778,17 @@ declare class FixedRoute extends Route {
         path?: PathEntity.StyleOptions | any;
         polyline?: PolylineEntity.StyleOptions | any;
         wall?: WallEntity.StyleOptions | any;
+        highlight?: {
+            label?: LabelPrimitive.StyleOptions | any;
+            billboard?: BillboardEntity.StyleOptions | any;
+            point?: PointPrimitive.StyleOptions | any;
+            model?: ModelPrimitive.StyleOptions | any;
+            circle?: CircleEntity.StyleOptions | any;
+            coneTrack?: ConeTrack.StyleOptions | any;
+            path?: PathEntity.StyleOptions | any;
+            polyline?: PolylineEntity.StyleOptions | any;
+            wall?: WallEntity.StyleOptions | any;
+        };
         orientation?: Cesium.Property | any;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         frameRate?: number;
@@ -5811,16 +5826,6 @@ declare class FixedRoute extends Route {
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
         flyToOptions?: any;
-    }, highlight?: {
-        label?: LabelPrimitive.StyleOptions | any;
-        billboard?: BillboardEntity.StyleOptions | any;
-        point?: PointPrimitive.StyleOptions | any;
-        model?: ModelPrimitive.StyleOptions | any;
-        circle?: CircleEntity.StyleOptions | any;
-        coneTrack?: ConeTrack.StyleOptions | any;
-        path?: PathEntity.StyleOptions | any;
-        polyline?: PolylineEntity.StyleOptions | any;
-        wall?: WallEntity.StyleOptions | any;
     });
     /**
      * 开始时间
@@ -6326,16 +6331,16 @@ declare namespace Route {
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
- * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
- * @param [highlight.label] - 使用 文本 对象，及其对应的样式
- * @param [highlight.billboard] - 使用 图标 对象，及其对应的样式
- * @param [highlight.point] - 使用 图标 对象，及其对应的样式
- * @param [highlight.model] - 使用 gltf模型 对象，及其对应的样式
- * @param [highlight.circle] - 使用 圆 对象，及其对应的样式
- * @param [highlight.coneTrack] - 使用 圆锥体 对象，及其对应的样式
- * @param [highlight.path] - 使用 path轨迹 对象，及其对应的样式
- * @param [highlight.polyline] - 使用 polyline路线 对象，及其对应的样式
- * @param [highlight.wall] - 使用 墙体 对象，及其对应的样式
+ * @param [options.highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+ * @param [options.highlight.label] - 使用 文本 对象，及其对应的样式
+ * @param [options.highlight.billboard] - 使用 图标 对象，及其对应的样式
+ * @param [options.highlight.point] - 使用 图标 对象，及其对应的样式
+ * @param [options.highlight.model] - 使用 gltf模型 对象，及其对应的样式
+ * @param [options.highlight.circle] - 使用 圆 对象，及其对应的样式
+ * @param [options.highlight.coneTrack] - 使用 圆锥体 对象，及其对应的样式
+ * @param [options.highlight.path] - 使用 path轨迹 对象，及其对应的样式
+ * @param [options.highlight.polyline] - 使用 polyline路线 对象，及其对应的样式
+ * @param [options.highlight.wall] - 使用 墙体 对象，及其对应的样式
  * @param [options.orientation] - 自定义实体方向, 默认内部根据轨迹自动的
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
@@ -6386,6 +6391,17 @@ declare class Route extends BasePointPrimitive {
         path?: PathEntity.StyleOptions | any;
         polyline?: PolylineEntity.StyleOptions | any;
         wall?: WallEntity.StyleOptions | any;
+        highlight?: {
+            label?: LabelPrimitive.StyleOptions | any;
+            billboard?: BillboardEntity.StyleOptions | any;
+            point?: PointPrimitive.StyleOptions | any;
+            model?: ModelPrimitive.StyleOptions | any;
+            circle?: CircleEntity.StyleOptions | any;
+            coneTrack?: ConeTrack.StyleOptions | any;
+            path?: PathEntity.StyleOptions | any;
+            polyline?: PolylineEntity.StyleOptions | any;
+            wall?: WallEntity.StyleOptions | any;
+        };
         orientation?: Cesium.Property | any;
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         frameRate?: number;
@@ -6423,16 +6439,6 @@ declare class Route extends BasePointPrimitive {
         allowDrillPick?: boolean | ((...params: any[]) => any);
         flyTo?: boolean;
         flyToOptions?: any;
-    }, highlight?: {
-        label?: LabelPrimitive.StyleOptions | any;
-        billboard?: BillboardEntity.StyleOptions | any;
-        point?: PointPrimitive.StyleOptions | any;
-        model?: ModelPrimitive.StyleOptions | any;
-        circle?: CircleEntity.StyleOptions | any;
-        coneTrack?: ConeTrack.StyleOptions | any;
-        path?: PathEntity.StyleOptions | any;
-        polyline?: PolylineEntity.StyleOptions | any;
-        wall?: WallEntity.StyleOptions | any;
     });
     /**
      * 时序动态坐标对象
@@ -8546,6 +8552,10 @@ declare namespace BillboardEntity {
      * @property [sizeInMeters] - 指定该广告牌的大小是否应该以米来度量。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
+     * @property [pixelOffsetScaleByDistance_far = 1000000] - 上限
+     * @property [pixelOffsetScaleByDistance_farValue = 0.1] - 比例值
+     * @property [pixelOffsetScaleByDistance_near = 1000] - 下限
+     * @property [pixelOffsetScaleByDistance_nearValue = 1] - 比例值
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
@@ -8584,7 +8594,11 @@ declare namespace BillboardEntity {
         alignedAxis?: Cesium.Cartesian3;
         sizeInMeters?: boolean;
         translucencyByDistance?: Cesium.NearFarScalar;
-        pixelOffsetScaleByDistance?: Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance?: boolean | Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance_far?: number;
+        pixelOffsetScaleByDistance_farValue?: number;
+        pixelOffsetScaleByDistance_near?: number;
+        pixelOffsetScaleByDistance_nearValue?: number;
         imageSubRegion?: Cesium.BoundingRectangle;
         setHeight?: number | string;
         addHeight?: number | string;
@@ -9854,6 +9868,10 @@ declare namespace DivBillboardEntity {
      * @property [sizeInMeters] - 指定该广告牌的大小是否应该以米来度量。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
+     * @property [pixelOffsetScaleByDistance_far = 1000000] - 上限
+     * @property [pixelOffsetScaleByDistance_farValue = 0.1] - 比例值
+     * @property [pixelOffsetScaleByDistance_near = 1000] - 下限
+     * @property [pixelOffsetScaleByDistance_nearValue = 1] - 比例值
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
@@ -9891,7 +9909,11 @@ declare namespace DivBillboardEntity {
         alignedAxis?: Cesium.Cartesian3;
         sizeInMeters?: boolean;
         translucencyByDistance?: Cesium.NearFarScalar;
-        pixelOffsetScaleByDistance?: Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance?: boolean | Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance_far?: number;
+        pixelOffsetScaleByDistance_farValue?: number;
+        pixelOffsetScaleByDistance_near?: number;
+        pixelOffsetScaleByDistance_nearValue?: number;
         imageSubRegion?: Cesium.BoundingRectangle;
         setHeight?: number | string;
         addHeight?: number | string;
@@ -10479,6 +10501,10 @@ declare namespace FontBillboardEntity {
      * @property [sizeInMeters] - 指定该广告牌的大小是否应该以米来度量。
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
+     * @property [pixelOffsetScaleByDistance_far = 1000000] - 上限
+     * @property [pixelOffsetScaleByDistance_farValue = 0.1] - 比例值
+     * @property [pixelOffsetScaleByDistance_near = 1000] - 下限
+     * @property [pixelOffsetScaleByDistance_nearValue = 1] - 比例值
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
@@ -10518,7 +10544,11 @@ declare namespace FontBillboardEntity {
         alignedAxis?: Cesium.Cartesian3;
         sizeInMeters?: boolean;
         translucencyByDistance?: Cesium.NearFarScalar;
-        pixelOffsetScaleByDistance?: Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance?: boolean | Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance_far?: number;
+        pixelOffsetScaleByDistance_farValue?: number;
+        pixelOffsetScaleByDistance_near?: number;
+        pixelOffsetScaleByDistance_nearValue?: number;
         imageSubRegion?: Cesium.BoundingRectangle;
         setHeight?: number | string;
         addHeight?: number | string;
@@ -10610,7 +10640,11 @@ declare namespace LabelEntity {
      * @property [pixelOffsetX = 0] - 横向偏移像素
      * @property [pixelOffsetY = 0] - 纵向偏移像素
      * @property [pixelOffset = Cartesian2.ZERO] - A {@link Cartesian2} Property specifying the pixel offset.
-     * @property [pixelOffsetScaleByDistance] - A {@link NearFarScalar} Property used to set pixelOffset based on distance from the camera.
+     * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
+     * @property [pixelOffsetScaleByDistance_far = 1000000] - 上限
+     * @property [pixelOffsetScaleByDistance_farValue = 0.1] - 比例值
+     * @property [pixelOffsetScaleByDistance_near = 1000] - 下限
+     * @property [pixelOffsetScaleByDistance_nearValue = 1] - 比例值
      * @property [eyeOffset = Cartesian3.ZERO] - A {@link Cartesian3} Property specifying the eye offset.
      * @property [scaleByDistance = false] - 是否按视距缩放 或 设定基于与相机的距离设置比例。
      * @property [scaleByDistance_far = 1000000] - 上限
@@ -10654,7 +10688,11 @@ declare namespace LabelEntity {
         pixelOffsetX?: number;
         pixelOffsetY?: number;
         pixelOffset?: Cesium.Cartesian2 | number[];
-        pixelOffsetScaleByDistance?: Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance?: boolean | Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance_far?: number;
+        pixelOffsetScaleByDistance_farValue?: number;
+        pixelOffsetScaleByDistance_near?: number;
+        pixelOffsetScaleByDistance_nearValue?: number;
         eyeOffset?: Cesium.Cartesian3;
         scaleByDistance?: boolean | Cesium.NearFarScalar;
         scaleByDistance_far?: number;
@@ -14483,6 +14521,7 @@ declare class VolumeDepthMeasure extends AreaMeasure {
  * 1. 挖方量: 计算“基准面”到地表之间的凸出部分进行挖掉的体积。<br />
  * 2. 填方量：计算“基准面”与“墙底部”之间的缺少部分进行填平的体积。
  * @param options - 参数对象，包括以下：
+ * @param options.positions - 坐标位置
  * @param options.style - 基准面样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.polygonWallStyle] - 围墙面的样式
@@ -14509,6 +14548,7 @@ declare class VolumeDepthMeasure extends AreaMeasure {
  */
 declare class VolumeMeasure extends AreaMeasure {
     constructor(options: {
+        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
         polygonWallStyle?: PolygonEntity.StyleOptions | any;
@@ -18312,6 +18352,15 @@ declare namespace VideoPrimitive {
      * @property [opacity = 1.0] - 透明度
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
+     *
+     * //以下是 这是MaterialAppearance的参数
+     * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
+     * @property [faceForward = !closed] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = false] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
+     * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
+     * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
+     * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      */
     type StyleOptions = any | {
         url?: string;
@@ -18319,6 +18368,13 @@ declare namespace VideoPrimitive {
         opacity?: number;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
+        flat?: boolean;
+        faceForward?: boolean;
+        translucent?: boolean;
+        closed?: boolean;
+        vertexShaderSource?: string;
+        fragmentShaderSource?: string;
+        renderState?: any;
     };
 }
 
@@ -23588,6 +23644,10 @@ declare class BaseTileLayer extends BaseLayer {
      */
     zIndex: number;
     /**
+     * 取当前subdomains配置的随机1个值，用于URL模板中用于 {s} 占位符的子域
+     */
+    readonly subdomainItem: string;
+    /**
      * 瓦片数据范围
      */
     rectangle: Cesium.Rectangle;
@@ -26275,13 +26335,14 @@ declare namespace Map {
      * @property [contextOptions = {}] - WebGL创建属性 传递给 Cesium.Scene 的 options 。{@link Cesium.Scene}
      * @property [contextOptions.allowTextureFilterAnisotropic = true] - 允许纹理过滤各向异性
      * @property [contextOptions.requestWebgl1 = false] - 是否启用webgl1，cesium v1.102起默认用webgl2渲染
-     * @property [contextOptions.webgl] - WebGL画布,用于 canvas.getContext("webgl", webglOptions)
+     * @property [contextOptions.webgl] - WebGL画布,用于 canvas.getContext("webgl", webglOptions) See {@link https://registry.khronos.org/webgl/specs/latest/1.0/#5.2|WebGLContextAttributes}
      * @property [contextOptions.webgl.alpha = false] - 是否包含alpha缓冲区，如果需要DIV透明时，需要改为true
-     * @property [contextOptions.webgl.antialias] - 是否执行抗锯齿
-     * @property [contextOptions.webgl.failIfMajorPerformanceCaveat] - 如果系统性能较低，是否创建上下文
      * @property [contextOptions.webgl.depth] - 绘图缓冲区的深度缓冲区至少为16位
      * @property [contextOptions.webgl.stencil = true] - 绘图缓冲区具有至少8位的模板缓冲区
-     * @property [contextOptions.webgl.powerPreference = "high-performance"] - 对用户代理的提示，指示GPU的哪种配置适合WebGL上下文
+     * @property [contextOptions.webgl.antialias] - 是否执行抗锯齿
+     * @property [contextOptions.webgl.failIfMajorPerformanceCaveat] - 如果系统性能较低，是否创建上下文
+     * @property [contextOptions.webgl.preserveDrawingBuffer] - 是否将把绘图缓存保留下来，截图需要将该项设置为true
+     * @property [contextOptions.webgl.powerPreference = "high-performance"] - 对用户代理的提示，指示GPU的哪种配置适合WebGL上下文，可选值："default"、"low-power"、"high-performance"
      * @property [orderIndependentTranslucency = true] - 如果为true，并且配置支持它，则使用顺序无关的半透明性。
      * @property [terrainShadows = Cesium.ShadowMode.RECEIVE_ONLY] - 确定地形是否投射或接收来自光源的阴影。
      * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
@@ -26360,10 +26421,12 @@ declare namespace Map {
             requestWebgl1?: boolean;
             webgl?: {
                 alpha?: boolean;
-                antialias?: boolean;
-                failIfMajorPerformanceCaveat?: boolean;
                 depth?: boolean;
                 stencil?: boolean;
+                antialias?: boolean;
+                premultipliedAlpha?: boolean;
+                failIfMajorPerformanceCaveat?: boolean;
+                preserveDrawingBuffer?: boolean;
                 powerPreference?: string;
             };
         };
@@ -32063,6 +32126,7 @@ declare class Measure extends BaseThing {
      * 测量 空间长度
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
@@ -32072,6 +32136,7 @@ declare class Measure extends BaseThing {
      */
     distance(options?: {
         style?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
@@ -32082,6 +32147,7 @@ declare class Measure extends BaseThing {
      * 测量 贴地长度
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
@@ -32094,6 +32160,7 @@ declare class Measure extends BaseThing {
      */
     distanceSurface(options?: {
         style?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
@@ -32107,6 +32174,7 @@ declare class Measure extends BaseThing {
      * 剖面分析，测量线插值点的高程数据
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
@@ -32118,6 +32186,7 @@ declare class Measure extends BaseThing {
      */
     section(options?: {
         style?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
@@ -32130,12 +32199,14 @@ declare class Measure extends BaseThing {
      * 面积测量（水平面）
      * @param [options] - 控制参数
      * @param [options.style] - 面的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 面积测量控制类 对象
      */
     area(options?: {
         style?: PolygonEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         decimal?: number;
     }): Promise<AreaMeasure | any>;
@@ -32143,6 +32214,7 @@ declare class Measure extends BaseThing {
      * 贴地面积测量
      * @param [options] - 控制参数
      * @param [options.style] - 面的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数(概略值，有经纬网网格来插值)
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
@@ -32152,6 +32224,7 @@ declare class Measure extends BaseThing {
      */
     areaSurface(options?: {
         style?: PolygonEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         splitNum?: number;
         has3dtiles?: boolean;
@@ -32172,8 +32245,9 @@ declare class Measure extends BaseThing {
      * @param [options.heightLabel = true] - 是否显示各边界点高度值文本
      * @param [options.offsetLabel = false] - 是否显示各边界点高度差文本
      * @param [options.showArea = true] - 是否显示横切面积
-     * @param [options.polygonWall] - 围合的墙样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.labelHeight] - 各边界点高度结果文本的样式
+     * @param [options.polygonWall] - 围合的墙样式
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @param [options.depth = false] - 是否采用 {@link VolumeDepthMeasure}进行分析
      * @returns 绘制创建完成的Promise，返回 体积测量控制类 对象
@@ -32190,8 +32264,9 @@ declare class Measure extends BaseThing {
         heightLabel?: boolean;
         offsetLabel?: boolean;
         showArea?: boolean;
-        polygonWall?: PolygonEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         labelHeight?: LabelEntity.StyleOptions | any;
+        polygonWall?: PolygonEntity.StyleOptions | any;
         decimal?: number;
         depth?: boolean;
     }): Promise<VolumeMeasure | any>;
@@ -32199,12 +32274,14 @@ declare class Measure extends BaseThing {
      * 高度测量
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 高度测量 对象
      */
     height(options?: {
         style?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         decimal?: number;
     }): Promise<HeightMeasure | any>;
@@ -32213,12 +32290,14 @@ declare class Measure extends BaseThing {
      * 包括水平距离、空间距离、高度差。
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 三角高度测量控制类 对象
      */
     heightTriangle(options?: {
         style?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         decimal?: number;
     }): Promise<HeightTriangleMeasure | any>;
@@ -32226,12 +32305,14 @@ declare class Measure extends BaseThing {
      * 角度测量
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式，默认为箭头线
+     * @param [options.label] - 测量结果文本的样式
      * @param [options.angleDecimal = 1] - 显示的 角度值 文本中保留的小数位
      * @param [options.decimal = 2] - 显示的 距离值 文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 角度测量控制类 对象
      */
     angle(options?: {
         style?: PolylineEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any | any;
         angleDecimal?: number;
         decimal?: number;
     }): Promise<AngleMeasure | any>;
