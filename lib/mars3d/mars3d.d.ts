@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.7
- * 编译日期：2023-09-24 21:28:47
+ * 版本信息：v3.6.8
+ * 编译日期：2023-10-02 20:09:45
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -8366,6 +8366,38 @@ declare class BasePointEntity extends BaseEntity {
      * 显示隐藏状态
      */
     show: boolean;
+    /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * graphic.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * graphic.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * graphic.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
 }
 
 /**
@@ -8712,38 +8744,6 @@ declare class BillboardEntity extends BasePointEntity {
      * @returns 无
      */
     stopBounce(): void;
-    /**
-     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
-     * @example
-     * // cesium原生写法,单个
-     * graphic.availability = new Cesium.TimeInterval({
-     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
-     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
-     *   isStartIncluded: true,
-     *   isStopIncluded: false
-     * })
-     *
-     * // cesium原生写法, 多个
-     * graphic.availability = new Cesium.TimeIntervalCollection([
-     *   new Cesium.TimeInterval({
-     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
-     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
-     *     isStartIncluded: true,
-     *     isStopIncluded: false
-     *   }),
-     *
-     * ])
-     *
-     * // 普通传值方式，多个
-     * graphic.availability = [
-     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
-     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
-     * ]
-     *
-     * // 普通传值方式，单个
-     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
-     */
-    availability: Cesium.TimeIntervalCollection;
 }
 
 declare namespace BoxEntity {
@@ -11676,38 +11676,6 @@ declare class PointEntity extends BasePointEntity {
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: Cesium.PointGraphics;
-    /**
-     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
-     * @example
-     * // cesium原生写法,单个
-     * graphic.availability = new Cesium.TimeInterval({
-     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
-     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
-     *   isStartIncluded: true,
-     *   isStopIncluded: false
-     * })
-     *
-     * // cesium原生写法, 多个
-     * graphic.availability = new Cesium.TimeIntervalCollection([
-     *   new Cesium.TimeInterval({
-     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
-     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
-     *     isStartIncluded: true,
-     *     isStopIncluded: false
-     *   }),
-     *
-     * ])
-     *
-     * // 普通传值方式，多个
-     * graphic.availability = [
-     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
-     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
-     * ]
-     *
-     * // 普通传值方式，单个
-     * graphic.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
-     */
-    availability: Cesium.TimeIntervalCollection;
 }
 
 declare namespace PolygonEntity {
@@ -21105,9 +21073,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * 遍历所有矢量数据并将其作为参数传递给回调函数
      * @param method - 回调方法
      * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
-     * @returns 当前对象本身,可以链式调用
+     * @param [reverse] - 是否倒序执行
+     * @returns 当前对象本身,可以链式调用。
      */
-    eachGraphic(method: (...params: any[]) => any, context?: any): GraphicLayer;
+    eachGraphic(method: (...params: any[]) => any, context?: any, reverse?: boolean): GraphicLayer;
     /**
      * 获取图层内 所有矢量数据
      * @param [hasPrivate = false] - 是否取私有的graphic
@@ -26599,6 +26568,10 @@ declare namespace Map {
      * @property [requestVertexNormals = false] - 是否应该从服务器请求额外的光照信息，如果可用，以每个顶点法线的形式。
      * @property [requestWaterMask = false] - 是否应该向服务器请求每个瓦的水掩膜(如果有的话)。
      * @property [requestMetadata = true] - 是否应该从服务器请求每个块元数据(如果可用)。
+     * @property [clip = false] - 是否默认启用地形开挖，如果后续打开，缓存数据不会裁剪
+     * @property [flat = false] - 是否默认启用地形压平
+     * @property [uplift = false] - 是否默认启用地形抬升
+     * @property [flood = false] - 是否默认启用地形区域材质(淹没，等高线)
      */
     type terrainOptions = {
         type?: string | TerrainType;
@@ -26607,6 +26580,10 @@ declare namespace Map {
         requestVertexNormals?: boolean;
         requestWaterMask?: boolean;
         requestMetadata?: boolean;
+        clip?: boolean;
+        flat?: boolean;
+        uplift?: boolean;
+        flood?: boolean;
     };
     /**
      * 底图图层配置
@@ -27065,9 +27042,10 @@ declare class Map extends BaseClass {
      * 遍历每一个图层并将其作为参数传递给回调函数
      * @param method - 回调方法
      * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
+     * @param [reverse] - 是否倒序执行
      * @returns 当前对象本身,可以链式调用
      */
-    eachLayer(method: (...params: any[]) => any, context?: any): Map;
+    eachLayer(method: (...params: any[]) => any, context?: any, reverse?: boolean): Map;
     /**
      * 根据指定属性获取图层，包括config.json配置的图层
      * @param attrValue - 属性值
@@ -27143,9 +27121,10 @@ declare class Map extends BaseClass {
      * 遍历每一个控件并将其作为参数传递给回调函数
      * @param method - 回调方法
      * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
+     * @param [reverse] - 是否倒序执行
      * @returns 当前对象本身,可以链式调用
      */
-    eachControl(method: (...params: any[]) => any, context?: any): Map;
+    eachControl(method: (...params: any[]) => any, context?: any, reverse?: boolean): Map;
     /**
      * 根据指定属性获取控件
      * @param attrValue - 属性值
@@ -27196,9 +27175,10 @@ declare class Map extends BaseClass {
      * 遍历每一个Thing对象并将其作为参数传递给回调函数
      * @param method - 回调方法
      * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
+     * @param [reverse] - 是否倒序执行
      * @returns 当前对象本身,可以链式调用
      */
-    eachThing(method: (...params: any[]) => any, context?: any): Map;
+    eachThing(method: (...params: any[]) => any, context?: any, reverse?: boolean): Map;
     /**
      * 根据指定属性获取Thing对象
      * @param attrValue - 属性值
@@ -27262,7 +27242,7 @@ declare class Map extends BaseClass {
         cancel?: Cesium.Camera.FlightCancelledCallback;
     }): Promise<boolean>;
     /**
-     * 设置相机pitch值，保持地图中心位置不变。
+     * 设置相机heading值，保持地图中心位置不变。
      * @param heading - 方向角度值， 0-360
      * @param [options] - 具有以下属性的对象:
      * @param [options.pitch] - 俯仰角度值，绕垂直于地心的轴旋转角度, -90至90
@@ -32445,16 +32425,20 @@ declare class Shadows extends BaseThing {
      * @param options - 参数
      * @param options.startDate - 开始时间
      * @param options.endDate - 结束时间
-     * @param positions - 分析区域范围坐标
-     * @param step - 间隔（单位米）
-     * @param [minHeight] - 最小高程（单位米）,与maxHeight一起可以设置多层
-     * @param [maxHeight] - 最大高程（单位米）
+     * @param options.positions - 分析区域范围坐标
+     * @param options.step - 间隔（单位米）
+     * @param [options.minHeight] - 最小高程（单位米）,与maxHeight一起可以设置多层
+     * @param [options.maxHeight] - 最大高程（单位米）
      * @returns 分析结果
      */
     startRate(options: {
         startDate: Date;
         endDate: Date;
-    }, positions: Cesium.Cartesian3[] | LngLatPoint[] | any, step: number, minHeight?: number, maxHeight?: number): Promise<any>;
+        positions: Cesium.Cartesian3[] | LngLatPoint[] | any;
+        step: number;
+        minHeight?: number;
+        maxHeight?: number;
+    }): Promise<any>;
 }
 
 declare namespace Sightline {
@@ -33525,7 +33509,8 @@ declare class TerrainEditBase extends BaseThing {
      * 添加单个区域
      * @param positions - 坐标位置数组
      * @param [options = {}] - 控制的参数
-     * @param [options.height] - 高度值
+     * @param [options.height] - 地形压平时，高度值
+     * @param [options.diffHeight] - 地形开挖和抬升时，墙体的高度值
      * @param [options.simplify] - 是否简化坐标点位，为空时不简化
      * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
@@ -33534,6 +33519,7 @@ declare class TerrainEditBase extends BaseThing {
      */
     addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[], options?: {
         height?: any;
+        diffHeight?: any;
         simplify?: {
             tolerance?: number;
             highQuality?: boolean;
