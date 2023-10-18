@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.8
- * 编译日期：2023-10-02 20:09:45
+ * 版本信息：v3.6.9
+ * 编译日期：2023-10-15 21:13:36
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -916,159 +916,198 @@ declare enum Icon {
 
 /**
  * 多语种文本配置，
- * 值为数组，对应{@link LangType}按照固定顺序排列,如：[中文简体,中文繁體,English]
  * @example
- * // 更新Lang值
- * mars3d.Util.setLangText("_右击菜单删除", "新的提示语句", mars3d.LangType.ZH)
+ * // 更新Lang单个值
+ * map.setLangText("_放大", "Zoom In")
+ *
+ * // 更新Lang多个值
+ * map.setLangText({
+ *   _放大: "Zoom In",
+ *   _缩小: "Zoom Out",
+ *   //其他需要更新的文本
+ * })
  *
  * // 获取Lang值
- * const text = mars3d.Util.getLangText("_右击菜单删除", mars3d.LangType.ZH)
+ * const text = map.getLangText("_放大")
  */
 declare enum Lang {
-    "_放大" = "[\"\u653E\u5927\",\"\u653E\u5927\",\"Zoom In\"]",
-    "_缩小" = "[\"\u7F29\u5C0F\",\"\u7E2E\u5C0F\",\"Zoom Out\"]",
-    "_查看此处坐标" = "[\"\u67E5\u770B\u6B64\u5904\u5750\u6807\",\"\u67E5\u770B\u6B64\u8655\u5750\u6A19\",\"Location info\"]",
-    "_位置信息" = "[\"\u4F4D\u7F6E\u4FE1\u606F\",\"\u4F4D\u7F6E\u4FE1\u606F\",\"The location information\"]",
-    "_经度" = "[\"\u7ECF\u5EA6\",\"\u7D93\u5EA6\",\"Lon\"]",
-    "_纬度" = "[\"\u7EAC\u5EA6\",\"\u7DEF\u5EA6\",\"Lat\"]",
-    "_海拔" = "[\"\u9AD8\u7A0B\",\"\u9AD8\u7A0B\",\"Alt\"]",
-    "_横坐标" = "[\"\u6A2A\u5750\u6807\",\"\u6A6B\u5750\u6A19\",\"X\"]",
-    "_纵坐标" = "[\"\u7EB5\u5750\u6807\",\"\u7E31\u5750\u6A19\",\"Y\"]",
-    "_查看当前视角" = "[\"\u67E5\u770B\u5F53\u524D\u89C6\u89D2\",\"\u67E5\u770B\u7576\u524D\u8996\u89D2\",\"Camera info\"]",
-    "_当前视角信息" = "[\"\u5F53\u524D\u89C6\u89D2\u4FE1\u606F\",\"\u7576\u524D\u8996\u89D2\u4FE1\u606F\",\"Current Camera Information\"]",
-    "_视角切换" = "[\"\u89C6\u89D2\u5207\u6362\",\"\u8996\u89D2\u5207\u63DB\",\"Camera\"]",
-    "_禁止进入地下" = "[\"\u7981\u6B62\u8FDB\u5165\u5730\u4E0B\",\"\u7981\u6B62\u9032\u5165\u5730\u4E0B\",\"Do not go underground\"]",
-    "_允许进入地下" = "[\"\u5141\u8BB8\u8FDB\u5165\u5730\u4E0B\",\"\u5141\u8A31\u9032\u5165\u5730\u4E0B\",\"Access to the ground\"]",
-    "_绕此处环绕飞行" = "[\"\u7ED5\u6B64\u5904\u73AF\u7ED5\u98DE\u884C\",\"\u7E5E\u6B64\u8655\u74B0\u7E5E\u98DB\u884C\",\"Fly around here\"]",
-    "_关闭环绕飞行" = "[\"\u5173\u95ED\u73AF\u7ED5\u98DE\u884C\",\"\u95DC\u9589\u74B0\u7E5E\u98DB\u884C\",\"Close off circling\"]",
-    "_移动到此处" = "[\"\u79FB\u52A8\u5230\u6B64\u5904\",\"\u79FB\u52D5\u5230\u6B64\u8655\",\"Move it over here\"]",
-    "_第一视角站到此处" = "[\"\u7B2C\u4E00\u89C6\u89D2\u7AD9\u5230\u6B64\u5904\",\"\u7B2C\u4E00\u8996\u89D2\u7AD9\u5230\u6B64\u8655\",\"First view is here\"]",
-    "_开启键盘漫游" = "[\"\u5F00\u542F\u952E\u76D8\u6F2B\u6E38\",\"\u958B\u5553\u9375\u76E4\u6F2B\u904A\",\"Enable keyboard roaming\"]",
-    "_关闭键盘漫游" = "[\"\u5173\u95ED\u952E\u76D8\u6F2B\u6E38\",\"\u95DC\u9589\u9375\u76E4\u6F2B\u904A\",\"Turn off keyboard roaming\"]",
-    "_跟踪锁定" = "[\"\u8DDF\u8E2A\u9501\u5B9A\",\"\u8DDF\u8E2A\u9396\u5B9A\",\"TrackedEntity\"]",
-    "_取消锁定" = "[\"\u53D6\u6D88\u9501\u5B9A\",\"\u53D6\u6D88\u9396\u5B9A\",\"Unlocked\"]",
-    "_三维模型" = "[\"\u4E09\u7EF4\u6A21\u578B\",\"\u4E09\u7DAD\u6A21\u578B\",\"3DTiles\"]",
-    "_显示三角网" = "[\"\u663E\u793A\u4E09\u89D2\u7F51\",\"\u986F\u793A\u4E09\u89D2\u7DB2\",\"Display Wireframe\"]",
-    "_关闭三角网" = "[\"\u5173\u95ED\u4E09\u89D2\u7F51\",\"\u95DC\u9589\u4E09\u89D2\u7DB2\",\"Close Wireframe\"]",
-    "_显示包围盒" = "[\"\u663E\u793A\u5305\u56F4\u76D2\",\"\u986F\u793A\u5305\u570D\u76D2\",\"Display BoundingVolume\"]",
-    "_关闭包围盒" = "[\"\u5173\u95ED\u5305\u56F4\u76D2\",\"\u95DC\u9589\u5305\u570D\u76D2\",\"Close BoundingVolume\"]",
-    "_地形服务" = "[\"\u5730\u5F62\u670D\u52A1\",\"\u5730\u5F62\u670D\u52D9\",\"Terrain\"]",
-    "_开启地形" = "[\"\u5F00\u542F\u5730\u5F62\",\"\u986F\u793A\u5730\u5F62\",\"Open terrain\"]",
-    "_关闭地形" = "[\"\u5173\u95ED\u5730\u5F62\",\"\u95DC\u9589\u5730\u5F62\",\"Close terrain\"]",
-    "_图上标记" = "[\"\u56FE\u4E0A\u6807\u8BB0\",\"\u5716\u4E0A\u6A19\u8A18\",\"Drawing\"]",
-    "_标记点" = "[\"\u6807\u8BB0\u70B9\",\"\u6A19\u8A18\u9EDE\",\"Mark points\"]",
-    "_标记线" = "[\"\u6807\u8BB0\u7EBF\",\"\u6A19\u8A18\u7DDA\",\"Tag line\"]",
-    "_标记面" = "[\"\u6807\u8BB0\u9762\",\"\u6A19\u8A18\u9762\",\"Mark surface\"]",
-    "_标记圆" = "[\"\u6807\u8BB0\u5706\",\"\u6A19\u8A18\u5713\",\"Mark round\"]",
-    "_标记矩形" = "[\"\u6807\u8BB0\u77E9\u5F62\",\"\u6A19\u8A18\u77E9\u5F62\",\"Mark rectangular\"]",
-    "_允许编辑" = "[\"\u5141\u8BB8\u7F16\u8F91\",\"\u5141\u8A31\u7DE8\u8F2F\",\"Allowed to edit\"]",
-    "_禁止编辑" = "[\"\u7981\u6B62\u7F16\u8F91\",\"\u7981\u6B62\u7DE8\u8F2F\",\"Prohibit to edit\"]",
-    "_导出GeoJSON" = "[\"\u5BFC\u51FAGeoJSON\",\"\u5C0E\u51FAGeoJSON\",\"Export GeoJSON\"]",
-    "_清除所有标记" = "[\"\u6E05\u9664\u6240\u6709\u6807\u8BB0\",\"\u6E05\u9664\u6240\u6709\u6A19\u8A18\",\"Clear\"]",
-    "_特效效果" = "[\"\u7279\u6548\u6548\u679C\",\"\u7279\u6548\u6548\u679C\",\"Effects\"]",
-    "_开启下雨" = "[\"\u5F00\u542F\u4E0B\u96E8\",\"\u958B\u5553\u4E0B\u96E8\",\"Enable rain\"]",
-    "_关闭下雨" = "[\"\u5173\u95ED\u4E0B\u96E8\",\"\u95DC\u9589\u4E0B\u96E8\",\"Close rain\"]",
-    "_开启下雪" = "[\"\u5F00\u542F\u4E0B\u96EA\",\"\u958B\u5553\u4E0B\u96EA\",\"Enable snow\"]",
-    "_关闭下雪" = "[\"\u5173\u95ED\u4E0B\u96EA\",\"\u95DC\u9589\u4E0B\u96EA\",\"Close snow\"]",
-    "_开启雾天气" = "[\"\u5F00\u542F\u96FE\u5929\u6C14\",\"\u958B\u5553\u9727\u5929\u6C23\",\"Enable fog\"]",
-    "_关闭雾天气" = "[\"\u5173\u95ED\u96FE\u5929\u6C14\",\"\u95DC\u9589\u9727\u5929\u6C23\",\"Close fog\"]",
-    "_开启泛光" = "[\"\u5F00\u542F\u6CDB\u5149\",\"\u958B\u5553\u6CDB\u5149\",\"Enable bloom\"]",
-    "_关闭泛光" = "[\"\u5173\u95ED\u6CDB\u5149\",\"\u95DC\u9589\u6CDB\u5149\",\"Close bloom\"]",
-    "_开启亮度" = "[\"\u5F00\u542F\u4EAE\u5EA6\",\"\u958B\u5553\u4EAE\u5EA6\",\"Enable brightness\"]",
-    "_关闭亮度" = "[\"\u5173\u95ED\u4EAE\u5EA6\",\"\u95DC\u9589\u4EAE\u5EA6\",\"Close brightness\"]",
-    "_开启夜视" = "[\"\u5F00\u542F\u591C\u89C6\",\"\u958B\u5553\u591C\u8996\",\"Enable night vision\"]",
-    "_关闭夜视" = "[\"\u5173\u95ED\u591C\u89C6\",\"\u95DC\u9589\u591C\u8996\",\"Close night vision\"]",
-    "_开启黑白" = "[\"\u5F00\u542F\u9ED1\u767D\",\"\u958B\u5553\u9ED1\u767D\",\"Enable black and white\"]",
-    "_关闭黑白" = "[\"\u5173\u95ED\u9ED1\u767D\",\"\u95DC\u9589\u9ED1\u767D\",\"Close black and white\"]",
-    "_开启拾取高亮" = "[\"\u5F00\u542F\u62FE\u53D6\u9AD8\u4EAE\",\"\u958B\u5553\u62FE\u53D6\u9AD8\u4EAE\",\"Enable Pick highlighted\"]",
-    "_关闭拾取高亮" = "[\"\u5173\u95ED\u62FE\u53D6\u9AD8\u4EAE\",\"\u95DC\u9589\u62FE\u53D6\u9AD8\u4EAE\",\"Close Pick highlighted\"]",
-    "_场景设置" = "[\"\u573A\u666F\u8BBE\u7F6E\",\"\u5834\u666F\u8A2D\u7F6E\",\"Scene\"]",
-    "_开启深度监测" = "[\"\u5F00\u542F\u6DF1\u5EA6\u76D1\u6D4B\",\"\u958B\u5553\u6DF1\u5EA6\u76E3\u6E2C\",\"Enable depth test against terrain\"]",
-    "_关闭深度监测" = "[\"\u5173\u95ED\u6DF1\u5EA6\u76D1\u6D4B\",\"\u95DC\u9589\u6DF1\u5EA6\u76E3\u6E2C\",\"Close depth test against terrain\"]",
-    "_显示星空背景" = "[\"\u663E\u793A\u661F\u7A7A\u80CC\u666F\",\"\u986F\u793A\u661F\u7A7A\u80CC\u666F\",\"Enable skyBox\"]",
-    "_关闭星空背景" = "[\"\u5173\u95ED\u661F\u7A7A\u80CC\u666F\",\"\u95DC\u9589\u661F\u7A7A\u80CC\u666F\",\"Close skyBox\"]",
-    "_开启日照阴影" = "[\"\u5F00\u542F\u65E5\u7167\u9634\u5F71\",\"\u958B\u5553\u65E5\u7167\u9670\u5F71\",\"Enable shadow\"]",
-    "_关闭日照阴影" = "[\"\u5173\u95ED\u65E5\u7167\u9634\u5F71\",\"\u95DC\u9589\u65E5\u7167\u9670\u5F71\",\"Close shadow\"]",
-    "_开启大气渲染" = "[\"\u5F00\u542F\u5927\u6C14\u6E32\u67D3\",\"\u958B\u5553\u5927\u6C23\u6E32\u67D3\",\"Enable sky atmosphere\"]",
-    "_关闭大气渲染" = "[\"\u5173\u95ED\u5927\u6C14\u6E32\u67D3\",\"\u95DC\u9589\u5927\u6C23\u6E32\u67D3\",\"Close sky atmosphere\"]",
-    "_场景出图" = "[\"\u573A\u666F\u51FA\u56FE\",\"\u5834\u666F\u51FA\u5716\",\"Export image\"]",
-    "_图上量算" = "[\"\u56FE\u4E0A\u91CF\u7B97\",\"\u5716\u4E0A\u91CF\u7B97\",\"Measure\"]",
-    "_删除测量" = "[\"\u5220\u9664\u6D4B\u91CF\",\"\u522A\u9664\u6E2C\u91CF\",\"Delete\"]",
-    "_角度" = "[\"\u89D2\u5EA6\",\"\u89D2\u5EA6\",\"Angle\"]",
-    "_距离" = "[\"\u8DDD\u79BB\",\"\u8DDD\u96E2\",\"Distance\"]",
-    "_面积" = "[\"\u9762\u79EF\",\"\u9762\u7A4D\",\"Area\"]",
-    "_总长" = "[\"\u603B\u957F\",\"\u7E3D\u9577\",\"Total distance\"]",
-    "_起点" = "[\"\u8D77\u70B9\",\"\u8D77\u9EDE\",\"Start\"]",
-    "_高度差" = "[\"\u9AD8\u5EA6\u5DEE\",\"\u9AD8\u5EA6\u5DEE\",\"Height difference\"]",
-    "_空间距离" = "[\"\u7A7A\u95F4\u8DDD\u79BB\",\"\u7A7A\u9593\u8DDD\u96E2\",\"Space distance\"]",
-    "_水平距离" = "[\"\u6C34\u5E73\u8DDD\u79BB\",\"\u6C34\u5E73\u8DDD\u96E2\",\"Horizontal distance\"]",
-    "_正在计算体积" = "[\"\u6B63\u5728\u8BA1\u7B97\u4F53\u79EF\",\"\u6B63\u5728\u8A08\u7B97\u9AD4\u7A4D\",\"Calculating volume\"]",
-    "_填方体积" = "[\"\u586B\u65B9\u4F53\u79EF\",\"\u586B\u65B9\u9AD4\u7A4D\",\"The volume of fill\"]",
-    "_挖方体积" = "[\"\u6316\u65B9\u4F53\u79EF\",\"\u6316\u65B9\u9AD4\u7A4D\",\"Excavation volume\"]",
-    "_横切面积" = "[\"\u6A2A\u5207\u9762\u79EF\",\"\u6A6B\u5207\u9762\u7A4D\",\"Crosscutting area\"]",
-    "_面上" = "[\"\u9762\u4E0A\",\"\u9762\u4E0A\",\"Up\"]",
-    "_面下" = "[\"\u9762\u4E0B\",\"\u9762\u4E0B\",\"Down\"]",
-    "_米" = "[\"\u7C73\",\"\u7C73\",\"m\"]",
-    "_公里" = "[\"\u516C\u91CC\",\"\u516C\u88CF\",\"km\"]",
-    "_万米" = "[\"\u4E07\u7C73\",\"\u4E07\u7C73\",\"myriametre\"]",
-    "_海里" = "[\"\u6D77\u91CC\",\"\u6D77\u88CF\",\"mile\"]",
-    "_丈" = "[\"\u4E08\",\"\u4E08\",\"zhang\"]",
-    "_平方米" = "[\"\u5E73\u65B9\u7C73\",\"\u5E73\u65B9\u7C73\",\"m\u00B2\"]",
-    "_平方公里" = "[\"\u5E73\u65B9\u516C\u91CC\",\"\u5E73\u65B9\u516C\u88CF\",\"km\u00B2\"]",
-    "_亩" = "[\"\u4EA9\",\"\u755D\",\"mu\"]",
-    "_公顷" = "[\"\u516C\u9877\",\"\u516C\u9803\",\"ha\"]",
-    "_立方米" = "[\"\u65B9\",\"\u65B9\",\"m\u00B3\"]",
-    "_万立方米" = "[\"\u4E07\u65B9\",\"\u4E07\u65B9\",\"wm\u00B3\"]",
-    "_单击开始绘制" = "[\"\u5355\u51FB\u5F00\u59CB\u7ED8\u5236\",\"\u55AE\u64CA\u958B\u59CB\u7E6A\u5236\",\"Click to start drawing\"]",
-    "_单击完成绘制" = "[\"\u5355\u51FB\u5B8C\u6210\u7ED8\u5236\",\"\u55AE\u64CA\u5B8C\u6210\u7E6A\u5236\",\"Click to finish drawing\"]",
-    "_双击完成绘制" = "[\"\u53CC\u51FB\u5B8C\u6210\u7ED8\u5236\",\"\u96D9\u64CA\u5B8C\u6210\u7E6A\u5236\",\"Double click to finish drawing\"]",
-    "_单击增加点" = "[\"\u5355\u51FB\u589E\u52A0\u70B9\",\"\u55AE\u64CA\u589E\u52A0\u9EDE\",\"left click add point\"]",
-    "_右击删除点" = "[\"\u53F3\u51FB\u5220\u9664\u70B9\",\"\u53F3\u64CA\u522A\u9664\u9EDE\",\"right click delete point\"]",
-    "_单击后激活编辑" = "[\"\u5355\u51FB\u540E\u6FC0\u6D3B\u7F16\u8F91\",\"\u55AE\u64CA\u5F8C \u6FC0\u6D3B\u7DE8\u8F2F\",\"Click to activate editing\"]",
-    "_右击菜单删除" = "[\"\u53F3\u51FB\u83DC\u5355\u5220\u9664\",\"\u53F3\u64CA\u83DC\u55AE\u522A\u9664\",\"Right click menu to delete\"]",
-    "_更多功能请右击" = "[\"\u66F4\u591A\u529F\u80FD\u8BF7\u53F3\u51FB\",\"\u66F4\u591A\u529F\u80FD\u8ACB\u53F3\u64CA\",\"For more functions, right click\"]",
-    "_停止编辑" = "[\"\u505C\u6B62\u7F16\u8F91\",\"\u505C\u6B62\u7DE8\u8F2F\",\"Stop editing\"]",
-    "_删除该点" = "[\"\u5220\u9664\u8BE5\u70B9\",\"\u522A\u9664\u8A72\u9EDE\",\"Delete that point\"]",
-    "_按轴平移" = "[\"\u6309\u8F74\u5E73\u79FB\",\"\u6309\u8EF8\u5E73\u79FB\",\"Translation by axis\"]",
-    "_停止按轴平移" = "[\"\u505C\u6B62\u6309\u8F74\u5E73\u79FB\",\"\u505C\u6B62\u6309\u8EF8\u5E73\u79FB\",\"Stop translation along axis\"]",
-    "_按轴旋转" = "[\"\u6309\u8F74\u65CB\u8F6C\",\"\u6309\u8EF8\u65CB\u8F49\",\"Rotation on axis\"]",
-    "_停止按轴旋转" = "[\"\u505C\u6B62\u6309\u8F74\u65CB\u8F6C\",\"\u505C\u6B62\u6309\u8EF8\u65CB\u8F49\",\"Stop rotation on axis\"]",
-    "_调整比例" = "[\"\u8C03\u6574\u6BD4\u4F8B\",\"\u8ABF\u6574\u6BD4\u4F8B\",\"Edit Scale\"]",
-    "_停止调整比例" = "[\"\u505C\u6B62\u8C03\u6574\u6BD4\u4F8B\",\"\u505C\u6B62\u8ABF\u6574\u6BD4\u4F8B\",\"Stop edit scale\"]",
-    "_释放后完成修改" = "[\"\u91CA\u653E\u540E\u5B8C\u6210\u4FEE\u6539\",\"\u91CB\u653E\u5F8C\u5B8C\u6210\u4FEE\u6539\",\"Complete the modification after release\"]",
-    "_该对象不允许编辑" = "[\"\u8BE5\u5BF9\u8C61\u4E0D\u5141\u8BB8\u7F16\u8F91\",\"\u8A72\u5C0D\u8C61\u4E0D\u5141\u8A31\u7DE8\u8F2F\",\"This object does not allow editing\"]",
-    "_拖动该点后" = "[\"\u62D6\u52A8\u8BE5\u70B9\u540E\",\"\u62D6\u52D5\u8A72\u9EDE\u5F8C\",\"Drag that point\"]",
-    "_拖动对象后" = "[\"\u62D6\u52A8\u5BF9\u8C61\u540E\",\"\u62D6\u52D5\u5C0D\u8C61\u5F8C\",\"Drag that object\"]",
-    "_修改位置" = "[\"\u4FEE\u6539\u4F4D\u7F6E\",\"\u4FEE\u6539\u4F4D\u7F6E\",\"Modify the position\"]",
-    "_整体平移" = "[\"\u6574\u4F53\u5E73\u79FB\",\"\u6574\u9AD4\u5E73\u79FB\",\"The overall translation\"]",
-    "_增加点" = "[\"\u589E\u52A0\u70B9\",\"\u589E\u52A0\u9EDE\",\"Add point\"]",
-    "_修改高度" = "[\"\u4FEE\u6539\u9AD8\u5EA6\",\"\u4FEE\u6539\u9AD8\u5EA6\",\"Modify the height\"]",
-    "_修改半径" = "[\"\u4FEE\u6539\u534A\u5F84\",\"\u4FEE\u6539\u534A\u5F91\",\"Modify the radius\"]",
-    "_修改长度" = "[\"\u4FEE\u6539\u957F\u5EA6(X\u65B9\u5411)\",\"\u4FEE\u6539\u9577\u5EA6(X\u65B9\u5411)\",\"Modify the length(X direction )\"]",
-    "_修改宽度" = "[\"\u4FEE\u6539\u5BBD\u5EA6(Y\u65B9\u5411)\",\"\u4FEE\u6539\u5BEC\u5EA6(Y\u65B9\u5411)\",\"Change the width(Y direction)\"]",
-    "_修改方向" = "[\"\u4FEE\u6539\u65B9\u5411\",\"\u4FEE\u6539\u65B9\u5411\",\"Change direction\"]",
-    "_修改缩放比例" = "[\"\u4FEE\u6539\u7F29\u653E\u6BD4\u4F8B\",\"\u4FEE\u6539\u7E2E\u653E\u6BD4\u4F8B\",\"Modify the Scale\"]",
-    "_无法删除不能少于最小点数" = "[\"\u65E0\u6CD5\u5220\u9664\uFF0C\u70B9\u6570\u91CF\u4E0D\u80FD\u5C11\u4E8E\",\"\u7121\u6CD5\u522A\u9664\uFF0C\u9EDE\u6578\u91CF\u4E0D\u80FD\u5C11\u4E8E\",\"Cannot delete, the number of dots cannot be less than\"]",
-    "_删除" = "[\"\u5220\u9664\",\"\u522A\u9664\",\"Delete\"]",
-    "_加载模型中" = "[\"\u52A0\u8F7D\u6A21\u578B\u4E2D\u2026\",\"\u52A0\u8F7D\u6A21\u578B\u4E2D\u2026\",\"Load Model\u2026\"]"
-}
-
-/**
- * 语言类型  枚举
- */
-declare enum LangType {
     /**
-     * 简体中文
+     * Cesium renderError 错误弹窗
      */
-    ZH = 0,
-    /**
-     * 繁体中文(香港、台湾等地区)
-     */
-    ZHHK = 1,
-    /**
-     * English英文  en
-     */
-    EN = 2
+    RenderingHasStopped = "WebGL\u53D1\u751F\u6E32\u67D3\u9519\u8BEF,\u6E32\u67D3\u5DF2\u7ECF\u505C\u6B62,\u8BF7\u5237\u65B0\u9875\u9762\u3002",
+    ErrorConstructingCesiumWidget = "WebGL\u53D1\u751F\u6E32\u67D3\u9519\u8BEF,\u6E32\u67D3\u5DF2\u7ECF\u505C\u6B62,\u8BF7\u5237\u65B0\u9875\u9762\u3002",
+    Today = "\u4ECA\u5929",
+    TodayRealTime = "\u4ECA\u5929\uFF08\u5B9E\u9645\u65F6\u95F4\uFF09",
+    Pause = "\u6682\u505C",
+    PlayReverse = "\u540E\u9000\u64AD\u653E",
+    PlayForward = "\u524D\u8FDB\u64AD\u653E",
+    CurrentTimeNotInRange = "\u5F53\u524D\u65F6\u95F4\u4E0D\u5728\u8303\u56F4\u5185",
+    Imagery = "\u5F71\u50CF",
+    CesiumIon = "\u5B98\u65B9ION",
+    Other = "\u5176\u4ED6",
+    Terrain = "\u5730\u5F62\u670D\u52A1",
+    WGS84Ellipsoid = "WGS84 \u692D\u7403",
+    CesiumWorldTerrain = "Cesium \u4E16\u754C\u5730\u5F62\u56FE",
+    WGS84EllipsoidESPG4326 = "WGS84\u6807\u51C6\u692D\u7403\uFF0C\u53C8\u79F0EPSG\uFF1A4326",
+    HighResolutionGlobalTerrain = "\u9AD8\u5206\u8FA8\u7387\u5168\u7403\u5730\u5F62\u56FE\u5757\u96C6\u7531\u51E0\u4E2A\u6570\u636E\u6E90\u7EC4\u6210\uFF0C\u7531Cesium ion\u6258\u7BA1",
+    FullScreen = "\u5168\u5C4F",
+    ExitFullScreen = "\u9000\u51FA\u5168\u5C4F",
+    FullScreenUnavailable = "\u5168\u5C4F\u4E0D\u53EF\u7528",
+    EnterAnAddressOrLandmark = "\u8BF7\u8F93\u5165\u5730\u5740...",
+    Searching = "\u67E5\u8BE2\u4E2D...",
+    ViewHome = "\u521D\u59CB\u89C6\u56FE",
+    NavigationInstructions = "\u5E2E\u52A9",
+    Mouse = "\u9F20\u6807\u64CD\u4F5C",
+    Touch = "\u89E6\u6478\u624B\u52BF",
+    PanView = "\u5E73\u79FB\u89C6\u56FE",
+    LeftClickDrag = "\u9F20\u6807\u5DE6\u952E+\u62D6\u62FD",
+    ZoomView = "\u7F29\u653E\u89C6\u56FE",
+    RightClick = "\u53F3\u952E+\u62D6\u62FD\uFF0C\u6216\u8005",
+    MouseWheelScroll = "\u4E2D\u952E\u6EDA\u52A8",
+    RotateView = "\u65CB\u8F6C\u89C6\u56FE",
+    MiddleClickDrag = "\u4E2D\u952E\u6309\u4E0B\u62D6\u62FD\uFF0C\u6216\u8005",
+    CtrlAndClickDrag = "\u6309Ctrl\u952E \u540C\u65F6 \u5DE6/\u53F3\u952E\u62D6\u62FD",
+    OneFingerDrag = "\u5355\u6307\u62D6\u52A8",
+    TwoFingerPinch = "\u53CC\u6307\u5411\u5185\u6216\u5411\u5916\u6ED1\u52A8",
+    TiltView = "\u503E\u659C\u89C6\u56FE",
+    TwoFingerDragSameDirection = "\u53CC\u6307\u6309\u76F8\u540C\u65B9\u5411\u62D6\u52A8",
+    TwoFingerDragOppositeDirection = "\u53CC\u6307\u6309\u76F8\u53CD\u65B9\u5411\u62D6\u52A8",
+    PerspectiveProjection = "\u900F\u89C6\u6295\u5F71",
+    OrthographicProjection = "\u6B63\u5C04\u6295\u5F71",
+    _2D = "\u4E8C\u7EF4\u89C6\u56FE",
+    _3D = "\u4E09\u7EF4\u89C6\u56FE",
+    ColumbusView = "\u54E5\u4F26\u5E032.5D\u89C6\u56FE",
+    EnterVRMode = "\u8FDB\u5165VR\u6A21\u5F0F",
+    ExitVRMode = "\u9000\u51FAVR\u6A21\u5F0F",
+    VRModeIsUnavailable = "VR\u6A21\u5F0F\u4E0D\u53EF\u7528",
+    "_放大" = "\u653E\u5927",
+    "_缩小" = "\u7F29\u5C0F",
+    "_暂停" = "\u6682\u505C",
+    "_继续" = "\u7EE7\u7EED",
+    "_查看此处坐标" = "\u67E5\u770B\u6B64\u5904\u5750\u6807",
+    "_位置信息" = "\u4F4D\u7F6E\u4FE1\u606F",
+    "_经度" = "\u7ECF\u5EA6",
+    "_纬度" = "\u7EAC\u5EA6",
+    "_海拔" = "\u9AD8\u7A0B",
+    "_横坐标" = "\u6A2A\u5750\u6807",
+    "_纵坐标" = "\u7EB5\u5750\u6807",
+    "_查看当前视角" = "\u67E5\u770B\u5F53\u524D\u89C6\u89D2",
+    "_当前视角信息" = "\u5F53\u524D\u89C6\u89D2\u4FE1\u606F",
+    "_视角切换" = "\u89C6\u89D2\u5207\u6362",
+    "_禁止进入地下" = "\u7981\u6B62\u8FDB\u5165\u5730\u4E0B",
+    "_允许进入地下" = "\u5141\u8BB8\u8FDB\u5165\u5730\u4E0B",
+    "_绕此处环绕飞行" = "\u7ED5\u6B64\u5904\u73AF\u7ED5\u98DE\u884C",
+    "_关闭环绕飞行" = "\u5173\u95ED\u73AF\u7ED5\u98DE\u884C",
+    "_移动到此处" = "\u79FB\u52A8\u5230\u6B64\u5904",
+    "_第一视角站到此处" = "\u7B2C\u4E00\u89C6\u89D2\u7AD9\u5230\u6B64\u5904",
+    "_开启键盘漫游" = "\u5F00\u542F\u952E\u76D8\u6F2B\u6E38",
+    "_关闭键盘漫游" = "\u5173\u95ED\u952E\u76D8\u6F2B\u6E38",
+    "_跟踪锁定" = "\u8DDF\u8E2A\u9501\u5B9A",
+    "_取消锁定" = "\u53D6\u6D88\u9501\u5B9A",
+    "_三维模型" = "\u4E09\u7EF4\u6A21\u578B",
+    "_显示三角网" = "\u663E\u793A\u4E09\u89D2\u7F51",
+    "_关闭三角网" = "\u5173\u95ED\u4E09\u89D2\u7F51",
+    "_显示包围盒" = "\u663E\u793A\u5305\u56F4\u76D2",
+    "_关闭包围盒" = "\u5173\u95ED\u5305\u56F4\u76D2",
+    "_地形服务" = "\u5730\u5F62\u670D\u52A1",
+    "_开启地形" = "\u5F00\u542F\u5730\u5F62",
+    "_关闭地形" = "\u5173\u95ED\u5730\u5F62",
+    "_图上标记" = "\u56FE\u4E0A\u6807\u8BB0",
+    "_标记点" = "\u6807\u8BB0\u70B9",
+    "_标记线" = "\u6807\u8BB0\u7EBF",
+    "_标记面" = "\u6807\u8BB0\u9762",
+    "_标记圆" = "\u6807\u8BB0\u5706",
+    "_标记矩形" = "\u6807\u8BB0\u77E9\u5F62",
+    "_允许编辑" = "\u5141\u8BB8\u7F16\u8F91",
+    "_禁止编辑" = "\u7981\u6B62\u7F16\u8F91",
+    "_导出GeoJSON" = "\u5BFC\u51FAGeoJSON",
+    "_清除所有标记" = "\u6E05\u9664\u6240\u6709\u6807\u8BB0",
+    "_特效效果" = "\u7279\u6548\u6548\u679C",
+    "_开启下雨" = "\u5F00\u542F\u4E0B\u96E8",
+    "_关闭下雨" = "\u5173\u95ED\u4E0B\u96E8",
+    "_开启下雪" = "\u5F00\u542F\u4E0B\u96EA",
+    "_关闭下雪" = "\u5173\u95ED\u4E0B\u96EA",
+    "_开启雾天气" = "\u5F00\u542F\u96FE\u5929\u6C14",
+    "_关闭雾天气" = "\u5173\u95ED\u96FE\u5929\u6C14",
+    "_开启泛光" = "\u5F00\u542F\u6CDB\u5149",
+    "_关闭泛光" = "\u5173\u95ED\u6CDB\u5149",
+    "_开启亮度" = "\u5F00\u542F\u4EAE\u5EA6",
+    "_关闭亮度" = "\u5173\u95ED\u4EAE\u5EA6",
+    "_开启夜视" = "\u5F00\u542F\u591C\u89C6",
+    "_关闭夜视" = "\u5173\u95ED\u591C\u89C6",
+    "_开启黑白" = "\u5F00\u542F\u9ED1\u767D",
+    "_关闭黑白" = "\u5173\u95ED\u9ED1\u767D",
+    "_开启拾取高亮" = "\u5F00\u542F\u62FE\u53D6\u9AD8\u4EAE",
+    "_关闭拾取高亮" = "\u5173\u95ED\u62FE\u53D6\u9AD8\u4EAE",
+    "_场景设置" = "\u573A\u666F\u8BBE\u7F6E",
+    "_开启深度监测" = "\u5F00\u542F\u6DF1\u5EA6\u76D1\u6D4B",
+    "_关闭深度监测" = "\u5173\u95ED\u6DF1\u5EA6\u76D1\u6D4B",
+    "_显示星空背景" = "\u663E\u793A\u661F\u7A7A\u80CC\u666F",
+    "_关闭星空背景" = "\u5173\u95ED\u661F\u7A7A\u80CC\u666F",
+    "_开启日照阴影" = "\u5F00\u542F\u65E5\u7167\u9634\u5F71",
+    "_关闭日照阴影" = "\u5173\u95ED\u65E5\u7167\u9634\u5F71",
+    "_开启大气渲染" = "\u5F00\u542F\u5927\u6C14\u6E32\u67D3",
+    "_关闭大气渲染" = "\u5173\u95ED\u5927\u6C14\u6E32\u67D3",
+    "_场景出图" = "\u573A\u666F\u51FA\u56FE",
+    "_图上量算" = "\u56FE\u4E0A\u91CF\u7B97",
+    "_删除测量" = "\u5220\u9664\u6D4B\u91CF",
+    "_角度" = "\u89D2\u5EA6",
+    "_距离" = "\u8DDD\u79BB",
+    "_面积" = "\u9762\u79EF",
+    "_总长" = "\u603B\u957F",
+    "_起点" = "\u8D77\u70B9",
+    "_高度差" = "\u9AD8\u5EA6\u5DEE",
+    "_空间距离" = "\u7A7A\u95F4\u8DDD\u79BB",
+    "_水平距离" = "\u6C34\u5E73\u8DDD\u79BB",
+    "_正在计算体积" = "\u6B63\u5728\u8BA1\u7B97\u4F53\u79EF",
+    "_填方体积" = "\u586B\u65B9\u4F53\u79EF",
+    "_挖方体积" = "\u6316\u65B9\u4F53\u79EF",
+    "_横切面积" = "\u6A2A\u5207\u9762\u79EF",
+    "_面上" = "\u9762\u4E0A",
+    "_面下" = "\u9762\u4E0B",
+    "_米" = "\u7C73",
+    "_公里" = "\u516C\u91CC",
+    "_万米" = "\u4E07\u7C73",
+    "_海里" = "\u6D77\u91CC",
+    "_丈" = "\u4E08",
+    "_平方米" = "\u5E73\u65B9\u7C73",
+    "_平方公里" = "\u5E73\u65B9\u516C\u91CC",
+    "_亩" = "\u4EA9",
+    "_公顷" = "\u516C\u9877",
+    "_立方米" = "\u65B9",
+    "_万立方米" = "\u4E07\u65B9",
+    "_单击开始绘制" = "\u5355\u51FB\u5F00\u59CB\u7ED8\u5236",
+    "_单击完成绘制" = "\u5355\u51FB\u5B8C\u6210\u7ED8\u5236",
+    "_双击完成绘制" = "\u53CC\u51FB\u5B8C\u6210\u7ED8\u5236",
+    "_单击增加点" = "\u5355\u51FB\u589E\u52A0\u70B9",
+    "_右击删除点" = "\u53F3\u51FB\u5220\u9664\u70B9",
+    "_单击后激活编辑" = "\u5355\u51FB\u540E\u6FC0\u6D3B\u7F16\u8F91",
+    "_右击菜单删除" = "\u53F3\u51FB\u83DC\u5355\u5220\u9664",
+    "_更多功能请右击" = "\u66F4\u591A\u529F\u80FD\u8BF7\u53F3\u51FB",
+    "_停止编辑" = "\u505C\u6B62\u7F16\u8F91",
+    "_删除该点" = "\u5220\u9664\u8BE5\u70B9",
+    "_按轴平移" = "\u6309\u8F74\u5E73\u79FB",
+    "_停止按轴平移" = "\u505C\u6B62\u6309\u8F74\u5E73\u79FB",
+    "_按轴旋转" = "\u6309\u8F74\u65CB\u8F6C",
+    "_停止按轴旋转" = "\u505C\u6B62\u6309\u8F74\u65CB\u8F6C",
+    "_调整比例" = "\u8C03\u6574\u6BD4\u4F8B",
+    "_停止调整比例" = "\u505C\u6B62\u8C03\u6574\u6BD4\u4F8B",
+    "_释放后完成修改" = "\u91CA\u653E\u540E\u5B8C\u6210\u4FEE\u6539",
+    "_该对象不允许编辑" = "\u8BE5\u5BF9\u8C61\u4E0D\u5141\u8BB8\u7F16\u8F91",
+    "_拖动该点后" = "\u62D6\u52A8\u8BE5\u70B9\u540E",
+    "_拖动对象后" = "\u62D6\u52A8\u5BF9\u8C61\u540E",
+    "_修改位置" = "\u4FEE\u6539\u4F4D\u7F6E",
+    "_整体平移" = "\u6574\u4F53\u5E73\u79FB",
+    "_增加点" = "\u589E\u52A0\u70B9",
+    "_修改高度" = "\u4FEE\u6539\u9AD8\u5EA6",
+    "_修改半径" = "\u4FEE\u6539\u534A\u5F84",
+    "_修改长度" = "\u4FEE\u6539\u957F\u5EA6(X\u65B9\u5411)",
+    "_修改宽度" = "\u4FEE\u6539\u5BBD\u5EA6(Y\u65B9\u5411)",
+    "_修改方向" = "\u4FEE\u6539\u65B9\u5411",
+    "_修改缩放比例" = "\u4FEE\u6539\u7F29\u653E\u6BD4\u4F8B",
+    "_无法删除不能少于最小点数" = "\u65E0\u6CD5\u5220\u9664\uFF0C\u70B9\u6570\u91CF\u4E0D\u80FD\u5C11\u4E8E",
+    "_删除" = "\u5220\u9664",
+    "_加载模型中" = "\u52A0\u8F7D\u6A21\u578B\u4E2D\u2026"
 }
 
 /**
@@ -1680,7 +1719,7 @@ declare class BaseControl extends BaseThing {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
         eventParent?: BaseClass | boolean;
     });
     /**
@@ -1773,7 +1812,7 @@ declare class ClockAnimate extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
 }
 
@@ -1814,7 +1853,7 @@ declare class Compass extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 更新 外部圆环区域的SVG图片
@@ -1858,9 +1897,12 @@ declare class Compass extends BaseControl {
  * 时钟仪表控制 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
  * @param [options.ticks = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0]] - 可选的步长
+ * @param [formatTimeStr = true] - 是否格式化时间文本为普通格式 ，比如 yyyy-MM-dd 、HH:mm:ss
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class Animation extends BaseCzmControl {
     constructor(options?: {
@@ -1868,7 +1910,9 @@ declare class Animation extends BaseCzmControl {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
-    });
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
+    }, formatTimeStr?: boolean);
 }
 
 /**
@@ -1877,12 +1921,16 @@ declare class Animation extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.destroyCzm = true] - remove移除时是否销毁Cesium对象，true时销毁，false时只是DOM隐藏
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class BaseCzmControl extends BaseControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         destroyCzm?: boolean;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
 }
 
@@ -1892,12 +1940,16 @@ declare class BaseCzmControl extends BaseControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class BaseLayerPicker extends BaseCzmControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -1911,12 +1963,16 @@ declare class BaseLayerPicker extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class FullscreenButton extends BaseCzmControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -1930,12 +1986,16 @@ declare class FullscreenButton extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class Geocoder extends BaseCzmControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -1950,6 +2010,8 @@ declare class Geocoder extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class HomeButton extends BaseCzmControl {
     constructor(options?: {
@@ -1957,6 +2019,8 @@ declare class HomeButton extends BaseCzmControl {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -1970,12 +2034,16 @@ declare class HomeButton extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class NavigationHelpButton extends BaseCzmControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -1989,12 +2057,16 @@ declare class NavigationHelpButton extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class ProjectionPicker extends BaseCzmControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -2009,6 +2081,8 @@ declare class ProjectionPicker extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class SceneModePicker extends BaseCzmControl {
     constructor(options?: {
@@ -2016,6 +2090,8 @@ declare class SceneModePicker extends BaseCzmControl {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -2028,6 +2104,7 @@ declare class SceneModePicker extends BaseCzmControl {
  * @param [options] - 参数对象，包括以下：
  * @param [options.zoom = true] - 刻度面板是否可以鼠标滚轮进行缩放
  * @param [options.maxSpan = 1] - 刻度放大的最大刻度跨度，单位：秒
+ * @param [formatTimeStr = true] - 是否格式化时间文本为普通格式 ，比如 yyyy-MM-dd 、HH:mm:ss
  * @param [options.style] - 可以CSS样式，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
  * @param [options.style.bottom = 0] - css定位bottom位置
@@ -2036,6 +2113,8 @@ declare class SceneModePicker extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class Timeline extends BaseCzmControl {
     constructor(options?: {
@@ -2050,7 +2129,9 @@ declare class Timeline extends BaseCzmControl {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
-    });
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
+    }, formatTimeStr?: boolean);
     /**
      * @param startTime - 开始时间
      * @param stopTime - 结束时间
@@ -2064,12 +2145,16 @@ declare class Timeline extends BaseCzmControl {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class VRButton extends BaseCzmControl {
     constructor(options?: {
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -2115,7 +2200,7 @@ declare class DistanceLegend extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 当前比例尺值（单位：米）
@@ -2178,7 +2263,6 @@ declare namespace LocationBar {
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
  * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
- * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
  */
 declare class LocationBar extends BaseControl {
     constructor(options?: {
@@ -2197,7 +2281,7 @@ declare class LocationBar extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 显示的数据
@@ -2237,7 +2321,7 @@ declare class MapCompare extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 对比的地图对象
@@ -2276,7 +2360,7 @@ declare class MapSplit extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 左侧区域瓦片图层
@@ -2332,7 +2416,7 @@ declare class MouseDownView extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
 }
 
@@ -2383,7 +2467,7 @@ declare class OverviewMap extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 鹰眼小地图对象
@@ -2449,7 +2533,7 @@ declare class ToolButton extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -2478,7 +2562,7 @@ declare class Zoom extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
     });
     /**
      * 父容器DOM对象
@@ -7131,8 +7215,10 @@ declare namespace VolumeCloud {
  * 体渲染气象云 矢量对象，该对象暂不支持鼠标交互和拾取
  * @param options - 参数对象，包括以下：
  * @param options.data - 数据
+ * @param [options.colors] - 色带颜色数组
+ * @param [options.steps] - 色带对应的数值数组
  * @param [options.threshold = 65/255] - 筛选值
- * @param [options.steps = 600] - 精细度
+ * @param [options.detail = 1000] - 精细度
  * @param [options.xCut = -0.5] - X轴裁剪,取值范围：-0.5至0.5
  * @param [options.yCut = -0.5] - Y轴裁剪,取值范围：-0.5至0.5
  * @param [options.zCut = 0.5] - Z轴裁剪,取值范围：-0.5至0.5
@@ -7144,8 +7230,10 @@ declare namespace VolumeCloud {
 declare class VolumeCloud extends BasePrimitive {
     constructor(options: {
         data: VolumeCloud.DataOptions;
+        colors?: string[];
+        steps?: number[];
         threshold?: number;
-        steps?: number;
+        detail?: number;
         xCut?: number;
         yCut?: number;
         zCut?: number;
@@ -11786,6 +11874,7 @@ declare namespace PolygonEntity {
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.midPointFraction = 0.5] - 编辑时，中间点的位置比例
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -11817,6 +11906,7 @@ declare class PolygonEntity extends BasePolyEntity {
         hasEditContextMenu?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
+        midPointFraction?: number;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -11983,6 +12073,7 @@ declare namespace PolylineEntity {
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.midPointFraction = 0.5] - 编辑时，中间点的位置比例
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -12014,6 +12105,7 @@ declare class PolylineEntity extends BasePolyEntity {
         hasEditContextMenu?: boolean;
         hasMoveEdit?: boolean;
         hasHeightEdit?: boolean;
+        midPointFraction?: number;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -14960,11 +15052,19 @@ declare class BasePrimitive extends BaseGraphic {
     /**
      * 当加载primitive数据的内部Cesium容器
      */
-    primitiveCollection: Cesium.PrimitiveCollection | Cesium.LabelCollection | Cesium.BillboardCollection | Cesium.PointPrimitiveCollection | Cesium.CloudCollection;
+    readonly primitiveCollection: Cesium.PrimitiveCollection | Cesium.LabelCollection | Cesium.BillboardCollection | Cesium.PointPrimitiveCollection | Cesium.CloudCollection;
     /**
      * 矢量数据对应的 Cesium内部对象
      */
     readonly primitive: Cesium.Primitive | Cesium.GroundPrimitive | Cesium.ClassificationPrimitive | any;
+    /**
+     * 矢量数据对应的渲染是否完成
+     */
+    readonly ready: boolean;
+    /**
+     * 获取Primitive对象渲染完成的Promise承诺(仅部分支持,不支持对象会打印log)
+     */
+    readonly readyPromise: Promise<any>;
     /**
      * 返回实例可修改的属性。{@link Cesium.GeometryInstance}
      * @example
@@ -17053,7 +17153,7 @@ declare class ModelPrimitive extends BasePointPrimitive {
      */
     scaleZ: number;
     /**
-     * 获取图层完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
+     * 获取模型完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
      */
     readonly readyPromise: Promise<Cesium.Model>;
     /**
@@ -20767,7 +20867,7 @@ declare namespace GraphicLayer {
  * @param [options.data] - 需要自动加载的数据，内部自动生成Graphic对象。{@link GraphicUtil#.create}
  * @param [options.hasEdit = false] - 是否自动激活编辑（true时，单击后自动激活编辑）
  * @param [options.isAutoEditing = true] - 完成标绘时是否自动启动编辑(需要hasEdit:true时)
- * @param [options.isContinued = false] - 是否连续标绘,联系标绘状态下无法编辑已有对象。
+ * @param [options.isContinued = false] - 是否连续标绘,连续标绘状态下无法编辑已有对象。
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
  * @param [options.drawEndEventType = EventType.dblClick] - 绘制时结束的事件，默认双击
  * @param [options.drawDelEventType = EventType.rightClick] - 绘制时删除点的事件，默认右键
@@ -21322,7 +21422,6 @@ declare namespace I3SLayer {
  * @param [options.cacheBytes = 536870912] - 如果缓存包含当前视图不需要的块，则块缓存将被修剪到的大小(以字节为单位)。
  * @param [options.maximumCacheOverflowBytes = 536870912] - 如果当前视图需要超过{@link Cesium3DTileset#cacheBytes}，则允许缓存净空的最大额外内存(以字节为单位)。
  * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
- * *
  * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
  * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式。
  * @param [options.customShader] - 自定义shader效果
@@ -26085,7 +26184,7 @@ declare class ContextMenu extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
         eventParent?: BaseClass | boolean;
     });
     /**
@@ -26122,7 +26221,7 @@ declare class KeyboardRoam extends BaseControl {
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
-        insertBefore?: HTMLElement;
+        insertBefore?: HTMLElement | string;
         eventParent?: BaseClass | boolean;
     });
     /**
@@ -26261,491 +26360,6 @@ declare class MouseEvent {
     pickImageryLayerFeatures(position: LngLatPoint | Cesium.Cartesian3 | any): Promise<any>;
 }
 
-declare namespace Map {
-    /**
-     * 场景参数
-     * @property [center] - 默认相机视角
-     * @property center.lng - 经度值, 180 - 180
-     * @property center.lat - 纬度值, -90 - 90
-     * @property center.alt - 高度值
-     * @property [center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
-     * @property [center.pitch] - 俯仰角度值，绕纬度线旋转角度,-90至90
-     * @property [center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
-     * @property [extent] - 矩形范围 相机视角,与center二选一
-     * @property extent.xmin - 最小经度值, -180 至 180
-     * @property extent.xmax - 最大经度值, -180 至 180
-     * @property extent.ymin - 最小纬度值, -90 至 90
-     * @property extent.ymax - 最大纬度值, -90 至 90
-     * @property [removeDblClick = false] - 是否移除Cesium默认的双击事件
-     * @property [ionToken] - Cesium Ion服务的 Token令牌
-     * @property [resolutionScale = 1.0] - 获取或设置渲染分辨率的缩放比例。小于1.0的值可以改善性能不佳的设备上的性能，而值大于1.0则将以更高的速度呈现分辨率，然后缩小比例，从而提高视觉保真度。例如，如果窗口小部件的尺寸为640x480，则将此值设置为0.5将导致场景以320x240渲染，然后在设置时按比例放大设置为2.0将导致场景以1280x960渲染，然后按比例缩小。
-     *
-     * 以下是Cesium.Scene对象相关参数
-     * @property [showSun] - 是否显示太阳，如修改对象可以用 [map.scene.sun]{@link http://mars3d.cn/api/cesium/Sun.html}
-     * @property [showMoon] - 是否显示月亮，如修改对象可以用 [map.scene.moon]{@link http://mars3d.cn/api/cesium/Moon.html}
-     * @property [showSkyBox] - 是否显示天空盒，如修改对象可以用 [map.scene.skyBox]{@link http://mars3d.cn/api/cesium/SkyBox.html}
-     * @property [showSkyAtmosphere] - 是否显示地球大气层外光圈，如修改对象可以用 [map.scene.skyAtmosphere]{@link http://mars3d.cn/api/cesium/SkyAtmosphere.html}
-     * @property [fog] - 是否启用雾化效果，如修改对象可以用 [map.scene.fog]{@link http://mars3d.cn/api/cesium/fog.html}
-     * @property [fxaa] - 是否开启快速抗锯齿
-     * @property [highDynamicRange] - 是否关闭高动态范围渲染(不关闭时地图会变暗)
-     * @property [backgroundColor] - 空间背景色 ，css颜色值
-     *
-     * 以下是Cesium.Viewer所支持的options【控件相关的写在另外的control属性中】
-     * @property [sceneMode = Cesium.SceneMode.SCENE3D] - 初始场景模式。可以设置进入场景后初始是2D、2.5D、3D 模式。
-     * @property [scene3DOnly = false] - 为 true 时，每个几何实例将仅以3D渲染以节省GPU内存。
-     * @property [mapProjection = new Cesium.GeographicProjection()] - 在二维模式下时，地图的呈现坐标系，默认为EPSG4326坐标系，如果需要EPSG3857墨卡托坐标系展示，传 new Cesium.WebMercatorProjection() 即可
-     * @property [mapMode2D = Cesium.MapMode2D.INFINITE_SCROLL] - 在二维模式下时，地图是可旋转的还是可以在水平方向无限滚动。
-     * @property [shouldAnimate = true] - 是否开启时钟动画
-     * @property [shadows = false] - 是否启用日照阴影
-     * @property [useDefaultRenderLoop = true] - 如果此小部件应控制渲染循环，则为true，否则为false。
-     * @property [targetFrameRate] - 使用默认渲染循环时的目标帧速率。
-     * @property [useBrowserRecommendedResolution = true] - 如果为true，则以浏览器建议的分辨率渲染，并忽略 window.devicePixelRatio 。
-     * @property [automaticallyTrackDataSourceClocks = true] - 如果为true，则此小部件将自动跟踪新添加的数据源的时钟设置，并在数据源的时钟发生更改时进行更新。如果要独立配置时钟，请将其设置为false。
-     * @property [contextOptions = {}] - WebGL创建属性 传递给 Cesium.Scene 的 options 。{@link Cesium.Scene}
-     * @property [contextOptions.allowTextureFilterAnisotropic = true] - 允许纹理过滤各向异性
-     * @property [contextOptions.requestWebgl1 = false] - 是否启用webgl1，cesium v1.102起默认用webgl2渲染
-     * @property [contextOptions.webgl] - WebGL画布,用于 canvas.getContext("webgl", webglOptions) See {@link https://registry.khronos.org/webgl/specs/latest/1.0/#5.2|WebGLContextAttributes}
-     * @property [contextOptions.webgl.alpha = false] - 是否包含alpha缓冲区，如果需要DIV透明时，需要改为true
-     * @property [contextOptions.webgl.depth] - 绘图缓冲区的深度缓冲区至少为16位
-     * @property [contextOptions.webgl.stencil = true] - 绘图缓冲区具有至少8位的模板缓冲区
-     * @property [contextOptions.webgl.antialias] - 是否执行抗锯齿
-     * @property [contextOptions.webgl.failIfMajorPerformanceCaveat] - 如果系统性能较低，是否创建上下文
-     * @property [contextOptions.webgl.preserveDrawingBuffer] - 是否将把绘图缓存保留下来，截图需要将该项设置为true
-     * @property [contextOptions.webgl.powerPreference = "high-performance"] - 对用户代理的提示，指示GPU的哪种配置适合WebGL上下文，可选值："default"、"low-power"、"high-performance"
-     * @property [orderIndependentTranslucency = true] - 如果为true，并且配置支持它，则使用顺序无关的半透明性。
-     * @property [terrainShadows = Cesium.ShadowMode.RECEIVE_ONLY] - 确定地形是否投射或接收来自光源的阴影。
-     * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
-     * @property [maximumRenderTimeChange = 0.0] - 如果requestRenderMode为true，这个值定义了在请求渲染之前允许的模拟时间的最大变化。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
-     * @property [depthPlaneEllipsoidOffset = 0.0] - 调整DepthPlane以处理椭球体零标高以下的渲染伪影。
-     * @property [msaaSamples = 1] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
-     *
-     * 以下是Cesium.Globe对象相关参数
-     * @property [globe] - globe地球相关参数
-     * @property [globe.show = true] - 是否显示地球
-     * @property [globe.baseColor = '#546a53'] - 地球背景色 ，css颜色值
-     * @property [globe.depthTestAgainstTerrain = false] - 是否启用深度监测,可以开启来测试矢量对象是否在地形下面或被遮挡。
-     * @property [globe.showGroundAtmosphere = true] - 是否在地球上绘制的地面大气
-     * @property [globe.enableLighting = false] - 是否显示晨昏线，可以看到地球的昼夜区域
-     * @property [globe.tileCacheSize = 100] - 地形图块缓存的大小，表示为图块数。任何其他只要不需要渲染，就会释放超出此数目的图块这个框架。较大的数字将消耗更多的内存，但显示细节更快例如，当缩小然后再放大时。
-     * @property [globe.terrainExaggeration = 1.0] - 地形夸张倍率，用于放大地形的标量。请注意，地形夸张不会修改其他相对于椭球的图元。
-     * @property [globe.realAlt = false] - 地形夸张倍率，在测量高度和下侧提示的高度信息中是否转换为实际真实高度值。
-     * @property [globe.terrainExaggerationRelativeHeight = 0.0] - 地形被夸大的高度。默认为0.0（相对于椭球表面缩放）。高于此高度的地形将向上缩放，低于此高度的地形将向下缩放。请注意，地形夸大不会修改任何其他图元，因为它们是相对于椭球体定位的。
-     *
-     * 以下是Cesium.ScreenSpaceCameraController对象相关参数
-     * @property [cameraController] - 相机操作相关参数
-     * @property [cameraController.minimumZoomDistance = 1.0] - 相机最近视距，变焦时相机位置的最小量级（以米为单位），默认为1。该值是相机与地表(含地形)的相对距离。
-     * @property [cameraController.maximumZoomDistance = 50000000.0] - 相机最远视距，变焦时相机位置的最大值（以米为单位）。该值是相机与地表(含地形)的相对距离。
-     * @property [cameraController.zoomFactor = 3.0] - 滚轮放大倍数，控制鼠标滚轮操作的步长
-     * @property [cameraController.minimumCollisionTerrainHeight = 80000] - 最小碰撞高度，低于此高度时绕鼠标键绕圈，大于时绕视图中心点绕圈。
-     * @property [cameraController.constrainedAxis = true] - 南北极绕轴心旋转，为false时 解除在南北极区域鼠标操作限制
-     * @property [cameraController.enableRotate = true] - 2D和3D视图下，是否允许用户旋转相机
-     * @property [cameraController.enableTranslate = true] - 2D和哥伦布视图下，是否允许用户平移地图
-     * @property [cameraController.enableTilt = true] - 3D和哥伦布视图下，是否允许用户倾斜相机
-     * @property [cameraController.enableZoom = true] - 是否允许 用户放大和缩小视图
-     * @property [cameraController.enableCollisionDetection = true] - 是否允许 地形相机的碰撞检测
-     *
-     * 以下是Cesium.Clock时钟相关参数
-     * @property [clock] - 时钟相关参数
-     * @property [clock.currentTime] - 当前的时间
-     * @property [clock.multiplier = 1.0] - 当前的速度
-     */
-    type sceneOptions = {
-        center?: {
-            lng: number;
-            lat: number;
-            alt: number;
-            heading?: number;
-            pitch?: number;
-            roll?: number;
-        };
-        extent?: {
-            xmin: number;
-            xmax: number;
-            ymin: number;
-            ymax: number;
-        };
-        removeDblClick?: boolean;
-        ionToken?: string;
-        resolutionScale?: number;
-        showSun?: boolean;
-        showMoon?: boolean;
-        showSkyBox?: boolean;
-        showSkyAtmosphere?: boolean;
-        fog?: boolean;
-        fxaa?: boolean;
-        highDynamicRange?: boolean;
-        backgroundColor?: string;
-        sceneMode?: Cesium.SceneMode;
-        scene3DOnly?: boolean;
-        mapProjection?: Cesium.MapProjection;
-        mapMode2D?: Cesium.MapMode2D;
-        shouldAnimate?: boolean;
-        shadows?: boolean;
-        useDefaultRenderLoop?: boolean;
-        targetFrameRate?: number;
-        useBrowserRecommendedResolution?: boolean;
-        automaticallyTrackDataSourceClocks?: boolean;
-        contextOptions?: {
-            allowTextureFilterAnisotropic?: boolean;
-            requestWebgl1?: boolean;
-            webgl?: {
-                alpha?: boolean;
-                depth?: boolean;
-                stencil?: boolean;
-                antialias?: boolean;
-                premultipliedAlpha?: boolean;
-                failIfMajorPerformanceCaveat?: boolean;
-                preserveDrawingBuffer?: boolean;
-                powerPreference?: string;
-            };
-        };
-        orderIndependentTranslucency?: boolean;
-        terrainShadows?: Cesium.ShadowMode;
-        requestRenderMode?: boolean;
-        maximumRenderTimeChange?: number;
-        depthPlaneEllipsoidOffset?: number;
-        msaaSamples?: number;
-        globe?: {
-            show?: boolean;
-            baseColor?: string;
-            depthTestAgainstTerrain?: boolean;
-            showGroundAtmosphere?: boolean;
-            enableLighting?: boolean;
-            tileCacheSize?: number;
-            terrainExaggeration?: number;
-            realAlt?: number;
-            terrainExaggerationRelativeHeight?: number;
-        };
-        cameraController?: {
-            minimumZoomDistance?: number;
-            maximumZoomDistance?: number;
-            zoomFactor?: number;
-            minimumCollisionTerrainHeight?: number;
-            constrainedAxis?: boolean;
-            enableRotate?: boolean;
-            enableTranslate?: boolean;
-            enableTilt?: boolean;
-            enableZoom?: boolean;
-            enableCollisionDetection?: boolean;
-        };
-        clock?: {
-            currentTime?: string | Cesium.JulianDate;
-            multiplier?: number;
-        };
-    };
-    /**
-     * 添加到地图的控件 参数
-     * @property [homeButton = false] - 视角复位按钮，是否显示
-     * @property [zoom] - 放大缩小按钮 , 对应 {@link Zoom}构造参数
-     * @property [sceneModePicker = false] - 二三维切换按钮，是否显示二维、三维、2.5D视图切换按钮
-     * @property [projectionPicker = false] - 投影切换按钮, 是否显示用于在透视和正投影之间进行切换按钮
-     * @property [fullscreenButton = false] - 全屏按钮，是否显示
-     * @property [fullscreenElement = document.body] - 当按下全屏按钮时，要置于全屏模式的元素或id
-     * @property [vrButton = false] - VR效果按钮，是否显示
-     * @property [geocoder = false] - 是否显示 地名查找按钮 控件，是Cesium原生控件
-     * @property [navigationHelpButton = false] - 帮助按钮，是否显示
-     * @property [navigationInstructionsInitiallyVisible = true] - 帮助按钮 在用户明确单击按钮之前是否自动显示
-     * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件, 如果true底图是Cesium机制控制，Map内的basemaps相关获取和控制将会无效。
-     * @property [imageryProviderViewModels] - baseLayerPicker底图切换面板中，用于图像的ProviderViewModel实例数组，默认自动根据basemaps数组生成。
-     * @property [selectedImageryProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基本图像层的视图模型，则使用第一个可用的图像层。默认为show:true的basemaps图层
-     * @property [terrainProviderViewModels] - baseLayerPicker底图切换面板中，用于地形的ProviderViewModel实例数组。默认自动使用terrain配置+无地形。
-     * @property [selectedTerrainProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基础地形层的视图模型，则使用第一个可用的地形层。
-     * @property [compass] - 导航球, 对应 {@link Compass}构造参数
-     * @property [locationBar] - 状态栏, 对应 {@link LocationBar}构造参数
-     * @property [locationBar.fps] - 是否显示实时FPS帧率
-     * @property [locationBar.format] - 显示内容的格式化html展示的内容格式化字符串。  支持以下模版配置：【鼠标所在位置】 经度:{lng}， 纬度:{lat}， 海拔：{alt}米， 【相机的】 方向角度：{heading}， 俯仰角度：{pitch}， 视高：{cameraHeight}米， 【地图的】 层级：{level}，
-     * @property [distanceLegend] - 比例尺, 对应 {@link DistanceLegend}构造参数
-     * @property [clockAnimate] - 时钟控制, 对应{@link ClockAnimate}构造参数
-     * @property [animation = true] - 时钟仪表控制(Cesium原生)
-     * @property [timeline = true] - 时间线, 是否创建下侧时间线控件面板
-     * @property [overviewMap] - 鹰眼地图, 对应{@link OverviewMap }构造参数
-     * @property [mapSplit] - 卷帘对比, 对应{@link MapSplit }构造参数
-     * @property [keyboardRoam] - 键盘漫游, 对应{@link KeyboardRoam }构造参数
-     * @property [mouseDownView] - 鼠标滚轮缩放美化样式(指示图标), 对应 {@link MouseDownView}构造参数
-     * @property [infoBox = true] - 信息面板，是否显示点击要素之后显示的信息，是Cesium原生控件
-     * @property [selectionIndicator = true] - 选中框，是否显示选择模型时的绿色框，是Cesium原生控件
-     * @property [showRenderLoopErrors = true] - 如果为true，则在发生渲染循环错误时，此小部件将自动向包含错误的用户显示HTML面板，是Cesium原生控件
-     * @property [contextmenu] - 内置 右键菜单 控制参数, 对应{@link ContextMenu }构造参数
-     * @property [contextmenu.preventDefault = true] - 是否取消右键菜单
-     * @property [contextmenu.hasDefault = true] - 是否绑定默认的地图右键菜单
-     * @property [popup] - 内置 Popup 控制参数
-     * @property [popup.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
-     * @property [tooltip] - 内置 Tooltip 控制参数
-     * @property [tooltip.cacheTime = 20] - 延迟缓存的时间，单位：毫秒
-     */
-    type controlOptions = {
-        homeButton?: boolean;
-        zoom?: any;
-        sceneModePicker?: boolean;
-        projectionPicker?: boolean;
-        fullscreenButton?: boolean;
-        fullscreenElement?: Element | string;
-        vrButton?: boolean;
-        geocoder?: boolean | Cesium.GeocoderService[];
-        navigationHelpButton?: boolean;
-        navigationInstructionsInitiallyVisible?: boolean;
-        baseLayerPicker?: boolean;
-        imageryProviderViewModels?: Cesium.ProviderViewModel[];
-        selectedImageryProviderViewModel?: Cesium.ProviderViewModel;
-        terrainProviderViewModels?: Cesium.ProviderViewModel[];
-        selectedTerrainProviderViewModel?: Cesium.ProviderViewModel;
-        compass?: any;
-        locationBar?: {
-            fps?: boolean;
-            format?: string | ((...params: any[]) => any);
-        };
-        distanceLegend?: any;
-        clockAnimate?: any;
-        animation?: boolean;
-        timeline?: boolean;
-        overviewMap?: any;
-        mapSplit?: any;
-        keyboardRoam?: any;
-        mouseDownView?: boolean;
-        infoBox?: boolean;
-        selectionIndicator?: boolean;
-        showRenderLoopErrors?: boolean;
-        contextmenu?: {
-            preventDefault?: boolean;
-            hasDefault?: boolean;
-        };
-        popup?: {
-            depthTest?: boolean;
-        };
-        tooltip?: {
-            cacheTime?: number;
-        };
-    };
-    /**
-     * 鼠标操作相关配置 参数
-     * @property [enabledMoveTarget = true] - 是否开启鼠标移动事件的拾取矢量数据
-     * @property [moveDelay = 30] - 鼠标移动事件的延迟毫秒数
-     * @property [pickWidth = 4] - 拾取时所选矩形的宽度，单位：像素
-     * @property [pickHeight = 4] - 拾取时所选矩形的高度，单位：像素
-     * @property [pickLimit = 9] - 在允许allowDrillPick穿透拾取时，限制拾取的对象个数。
-     */
-    type mouseOptions = {
-        enabledMoveTarget?: boolean;
-        moveDelay?: number;
-        pickWidth?: number;
-        pickHeight?: number;
-        pickLimit?: number;
-    };
-    /**
-     * 添加到地图的特效 参数
-     * @property [bloom] - 泛光,对应{@link BloomEffect }构造参数
-     * @property [brightness] - 亮度,对应{@link BrightnessEffect }构造参数
-     * @property [rain] - 雨天气,对应{@link RainEffect }构造参数
-     * @property [snow] - 雪天气 ,对应{@link SnowEffect }构造参数
-     * @property [snowCover] - 地面积雪,对应{@link SnowCoverEffect }构造参数
-     * @property [fog] - 雾天气,对应{@link FogEffect }构造参数
-     * @property [depthOfField] - 景深,对应{@link DepthOfFieldEffect }构造参数
-     * @property [mosaic] - 马赛克,对应{@link MosaicEffect }构造参数
-     * @property [nightVision] - 夜视,对应{@link NightVisionEffect }构造参数
-     * @property [blackAndWhite] - 黑白,对应{@link BlackAndWhiteEffect }构造参数
-     * @property [outline] - 对象轮廓描边,对应{@link OutlineEffect }构造参数
-     * @property [bloomTarget] - 对象泛光,对应{@link BloomTargetEffect }构造参数
-     */
-    type effectOptions = {
-        bloom?: any;
-        brightness?: any;
-        rain?: any;
-        snow?: any;
-        snowCover?: any;
-        fog?: any;
-        depthOfField?: any;
-        mosaic?: any;
-        nightVision?: any;
-        blackAndWhite?: any;
-        outline?: any;
-        bloomTarget?: any;
-    };
-    /**
-     * 地形服务配置
-     * @property [type = "xyz"] - 地形类型
-     * @property url - 地形服务地址
-     * @property [show = false] - 是否启用显示地形
-     * @property [requestVertexNormals = false] - 是否应该从服务器请求额外的光照信息，如果可用，以每个顶点法线的形式。
-     * @property [requestWaterMask = false] - 是否应该向服务器请求每个瓦的水掩膜(如果有的话)。
-     * @property [requestMetadata = true] - 是否应该从服务器请求每个块元数据(如果可用)。
-     * @property [clip = false] - 是否默认启用地形开挖，如果后续打开，缓存数据不会裁剪
-     * @property [flat = false] - 是否默认启用地形压平
-     * @property [uplift = false] - 是否默认启用地形抬升
-     * @property [flood = false] - 是否默认启用地形区域材质(淹没，等高线)
-     */
-    type terrainOptions = {
-        type?: string | TerrainType;
-        url: string | Cesium.Resource;
-        show?: boolean;
-        requestVertexNormals?: boolean;
-        requestWaterMask?: boolean;
-        requestMetadata?: boolean;
-        clip?: boolean;
-        flat?: boolean;
-        uplift?: boolean;
-        flood?: boolean;
-    };
-    /**
-     * 底图图层配置
-     * @property type - 图层类型
-     * @property [多个参数] - 每种不同type都有自己的不同属性，具体参考{@link LayerType}找到type对应的BaseTileLayer子类图层类,查看其构造参数
-     */
-    type basemapOptions = {
-        type: string | LayerType;
-        多个参数?: any;
-    };
-    /**
-     * 可以叠加显示的图层配置，
-     * @property type - 图层类型
-     * @property [id] - 图层id标识
-     * @property [pid = -1] - 图层父级的id，一般图层管理中使用
-     * @property [name = ''] - 图层名称
-     * @property [show = true] - 图层是否显示
-     * @property [center] - 图层自定义定位视角，默认根据数据情况自动定位。
-     * @property [popup] - 当图层支持popup弹窗时，绑定的值
-     * @property [popupOptions] - popup弹窗时的配置参数
-     * @property [tooltip] - 当图层支持tooltip弹窗时，绑定的值
-     * @property [tooltipOptions] - tooltip弹窗时的配置参数
-     * @property [多个参数] - 每种type都有自己的不同属性，具体参考{@link LayerType}找到type对应的图层类,查看其构造参数
-     */
-    type layerOptions = {
-        type: string | LayerType;
-        id?: string | number;
-        pid?: string | number;
-        name?: string;
-        show?: boolean;
-        center?: any;
-        popup?: any;
-        popupOptions?: Popup.StyleOptions | any;
-        tooltip?: any;
-        tooltipOptions?: Tooltip.StyleOptions | any;
-        多个参数?: any;
-    };
-    /**
-     * 覆盖SDK内的{@link Token}所有第3方Token默认值
-     * @property [tianditu] - 天地图
-     * @property [gaode] - 高德
-     * @property [baidu] - 百度
-     * @property [ion] - Ion服务
-     * @property [mapbox] - mapbox地图
-     * @property [bing] - 微软Bing地图
-     */
-    type tokenOptions = {
-        tianditu?: string | string[];
-        gaode?: string | string[];
-        baidu?: string | string[];
-        ion?: string;
-        mapbox?: string;
-        bing?: string;
-    };
-    /**
-     * Map支持的{@link EventType}事件类型
-     * @example
-     * //绑定监听事件
-     * map.on(mars3d.EventType.click, function (event) {
-     *   console.log('单击了地图对象', event)
-     * })
-     * @property load - 地图初始化完成事件(地形、所有图层完成初始化)
-     * @property addLayer - 添加图层
-     * @property removeLayer - 移除图层
-     * @property terrainChange - 地形变化
-     * @property tileLoadProgress - 地图中瓦片加载进度变化
-     * @property cameraMoveStart - 相机开启移动前 场景事件
-     * @property cameraMoveEnd - 相机移动完成后 场景事件
-     * @property cameraChanged - 相机位置完成 场景事件
-     * @property preUpdate - 场景更新前 场景事件
-     * @property postUpdate - 场景更新后 场景事件
-     * @property preRender - 场景渲染前 场景事件
-     * @property postRender - 场景渲染后 场景事件
-     * @property morphStart - 场景模式(2D/3D/哥伦布)变换前 场景事件
-     * @property morphComplete - 完成场景模式(2D/3D/哥伦布)变换 场景事件
-     * @property clockTick - 时钟跳动 场景事件
-     * @property renderError - 场景渲染失败（需要刷新页面）
-     * @property click - 左键单击 鼠标事件
-     * @property clickGraphic - 左键单击到矢量或模型数据时 鼠标事件
-     * @property clickTileGraphic - 左键单击到wms或arcgis瓦片服务的对应矢量数据时
-     * @property clickMap - 左键单击地图空白（未单击到矢量或模型数据）时 鼠标事件
-     * @property dblClick - 左键双击 鼠标事件
-     * @property leftDown - 左键鼠标按下 鼠标事件
-     * @property leftUp - 左键鼠标按下后释放 鼠标事件
-     * @property mouseMove - 鼠标移动 鼠标事件
-     * @property mouseMoveTarget - 鼠标移动（拾取目标，并延迟处理） 鼠标事件
-     * @property wheel - 鼠标滚轮滚动 鼠标事件
-     * @property rightClick - 右键单击 鼠标事件
-     * @property rightDown - 右键鼠标按下 鼠标事件
-     * @property rightUp - 右键鼠标按下后释放 鼠标事件
-     * @property middleClick - 中键单击 鼠标事件
-     * @property middleDown - 中键鼠标按下 鼠标事件
-     * @property middleUp - 中键鼠标按下后释放 鼠标事件
-     * @property pinchStart - 在触摸屏上两指缩放开始 鼠标事件
-     * @property pinchEnd - 在触摸屏上两指缩放结束 鼠标事件
-     * @property pinchMove - 在触摸屏上两指移动 鼠标事件
-     * @property mouseDown - 鼠标按下 [左中右3键都触发] 鼠标事件
-     * @property mouseUp - 鼠标按下后释放 [左中右3键都触发] 鼠标事件
-     * @property mouseOver - 鼠标移入 鼠标事件
-     * @property mouseOut - 鼠标移出 鼠标事件
-     * @property keydown - 按键按下 键盘事件
-     * @property keyup - 按键按下后释放 键盘事件
-     * @property popupOpen - popup弹窗打开后
-     * @property popupClose - popup弹窗关闭
-     * @property tooltipOpen - tooltip弹窗打开后
-     * @property tooltipClose - tooltip弹窗关闭
-     * @property contextMenuOpen - 右键菜单 打开后
-     * @property contextMenuClose - 右键菜单 关闭
-     * @property contextMenuClick - 右键菜单 单击某一项后
-     */
-    type EventType = {
-        load: string;
-        addLayer: string;
-        removeLayer: string;
-        terrainChange: string;
-        tileLoadProgress: string;
-        cameraMoveStart: string;
-        cameraMoveEnd: string;
-        cameraChanged: string;
-        preUpdate: string;
-        postUpdate: string;
-        preRender: string;
-        postRender: string;
-        morphStart: string;
-        morphComplete: string;
-        clockTick: string;
-        renderError: string;
-        click: string;
-        clickGraphic: string;
-        clickTileGraphic: string;
-        clickMap: string;
-        dblClick: string;
-        leftDown: string;
-        leftUp: string;
-        mouseMove: string;
-        mouseMoveTarget: string;
-        wheel: string;
-        rightClick: string;
-        rightDown: string;
-        rightUp: string;
-        middleClick: string;
-        middleDown: string;
-        middleUp: string;
-        pinchStart: string;
-        pinchEnd: string;
-        pinchMove: string;
-        mouseDown: string;
-        mouseUp: string;
-        mouseOver: string;
-        mouseOut: string;
-        keydown: string;
-        keyup: string;
-        popupOpen: string;
-        popupClose: string;
-        tooltipOpen: string;
-        tooltipClose: string;
-        contextMenuOpen: string;
-        contextMenuClose: string;
-        contextMenuClick: string;
-    };
-}
-
 /**
  * 地图类 ，这是构造三维地球的一切的开始起点。
  * @param id - 地图div容器的id 或 已构造好的Viewer对象
@@ -26758,7 +26372,7 @@ declare namespace Map {
  * @param [options.basemaps] - 底图图层配置
  * @param [options.layers] - 可以叠加显示的图层配置
  * @param [options.chinaCRS = ChinaCRS.WGS84] - 标识当前三维场景的国内坐标系（用于部分图层内对比判断来自动纠偏或加偏）
- * @param [options.lang] - 使用的语言（如中文、英文等）。
+ * @param [options.lang] - 使用的语言文本键值对对象，可传入外部自定义的任意语言文本。
  * @param [options.templateValues] - 图层中统一的url模版，比如可以将服务url前缀统一使用模板，方便修改或动态配置。
  * @param [options.token] - 覆盖SDK内的{@link Token}所有第3方Token默认值
  */
@@ -26772,7 +26386,7 @@ declare class Map extends BaseClass {
         basemaps?: Map.basemapOptions[];
         layers?: Map.layerOptions[];
         chinaCRS?: ChinaCRS;
-        lang?: LangType;
+        lang?: any | Lang;
         templateValues?: any;
         token?: Map.tokenOptions;
     });
@@ -26887,9 +26501,9 @@ declare class Map extends BaseClass {
      */
     fixedLight: boolean;
     /**
-     * 使用的语言（如中文、英文等）。
+     * 使用的语言文本配置
      */
-    lang: LangType;
+    lang: Lang | any;
     /**
      * 鼠标滚轮放大的步长比例
      */
@@ -27187,11 +26801,17 @@ declare class Map extends BaseClass {
      */
     getThing(attrValue: string | number | boolean, attrName?: string): BaseThing;
     /**
-     * 根据设置的lang参数，获取当前key对应语言的文本内容。
+     * 获取当前key对应语言的文本内容。
      * @param key - 文本key
      * @returns lang参数指定的对应文本内容
      */
-    getLangText(key: string): void;
+    getLangText(key: string): string;
+    /**
+     * 设置当前key对应语言的文本内容。
+     * @param key - 文本key ，如果是object时更新对应的多个键值对
+     * @param text - 文本内容
+     */
+    setLangText(key: string | any, text: string): void;
     /**
      * 放大地图
      * @param [relativeAmount = 2] - 相对量
@@ -27750,6 +27370,491 @@ declare class Map extends BaseClass {
      * @returns 是否存在
      */
     listens(type: EventType | string, propagate?: BaseClass): boolean;
+}
+
+declare namespace Map {
+    /**
+     * 场景参数
+     * @property [center] - 默认相机视角
+     * @property center.lng - 经度值, 180 - 180
+     * @property center.lat - 纬度值, -90 - 90
+     * @property center.alt - 高度值
+     * @property [center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
+     * @property [center.pitch] - 俯仰角度值，绕纬度线旋转角度,-90至90
+     * @property [center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+     * @property [extent] - 矩形范围 相机视角,与center二选一
+     * @property extent.xmin - 最小经度值, -180 至 180
+     * @property extent.xmax - 最大经度值, -180 至 180
+     * @property extent.ymin - 最小纬度值, -90 至 90
+     * @property extent.ymax - 最大纬度值, -90 至 90
+     * @property [removeDblClick = false] - 是否移除Cesium默认的双击事件
+     * @property [ionToken] - Cesium Ion服务的 Token令牌
+     * @property [resolutionScale = 1.0] - 获取或设置渲染分辨率的缩放比例。小于1.0的值可以改善性能不佳的设备上的性能，而值大于1.0则将以更高的速度呈现分辨率，然后缩小比例，从而提高视觉保真度。例如，如果窗口小部件的尺寸为640x480，则将此值设置为0.5将导致场景以320x240渲染，然后在设置时按比例放大设置为2.0将导致场景以1280x960渲染，然后按比例缩小。
+     *
+     * 以下是Cesium.Scene对象相关参数
+     * @property [showSun] - 是否显示太阳，如修改对象可以用 [map.scene.sun]{@link http://mars3d.cn/api/cesium/Sun.html}
+     * @property [showMoon] - 是否显示月亮，如修改对象可以用 [map.scene.moon]{@link http://mars3d.cn/api/cesium/Moon.html}
+     * @property [showSkyBox] - 是否显示天空盒，如修改对象可以用 [map.scene.skyBox]{@link http://mars3d.cn/api/cesium/SkyBox.html}
+     * @property [showSkyAtmosphere] - 是否显示地球大气层外光圈，如修改对象可以用 [map.scene.skyAtmosphere]{@link http://mars3d.cn/api/cesium/SkyAtmosphere.html}
+     * @property [fog] - 是否启用雾化效果，如修改对象可以用 [map.scene.fog]{@link http://mars3d.cn/api/cesium/fog.html}
+     * @property [fxaa] - 是否开启快速抗锯齿
+     * @property [highDynamicRange] - 是否关闭高动态范围渲染(不关闭时地图会变暗)
+     * @property [backgroundColor] - 空间背景色 ，css颜色值
+     *
+     * 以下是Cesium.Viewer所支持的options【控件相关的写在另外的control属性中】
+     * @property [sceneMode = Cesium.SceneMode.SCENE3D] - 初始场景模式。可以设置进入场景后初始是2D、2.5D、3D 模式。
+     * @property [scene3DOnly = false] - 为 true 时，每个几何实例将仅以3D渲染以节省GPU内存。
+     * @property [mapProjection = new Cesium.GeographicProjection()] - 在二维模式下时，地图的呈现坐标系，默认为EPSG4326坐标系，如果需要EPSG3857墨卡托坐标系展示，传 new Cesium.WebMercatorProjection() 即可
+     * @property [mapMode2D = Cesium.MapMode2D.INFINITE_SCROLL] - 在二维模式下时，地图是可旋转的还是可以在水平方向无限滚动。
+     * @property [shouldAnimate = true] - 是否开启时钟动画
+     * @property [shadows = false] - 是否启用日照阴影
+     * @property [useDefaultRenderLoop = true] - 如果此小部件应控制渲染循环，则为true，否则为false。
+     * @property [targetFrameRate] - 使用默认渲染循环时的目标帧速率。
+     * @property [useBrowserRecommendedResolution = true] - 如果为true，则以浏览器建议的分辨率渲染，并忽略 window.devicePixelRatio 。
+     * @property [automaticallyTrackDataSourceClocks = true] - 如果为true，则此小部件将自动跟踪新添加的数据源的时钟设置，并在数据源的时钟发生更改时进行更新。如果要独立配置时钟，请将其设置为false。
+     * @property [contextOptions = {}] - WebGL创建属性 传递给 Cesium.Scene 的 options 。{@link Cesium.Scene}
+     * @property [contextOptions.allowTextureFilterAnisotropic = true] - 允许纹理过滤各向异性
+     * @property [contextOptions.requestWebgl1 = false] - 是否启用webgl1，cesium v1.102起默认用webgl2渲染
+     * @property [contextOptions.webgl] - WebGL画布,用于 canvas.getContext("webgl", webglOptions) See {@link https://registry.khronos.org/webgl/specs/latest/1.0/#5.2|WebGLContextAttributes}
+     * @property [contextOptions.webgl.alpha = false] - 是否包含alpha缓冲区，如果需要DIV透明时，需要改为true
+     * @property [contextOptions.webgl.depth] - 绘图缓冲区的深度缓冲区至少为16位
+     * @property [contextOptions.webgl.stencil = true] - 绘图缓冲区具有至少8位的模板缓冲区
+     * @property [contextOptions.webgl.antialias] - 是否执行抗锯齿
+     * @property [contextOptions.webgl.failIfMajorPerformanceCaveat] - 如果系统性能较低，是否创建上下文
+     * @property [contextOptions.webgl.preserveDrawingBuffer] - 是否将把绘图缓存保留下来，截图需要将该项设置为true
+     * @property [contextOptions.webgl.powerPreference = "high-performance"] - 对用户代理的提示，指示GPU的哪种配置适合WebGL上下文，可选值："default"、"low-power"、"high-performance"
+     * @property [orderIndependentTranslucency = true] - 如果为true，并且配置支持它，则使用顺序无关的半透明性。
+     * @property [terrainShadows = Cesium.ShadowMode.RECEIVE_ONLY] - 确定地形是否投射或接收来自光源的阴影。
+     * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
+     * @property [maximumRenderTimeChange = 0.0] - 如果requestRenderMode为true，这个值定义了在请求渲染之前允许的模拟时间的最大变化。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
+     * @property [depthPlaneEllipsoidOffset = 0.0] - 调整DepthPlane以处理椭球体零标高以下的渲染伪影。
+     * @property [msaaSamples = 1] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
+     *
+     * 以下是Cesium.Globe对象相关参数
+     * @property [globe] - globe地球相关参数
+     * @property [globe.show = true] - 是否显示地球
+     * @property [globe.baseColor = '#546a53'] - 地球背景色 ，css颜色值
+     * @property [globe.depthTestAgainstTerrain = false] - 是否启用深度监测,可以开启来测试矢量对象是否在地形下面或被遮挡。
+     * @property [globe.showGroundAtmosphere = true] - 是否在地球上绘制的地面大气
+     * @property [globe.enableLighting = false] - 是否显示晨昏线，可以看到地球的昼夜区域
+     * @property [globe.tileCacheSize = 100] - 地形图块缓存的大小，表示为图块数。任何其他只要不需要渲染，就会释放超出此数目的图块这个框架。较大的数字将消耗更多的内存，但显示细节更快例如，当缩小然后再放大时。
+     * @property [globe.terrainExaggeration = 1.0] - 地形夸张倍率，用于放大地形的标量。请注意，地形夸张不会修改其他相对于椭球的图元。
+     * @property [globe.realAlt = false] - 地形夸张倍率，在测量高度和下侧提示的高度信息中是否转换为实际真实高度值。
+     * @property [globe.terrainExaggerationRelativeHeight = 0.0] - 地形被夸大的高度。默认为0.0（相对于椭球表面缩放）。高于此高度的地形将向上缩放，低于此高度的地形将向下缩放。请注意，地形夸大不会修改任何其他图元，因为它们是相对于椭球体定位的。
+     *
+     * 以下是Cesium.ScreenSpaceCameraController对象相关参数
+     * @property [cameraController] - 相机操作相关参数
+     * @property [cameraController.minimumZoomDistance = 1.0] - 相机最近视距，变焦时相机位置的最小量级（以米为单位），默认为1。该值是相机与地表(含地形)的相对距离。
+     * @property [cameraController.maximumZoomDistance = 50000000.0] - 相机最远视距，变焦时相机位置的最大值（以米为单位）。该值是相机与地表(含地形)的相对距离。
+     * @property [cameraController.zoomFactor = 3.0] - 滚轮放大倍数，控制鼠标滚轮操作的步长
+     * @property [cameraController.minimumCollisionTerrainHeight = 80000] - 最小碰撞高度，低于此高度时绕鼠标键绕圈，大于时绕视图中心点绕圈。
+     * @property [cameraController.constrainedAxis = true] - 南北极绕轴心旋转，为false时 解除在南北极区域鼠标操作限制
+     * @property [cameraController.enableRotate = true] - 2D和3D视图下，是否允许用户旋转相机
+     * @property [cameraController.enableTranslate = true] - 2D和哥伦布视图下，是否允许用户平移地图
+     * @property [cameraController.enableTilt = true] - 3D和哥伦布视图下，是否允许用户倾斜相机
+     * @property [cameraController.enableZoom = true] - 是否允许 用户放大和缩小视图
+     * @property [cameraController.enableCollisionDetection = true] - 是否允许 地形相机的碰撞检测
+     *
+     * 以下是Cesium.Clock时钟相关参数
+     * @property [clock] - 时钟相关参数
+     * @property [clock.currentTime] - 当前的时间
+     * @property [clock.multiplier = 1.0] - 当前的速度
+     */
+    type sceneOptions = {
+        center?: {
+            lng: number;
+            lat: number;
+            alt: number;
+            heading?: number;
+            pitch?: number;
+            roll?: number;
+        };
+        extent?: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+        };
+        removeDblClick?: boolean;
+        ionToken?: string;
+        resolutionScale?: number;
+        showSun?: boolean;
+        showMoon?: boolean;
+        showSkyBox?: boolean;
+        showSkyAtmosphere?: boolean;
+        fog?: boolean;
+        fxaa?: boolean;
+        highDynamicRange?: boolean;
+        backgroundColor?: string;
+        sceneMode?: Cesium.SceneMode;
+        scene3DOnly?: boolean;
+        mapProjection?: Cesium.MapProjection;
+        mapMode2D?: Cesium.MapMode2D;
+        shouldAnimate?: boolean;
+        shadows?: boolean;
+        useDefaultRenderLoop?: boolean;
+        targetFrameRate?: number;
+        useBrowserRecommendedResolution?: boolean;
+        automaticallyTrackDataSourceClocks?: boolean;
+        contextOptions?: {
+            allowTextureFilterAnisotropic?: boolean;
+            requestWebgl1?: boolean;
+            webgl?: {
+                alpha?: boolean;
+                depth?: boolean;
+                stencil?: boolean;
+                antialias?: boolean;
+                premultipliedAlpha?: boolean;
+                failIfMajorPerformanceCaveat?: boolean;
+                preserveDrawingBuffer?: boolean;
+                powerPreference?: string;
+            };
+        };
+        orderIndependentTranslucency?: boolean;
+        terrainShadows?: Cesium.ShadowMode;
+        requestRenderMode?: boolean;
+        maximumRenderTimeChange?: number;
+        depthPlaneEllipsoidOffset?: number;
+        msaaSamples?: number;
+        globe?: {
+            show?: boolean;
+            baseColor?: string;
+            depthTestAgainstTerrain?: boolean;
+            showGroundAtmosphere?: boolean;
+            enableLighting?: boolean;
+            tileCacheSize?: number;
+            terrainExaggeration?: number;
+            realAlt?: number;
+            terrainExaggerationRelativeHeight?: number;
+        };
+        cameraController?: {
+            minimumZoomDistance?: number;
+            maximumZoomDistance?: number;
+            zoomFactor?: number;
+            minimumCollisionTerrainHeight?: number;
+            constrainedAxis?: boolean;
+            enableRotate?: boolean;
+            enableTranslate?: boolean;
+            enableTilt?: boolean;
+            enableZoom?: boolean;
+            enableCollisionDetection?: boolean;
+        };
+        clock?: {
+            currentTime?: string | Cesium.JulianDate;
+            multiplier?: number;
+        };
+    };
+    /**
+     * 添加到地图的控件 参数
+     * @property [homeButton = false] - 视角复位按钮，是否显示
+     * @property [zoom] - 放大缩小按钮 , 对应 {@link Zoom}构造参数
+     * @property [sceneModePicker = false] - 二三维切换按钮，是否显示二维、三维、2.5D视图切换按钮
+     * @property [projectionPicker = false] - 投影切换按钮, 是否显示用于在透视和正投影之间进行切换按钮
+     * @property [fullscreenButton = false] - 全屏按钮，是否显示
+     * @property [fullscreenElement = document.body] - 当按下全屏按钮时，要置于全屏模式的元素或id
+     * @property [vrButton = false] - VR效果按钮，是否显示
+     * @property [geocoder = false] - 是否显示 地名查找按钮 控件，是Cesium原生控件
+     * @property [navigationHelpButton = false] - 帮助按钮，是否显示
+     * @property [navigationInstructionsInitiallyVisible = true] - 帮助按钮 在用户明确单击按钮之前是否自动显示
+     * @property [baseLayerPicker = false] - 是否显示 底图切换 按钮，是Cesium原生控件, 如果true底图是Cesium机制控制，Map内的basemaps相关获取和控制将会无效。
+     * @property [imageryProviderViewModels] - baseLayerPicker底图切换面板中，用于图像的ProviderViewModel实例数组，默认自动根据basemaps数组生成。
+     * @property [selectedImageryProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基本图像层的视图模型，则使用第一个可用的图像层。默认为show:true的basemaps图层
+     * @property [terrainProviderViewModels] - baseLayerPicker底图切换面板中，用于地形的ProviderViewModel实例数组。默认自动使用terrain配置+无地形。
+     * @property [selectedTerrainProviderViewModel] - baseLayerPicker底图切换面板中，如果没有提供当前基础地形层的视图模型，则使用第一个可用的地形层。
+     * @property [compass] - 导航球, 对应 {@link Compass}构造参数
+     * @property [locationBar] - 状态栏, 对应 {@link LocationBar}构造参数
+     * @property [locationBar.fps] - 是否显示实时FPS帧率
+     * @property [locationBar.format] - 显示内容的格式化html展示的内容格式化字符串。  支持以下模版配置：【鼠标所在位置】 经度:{lng}， 纬度:{lat}， 海拔：{alt}米， 【相机的】 方向角度：{heading}， 俯仰角度：{pitch}， 视高：{cameraHeight}米， 【地图的】 层级：{level}，
+     * @property [distanceLegend] - 比例尺, 对应 {@link DistanceLegend}构造参数
+     * @property [clockAnimate] - 时钟控制, 对应{@link ClockAnimate}构造参数
+     * @property [animation = true] - 时钟仪表控制(Cesium原生)
+     * @property [timeline = true] - 时间线, 是否创建下侧时间线控件面板
+     * @property [overviewMap] - 鹰眼地图, 对应{@link OverviewMap }构造参数
+     * @property [mapSplit] - 卷帘对比, 对应{@link MapSplit }构造参数
+     * @property [keyboardRoam] - 键盘漫游, 对应{@link KeyboardRoam }构造参数
+     * @property [mouseDownView] - 鼠标滚轮缩放美化样式(指示图标), 对应 {@link MouseDownView}构造参数
+     * @property [infoBox = true] - 信息面板，是否显示点击要素之后显示的信息，是Cesium原生控件
+     * @property [selectionIndicator = true] - 选中框，是否显示选择模型时的绿色框，是Cesium原生控件
+     * @property [showRenderLoopErrors = true] - 如果为true，则在发生渲染循环错误时，此小部件将自动向包含错误的用户显示HTML面板，是Cesium原生控件
+     * @property [contextmenu] - 内置 右键菜单 控制参数, 对应{@link ContextMenu }构造参数
+     * @property [contextmenu.preventDefault = true] - 是否取消右键菜单
+     * @property [contextmenu.hasDefault = true] - 是否绑定默认的地图右键菜单
+     * @property [popup] - 内置 Popup 控制参数
+     * @property [popup.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
+     * @property [tooltip] - 内置 Tooltip 控制参数
+     * @property [tooltip.cacheTime = 20] - 延迟缓存的时间，单位：毫秒
+     */
+    type controlOptions = {
+        homeButton?: boolean;
+        zoom?: any;
+        sceneModePicker?: boolean;
+        projectionPicker?: boolean;
+        fullscreenButton?: boolean;
+        fullscreenElement?: Element | string;
+        vrButton?: boolean;
+        geocoder?: boolean | Cesium.GeocoderService[];
+        navigationHelpButton?: boolean;
+        navigationInstructionsInitiallyVisible?: boolean;
+        baseLayerPicker?: boolean;
+        imageryProviderViewModels?: Cesium.ProviderViewModel[];
+        selectedImageryProviderViewModel?: Cesium.ProviderViewModel;
+        terrainProviderViewModels?: Cesium.ProviderViewModel[];
+        selectedTerrainProviderViewModel?: Cesium.ProviderViewModel;
+        compass?: any;
+        locationBar?: {
+            fps?: boolean;
+            format?: string | ((...params: any[]) => any);
+        };
+        distanceLegend?: any;
+        clockAnimate?: any;
+        animation?: boolean;
+        timeline?: boolean;
+        overviewMap?: any;
+        mapSplit?: any;
+        keyboardRoam?: any;
+        mouseDownView?: boolean;
+        infoBox?: boolean;
+        selectionIndicator?: boolean;
+        showRenderLoopErrors?: boolean;
+        contextmenu?: {
+            preventDefault?: boolean;
+            hasDefault?: boolean;
+        };
+        popup?: {
+            depthTest?: boolean;
+        };
+        tooltip?: {
+            cacheTime?: number;
+        };
+    };
+    /**
+     * 鼠标操作相关配置 参数
+     * @property [enabledMoveTarget = true] - 是否开启鼠标移动事件的拾取矢量数据
+     * @property [moveDelay = 30] - 鼠标移动事件的延迟毫秒数
+     * @property [pickWidth = 4] - 拾取时所选矩形的宽度，单位：像素
+     * @property [pickHeight = 4] - 拾取时所选矩形的高度，单位：像素
+     * @property [pickLimit = 9] - 在允许allowDrillPick穿透拾取时，限制拾取的对象个数。
+     */
+    type mouseOptions = {
+        enabledMoveTarget?: boolean;
+        moveDelay?: number;
+        pickWidth?: number;
+        pickHeight?: number;
+        pickLimit?: number;
+    };
+    /**
+     * 添加到地图的特效 参数
+     * @property [bloom] - 泛光,对应{@link BloomEffect }构造参数
+     * @property [brightness] - 亮度,对应{@link BrightnessEffect }构造参数
+     * @property [rain] - 雨天气,对应{@link RainEffect }构造参数
+     * @property [snow] - 雪天气 ,对应{@link SnowEffect }构造参数
+     * @property [snowCover] - 地面积雪,对应{@link SnowCoverEffect }构造参数
+     * @property [fog] - 雾天气,对应{@link FogEffect }构造参数
+     * @property [depthOfField] - 景深,对应{@link DepthOfFieldEffect }构造参数
+     * @property [mosaic] - 马赛克,对应{@link MosaicEffect }构造参数
+     * @property [nightVision] - 夜视,对应{@link NightVisionEffect }构造参数
+     * @property [blackAndWhite] - 黑白,对应{@link BlackAndWhiteEffect }构造参数
+     * @property [outline] - 对象轮廓描边,对应{@link OutlineEffect }构造参数
+     * @property [bloomTarget] - 对象泛光,对应{@link BloomTargetEffect }构造参数
+     */
+    type effectOptions = {
+        bloom?: any;
+        brightness?: any;
+        rain?: any;
+        snow?: any;
+        snowCover?: any;
+        fog?: any;
+        depthOfField?: any;
+        mosaic?: any;
+        nightVision?: any;
+        blackAndWhite?: any;
+        outline?: any;
+        bloomTarget?: any;
+    };
+    /**
+     * 地形服务配置
+     * @property [type = "xyz"] - 地形类型
+     * @property url - 地形服务地址
+     * @property [show = false] - 是否启用显示地形
+     * @property [requestVertexNormals = false] - 是否应该从服务器请求额外的光照信息，如果可用，以每个顶点法线的形式。
+     * @property [requestWaterMask = false] - 是否应该向服务器请求每个瓦的水掩膜(如果有的话)。
+     * @property [requestMetadata = true] - 是否应该从服务器请求每个块元数据(如果可用)。
+     * @property [clip = false] - 是否默认启用地形开挖，如果后续打开，缓存数据不会裁剪
+     * @property [flat = false] - 是否默认启用地形压平
+     * @property [uplift = false] - 是否默认启用地形抬升
+     * @property [flood = false] - 是否默认启用地形区域材质(淹没，等高线)
+     */
+    type terrainOptions = {
+        type?: string | TerrainType;
+        url: string | Cesium.Resource;
+        show?: boolean;
+        requestVertexNormals?: boolean;
+        requestWaterMask?: boolean;
+        requestMetadata?: boolean;
+        clip?: boolean;
+        flat?: boolean;
+        uplift?: boolean;
+        flood?: boolean;
+    };
+    /**
+     * 底图图层配置
+     * @property type - 图层类型
+     * @property [多个参数] - 每种不同type都有自己的不同属性，具体参考{@link LayerType}找到type对应的BaseTileLayer子类图层类,查看其构造参数
+     */
+    type basemapOptions = {
+        type: string | LayerType;
+        多个参数?: any;
+    };
+    /**
+     * 可以叠加显示的图层配置，
+     * @property type - 图层类型
+     * @property [id] - 图层id标识
+     * @property [pid = -1] - 图层父级的id，一般图层管理中使用
+     * @property [name = ''] - 图层名称
+     * @property [show = true] - 图层是否显示
+     * @property [center] - 图层自定义定位视角，默认根据数据情况自动定位。
+     * @property [popup] - 当图层支持popup弹窗时，绑定的值
+     * @property [popupOptions] - popup弹窗时的配置参数
+     * @property [tooltip] - 当图层支持tooltip弹窗时，绑定的值
+     * @property [tooltipOptions] - tooltip弹窗时的配置参数
+     * @property [多个参数] - 每种type都有自己的不同属性，具体参考{@link LayerType}找到type对应的图层类,查看其构造参数
+     */
+    type layerOptions = {
+        type: string | LayerType;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        show?: boolean;
+        center?: any;
+        popup?: any;
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: any;
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        多个参数?: any;
+    };
+    /**
+     * 覆盖SDK内的{@link Token}所有第3方Token默认值
+     * @property [tianditu] - 天地图
+     * @property [gaode] - 高德
+     * @property [baidu] - 百度
+     * @property [ion] - Ion服务
+     * @property [mapbox] - mapbox地图
+     * @property [bing] - 微软Bing地图
+     */
+    type tokenOptions = {
+        tianditu?: string | string[];
+        gaode?: string | string[];
+        baidu?: string | string[];
+        ion?: string;
+        mapbox?: string;
+        bing?: string;
+    };
+    /**
+     * Map支持的{@link EventType}事件类型
+     * @example
+     * //绑定监听事件
+     * map.on(mars3d.EventType.click, function (event) {
+     *   console.log('单击了地图对象', event)
+     * })
+     * @property load - 地图初始化完成事件(地形、所有图层完成初始化)
+     * @property addLayer - 添加图层
+     * @property removeLayer - 移除图层
+     * @property terrainChange - 地形变化
+     * @property tileLoadProgress - 地图中瓦片加载进度变化
+     * @property cameraMoveStart - 相机开启移动前 场景事件
+     * @property cameraMoveEnd - 相机移动完成后 场景事件
+     * @property cameraChanged - 相机位置完成 场景事件
+     * @property preUpdate - 场景更新前 场景事件
+     * @property postUpdate - 场景更新后 场景事件
+     * @property preRender - 场景渲染前 场景事件
+     * @property postRender - 场景渲染后 场景事件
+     * @property morphStart - 场景模式(2D/3D/哥伦布)变换前 场景事件
+     * @property morphComplete - 完成场景模式(2D/3D/哥伦布)变换 场景事件
+     * @property clockTick - 时钟跳动 场景事件
+     * @property renderError - 场景渲染失败（需要刷新页面）
+     * @property click - 左键单击 鼠标事件
+     * @property clickGraphic - 左键单击到矢量或模型数据时 鼠标事件
+     * @property clickTileGraphic - 左键单击到wms或arcgis瓦片服务的对应矢量数据时
+     * @property clickMap - 左键单击地图空白（未单击到矢量或模型数据）时 鼠标事件
+     * @property dblClick - 左键双击 鼠标事件
+     * @property leftDown - 左键鼠标按下 鼠标事件
+     * @property leftUp - 左键鼠标按下后释放 鼠标事件
+     * @property mouseMove - 鼠标移动 鼠标事件
+     * @property mouseMoveTarget - 鼠标移动（拾取目标，并延迟处理） 鼠标事件
+     * @property wheel - 鼠标滚轮滚动 鼠标事件
+     * @property rightClick - 右键单击 鼠标事件
+     * @property rightDown - 右键鼠标按下 鼠标事件
+     * @property rightUp - 右键鼠标按下后释放 鼠标事件
+     * @property middleClick - 中键单击 鼠标事件
+     * @property middleDown - 中键鼠标按下 鼠标事件
+     * @property middleUp - 中键鼠标按下后释放 鼠标事件
+     * @property pinchStart - 在触摸屏上两指缩放开始 鼠标事件
+     * @property pinchEnd - 在触摸屏上两指缩放结束 鼠标事件
+     * @property pinchMove - 在触摸屏上两指移动 鼠标事件
+     * @property mouseDown - 鼠标按下 [左中右3键都触发] 鼠标事件
+     * @property mouseUp - 鼠标按下后释放 [左中右3键都触发] 鼠标事件
+     * @property mouseOver - 鼠标移入 鼠标事件
+     * @property mouseOut - 鼠标移出 鼠标事件
+     * @property keydown - 按键按下 键盘事件
+     * @property keyup - 按键按下后释放 键盘事件
+     * @property popupOpen - popup弹窗打开后
+     * @property popupClose - popup弹窗关闭
+     * @property tooltipOpen - tooltip弹窗打开后
+     * @property tooltipClose - tooltip弹窗关闭
+     * @property contextMenuOpen - 右键菜单 打开后
+     * @property contextMenuClose - 右键菜单 关闭
+     * @property contextMenuClick - 右键菜单 单击某一项后
+     */
+    type EventType = {
+        load: string;
+        addLayer: string;
+        removeLayer: string;
+        terrainChange: string;
+        tileLoadProgress: string;
+        cameraMoveStart: string;
+        cameraMoveEnd: string;
+        cameraChanged: string;
+        preUpdate: string;
+        postUpdate: string;
+        preRender: string;
+        postRender: string;
+        morphStart: string;
+        morphComplete: string;
+        clockTick: string;
+        renderError: string;
+        click: string;
+        clickGraphic: string;
+        clickTileGraphic: string;
+        clickMap: string;
+        dblClick: string;
+        leftDown: string;
+        leftUp: string;
+        mouseMove: string;
+        mouseMoveTarget: string;
+        wheel: string;
+        rightClick: string;
+        rightDown: string;
+        rightUp: string;
+        middleClick: string;
+        middleDown: string;
+        middleUp: string;
+        pinchStart: string;
+        pinchEnd: string;
+        pinchMove: string;
+        mouseDown: string;
+        mouseUp: string;
+        mouseOver: string;
+        mouseOut: string;
+        keydown: string;
+        keyup: string;
+        popupOpen: string;
+        popupClose: string;
+        tooltipOpen: string;
+        tooltipClose: string;
+        contextMenuOpen: string;
+        contextMenuClose: string;
+        contextMenuClick: string;
+    };
 }
 
 /**
@@ -32107,6 +32212,7 @@ declare class Measure extends BaseThing {
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式
+     *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
@@ -32127,7 +32233,8 @@ declare class Measure extends BaseThing {
      * 测量 贴地长度
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
-     * @param [options.label] - 测量结果文本的样式
+     * @param [options.label] - 测量结果文本的样式,
+     *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
@@ -32155,6 +32262,7 @@ declare class Measure extends BaseThing {
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式
+     *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
@@ -35261,13 +35369,13 @@ declare namespace MeasureUtil {
      * @param val - 距离值，米
      * @param [options] - 参数：
      * @param [options.unit = 'auto'] - 计量单位, 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
-     * @param [options.lang = 0] - 使用的语言
+     * @param [options.getLangText] - 获取文本的对应方法
      * @param [options.decimal = 2] - 保留的小数位
      * @returns 带单位的格式化距离值字符串，如：20.17 米
      */
     function formatDistance(val: number, options?: {
         unit?: string;
-        lang?: LangType;
+        getLangText?: (...params: any[]) => any;
         decimal?: number;
     }): string;
     /**
@@ -35275,13 +35383,13 @@ declare namespace MeasureUtil {
      * @param val - 面积值，平方米
      * @param [options] - 参数：
      * @param [options.unit = 'auto'] - 计量单位，可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用m或km
-     * @param [options.lang = 0] - 使用的语言
+     * @param [options.getLangText] - 获取文本的对应方法
      * @param [options.decimal = 2] - 保留的小数位
      * @returns 带单位的格式化面积值字符串，如：20.21 平方公里
      */
     function formatArea(val: number, options?: {
         unit?: string;
-        lang?: LangType;
+        getLangText?: (...params: any[]) => any;
         decimal?: number;
     }): string;
     /**
@@ -35289,13 +35397,13 @@ declare namespace MeasureUtil {
      * @param val - 体积值，立方米
      * @param [options] - 参数：
      * @param [options.unit = 'auto'] - 计量单位，当前无用，备用参数
-     * @param [options.lang = 0] - 使用的语言
+     * @param [options.getLangText] - 获取文本的对应方法
      * @param [options.decimal = 2] - 保留的小数位
      * @returns 带单位的格式化体积值字符串，如：20.21立方米
      */
     function formatVolume(val: number, options?: {
         unit?: string;
-        lang?: LangType;
+        getLangText?: (...params: any[]) => any;
         decimal?: number;
     }): string;
 }
@@ -35609,9 +35717,10 @@ declare namespace PointUtil {
      * 求2点的中间点（贴地表）
      * @param mpt1 - 点1坐标
      * @param mpt2 - 点2坐标
+     * @param [fraction = 0.5] - 起始点和终点之间距离的比例
      * @returns 2个点是否为重复的点
      */
-    function getMidpoint(mpt1: Cesium.Cartesian3 | LngLatPoint, mpt2: Cesium.Cartesian3 | LngLatPoint): Cesium.Cartesian3;
+    function getMidpoint(mpt1: Cesium.Cartesian3 | LngLatPoint, mpt2: Cesium.Cartesian3 | LngLatPoint, fraction?: number): Cesium.Cartesian3;
     /**
      * 判断2个点是否为重复的点，比如标绘中的双击会偶尔产生2个重复点
      * @param mpt1 - 点1坐标
@@ -35940,7 +36049,7 @@ declare namespace PolyUtil {
      * @param options.center - 中心坐标
      * @param [options.width] - 矩形的宽度，单位：米
      * @param [options.height] - 矩形的高度，单位：米
-     * @param [options.rotation = 0] - 旋转的角度
+     * @param [options.rotation = 0] - 旋转的角度（弧度值）
      * @param [options.originX = 0.5] - 中心点所在的位置x轴方向比例，取值范围：0.1-1.0
      * @param [options.originY = 0.5] - 中心点所在的位置y轴方向比例，取值范围：0.1-1.0
      * @returns 矩形面的顶点坐标数组
@@ -36744,21 +36853,6 @@ declare namespace Util {
         headers?: any;
     }): Promise<any>;
     /**
-     * 根据设置的lang参数，获取当前key对应语言的文本内容。
-     * @param key - 文本key
-     * @param [langType = 0] - 使用的语言
-     * @returns lang参数指定的对应文本内容
-     */
-    function getLangText(key: string, langType?: LangType): string;
-    /**
-     * 更新Lang值，设置当前key对应语言的文本内容。
-     * @param key - 文本key
-     * @param text - 文本内容
-     * @param [langType = 0] - 使用的语言
-     * @returns 是否更新成功
-     */
-    function setLangText(key: string, text: string, langType?: LangType): void;
-    /**
      * 进入全屏
      * @param container - 指定DOM元素，如 map.container
      * @returns 是否全屏
@@ -37016,6 +37110,32 @@ declare namespace graphic {
 }
 
 /**
+ * 矢量数据编辑类 命名空间
+ */
+declare namespace edit {
+  export { EditBase }
+  export { EditBox }
+  export { EditCircle }
+  export { EditCorridor }
+  export { EditCylinder }
+  export { EditEllipsoid }
+  export { EditModel }
+  export { EditPlane }
+  export { EditPoint }
+  export { EditPoly }
+  export { EditPolygon }
+  export { EditPolygonGrid }
+  export { EditPolylineVolume }
+  export { EditRectangle }
+  export { EditTileset }
+  export { EditVideo2D }
+  export { EditWall }
+
+  export { EditDivGraphic }
+}
+
+
+/**
  * 图层类 命名空间，
  * 教程 http://mars3d.cn/dev/guide/map/layer.html
  */
@@ -37130,9 +37250,9 @@ declare namespace thing {
 
 export {
   name, update, version, proj4, Tle,
-  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, LangType, MoveType, ClipType, Icon,
+  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, MoveType, ClipType, Icon,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
-  material, graphic, provider, layer, thing, effect, control, query,
+  material, graphic, edit, provider, layer, thing, effect, control, query,
   Map,
 };
