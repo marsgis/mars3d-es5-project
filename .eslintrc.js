@@ -26,6 +26,7 @@ module.exports = {
 
     Cesium: "readonly",
     mars3d: "readonly",
+    es5widget: "readonly",
     L: "readonly",
     mars2d: "readonly",
 

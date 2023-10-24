@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.9
- * 编译日期：2023-10-15 21:13:36
+ * 版本信息：v3.6.10
+ * 编译日期：2023-10-23 17:27:39
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -932,6 +932,10 @@ declare enum Icon {
  */
 declare enum Lang {
     /**
+     * 标识语言的唯一标识
+     */
+    type = "cn",
+    /**
      * Cesium renderError 错误弹窗
      */
     RenderingHasStopped = "WebGL\u53D1\u751F\u6E32\u67D3\u9519\u8BEF,\u6E32\u67D3\u5DF2\u7ECF\u505C\u6B62,\u8BF7\u5237\u65B0\u9875\u9762\u3002",
@@ -946,10 +950,10 @@ declare enum Lang {
     CesiumIon = "\u5B98\u65B9ION",
     Other = "\u5176\u4ED6",
     Terrain = "\u5730\u5F62\u670D\u52A1",
-    WGS84Ellipsoid = "WGS84 \u692D\u7403",
-    CesiumWorldTerrain = "Cesium \u4E16\u754C\u5730\u5F62\u56FE",
-    WGS84EllipsoidESPG4326 = "WGS84\u6807\u51C6\u692D\u7403\uFF0C\u53C8\u79F0EPSG\uFF1A4326",
-    HighResolutionGlobalTerrain = "\u9AD8\u5206\u8FA8\u7387\u5168\u7403\u5730\u5F62\u56FE\u5757\u96C6\u7531\u51E0\u4E2A\u6570\u636E\u6E90\u7EC4\u6210\uFF0C\u7531Cesium ion\u6258\u7BA1",
+    EllipsoidTerrainProvider = "\u65E0\u5730\u5F62",
+    EllipsoidTerrainProviderTooltip = "WGS84\u6807\u51C6\u692D\u7403\u4F53\uFF0C\u6CA1\u6709\u5730\u5F62\u6570\u636E",
+    TerrainProvider = "\u6709\u5730\u5F62",
+    TerrainProviderTooltip = "\u63D0\u4F9B\u7684\u9AD8\u7CBE\u5EA6\u7684DEM\u5730\u5F62\u670D\u52A1",
     FullScreen = "\u5168\u5C4F",
     ExitFullScreen = "\u9000\u51FA\u5168\u5C4F",
     FullScreenUnavailable = "\u5168\u5C4F\u4E0D\u53EF\u7528",
@@ -1337,6 +1341,7 @@ declare namespace MaterialType {
      * @property [speed = 0] - 不为0时呈现图片滚动效果，数字代表滚动速度
      * @property [flipx = false] - 是否X方向翻转图片
      * @property [flipy = false] - 是否Y方向翻转图片
+     * @property [repeat = new Cesium.Cartesian2(1.0, 1.0)] - 指定图像在每个方向上重复的次数
      * @property [noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
      */
     const Image2: string;
@@ -4558,6 +4563,10 @@ declare class BasePolyCombine extends BaseCombine {
      */
     readonly style: any;
     /**
+     * 附加的label文本对象
+     */
+    readonly label: Cesium.Label[] | any;
+    /**
      * 高亮对象。
      * @param [highlightStyle] - 高亮的样式，具体见各{@link GraphicType}矢量数据的style参数。
      * @param [closeLast = true] - 是否清除地图上上一次的高亮对象
@@ -7424,7 +7433,7 @@ declare namespace DivGraphic {
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.testPoint] - 测试点 的对应样式 ，可以进行用于比较测试div的位置，方便调试CSS。
- * @param [options.pointerEvents] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。
+ * @param [options.pointerEvents] - DIV是否可以鼠标交互，为false时可以穿透操作及缩放地图，但无法进行鼠标交互及触发相关事件。如果传入值后，这个值优先级最高。
  * @param [options.hasZIndex = false] - 是否自动调整DIV的层级顺序。
  * @param [options.zIndex = "auto"] - 指定固定的zIndex层级属性(当hasZIndex为true时无效)
  * @param [options.depthTest = true] - 是否打开深度判断（true时判断是否在球背面）
@@ -7540,6 +7549,13 @@ declare class DivGraphic extends BaseGraphic {
      * 对应的DOM元素的id
      */
     readonly containerId: string;
+    /**
+     * 公共部分外框部分html内容，需要加2处：
+     * (1)用于填充html的地方写上{content}标识；
+     * (2)关闭按钮加class样式：closeButton。
+     * 传空字符串或false时，不用内置模版。
+     */
+    template: string;
     /**
      * 设置或获取当前对象对应的Html
      */
@@ -15085,7 +15101,7 @@ declare class BasePrimitive extends BaseGraphic {
      */
     readonly uniforms: any | undefined;
     /**
-     * 附加的label文本对象（仅基础primitive支持，如Combine对象不支持）
+     * 附加的label文本对象
      */
     readonly label: Cesium.Label | any;
     /**
@@ -22013,7 +22029,7 @@ declare namespace TilesetLayer {
  * @param [options.scale = 1] - 自定义缩放比例
  * @param [options.axis] - 自定义轴方向
  * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
- * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式。
+ * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式，object时可以修改内置shader的3个变量，比如： { baseHeight: 50.0,  heightRange: 380.0,  glowRange: 400.0    },
  * @param [options.customShader] - 自定义shader效果
  * @param [options.editUpAxis = Cesium.Axis.Z] - 标识模型的轴方向(建筑物特效、模型压平等功能中使用)
  * @param [options.highlight] - 高亮及其样式配置
@@ -22140,7 +22156,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         scale?: number;
         axis?: string | Cesium.Axis;
         style?: any | Cesium.Cesium3DTileStyle | ((...params: any[]) => any);
-        marsJzwStyle?: boolean | string;
+        marsJzwStyle?: boolean | any | string;
         customShader?: Cesium.CustomShader;
         editUpAxis?: Cesium.Axis;
         highlight?: {
@@ -22271,7 +22287,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
     /**
      * 开启或设置建筑物特效样式。
      */
-    marsJzwStyle: boolean | any;
+    marsJzwStyle: boolean | any | string;
     /**
      * 模型样式，
      * 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
@@ -25140,7 +25156,7 @@ declare class OsmLayer extends BaseTileLayer {
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG4490] - 瓦片数据的坐标系信息，默认为4490投影,也支持传入EPSG3857坐标系
- * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
+ * @param [options.chinaCRS = ChinaCRS.WGS84] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
@@ -26371,7 +26387,7 @@ declare class MouseEvent {
  * @param [options.terrain] - 地形服务配置
  * @param [options.basemaps] - 底图图层配置
  * @param [options.layers] - 可以叠加显示的图层配置
- * @param [options.chinaCRS = ChinaCRS.WGS84] - 标识当前三维场景的国内坐标系（用于部分图层内对比判断来自动纠偏或加偏）
+ * @param [options.chinaCRS = ChinaCRS.WGS84] - 标识当前三维场景的国内坐标系（用于部分图层内对比判断来自动纠偏或加偏），只能初始化传入
  * @param [options.lang] - 使用的语言文本键值对对象，可传入外部自定义的任意语言文本。
  * @param [options.templateValues] - 图层中统一的url模版，比如可以将服务url前缀统一使用模板，方便修改或动态配置。
  * @param [options.token] - 覆盖SDK内的{@link Token}所有第3方Token默认值
@@ -27236,11 +27252,16 @@ declare class Map extends BaseClass {
         center?: any;
     }): Promise<boolean>;
     /**
-     * 清除已高亮的矢量对象
-     * @param [result] - 事件对象
+     * 判断指定对象是否为当前场景中正在高亮的对象
+     * @param target - 判断的高亮的对象（如graphic或layer等）
      * @returns 无
      */
-    closeHighlight(result?: any): void;
+    isHighlighting(target: any): void;
+    /**
+     * 清除已高亮的矢量对象
+     * @returns 无
+     */
+    closeHighlight(): void;
     /**
      * 高亮矢量对象
      * @param graphic - 矢量对象
@@ -28181,6 +28202,7 @@ declare class EllipsoidWaveMaterialProperty extends BaseMaterialProperty {
  * @param [options.speed = 0] - 不为0时呈现图片滚动效果，数字代表滚动速度
  * @param [options.flipx = false] - 是否X方向翻转图片
  * @param [options.flipy = false] - 是否Y方向翻转图片
+ * @param [options.repeat = new Cesium.Cartesian2(1.0, 1.0)] - 指定图像在每个方向上重复的次数
  * @param [options.noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
  */
 declare class Image2MaterialProperty extends BaseMaterialProperty {
@@ -28191,6 +28213,7 @@ declare class Image2MaterialProperty extends BaseMaterialProperty {
         speed?: number;
         flipx?: boolean;
         flipy?: boolean;
+        repeat?: Cesium.Cartesian2;
         noWhite?: boolean;
     });
     /**
@@ -28221,6 +28244,10 @@ declare class Image2MaterialProperty extends BaseMaterialProperty {
      * 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
      */
     noWhite: boolean;
+    /**
+     * 指定图像在每个方向上重复的次数
+     */
+    repeat: Cesium.Cartesian2;
     /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
@@ -30892,6 +30919,13 @@ declare class SatelliteSensor extends BasePointPrimitive {
  * @param [options.url = 'https://t{s}.tianditu.gov.cn/mapservice/GetTiles'] - 天地图服务地址
  * @param [options.subdomains = '01234567'] - 服务负载子域
  * @param [options.key = mars3d.Token.tianditu] - 天地图服务token令牌
+ * @param [options.label] - 文字样式信息
+ * @param [options.billboard] - 文字样式信息
+ * @param [options.metadata] - metadata
+ * @param [options.aotuCollide = true] - 是否开启避让
+ * @param [options.collisionPadding = [5, 10, 8, 5]] - 开启避让时，标注碰撞增加内边距，上、右、下、左
+ * @param [options.serverFirstStyle = true] - 服务端样式优先
+ * @param [options.boundBoxList] - GeoWTFS.initTDT方法参数
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -30911,6 +30945,13 @@ declare class TdtDmLayer extends BaseLayer {
         url?: string;
         subdomains?: string;
         key?: string;
+        label?: LabelEntity.StyleOptions | any;
+        billboard?: BillboardEntity.StyleOptions | any;
+        metadata?: any;
+        aotuCollide?: boolean;
+        collisionPadding?: number[];
+        serverFirstStyle?: boolean;
+        boundBoxList?: any[];
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -35144,9 +35185,10 @@ declare namespace LayerUtil {
     /**
      * 获取baseLayerPicker使用的绑定地形列表
      * @param options - 地形参数,同{@link createTerrainProvider}方法参数
+     * @param [getLangText] - 取文本的方法
      * @returns 地形列表
      */
-    function getTerrainProviderViewModels(options: any): Cesium.ProviderViewModel[];
+    function getTerrainProviderViewModels(options: any, getLangText?: any): Cesium.ProviderViewModel[];
 }
 
 /**
@@ -37099,6 +37141,14 @@ declare namespace graphic {
   export { Video3D }
   export { Route }
   export { FixedRoute }
+  export { PointLight }
+  export { SpotLight }
+  export { VolumeCloud }
+
+  export { PointVisibility }
+  export { ConeVisibility }
+  export { SkylineBody }
+  export { ViewDome }
 
 
   //卫星插件

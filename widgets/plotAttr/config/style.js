@@ -1838,6 +1838,87 @@ const styleConfig = {
     ]
   },
 
+  jammingRadar: {
+    name: "自定义干扰雷达",
+    style: [
+      { name: "autoColor", label: "是否内置渐变色", type: "radio", defval: true },
+      {
+        name: "color",
+        label: "颜色",
+        type: "color",
+        defval: "rgba(255,0,0,0.5)",
+        show(style, allStyle, graphicType) {
+          return !style.autoColor
+        }
+      },
+      {
+        name: "outline",
+        label: "是否显示边线",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "outlineColor",
+        label: "边线颜色",
+        type: "color",
+        defval: "#ffffff",
+        show(style, allStyle, graphicType) {
+          return !style.autoColor
+        }
+      },
+      { name: "scale", label: "大小比例", type: "slider",  min: 0.1, max: 10.0, step: 0.1, defval: 1.0  },
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+    ]
+  },
+
+  fixedJammingRadar: {
+    name: "固定算法干扰雷达",
+    style: [
+      { name: "autoColor", label: "是否内置渐变色", type: "radio", defval: true },
+      {
+        name: "color",
+        label: "颜色",
+        type: "color",
+        defval: "#00FF00",
+        show(style, allStyle, graphicType) {
+          return !style.autoColor
+        }
+      },
+      {
+        name: "outline",
+        label: "是否显示边线",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "outlineColor",
+        label: "边线颜色",
+        type: "color",
+        defval: "#00FF00",
+        show(style, allStyle, graphicType) {
+          return !style.autoColor
+        }
+      },
+      { name: "scale", label: "大小比例", type: "slider",  min: 0.1, max: 10.0, step: 0.1, defval: 1.0  },
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+
+      { name: "pt", label: "发射功率", type: "number", defval: 8e6 },
+      { name: "gt", label: "天线主瓣增益", type: "number", defval: 500 },
+      { name: "lambda", label: "信号波长(lambda)", type: "number", defval: 0.056 },
+      { name: "sigma", label: "反射截面积(sigma)", type: "number", defval: 3 },
+      { name: "n", label: "脉冲积累数", type: "number", defval: 16 },
+      { name: "k", label: "玻尔兹曼常数", type: "number", defval: 138e-25 },
+      { name: "t0", label: "绝对温度", type: "number", defval: 290 },
+      { name: "bn", label: "接收机通频带宽度", type: "number", defval: 16e5 },
+      { name: "fn", label: "接收机噪声系数", type: "number", defval: 5 },
+      { name: "sn", label: "接收机最小可检测信噪比", type: "number", defval: 2 }
+    ]
+  },
+
   satellite: {
     name: "卫星",
     primitive: false,
@@ -1960,7 +2041,7 @@ const styleConfig = {
   polyline: {
     name: "线",
     primitive: true,
-    extends: ["curve","brushLine", "distanceMeasure", "heightMeasure"],
+    extends: ["curve", "brushLine", "distanceMeasure", "heightMeasure"],
     style: [
       { name: "width", label: "线宽", type: "number", step: 1, defval: 4.0 },
       {
@@ -3078,7 +3159,7 @@ const styleConfig = {
       { name: "ripple", label: "波纹大小", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 50.0 },
       { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },
       { name: "animationSpeed", label: "动画速度", type: "number", min: 0.1, max: 10.0, step: 0.1, defval: 1.0 },
-      { name: "specularIntensity", label: "反射强度", type: "slider", min: 0.00, max: 0.90, step: 0.01, defval: 0.3 },
+      { name: "specularIntensity", label: "反射强度", type: "slider", min: 0.0, max: 0.9, step: 0.01, defval: 0.3 },
       { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 }
     ]
   }

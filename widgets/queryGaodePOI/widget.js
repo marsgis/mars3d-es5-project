@@ -1,7 +1,7 @@
 "use script" //开发环境建议开启严格模式
 ;(function (window, mars3d) {
   //创建widget类，需要继承BaseWidget
-  class MyWidget extends mars3d.widget.BaseWidget {
+  class MyWidget extends es5widget.BaseWidget {
     //外部资源配置
     get resources() {
       return ["view.css"]
@@ -125,7 +125,7 @@
         // layer.show = true; //为了演示勾选
         // this.map.addLayer(layer);
 
-        // mars3d.widget.fire("checkLayer", { layer });
+        // es5widget.fire("checkLayer", { layer });
       })
       //绑定回车键
       $("#txt_querypoi").bind("keydown", (event) => {
@@ -584,7 +584,7 @@
   }
 
   //注册到widget管理器中。
-  window.queryGaodePOIWidget = mars3d.widget.bindClass(MyWidget)
+  window.queryGaodePOIWidget = es5widget.bindClass(MyWidget)
 
   //每个widet之间都是直接引入到index.html中，会存在彼此命名冲突，所以闭包处理下。
 })(window, mars3d)

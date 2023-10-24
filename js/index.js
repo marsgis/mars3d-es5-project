@@ -110,7 +110,7 @@ function initMap(mapOptions) {
   bindShowTilesParts()
 
   //演示：接收的widget内抛出的事件
-  mars3d.widget.on("centerXY", function (event) {
+  es5widget.on("centerXY", function (event) {
     console.log("在widget进行了坐标定位", event)
   })
 
@@ -165,7 +165,7 @@ function initWidget(map) {
         map.flyHome({ duration: 0 })
       }
       //初始化widget管理器
-      mars3d.widget.init(map, json, "./") //tip: 第3个参数支持定义widget目录的相对路径。
+      es5widget.init(map, json, "./") //tip: 第3个参数支持定义widget目录的相对路径。
 
       if (window.lastWidgetItem) {
         activateWidget(lastWidgetItem)
@@ -180,16 +180,16 @@ function initWidget(map) {
     })
 
   //widget相关事件监听
-  // mars3d.widget.on(mars3d.widget.EventType.load, function (event) {
+  // es5widget.on(es5widget.EventType.load, function (event) {
   //     console.log("引入加载了widget的js", event);
   // })
-  // mars3d.widget.on(mars3d.widget.EventType.created, function (event) {
+  // es5widget.on(es5widget.EventType.created, function (event) {
   //     console.log("创建了widet", event);
   // })
-  mars3d.widget.on(mars3d.widget.EventType.activated, function (event) {
+  es5widget.on(es5widget.EventType.activated, function (event) {
     console.log("激活了widget", event)
   })
-  mars3d.widget.on(mars3d.widget.EventType.disabled, function (event) {
+  es5widget.on(es5widget.EventType.disabled, function (event) {
     console.log("释放了widget", event)
   })
 }
@@ -211,15 +211,15 @@ function bindShowTilesParts() {
 
     var tilesParts = "widgets/tilesParts/widget.js"
 
-    if (mars3d.widget.isActivate(tilesParts)) {
-      var parts = mars3d.widget.getClass(tilesParts)
+    if (es5widget.isActivate(tilesParts)) {
+      var parts = es5widget.getClass(tilesParts)
       if (parts.config.layerCfg == layer.options) {
         //当前已激活,并且单击了相同模型时跳出
         return
       }
     }
 
-    mars3d.widget.activate({
+    es5widget.activate({
       name: layer.name + " 构件",
       uri: tilesParts,
       layerCfg: layer.options,
@@ -236,15 +236,15 @@ function activateWidget(item) {
     return
   }
 
-  if (mars3d.widget.isActivate(item.uri)) {
-    mars3d.widget.disable(item)
+  if (es5widget.isActivate(item.uri)) {
+    es5widget.disable(item)
   } else {
-    mars3d.widget.activate(item)
+    es5widget.activate(item)
   }
 }
 
 function disableWidget(item) {
-  mars3d.widget.disable(item)
+  es5widget.disable(item)
 }
 
 function activateFunByMenu(fun) {
@@ -252,6 +252,6 @@ function activateFunByMenu(fun) {
 }
 
 function goHome() {
-  mars3d.widget.disableAll()
+  es5widget.disableAll()
   map.flyHome()
 }
