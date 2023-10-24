@@ -185,7 +185,7 @@ es5widget.init(map, widgetCfg, './') //tip: 第3个参数支持定义widget目�
 ```
 
 ### 3.1 widget的管理
-在外部调用widget功能，都是通过 mars3d.widget静态类 来统一管理的，更多方法可以参阅该类的API文档。
+在外部调用widget功能，都是通过 es5widget静态类 来统一管理的，更多方法可以参阅该类的API文档。
  
 比如激活widet：在需要外部使用的地方通过 es5widget.activate(options) 来激活widget模块, 参数支持多种模式可多样化兼容使用, 比如：
  ```js
@@ -335,7 +335,7 @@ getData() {
 
 ## 4.5 不同widget之间的通信交互示例
  
-可以利用mars3d.widget作为桥梁，通过事件的方式交互，这种比较自由方便，注意项目内**事件名称唯一**即可。
+可以利用es5widget作为桥梁，通过事件的方式交互，这种比较自由方便，注意项目内**事件名称唯一**即可。
 
 ```js  
 //演示：抛出事件，在其他widget或vue中监听使用  widgets\centerXY\widget.js
