@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.11
- * 编译日期：2023-11-02 17:46:20
+ * 版本信息：v3.6.12
+ * 编译日期：2023-11-07 21:55:21
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -1391,8 +1391,8 @@ declare namespace MaterialType {
     const Grid: string;
     /**
      * 面状：棋盘
-     * @property [lightColor = Cesium.Color.WHITE] - 主色
-     * @property [darkColor = Cesium.Color.BLACK] - 衬色，棋盘中另外一个颜色
+     * @property [evenColor = Cesium.Color.WHITE] - 主色
+     * @property [oddColor = Cesium.Color.BLACK] - 衬色，棋盘中另外一个颜色
      * @property [repeat = new Cesium.Cartesian2(2.0, 2.0)] - 数量，在每个方向重复的次数
      */
     const Checkerboard: string;
@@ -3337,7 +3337,7 @@ declare class MultipleSkyBox extends Cesium.SkyBox {
 }
 
 /**
- * 特效 基类
+ * 特效（后处理） 基类
  * @param [options] - 参数对象，包括以下：
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -3547,6 +3547,41 @@ declare class BrightnessEffect extends BaseEffect {
      * 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中
      */
     brightness: number;
+}
+
+/**
+ * 颜色校正 效果
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.brightness = 1.0] - 亮度
+ * @param [options.contrast = 1.0] - 对比度
+ * @param [options.hue = 0.0] - 色调
+ * @param [options.saturation = 1.0] - 饱和度
+ */
+declare class ColorCorrectionEffect extends BaseEffect {
+    constructor(options?: {
+        enabled?: boolean;
+        brightness?: number;
+        contrast?: number;
+        hue?: number;
+        saturation?: number;
+    });
+    /**
+     * 亮度
+     */
+    brightness: number;
+    /**
+     * 对比度
+     */
+    contrast: number;
+    /**
+     * 色调
+     */
+    hue: number;
+    /**
+     * 饱和度
+     */
+    saturation: number;
 }
 
 /**
@@ -12727,7 +12762,7 @@ declare namespace Video2D {
      * @property angle - 水平张角(度数)
      * @property angle2 - 垂直张角(度数)
      * @property distance - 投射距离
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0-360度），正东方向为0,顺时针到360度
      * @property [pitch = 0] - 俯仰角（度数值，0-360度）
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
      * @property [opacity = 1.0] - 透明度
@@ -14651,7 +14686,7 @@ declare class VolumeDepthMeasure extends AreaMeasure {
  * @param options.positions - 坐标位置
  * @param options.style - 基准面样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.polygonWallStyle] - 围墙面的样式
+ * @param [options.polygonWall] - 围墙面的样式
  * @param [options.label] - 测量结果文本的样式
  * @param [options.showFillVolume = true] - 是否显示填方体积结果文本
  * @param [options.fillVolumeName = '填方体积'] - 填方体积结果的名称
@@ -14665,6 +14700,11 @@ declare class VolumeDepthMeasure extends AreaMeasure {
  * @param [options.decimal = 2] - 显示的 数值 文本中保留的小数位
  * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
  * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
+ * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
+ * @param [options.splitNum = 10] - 插值数，将面分割的网格数(概略值，有经纬网网格来插值)
+ * @param [options.minHeight] - 可以指定最低高度（单位：米）
+ * @param [options.maxHeight] - 可以指定最高高度（单位：米）
+ * @param [options.height] - 可以指定基准面高度（单位：米），默认是绘制后的最低高度值
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -14678,7 +14718,7 @@ declare class VolumeMeasure extends AreaMeasure {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any;
-        polygonWallStyle?: PolygonEntity.StyleOptions | any;
+        polygonWall?: PolygonEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any;
         showFillVolume?: boolean;
         fillVolumeName?: string;
@@ -14692,6 +14732,11 @@ declare class VolumeMeasure extends AreaMeasure {
         decimal?: number;
         has3dtiles?: boolean;
         exact?: boolean;
+        unit?: string;
+        splitNum?: number;
+        minHeight?: number;
+        maxHeight?: number;
+        height?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -18057,6 +18102,15 @@ declare namespace RectanglePrimitive {
      * @property [classification = false] - 是否为ClassificationPrimitive ，分类基元 表示Scene要高亮显示的包围几何的体积
      * @property [offsetHeight] - 平移指定偏移高度（相对于原始坐标值）
      * @property [offsetAttribute] - offsetHeight时对应平移哪些顶点，比如：Cesium.GeometryOffsetAttribute.ALL
+     *
+     * //以下是 这是MaterialAppearance的参数
+     * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
+     * @property [faceForward = !closed] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = false] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
+     * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
+     * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
+     * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [label] - 支持附带文字的显示
@@ -18086,6 +18140,13 @@ declare namespace RectanglePrimitive {
         classification?: boolean;
         offsetHeight?: number;
         offsetAttribute?: number;
+        flat?: boolean;
+        faceForward?: boolean;
+        translucent?: boolean;
+        closed?: boolean;
+        vertexShaderSource?: string;
+        fragmentShaderSource?: string;
+        renderState?: any;
         setHeight?: number | string;
         addHeight?: number | string;
         label?: LabelPrimitive.StyleOptions | any;
@@ -22107,8 +22168,8 @@ declare namespace TilesetLayer {
  * @param options - 参数对象， 构造参数建议从{@link http://mars3d.cn/editor-vue.html?id=layer-tileset/manager/edit|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
  * @param options.url - tileset的主JSON文件的 url ，ION资源时可以写 url: Cesium.IonResource.fromAssetId(8564),
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
- * @param [options.cacheBytes = 536870912] - 如果缓存包含当前视图不需要的块，则块缓存将被修剪到的大小(以字节为单位)。
- * @param [options.maximumCacheOverflowBytes = 536870912] - 如果当前视图需要超过{@link Cesium3DTileset#cacheBytes}，则允许缓存净空的最大额外内存(以字节为单位)。
+ * @param [options.cacheBytes = 536870912] - 额定显存大小(以字节为单位)，允许在这个值上下波动。
+ * @param [options.maximumCacheOverflowBytes = 536870912] - 最大显存大小(以字节为单位)。
  * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
  * @param [options.position] - 自定义新的中心点位置（移动模型）
  * @param [options.position.lng] - 经度值, 180 - 180
@@ -32533,39 +32594,49 @@ declare class Measure extends BaseThing {
      * 体积测量（方量分析）
      * @param [options] - 控制参数
      * @param [options.style] - 基准面的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
-     * @param [options.splitNum = 10] - 插值数，将面分割的网格数(概略值，有经纬网网格来插值)
+     * @param [options.polygonWall] - 围墙面的样式
+     * @param [options.label] - 测量结果文本的样式
+     * @param [options.showFillVolume = true] - 是否显示填方体积结果文本
+     * @param [options.fillVolumeName = '填方体积'] - 填方体积结果的名称
+     * @param [options.showDigVolume = true] - 是否显示挖方体积结果文本
+     * @param [options.digVolumeName = '挖方体积'] - 挖方体积结果的名称
+     * @param [options.showArea = true] - 是否显示横切面积结果文本
+     * @param [options.areaName = '横切面积'] - 横切面积结果的名称
+     * @param [options.heightLabel = true] - 是否显示各边界点高度值文本
+     * @param [options.offsetLabel = false] - 是否显示各边界点高度差文本
+     * @param [options.labelHeight] - 各边界点高度结果文本的样式
+     * @param [options.decimal = 2] - 显示的 数值 文本中保留的小数位
      * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
+     * @param [options.splitNum = 10] - 插值数，将面分割的网格数(概略值，有经纬网网格来插值)
      * @param [options.minHeight] - 可以指定最低高度（单位：米）
      * @param [options.maxHeight] - 可以指定最高高度（单位：米）
      * @param [options.height] - 可以指定基准面高度（单位：米），默认是绘制后的最低高度值
-     * @param [options.heightLabel = true] - 是否显示各边界点高度值文本
-     * @param [options.offsetLabel = false] - 是否显示各边界点高度差文本
-     * @param [options.showArea = true] - 是否显示横切面积
-     * @param [options.label] - 测量结果文本的样式
-     * @param [options.labelHeight] - 各边界点高度结果文本的样式
-     * @param [options.polygonWall] - 围合的墙样式
-     * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @param [options.depth = false] - 是否采用 {@link VolumeDepthMeasure}进行分析
      * @returns 绘制创建完成的Promise，返回 体积测量控制类 对象
      */
     volume(options?: {
         style?: PolygonEntity.StyleOptions | any;
-        unit?: string;
-        splitNum?: number;
+        polygonWall?: PolygonEntity.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
+        showFillVolume?: boolean;
+        fillVolumeName?: string;
+        showDigVolume?: boolean;
+        digVolumeName?: string;
+        showArea?: boolean;
+        areaName?: string;
+        heightLabel?: boolean;
+        offsetLabel?: boolean;
+        labelHeight?: LabelEntity.StyleOptions | any;
+        decimal?: number;
         has3dtiles?: boolean;
         exact?: boolean;
+        unit?: string;
+        splitNum?: number;
         minHeight?: number;
         maxHeight?: number;
         height?: number;
-        heightLabel?: boolean;
-        offsetLabel?: boolean;
-        showArea?: boolean;
-        label?: LabelEntity.StyleOptions | any | any;
-        labelHeight?: LabelEntity.StyleOptions | any;
-        polygonWall?: PolygonEntity.StyleOptions | any;
-        decimal?: number;
         depth?: boolean;
     }): Promise<VolumeMeasure | any>;
     /**
@@ -37154,6 +37225,7 @@ declare namespace effect {
   export { DepthOfFieldEffect }
   export { OutlineEffect }
   export { BloomTargetEffect }
+  export { ColorCorrectionEffect }
 }
 
 
