@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.12
- * 编译日期：2023-11-07 21:55:21
+ * 版本信息：v3.6.13
+ * 编译日期：2023-11-20 21:13:16
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -1083,6 +1083,9 @@ declare enum Lang {
     "_公顷" = "\u516C\u9877",
     "_立方米" = "\u65B9",
     "_万立方米" = "\u4E07\u65B9",
+    "_秒" = "\u79D2",
+    "_分钟" = "\u5206\u949F",
+    "_小时" = "\u5C0F\u65F6",
     "_单击开始绘制" = "\u5355\u51FB\u5F00\u59CB\u7ED8\u5236",
     "_单击完成绘制" = "\u5355\u51FB\u5B8C\u6210\u7ED8\u5236",
     "_双击完成绘制" = "\u53CC\u51FB\u5B8C\u6210\u7ED8\u5236",
@@ -2809,6 +2812,11 @@ declare class BaseThing extends BaseClass {
      */
     setOptions(options: any): BaseThing | BaseControl | any;
     /**
+     * 将对象转为Json简单对象，用于存储后再传参加载
+     * @returns Json简单对象
+     */
+    toJSON(): any;
+    /**
      * 当前类的构造参数
      */
     readonly options: any;
@@ -3381,6 +3389,44 @@ declare class BaseEffect extends BaseThing {
      * @returns 无
      */
     remove(destroy?: boolean): void;
+    /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * tilesetLayer.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * tilesetLayer.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * tilesetLayer.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * tilesetLayer.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
+    /**
+     * 获取指定时间下的时序对应的 显示隐藏 状态
+     * @param time - 指定时间
+     * @returns 显示隐藏 状态
+     */
+    getAvailabilityShow(time: Cesium.JulianDate): boolean;
     /**
      * 触发指定类型的事件。
      * @param type - 事件类型
@@ -14941,7 +14987,8 @@ declare class BasePointPrimitive extends BasePrimitive {
      */
     property: Cesium.SampledPositionProperty | Cesium.CallbackProperty;
     /**
-     * 设置并添加动画轨迹位置，按“指定时间”运动到达“指定位置”。【仅文本、图标点、模型等部分子类支持】
+     * 设置并添加动画轨迹位置，按“指定时间”运动到达“指定位置”。
+     * 【仅LabelPrimitive、PointPrimitive、BillboardPrimitive、ModelPrimitive 等部分子类支持】
      * @param point - 指定位置坐标
      * @param [currTime = Cesium.JulianDate.now()] - 指定时间。当为String时，可以传入'2021-01-01 12:13:00'; 当为number时，可以传入当前时间延迟的秒数。
      * @returns 当前对象本身，可以链式调用
@@ -18728,6 +18775,8 @@ declare namespace WallPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -18754,6 +18803,8 @@ declare namespace WallPrimitive {
         vertexShaderSource?: string;
         fragmentShaderSource?: string;
         renderState?: any;
+        setHeight?: number | string;
+        addHeight?: number | string;
         highlight?: WallPrimitive.StyleOptions | any;
         label?: LabelPrimitive.StyleOptions | any | any;
     };
@@ -19363,6 +19414,44 @@ declare class BaseLayer extends BaseClass {
      */
     opacity: number;
     /**
+     * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
+     * @example
+     * // cesium原生写法,单个
+     * tilesetLayer.availability = new Cesium.TimeInterval({
+     *   start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *   stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *   isStartIncluded: true,
+     *   isStopIncluded: false
+     * })
+     *
+     * // cesium原生写法, 多个
+     * tilesetLayer.availability = new Cesium.TimeIntervalCollection([
+     *   new Cesium.TimeInterval({
+     *     start: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:00")),
+     *     stop: Cesium.JulianDate.fromDate(new Date("2017-08-25 08:00:20")),
+     *     isStartIncluded: true,
+     *     isStopIncluded: false
+     *   }),
+     *
+     * ])
+     *
+     * // 普通传值方式，多个
+     * tilesetLayer.availability = [
+     *   { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false },
+     *   { start: "2017-08-25 09:00:00", stop: "2017-08-25 09:02:30" }
+     * ]
+     *
+     * // 普通传值方式，单个
+     * tilesetLayer.availability = { start: "2017-08-25 08:00:00", stop: "2017-08-25 08:01:20", isStartIncluded: true, isStopIncluded: false }
+     */
+    availability: Cesium.TimeIntervalCollection;
+    /**
+     * 获取指定时间下的时序对应的 显示隐藏 状态
+     * @param time - 指定时间
+     * @returns 显示隐藏 状态
+     */
+    getAvailabilityShow(time: Cesium.JulianDate): boolean;
+    /**
      * 添加到地图上，同 map.addThing
      * @param map - 地图对象
      * @returns 当前对象本身，可以链式调用
@@ -19678,48 +19767,14 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      */
     process(diejiaData: Cesium.Resource | string | any, options?: any): Promise<any>;
     /**
-     * 飞行定位至图层数据所在的视角
-     * @param [options = {}] - 参数对象:
-     * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
-     * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
-     * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
-     * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
-     * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
-     * @param [options.complete] - 飞行完成后要执行的函数。
-     * @param [options.cancel] - 飞行取消时要执行的函数。
-     * @param [options.endTransform] - 变换矩阵表示飞行结束时相机所处的参照系。
-     * @param [options.maximumHeight] - 飞行高峰时的最大高度。
-     * @param [options.pitchAdjustHeight] - 如果相机飞得比这个值高，在飞行过程中调整俯仰以向下看，并保持地球在视口。
-     * @param [options.flyOverLongitude] - 地球上的两点之间总有两条路。这个选项迫使相机选择战斗方向飞过那个经度。
-     * @param [options.flyOverLongitudeWeight] - 仅在通过flyOverLongitude指定的lon上空飞行，只要该方式的时间不超过flyOverLongitudeWeight的短途时间。
-     * @param [options.convert = true] - 是否将目的地从世界坐标转换为场景坐标（仅在不使用3D时相关）。
-     * @param [options.easingFunction] - 控制在飞行过程中如何插值时间。
-     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
+     * 获取图层内所有数据的 矩形边界值
+     * @param [options] - 控制参数
+     * @param [options.isFormat = false] - 是否格式化，格式化时示例： { xmin: 73.16895, xmax: 134.86816, ymin: 12.2023, ymax: 54.11485 }
+     * @returns isFormat：true时，返回格式化对象，isFormat：false时返回Cesium.Rectangle对象
      */
-    flyTo(options?: {
-        radius?: number;
-        scale?: number;
-        heading?: number;
-        pitch?: number;
-        roll?: number;
-        minHeight?: number;
-        maxHeight?: number;
-        height?: number;
-        duration?: number;
-        complete?: Cesium.Camera.FlightCompleteCallback;
-        cancel?: Cesium.Camera.FlightCancelledCallback;
-        endTransform?: Cesium.Matrix4;
-        maximumHeight?: number;
-        pitchAdjustHeight?: number;
-        flyOverLongitude?: number;
-        flyOverLongitudeWeight?: number;
-        convert?: boolean;
-        easingFunction?: Cesium.EasingFunction.Callback;
-    }): Promise<boolean>;
+    getRectangle(options?: {
+        isFormat?: boolean;
+    }): Cesium.Rectangle | any;
 }
 
 /**
@@ -19988,6 +20043,10 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
  * @param [options.chinaCRS] - 标识数据的国内坐标系（用于自动纠偏或加偏）
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+ * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+ * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+ * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
  * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
  * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
@@ -20062,6 +20121,11 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
         graphicOptions?: any;
         chinaCRS?: ChinaCRS;
         allowDrillPick?: boolean | ((...params: any[]) => any);
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         buildings?: {
             bottomHeight?: string;
             cloumn?: string;
@@ -20124,14 +20188,21 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param [options.token] - 用于通过ArcGIS MapServer服务进行身份验证的ArcGIS令牌。
  * @param [options.where] - 用于筛选数据的where查询条件
  * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
- * @param options.symbol.styleOptions - 数据的Style样式
+ * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
+ * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
  * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
- * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, entity, styleOpt){  return { color: "#ff0000" };  }
- * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
+ * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
+ * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
+ * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+ * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+ * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+ * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
  * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
  * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
@@ -20174,15 +20245,23 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
         token?: string;
         where?: string;
         format?: (...params: any[]) => any;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
         opacity?: number;
         zIndex?: number;
         symbol?: {
-            styleOptions: BillboardEntity.StyleOptions | any | PolylineEntity.StyleOptions | any | PolygonEntity.StyleOptions | any | any;
+            type?: GraphicType | string;
+            styleOptions: any;
             styleField?: string;
             styleFieldOptions?: any;
+            merge?: boolean;
             callback?: (...params: any[]) => any;
         };
-        allowDrillPick?: boolean | ((...params: any[]) => any);
+        graphicOptions?: any;
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         buildings?: {
             bottomHeight?: string;
             cloumn?: string;
@@ -20616,6 +20695,10 @@ declare namespace GeoJsonLayer {
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
+ * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+ * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+ * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+ * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
  * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
  * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
@@ -20691,6 +20774,11 @@ declare class GeoJsonLayer extends GraphicLayer {
             callback?: (...params: any[]) => any;
         };
         graphicOptions?: any;
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         buildings?: {
             bottomHeight?: string;
             cloumn?: string;
@@ -21039,6 +21127,7 @@ declare namespace GraphicLayer {
  * @param [options.isAutoEditing = true] - 完成标绘时是否自动启动编辑(需要hasEdit:true时)
  * @param [options.isContinued = false] - 是否连续标绘,连续标绘状态下无法编辑已有对象。
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
+ * @param [options.drawAddEventType = EventType.click] - 绘制时增加点的事件，默认单击
  * @param [options.drawEndEventType = EventType.dblClick] - 绘制时结束的事件，默认双击
  * @param [options.drawDelEventType = EventType.rightClick] - 绘制时删除点的事件，默认右键
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效，且只有贴地对象有效)。
@@ -21102,6 +21191,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         isAutoEditing?: boolean;
         isContinued?: boolean;
         isRestorePositions?: boolean;
+        drawAddEventType?: boolean;
         drawEndEventType?: boolean;
         drawDelEventType?: boolean;
         zIndex?: number;
@@ -21277,6 +21367,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.style] - 可以设置指定style样式,每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
      * //  * @param {boolean} [options.style.merge] 是否合并并覆盖json中已有的style，默认不合并，仅适用style配置。
      * @param [options.crs] - 原始数据的坐标系，如'EPSG:3857' （可以从 {@link http://epsg.io }查询）
+     * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+     * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+     * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+     * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onEachFeature] - 创建每个Graphic前的回调
      * @returns 转换后的Graphic对象数组
      */
@@ -21286,6 +21380,11 @@ declare class GraphicLayer extends BaseGraphicLayer {
         type?: GraphicType | string;
         style?: any;
         crs?: string;
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         onEachFeature?: (...params: any[]) => any;
     }): BaseGraphic[];
     /**
@@ -22172,8 +22271,8 @@ declare namespace TilesetLayer {
  * @param [options.maximumCacheOverflowBytes = 536870912] - 最大显存大小(以字节为单位)。
  * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
  * @param [options.position] - 自定义新的中心点位置（移动模型）
- * @param [options.position.lng] - 经度值, 180 - 180
- * @param [options.position.lat] - 纬度值, -90 - 90
+ * @param [options.position.lng] - 经度值, -180 至 180
+ * @param [options.position.lat] - 纬度值, -90 至 90
  * @param [options.position.alt] - 高度值（单位：米）
  * @param [options.position.alt_offset] - 相对于模型本身高度的偏移值（单位：米） ，如果有alt时已alt优先。
  * @param [options.rotation] - 自定义旋转方向（旋转模型）
@@ -22182,7 +22281,10 @@ declare namespace TilesetLayer {
  * @param options.rotation.z - 四周方向，角度值0-360
  * @param [options.modelMatrix] - 模型的矩阵位置，内部无坐标位置的模型使用，此时position和rotation等参数均无效。
  * @param [options.updateMatrix] - 外部自定义修复模型矩阵位置
- * @param [options.scale = 1] - 自定义缩放比例
+ * @param [options.scale = 1] - 自定义缩放比例，整体等比例缩放
+ * @param [options.scaleX = 1] - 单独自定义缩放X轴方向比例
+ * @param [options.scaleY = 1] - 单独自定义缩放Y轴方向比例
+ * @param [options.scaleZ = 1] - 单独自定义缩放Z轴方向比例
  * @param [options.axis] - 自定义轴方向
  * @param [options.style] - 模型样式， 使用{@link https://github.com/CesiumGS/3d-tiles/tree/master/specification/Styling|3D Tiles Styling language}.
  * @param [options.marsJzwStyle = false] - 开启或设置建筑物特效样式，object时可以修改内置shader的3个变量，比如： { baseHeight: 50.0,  heightRange: 380.0,  glowRange: 400.0    },
@@ -22310,6 +22412,9 @@ declare class TilesetLayer extends BaseGraphicLayer {
         modelMatrix?: Cesium.Matrix4;
         updateMatrix?: (...params: any[]) => any;
         scale?: number;
+        scaleX?: number;
+        scaleY?: number;
+        scaleZ?: number;
         axis?: string | Cesium.Axis;
         style?: any | Cesium.Cesium3DTileStyle | ((...params: any[]) => any);
         marsJzwStyle?: boolean | any | string;
@@ -22713,6 +22818,10 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
  * @param [options.chinaCRS] - 标识数据的国内坐标系（用于自动纠偏或加偏）
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+ * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+ * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+ * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
  * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
  * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
@@ -22801,6 +22910,11 @@ declare class WfsLayer extends LodGraphicLayer {
         graphicOptions?: any;
         chinaCRS?: ChinaCRS;
         allowDrillPick?: boolean | ((...params: any[]) => any);
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         buildings?: {
             bottomHeight?: string;
             cloumn?: string;
@@ -27356,6 +27470,7 @@ declare class Map extends BaseClass {
      * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
      * @param [options.duration] - 飞行持续时间（秒）。如果省略，内部会根据飞行距离计算出理想的飞行时间。
      * @param [options.clampToGround] - 是否贴地对象,true时异步计算实际高度值后进行定位。
+     * @param [options.lock] - 是否是trackedEntity锁定视角状态
      * @param [options.complete] - 飞行完成后要执行的函数。
      * @param [options.cancel] - 飞行取消时要执行的函数。
      * @param [options.endTransform] - 表示飞行完成后摄像机将位于的参考帧的变换矩阵。
@@ -27373,6 +27488,7 @@ declare class Map extends BaseClass {
         roll?: number;
         duration?: number;
         clampToGround?: boolean;
+        lock?: boolean;
         complete?: Cesium.Camera.FlightCompleteCallback;
         cancel?: Cesium.Camera.FlightCancelledCallback;
         endTransform?: Cesium.Matrix4;
@@ -27593,7 +27709,7 @@ declare namespace Map {
      * 以下是Cesium.Viewer所支持的options【控件相关的写在另外的control属性中】
      * @property [sceneMode = Cesium.SceneMode.SCENE3D] - 初始场景模式。可以设置进入场景后初始是2D、2.5D、3D 模式。
      * @property [scene3DOnly = false] - 为 true 时，每个几何实例将仅以3D渲染以节省GPU内存。
-     * @property [mapProjection = new Cesium.GeographicProjection()] - 在二维模式下时，地图的呈现坐标系，默认为EPSG4326坐标系，如果需要EPSG3857墨卡托坐标系展示，传 new Cesium.WebMercatorProjection() 即可
+     * @property [mapProjection = CRS.EPSG4326] - 在二维模式下时，地图的呈现坐标系，默认为EPSG4326坐标系，如果需要EPSG3857墨卡托坐标系展示，传 new Cesium.WebMercatorProjection() 即可
      * @property [mapMode2D = Cesium.MapMode2D.INFINITE_SCROLL] - 在二维模式下时，地图是可旋转的还是可以在水平方向无限滚动。
      * @property [shouldAnimate = true] - 是否开启时钟动画
      * @property [shadows = false] - 是否启用日照阴影
@@ -27677,7 +27793,7 @@ declare namespace Map {
         backgroundColor?: string;
         sceneMode?: Cesium.SceneMode;
         scene3DOnly?: boolean;
-        mapProjection?: Cesium.MapProjection;
+        mapProjection?: Cesium.MapProjection | CRS;
         mapMode2D?: Cesium.MapMode2D;
         shouldAnimate?: boolean;
         shadows?: boolean;
@@ -33456,11 +33572,6 @@ declare class ContourLine extends TerrainEditBase {
      * 是否显示区域外的地图
      */
     showElseArea: boolean;
-    /**
-     * 清除数据
-     * @returns 无
-     */
-    clear(): void;
 }
 
 declare namespace FloodByGraphic {
@@ -34189,7 +34300,7 @@ declare class TilesetBoxClip extends BaseThing {
  * @param options.layer - 需要裁剪的对象（3dtiles图层）
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.clipOutSide = false] - 是否外裁剪
- * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34211,7 +34322,7 @@ declare class TilesetClip extends TilesetEditBase {
  * @param [options] - 参数对象，包括以下：
  * @param options.layer - 需要模型分析的对象（3dtiles图层）
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
- * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34307,7 +34418,7 @@ declare class TilesetEditBase extends BaseThing {
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.editHeight] - 模型基准高度(单位：米)，基于压平/淹没区域最低点高度的纠偏，也支持定义在模型图层中
  * @param [options.raise = true] - 是否开启区域抬高
- * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34380,6 +34491,7 @@ declare namespace TilesetFlood {
  * @param [options.color = new Cesium.Color(0.15, 0.7, 0.95, 0.5)] - 淹没颜色
  * @param [options.floodAll] - 是否对整个模型进行分析
  * @param [options.limitMin = false] - 显示效果中是否不显示最低高度以下的部分颜色
+ * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34394,6 +34506,7 @@ declare class TilesetFlood extends TilesetEditBase {
         color?: Cesium.Color | string;
         floodAll?: boolean;
         limitMin?: boolean;
+        precise?: boolean;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -36935,6 +37048,10 @@ declare namespace Util {
      * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
      * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
      * @param [options.crs] - 原始数据的坐标系，如'EPSG:3857' （可以从 {@link http://epsg.io }查询）
+     * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+     * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+     * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+     * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理,比如坐标纠偏 onPointTrans: mars3d.PointUtil.getTransFun(mars3d.ChinaCRS.GCJ02, map.chinaCRS)
      * @returns Graphic构造参数数组（用于创建{@link BaseGraphic}）
      */
@@ -36950,6 +37067,11 @@ declare namespace Util {
             callback?: (...params: any[]) => any;
         };
         crs?: string;
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         onPointTrans?: (...params: any[]) => any;
     }): any;
     /**
@@ -36960,6 +37082,10 @@ declare namespace Util {
      * @param [options.style = {}] - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
      * //  * @param {boolean} [options.style.merge] 是否合并并覆盖json中已有的style，默认不合并，仅适用style配置。
      * @param [options.crs] - 原始数据的坐标系，如'EPSG:3857' （可以从 {@link http://epsg.io }查询）
+     * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+     * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+     * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+     * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理
      * @returns Graphic构造参数（用于创建{@link BaseGraphic}）
      */
@@ -36967,6 +37093,11 @@ declare namespace Util {
         type?: GraphicType | string;
         style?: any;
         crs?: string;
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
         onPointTrans?: (...params: any[]) => any;
     }): any;
     /**
@@ -37120,9 +37251,13 @@ declare namespace Util {
     /**
      * 格式化时长
      * @param strtime - 时长
+     * @param [options] - 参数：
+     * @param [options.getLangText] - 获取文本的对应方法
      * @returns 格式化字符串，如XX小时XX分钟
      */
-    function formatTime(strtime: number): string;
+    function formatTime(strtime: number, options?: {
+        getLangText?: (...params: any[]) => any;
+    }): string;
     /**
      * 请求服务返回JSON结果
      * @param options - 请求参数
