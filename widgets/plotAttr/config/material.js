@@ -299,6 +299,13 @@ const materialConfig = {
   EllipsoidElectric: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+  ],
+  LineCross: [
+    { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+    { name: "dashLength", label: "长度", type: "number", step: 1, defval: 64 },
+    { name: "maskLength", label: "间隔", type: "number", step: 1, defval: 9 },
+    { name: "centerPower", label: "中心百分比", type: "number", step: 1,step: 0.1, defval: 0.1 },
+    { name: "dashPower", label: "虚线百分比", type: "number", step: 1,step: 0.1, defval: 0.1 }
   ]
 }
 

@@ -768,9 +768,84 @@ const styleConfig = {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
+      { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false },
       { name: "html", label: "Html文本", type: "label", defval: "" }
     ]
   },
+  divPlane: {
+    name: "DIV三维平面",
+    style: [
+      { name: "scale", label: "比例", type: "number", step: 1, defval: 1.0 },
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 90.0 },
+
+      {
+        name: "horizontalOrigin",
+        label: "横向定位",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "左边", value: 1 },
+          { label: "居中", value: 0 },
+          { label: "右边", value: -1 }
+        ]
+      },
+      {
+        name: "verticalOrigin",
+        label: "垂直定位",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "顶部", value: -1 },
+          { label: "居中", value: 0 },
+          { label: "底部", value: 1 }
+        ]
+      },
+
+      {
+        name: "distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show(style, allStyle, graphicType) {
+          return style.distanceDisplayCondition
+        }
+      },
+      {
+        name: "distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return style.distanceDisplayCondition
+        }
+      },
+      {
+        name: "clampToGround",
+        label: "是否贴地",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return !style.diffHeight || style.diffHeight !== 0
+        }
+      },
+
+      { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false },
+      { name: "html", label: "Html文本", type: "label", defval: "" }
+    ]
+  },
+
   fontBillboard: {
     name: "字体点标记",
     style: [
@@ -1045,8 +1120,8 @@ const styleConfig = {
         max: 360.0,
         step: 0.01,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.fill !== false
+        show: (style) => {
+          return style.fill !== false && style.materialType !== "Color"
         }
       },
       {
@@ -1069,7 +1144,7 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         show(style, allStyle, graphicType) {
-          return style.outline
+          return style.outline && !style.outlineStyle
         }
       },
       {
@@ -1078,10 +1153,9 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show(style, allStyle, graphicType) {
-          return style.outline
+          return style.outline && (style.diffHeight || !style.outlineStyle)
         }
       },
-
       {
         name: "distanceDisplayCondition",
         label: "是否按视距显示",
@@ -1195,8 +1269,8 @@ const styleConfig = {
         max: 360.0,
         step: 0.01,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.fill !== false
+        show: (style) => {
+          return style.fill !== false && style.materialType !== "Color"
         }
       },
 
@@ -1209,7 +1283,7 @@ const styleConfig = {
         step: 1,
         defval: 1,
         show(style, allStyle, graphicType) {
-          return style.outline
+          return style.outline && !style.outlineStyle
         }
       },
       {
@@ -1218,7 +1292,7 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show(style, allStyle, graphicType) {
-          return style.outline
+          return style.outline && (style.diffHeight || !style.outlineStyle)
         }
       },
 
@@ -1841,6 +1915,10 @@ const styleConfig = {
   jammingRadar: {
     name: "自定义干扰雷达",
     style: [
+      { name: "scale", label: "大小比例", type: "slider", min: 0.1, max: 10.0, step: 0.1, defval: 1.0 },
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "autoColor", label: "是否内置渐变色", type: "radio", defval: true },
       {
         name: "color",
@@ -1865,17 +1943,17 @@ const styleConfig = {
         show(style, allStyle, graphicType) {
           return !style.autoColor
         }
-      },
-      { name: "scale", label: "大小比例", type: "slider",  min: 0.1, max: 10.0, step: 0.1, defval: 1.0  },
-      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      }
     ]
   },
 
   fixedJammingRadar: {
     name: "固定算法干扰雷达",
     style: [
+      { name: "scale", label: "大小比例", type: "slider", min: 0.1, max: 10.0, step: 0.1, defval: 1.0 },
+      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "autoColor", label: "是否内置渐变色", type: "radio", defval: true },
       {
         name: "color",
@@ -1901,10 +1979,6 @@ const styleConfig = {
           return !style.autoColor
         }
       },
-      { name: "scale", label: "大小比例", type: "slider",  min: 0.1, max: 10.0, step: 0.1, defval: 1.0  },
-      { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
 
       { name: "pt", label: "发射功率", type: "number", defval: 8e6 },
       { name: "gt", label: "天线主瓣增益", type: "number", defval: 500 },
@@ -2609,7 +2683,7 @@ const styleConfig = {
         step: 1,
         defval: 1,
         show(style, allStyle, graphicType) {
-          return style.outline
+          return style.outline && !style.outlineStyle
         }
       },
       {
@@ -2618,12 +2692,21 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show(style, allStyle, graphicType) {
-          return style.outline
+          return style.outline && (style.diffHeight || !style.outlineStyle)
         }
       },
 
       { name: "rotationDegree", label: "旋转角度", type: "number", step: 1, defval: 0.0 },
-      { name: "stRotationDegree", label: "材质角度", type: "number", step: 1, defval: 0.0 },
+      {
+        name: "stRotationDegree",
+        label: "材质角度",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show: (style) => {
+          return style.fill !== false && style.materialType !== "Color"
+        }
+      },
       {
         name: "distanceDisplayCondition",
         label: "是否按视距显示",
@@ -2753,7 +2836,7 @@ const styleConfig = {
         step: 0.01,
         defval: 0.0,
         show: (style) => {
-          return style.fill !== false
+          return style.fill !== false && style.materialType !== "Color"
         }
       },
 
@@ -2766,7 +2849,7 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         show: (style) => {
-          return style.outline
+          return style.outline && !style.outlineStyle
         }
       },
       {
@@ -2924,7 +3007,7 @@ const styleConfig = {
         step: 0.01,
         defval: 0.0,
         show: (style) => {
-          return style.fill !== false
+          return style.fill !== false && style.materialType !== "Color"
         }
       },
 
@@ -2937,7 +3020,7 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         show: (style) => {
-          return style.outline
+          return style.outline && !style.outlineStyle
         }
       },
       {
@@ -2946,7 +3029,7 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show: (style) => {
-          return style.outline
+          return style.outline && (style.diffHeight || !style.outlineStyle)
         }
       },
 
@@ -3040,7 +3123,18 @@ const styleConfig = {
         step: 0.01,
         defval: 0.0,
         show: (style) => {
-          return style.fill !== false
+          return style.fill !== false && style.materialType !== "Color"
+        }
+      },
+
+      {
+        name: "offsetHeight",
+        label: "偏移高度",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return !style.clampToGround
         }
       },
       {

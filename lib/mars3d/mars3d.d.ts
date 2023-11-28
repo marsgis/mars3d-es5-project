@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.13
- * 编译日期：2023-11-20 21:13:16
+ * 版本信息：v3.6.14
+ * 编译日期：2023-11-28 09:42:10
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -118,6 +118,36 @@ declare enum CRS {
      * 范围：EPSG:4502 到 EPSG:4512
      */
     CGCS2000_GK_CM_6 = "CGCS2000_GK_CM_6"
+}
+
+/**
+ * 矢量对象编辑时 拖拽点类型
+ */
+declare enum EditPointType {
+    /**
+     * 位置控制
+     */
+    Control = 1,
+    /**
+     * 整体平移(如线面)
+     */
+    MoveAll = 2,
+    /**
+     * 辅助增加新点
+     */
+    AddMidPoint = 3,
+    /**
+     * 上下移动高度
+     */
+    MoveHeight = 4,
+    /**
+     * 辅助修改属性（如半径）
+     */
+    EditAttr = 5,
+    /**
+     * 旋转角度修改
+     */
+    EditRotation = 6
 }
 
 /**
@@ -31118,7 +31148,7 @@ declare namespace SatelliteSensor {
      * @property [heading = 0] - 方向角 （角度值 0-360）
      * @property [pitch = 0] - 俯仰角（角度值 0-360）
      * @property [roll = 0] - 翻滚角（角度值 0-360）
-     * @property [color = Cesium.Color.YELLOW] - 颜色
+     * @property [color = "rgba(255,255,0,0.4)"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色
@@ -34300,7 +34330,7 @@ declare class TilesetBoxClip extends BaseThing {
  * @param options.layer - 需要裁剪的对象（3dtiles图层）
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.clipOutSide = false] - 是否外裁剪
- * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34322,7 +34352,7 @@ declare class TilesetClip extends TilesetEditBase {
  * @param [options] - 参数对象，包括以下：
  * @param options.layer - 需要模型分析的对象（3dtiles图层）
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
- * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34418,7 +34448,7 @@ declare class TilesetEditBase extends BaseThing {
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.editHeight] - 模型基准高度(单位：米)，基于压平/淹没区域最低点高度的纠偏，也支持定义在模型图层中
  * @param [options.raise = true] - 是否开启区域抬高
- * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -34491,7 +34521,7 @@ declare namespace TilesetFlood {
  * @param [options.color = new Cesium.Color(0.15, 0.7, 0.95, 0.5)] - 淹没颜色
  * @param [options.floodAll] - 是否对整个模型进行分析
  * @param [options.limitMin = false] - 显示效果中是否不显示最低高度以下的部分颜色
- * @param [options.precise = false] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35360,25 +35390,31 @@ declare namespace DomUtil {
  */
 declare namespace DrawUtil {
     /**
-     * 拖拽点分类
-     */
-    const PointType: number;
-    /**
-     * 拖拽点颜色
+     * 根据类型设置编辑点的样式
      * @example
-     * mars3d.DrawUtil.PointColor.Control = '#1c197d' //位置控制拖拽点
-     * mars3d.DrawUtil.PointColor.MoveAll = '#8c003a' //整体平移(如线面)拖拽点
-     * mars3d.DrawUtil.PointColor.MoveHeight = '#9500eb' //上下移动高度的拖拽点
-     * mars3d.DrawUtil.PointColor.EditAttr = '#f73163' //辅助修改属性（如半径）的拖拽点
-     * mars3d.DrawUtil.PointColor.AddMidPoint = 'rgba(4,194,201,0.3)' //增加新点，辅助拖拽点
-     */
-    const PointColor: Cesium.Color;
-    /**
-     * 设置编辑点的样式（color颜色除外）
-     * @param value - 像素
+     * mars3d.DrawUtil.setEditPointStyle(mars3d.EditPointType.Control, {
+     *   type: mars3d.GraphicType.billboardP, // 支持设置type指定编辑点类型
+     *   image: "img/icon/move.png",
+     *   horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+     *   verticalOrigin: Cesium.VerticalOrigin.CENTER
+     * })
+     * @param type - 类型
+     * @param newStyle - 样式
      * @returns 无
      */
-    function setPointStyle(value: PointPrimitive.StyleOptions | any): void;
+    function setEditPointStyle(type: EditPointType | number, newStyle: PointPrimitive.StyleOptions | any | any): void;
+    /**
+     * 更新所有编辑点的样式
+     * @param style - 样式
+     * @returns 无
+     */
+    function setAllEditPointStyle(style: PointPrimitive.StyleOptions | any | any): void;
+    /**
+     * 根据类型获取编辑点样式
+     * @param [type = mars3d.EditPointType.Control] - 类型
+     * @returns 样式对象
+     */
+    function getEditPointStyle(type?: EditPointType | number): PointPrimitive.StyleOptions | any | any;
 }
 
 /**
@@ -37701,7 +37737,7 @@ declare namespace thing {
 
 export {
   name, update, version, proj4, Tle,
-  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, MoveType, ClipType, Icon,
+  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, MoveType, ClipType, Icon, EditPointType,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
   material, graphic, edit, provider, layer, thing, effect, control, query,
