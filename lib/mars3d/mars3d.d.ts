@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.14
- * 编译日期：2023-11-28 09:42:10
+ * 版本信息：v3.6.15
+ * 编译日期：2023-12-04 17:35:14
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -3903,12 +3903,14 @@ declare class SnowCoverEffect extends BaseEffect {
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.speed = 10] - 速度
+ * @param [options.scale = 10.0] - 粒子大小
  * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果
  */
 declare class SnowEffect extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         speed?: number;
+        scale?: number;
         maxHeight?: number;
     });
     /**
@@ -3919,6 +3921,10 @@ declare class SnowEffect extends BaseEffect {
      * 速度
      */
     speed: number;
+    /**
+     * 粒子大小
+     */
+    scale: number;
 }
 
 /**
@@ -4543,7 +4549,7 @@ declare class BaseCombine extends BasePrimitive {
         noAlt?: boolean;
     }): any;
     /**
-     * 更新颜色, 只对纯色材质有效，其他材质无法单独更新，需要setStle方法调用(全部更新渲染)。
+     * 更新颜色, 只对纯色材质有效，其他材质无法单独更新，需要setStyle方法调用(全部更新渲染)。
      * @param style - 样式信息
      * @param [style.color = "#ffffff"] - 颜色
      * @param [style.opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -8095,7 +8101,7 @@ declare namespace Popup {
      * @property [clampToGround = false] - 是否贴地
      * @property [css_transform_origin = 'left bottom 0'] - DIV的 transform-origin css值
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
-     * @property [autoCenter] - 当气泡窗口有部分在地图之外时是否自动进行居中 （目前仅俯视时准确定位）
+     * @property [autoCenter] - 当气泡窗口有部分在地图之外时是否自动将地图进行居中 （目前仅俯视时准确定位）
      * @property [maxWidth = 700] - 弹窗的最大宽度，单位为像素
      * @property [minWidth = 50] - 弹窗的最小宽度，单位为像素
      * @property [maxHeight = 550] - 如果设置，如果内容超过此高度时，则在弹出窗口中显示滚动条。
