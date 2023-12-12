@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.15
- * 编译日期：2023-12-04 17:35:14
+ * 版本信息：v3.6.16
+ * 编译日期：2023-12-10 22:08:21
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -165,7 +165,8 @@ declare enum EffectType {
     outline,
     rain,
     snow,
-    snowCover
+    snowCover,
+    colorCorrection
 }
 
 /**
@@ -1659,6 +1660,30 @@ declare enum TerrainType {
 }
 
 /**
+ * Thing对象(如分析、管理类等) 类型 【提示：仅与地图一对一的类型，非所有Thing类】
+ */
+declare enum ThingType {
+    shadows,
+    sightline,
+    skyline,
+    cameraHistory,
+    rotateOut,
+    rotatePoint,
+    firstPersonRoam,
+    streetView,
+    terrainFlat,
+    terrainClip,
+    terrainPlanClip,
+    terrainUplift,
+    floodByMaterial,
+    floodByGraphic,
+    underground,
+    contourLine,
+    Slope,
+    limitHeight
+}
+
+/**
  * SDK中涉及到的所有第3方地图服务的Token令牌key，
  * 【重要提示：为了避免后期失效，请全部重新赋值换成自己的key】
  */
@@ -2786,6 +2811,10 @@ declare class BaseThing extends BaseClass {
         eventParent?: BaseClass | boolean;
     });
     /**
+     * 类型
+     */
+    readonly type: string;
+    /**
      * 当前对象的状态
      */
     readonly state: State;
@@ -3385,10 +3414,6 @@ declare class BaseEffect extends BaseThing {
         id?: string | number;
         enabled?: boolean;
     });
-    /**
-     * 特效类型
-     */
-    readonly type: string;
     /**
      * 特效对象
      */
@@ -8395,14 +8420,14 @@ declare class BaseEntity extends BaseGraphic {
      * 高亮闪烁 Enity实体对象
      * @param options - 参数
      * @param [options.time] - 闪烁的时长(秒)，未设置时不自动停止。
-     * @param [options.color = Cesium.Color.YELLOW] - 高亮的颜色
+     * @param [options.color] - 高亮的颜色
      * @param [options.maxAlpha = 0.3] - 闪烁的最大透明度，从 0 到 maxAlpha 渐变
      * @param [options.onEnd] - 播放完成后的回调方法
      * @returns 高亮闪烁控制 对象
      */
     startFlicker(options: {
         time?: number;
-        color?: Cesium.Color;
+        color?: Cesium.Color | string;
         maxAlpha?: number;
         onEnd?: (...params: any[]) => any;
     }): FlickerEntity;
@@ -9748,14 +9773,14 @@ declare class FlickerEntity {
      * @param entitys - entity对象或对象数组
      * @param [opts = {}] - 控制参数
      * @param [opts.time] - 闪烁的时长(秒)，未设置时不自动停止。
-     * @param [opts.color = Cesium.Color.YELLOW] - 高亮的颜色
+     * @param [opts.color = Cesium.Color.WHITE] - 高亮的颜色
      * @param [opts.maxAlpha = 0.3] - 闪烁的最大透明度，从 0 到 maxAlpha 渐变
      * @param [opts.onEnd] - 播放完成后的回调方法
      * @returns 高亮闪烁控制 对象
      */
     startFlicker(entitys: Cesium.Entity | Cesium.Entity[], opts?: {
         time?: number;
-        color?: Cesium.Color;
+        color?: Cesium.Color | string;
         maxAlpha?: number;
         onEnd?: (...params: any[]) => any;
     }): FlickerEntity;
@@ -26699,12 +26724,13 @@ declare class MouseEvent {
  * @param id - 地图div容器的id 或 已构造好的Viewer对象
  * @param [options = {}] - 参数对象:
  * @param [options.scene] - 场景参数
- * @param [options.control] - 添加的控件
- * @param [options.effect] - 添加的特效
  * @param [options.mouse] - 鼠标操作相关配置参数
  * @param [options.terrain] - 地形服务配置
  * @param [options.basemaps] - 底图图层配置
  * @param [options.layers] - 可以叠加显示的图层配置
+ * @param [options.control] - 添加的控件
+ * @param [options.effect] - 添加的特效
+ * @param [options.thing] - 添加的特效
  * @param [options.chinaCRS = ChinaCRS.WGS84] - 标识当前三维场景的国内坐标系（用于部分图层内对比判断来自动纠偏或加偏），只能初始化传入
  * @param [options.lang] - 使用的语言文本键值对对象，可传入外部自定义的任意语言文本。
  * @param [options.templateValues] - 图层中统一的url模版，比如可以将服务url前缀统一使用模板，方便修改或动态配置。
@@ -26713,12 +26739,13 @@ declare class MouseEvent {
 declare class Map extends BaseClass {
     constructor(id: string | Cesium.Viewer, options?: {
         scene?: Map.sceneOptions;
-        control?: Map.controlOptions;
-        effect?: Map.effectOptions;
         mouse?: Map.mouseOptions;
         terrain?: Map.terrainOptions;
         basemaps?: Map.basemapOptions[];
         layers?: Map.layerOptions[];
+        control?: Map.controlOptions;
+        effect?: Map.effectOptions;
+        thing?: Map.thingOptions;
         chinaCRS?: ChinaCRS;
         lang?: any | Lang;
         templateValues?: any;
@@ -26821,6 +26848,10 @@ declare class Map extends BaseClass {
      * 获取地图上已构造的effect特效对象
      */
     readonly effects: any;
+    /**
+     * 获取地图上已构造的thing特效对象
+     */
+    readonly thing: any;
     /**
      * 默认绑定的图层，简单场景时快捷方便使用
      */
@@ -27995,6 +28026,7 @@ declare namespace Map {
      * @property [blackAndWhite] - 黑白,对应{@link BlackAndWhiteEffect }构造参数
      * @property [outline] - 对象轮廓描边,对应{@link OutlineEffect }构造参数
      * @property [bloomTarget] - 对象泛光,对应{@link BloomTargetEffect }构造参数
+     * @property [colorCorrection] - 颜色校正 特效,对应类为：{@link ColorCorrectionEffect }构造参数
      */
     type effectOptions = {
         bloom?: any;
@@ -28009,6 +28041,48 @@ declare namespace Map {
         blackAndWhite?: any;
         outline?: any;
         bloomTarget?: any;
+        colorCorrection?: string;
+    };
+    /**
+     * 添加到地图的 Thing对象(如分析、管理类等) 参数 【提示：仅与地图一对一的类型，非所有Thing类】
+     * @property [shadows] - 日照分析, 对应类为：{@link Shadows }
+     * @property [sightline] - 通视分析, 对应类为：{@link Sightline }
+     * @property [skyline] - 天际线描边, 对应类为：{@link Skyline }
+     * @property [cameraHistory] - 相机视角记录及处理类, 对应类为：{@link CameraHistory }
+     * @property [rotateOut] - 相机位置不动，对外四周旋转, 对应类为：{@link RotateOut }
+     * @property [rotatePoint] - 相机绕 固定中心点 旋转, 对应类为：{@link RotatePoint }
+     * @property [firstPersonRoam] - 第一人称贴地漫游, 对应类为：{@link FirstPersonRoam }
+     * @property [streetView] - 街景视角模式控制, 对应类为：{@link StreetView }
+     * @property [terrainFlat] - 地形压平, 对应类为：{@link TerrainFlat }
+     * @property [terrainClip] - 地形开挖, 对应类为：{@link TerrainClip }
+     * @property [terrainPlanClip] - 地形开挖（基于clippingPlanes）, 对应类为：{@link TerrainPlanClip }
+     * @property [terrainUplift] - 地形抬升, 对应类为：{@link TerrainUplift }
+     * @property [floodByMaterial] - 淹没分析（基于地球材质）, 对应类为：{@link FloodByMaterial }
+     * @property [floodByGraphic] - 淹没分析（基于polygon矢量面抬高）, 对应类为：{@link FloodByGraphic }
+     * @property [underground] - 地下模式, 对应类为：{@link Underground }
+     * @property [contourLine] - 等高线, 对应类为：{@link ContourLine }
+     * @property [slope] - 坡度坡向分析, 对应类为：{@link Slope }
+     * @property [limitHeight] - 模型限高分析, 对应类为：{@link LimitHeight }
+     */
+    type thingOptions = {
+        shadows?: string;
+        sightline?: string;
+        skyline?: string;
+        cameraHistory?: string;
+        rotateOut?: string;
+        rotatePoint?: string;
+        firstPersonRoam?: string;
+        streetView?: string;
+        terrainFlat?: string;
+        terrainClip?: string;
+        terrainPlanClip?: string;
+        terrainUplift?: string;
+        floodByMaterial?: string;
+        floodByGraphic?: string;
+        underground?: string;
+        contourLine?: string;
+        slope?: string;
+        limitHeight?: string;
     };
     /**
      * 地形服务配置
@@ -30311,7 +30385,7 @@ declare class MapVLayer extends BaseLayer {
 }
 
 /**
- * 视锥体的类型
+ * 视椎体的类型
  */
 declare enum SensorType {
     /**
@@ -30787,7 +30861,7 @@ declare class ConicSensor extends BasePointPrimitive {
      */
     readonly matrix: Cesium.Matrix4;
     /**
-     * 获取视锥体射出length半径长度后的点坐标
+     * 获取视椎体射出length半径长度后的点坐标
      */
     readonly rayPosition: Cesium.Cartesian3;
     /**
@@ -30969,7 +31043,7 @@ declare class RectSensor extends BasePointPrimitive {
      */
     readonly matrix: Cesium.Matrix4;
     /**
-     * 获取视锥体射出length半径长度后的点坐标
+     * 获取视椎体射出length半径长度后的点坐标
      */
     readonly rayPosition: Cesium.Cartesian3;
     /**
@@ -31018,7 +31092,7 @@ declare namespace Satellite {
 }
 
 /**
- * 卫星综合体 对象类【统一管理卫星模型、轨道、视锥体】,
+ * 卫星综合体 对象类【统一管理卫星模型、轨道、视椎体】,
  * 【需要引入  mars3d-space 插件库】
  * @param options - 参数对象，包括以下：
  * @param [options.tle1] - 卫星两行轨道数（TLE） 的tle1, 示例：'1 39150U 13018A   18309.20646405  .00000034  00000-0  12253-4 0  9993'
@@ -31032,7 +31106,7 @@ declare namespace Satellite {
  * @param [options.label] - 设置是否显示 文本 和对应的样式
  * @param [options.billboard] - 设置是否显示 图标点 和对应的样式
  * @param [options.point] - 设置是否显示 像素点 和对应的样式
- * @param [options.cone] - 设置是否显示 卫星视锥体 和对应的样式
+ * @param [options.cone] - 设置是否显示 卫星视椎体 和对应的样式
  * @param [options.path] - 设置是否显示 卫星轨迹路线 和对应的样式，属性还包含：<br />
  * //  * @param {boolean} [options.path.closure=false]  是否闭合轨道圆
  * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
@@ -31040,7 +31114,7 @@ declare namespace Satellite {
  * @param [highlight.label] - 设置是否显示 文本 和对应的样式
  * @param [highlight.billboard] - 设置是否显示 图标点 和对应的样式
  * @param [highlight.point] - 设置是否显示 像素点 和对应的样式
- * @param [highlight.cone] - 设置是否显示 卫星视锥体 和对应的样式
+ * @param [highlight.cone] - 设置是否显示 卫星视椎体 和对应的样式
  * @param [highlight.path] - 设置是否显示 卫星轨迹路线 和对应的样式
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.id = createGuid()] - 矢量数据id标识
@@ -31083,7 +31157,7 @@ declare class Satellite extends Route {
      */
     readonly timeRange: any;
     /**
-     * 卫星视锥体（圆锥或四凌锥） 子对象
+     * 卫星视椎体（圆锥或四凌锥） 子对象
      */
     cone: SatelliteSensor | SatelliteSensor[] | any;
     /**
@@ -31095,7 +31169,7 @@ declare class Satellite extends Route {
      */
     angle2: number;
     /**
-     * 是否显示视锥体
+     * 是否显示视椎体
      */
     coneShow: boolean;
     /**
@@ -31145,7 +31219,7 @@ declare class Satellite extends Route {
 
 declare namespace SatelliteSensor {
     /**
-     * 卫星视锥体（圆锥或四凌锥） 支持的样式信息
+     * 卫星视椎体（圆锥或四凌锥） 支持的样式信息
      * @property [sensorType = SatelliteSensor.Type.Rect] - 视锥类型
      * @property [angle1 = 5] - 圆锥的角度或者四棱锥的第一个角度，半场角度，取值范围 0.1-89.9
      * @property [angle2 = 5] - 四棱锥的第二个角度，半场角度，取值范围 0.1-89.9
@@ -31184,7 +31258,7 @@ declare namespace SatelliteSensor {
         closed?: boolean;
     };
     /**
-     * 视锥体类型
+     * 视椎体类型
      */
     enum Type {
         Conic,
@@ -31269,7 +31343,7 @@ declare class SatelliteSensor extends BasePointPrimitive {
      */
     readonly matrix: Cesium.Matrix4;
     /**
-     * 获取视锥体方向中心射线与地球相交点
+     * 获取视椎体方向中心射线与地球相交点
      */
     readonly groundPosition: Cesium.Cartesian3;
     /**
@@ -32838,13 +32912,15 @@ declare class Measure extends BaseThing {
         decimal?: number;
     }): Promise<AngleMeasure | any>;
     /**
-     * 坐标测量
+     * 坐标测量 popup
      * @param [options] - 控制参数
      * @param [options.style] - 点的样式
+     * @param [options.popup] - 绑定的popup弹窗值的自定义回调方法
      * @returns 绘制创建完成的Promise，返回 坐标测量控制类 对象
      */
     point(options?: {
         style?: PointEntity.StyleOptions | any;
+        popup?: (...params: any[]) => any;
     }): Promise<PointMeasure | any>;
     /**
      * 停止绘制，如有未完成的绘制会自动删除
@@ -33064,7 +33140,7 @@ declare class Sightline extends BaseThing {
 }
 
 /**
- * 天际线 描边
+ * 天际线描边
  * @param [options] - 参数对象，包括以下：
  * @param [options.color = new Cesium.Color(1.0, 0.0, 0.0)] - 边际线颜色
  * @param [options.width = 2] - 天际线宽度
@@ -33091,7 +33167,7 @@ declare class Skyline extends BaseThing {
 }
 
 /**
- * 地下模式类
+ * 地下模式
  * @param [options] - 参数对象，包括以下：
  * @param [options.alpha = 0.5] - 透明度  0.0-1.0
  * @param [options.color = Cesium.Color.BLACK] - 当相机在地下或球体是半透明时，渲染球体背面的颜色
@@ -33948,7 +34024,7 @@ declare type getSlope_endItem = (event: {
  * 地形开挖，
  * 基于地球材质，可以多个区域开挖。
  * @param [options] - 参数对象，包括以下：
- * @param [options.positions] - 坐标位置数组，只显示单个区域【单个区域场景时使用】
+ * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.clipOutSide = false] - 是否外切开挖
  * @param [options.image] - 开挖区域的井墙面贴图URL。未传入该值时，不显示开挖区域的井。
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
@@ -33960,7 +34036,7 @@ declare type getSlope_endItem = (event: {
  */
 declare class TerrainClip extends TerrainEditBase {
     constructor(options?: {
-        positions?: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[];
+        area?: any;
         clipOutSide?: boolean;
         image?: string;
         imageBottom?: string;
@@ -34167,7 +34243,7 @@ declare class TerrainUplift extends TerrainEditBase {
 }
 
 /**
- * 限高分析
+ * 模型限高分析
  * @param [options] - 参数对象，包括以下：
  * @param [options.positions] - 限高区域坐标数组
  * @param [options.height] - 限高高度（单位米）,相对于bottomHeight模型地面的海拔高度的相对高度。
@@ -36775,6 +36851,32 @@ declare namespace PolyUtil {
         minDistance?: number;
         cameraHeight?: number;
     }): Promise<any>;
+}
+
+/**
+ * Thing对象(如 分析、管理类等)  相关 静态方法
+ */
+declare namespace ThingUtil {
+    /**
+     * 注册Thing对象类
+     * @param type - Thing对象类型
+     * @param thingClass - Thing对象类
+     * @returns 无
+     */
+    function register(type: string, thingClass: BaseThing): void;
+    /**
+     * 根据 Thing对象类型 获取 Thing对象类
+     * @param type - Thing对象类型
+     * @returns Thing对象类
+     */
+    function getClass(type: ThingType): BaseThing | undefined;
+    /**
+     * 创建Thing对象工厂方法
+     * @param type - Thing对象类型
+     * @param options - Thing对象参数，具体见各{@link ThingType}对应的Thing对象类的构造方法参数
+     * @returns 创建完成的Thing对象对象
+     */
+    function create(type: ThingType, options: any): BaseThing;
 }
 
 /**
