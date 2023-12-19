@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.6.16
- * 编译日期：2023-12-10 22:08:21
+ * 版本信息：v3.6.17
+ * 编译日期：2023-12-14 20:38:21
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2023-03-17
  */
@@ -2813,7 +2813,7 @@ declare class BaseThing extends BaseClass {
     /**
      * 类型
      */
-    readonly type: string;
+    readonly type: string | number;
     /**
      * 当前对象的状态
      */
@@ -6053,7 +6053,7 @@ declare class FixedRoute extends Route {
         clockLoop?: boolean;
         clockRange?: Cesium.ClockRange;
         attr?: any;
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
         billboard?: BillboardEntity.StyleOptions | any;
         point?: PointPrimitive.StyleOptions | any;
         model?: ModelPrimitive.StyleOptions | any;
@@ -6063,7 +6063,7 @@ declare class FixedRoute extends Route {
         polyline?: PolylineEntity.StyleOptions | any;
         wall?: WallEntity.StyleOptions | any;
         highlight?: {
-            label?: LabelPrimitive.StyleOptions | any;
+            label?: LabelEntity.StyleOptions | any;
             billboard?: BillboardEntity.StyleOptions | any;
             point?: PointPrimitive.StyleOptions | any;
             model?: ModelPrimitive.StyleOptions | any;
@@ -6666,7 +6666,7 @@ declare class Route extends BasePointPrimitive {
     constructor(options: {
         position?: Cesium.SampledPositionProperty;
         attr?: any;
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
         billboard?: BillboardEntity.StyleOptions | any;
         point?: PointPrimitive.StyleOptions | any;
         model?: ModelPrimitive.StyleOptions | any;
@@ -6676,7 +6676,7 @@ declare class Route extends BasePointPrimitive {
         polyline?: PolylineEntity.StyleOptions | any;
         wall?: WallEntity.StyleOptions | any;
         highlight?: {
-            label?: LabelPrimitive.StyleOptions | any;
+            label?: LabelEntity.StyleOptions | any;
             billboard?: BillboardEntity.StyleOptions | any;
             point?: PointPrimitive.StyleOptions | any;
             model?: ModelPrimitive.StyleOptions | any;
@@ -8886,7 +8886,7 @@ declare namespace BillboardEntity {
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9071,7 +9071,7 @@ declare namespace BoxEntity {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9279,6 +9279,7 @@ declare namespace CanvasLabelEntity {
      * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      */
     type StyleOptions = any | {
         text?: string;
@@ -9322,6 +9323,7 @@ declare namespace CanvasLabelEntity {
         translucencyByDistance?: Cesium.NearFarScalar;
         setHeight?: number | string;
         addHeight?: number | string;
+        highlight?: CanvasLabelEntity.StyleOptions | any;
     };
 }
 
@@ -9416,7 +9418,7 @@ declare namespace CircleEntity {
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序。用于排序地面几何。只有在椭圆为常量且没有指定height或exturdedHeight时才有效果。
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9662,7 +9664,7 @@ declare namespace ConeTrack {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9823,7 +9825,7 @@ declare namespace CorridorEntity {
      * @property [zIndex = 0] - 层级顺序，用于排序。只有在高度和挤压高度未定义，并且走廊是静态的情况下才有效果。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10027,7 +10029,7 @@ declare namespace CylinderEntity {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定从实体位置到它的相对高度。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10170,7 +10172,7 @@ declare namespace DivBillboardEntity {
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10461,7 +10463,7 @@ declare namespace EllipseEntity {
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [zIndex = 0] - 层级顺序。用于排序地面几何。只有在椭圆为常量且没有指定height或exturdedHeight时才有效果。
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10601,7 +10603,7 @@ declare namespace EllipsoidEntity {
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定椭球是否投射或接收来自光源的阴影。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10803,7 +10805,7 @@ declare namespace FontBillboardEntity {
      * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10957,6 +10959,7 @@ declare namespace LabelEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [templateEmptyStr = ""] - 当text存在模版字符串配置时，空值时显示的内容
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      */
     type StyleOptions = any | {
         text?: string;
@@ -11005,6 +11008,7 @@ declare namespace LabelEntity {
         setHeight?: number | string;
         addHeight?: number | string;
         templateEmptyStr?: string;
+        highlight?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -11099,14 +11103,14 @@ declare namespace ModelEntity {
     /**
      * gltf小模型 支持的样式信息
      * @property [url] - glTF模型的URI的字符串或资源属性。
-     * @property [scale = 1.0] - 比例
+     * @property [scale = 1.0] - 缩放比例
+     * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑scale缩放，内部会计算像素对应的实际scale值。
+     * @property [maximumScale] - 内部计算minimumPixelSize对应的实际scale值时，限定的最大的scale缩放比例。
      * @property [heading = 0] - 方向角 （度数值，0-360度），优先级高于orientation
      * @property [pitch = 0] - 俯仰角（度数值，0-360度），优先级高于orientation
      * @property [roll = 0] - 翻滚角（度数值，0-360度），优先级高于orientation
      * @property [mergeOrientation = false] - 当存在orientation时（如addDynamicPosition等），设置为true时，是在orientation基础的方式值上加上设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的纠偏处理
      * @property [radius] - 编辑时，半径圆圈的半径，默认自动
-     * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑缩放。
-     * @property [maximumScale] - 模型的最大比例尺寸。minimumPixelSize的上限。
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
      * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -11135,19 +11139,19 @@ declare namespace ModelEntity {
      * @property [customShader] - A property specifying the {@link CustomShader} to apply to this model.
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
         url?: string | Cesium.Resource;
         scale?: number;
+        minimumPixelSize?: number;
+        maximumScale?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
         mergeOrientation?: boolean;
         radius?: number;
-        minimumPixelSize?: number;
-        maximumScale?: number;
         fill?: boolean;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -11436,6 +11440,7 @@ declare namespace PathEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      */
     type StyleOptions = any | {
         width?: number;
@@ -11448,6 +11453,7 @@ declare namespace PathEntity {
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
+        highlight?: PathEntity.StyleOptions | any;
     };
 }
 
@@ -11647,7 +11653,7 @@ declare namespace PitEntity {
         imageBottom: string;
         diffHeight: number;
         splitNum?: number;
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -11736,7 +11742,7 @@ declare namespace PlaneEntity {
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定平面是投射还是接收来自光源的阴影。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -11863,7 +11869,7 @@ declare namespace PointEntity {
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -12014,7 +12020,7 @@ declare namespace PolygonEntity {
      * @property [buffer] - 对坐标进行缓冲扩大buffer指定的半径范围，单位：米。如用于单体化建筑物扩大点方便鼠标拾取。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -12222,7 +12228,7 @@ declare namespace PolylineEntity {
      * @property [zIndex = 0] - 层级顺序,指定用于排序地面几何的zIndex。只有当' clampToGround '为真且支持地形上的折线时才会有效果。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string} [label.text = "文字"] 文本内容，换行可以用换行符'\n'。
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -12364,7 +12370,7 @@ declare namespace PolylineVolumeEntity {
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定管道是否投射或接收来自光源的阴影。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -12504,7 +12510,7 @@ declare namespace RectangleEntity {
      * @property [zIndex = 0] - 层级顺序，指定用于排序地面几何的zIndex。只有当矩形为常量且没有指定height或extrdedheight时才有效果。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -13077,7 +13083,7 @@ declare namespace WallEntity {
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -15484,7 +15490,7 @@ declare namespace BoxPrimitive {
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -15598,6 +15604,7 @@ declare namespace CirclePrimitive {
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离。
+     * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
@@ -15623,7 +15630,7 @@ declare namespace CirclePrimitive {
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -15634,6 +15641,7 @@ declare namespace CirclePrimitive {
         stRotation?: number;
         stRotationDegree?: number;
         granularity?: number;
+        fill?: boolean;
         materialType?: string;
         materialOptions?: any;
         material?: Cesium.Material;
@@ -16000,7 +16008,7 @@ declare namespace ConeTrackPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16152,6 +16160,7 @@ declare namespace CorridorPrimitive {
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16185,7 +16194,8 @@ declare namespace CorridorPrimitive {
         renderState?: any;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelPrimitive.StyleOptions | any;
+        highlight?: CorridorPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -16284,7 +16294,7 @@ declare namespace CylinderPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16730,7 +16740,7 @@ declare namespace EllipsoidPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16867,7 +16877,7 @@ declare namespace FrustumPrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -17008,16 +17018,6 @@ declare class FrustumPrimitive extends BasePointPrimitive {
     roll: number;
 }
 
-declare namespace LabelPrimitive {
-    /**
-     * 文字 支持的样式信息（与LabelEntity相同）
-     * @property [所有] - 与LabelEntity相同
-     */
-    type StyleOptions = any | {
-        所有?: LabelEntity.StyleOptions | any;
-    };
-}
-
 /**
  * 文字 Primitive矢量数据
  * @param options - 参数对象，包括以下：
@@ -17046,7 +17046,7 @@ declare namespace LabelPrimitive {
 declare class LabelPrimitive extends BasePointPrimitive {
     constructor(options: {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
-        style: LabelPrimitive.StyleOptions | any;
+        style: LabelEntity.StyleOptions | any;
         attr?: any;
         forwardExtrapolationType?: Cesium.ExtrapolationType;
         backwardExtrapolationType?: Cesium.ExtrapolationType;
@@ -17090,7 +17090,7 @@ declare namespace LightCone {
      * @property [radius = 100] - 锥体底部半径。(单位：米)
      * @property [height = 1000] - 锥体高度，相对于椭球面的高度。(单位：米)
      * @property [distanceDisplayCondition] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      */
     type StyleOptions = any | {
         color?: string | Cesium.Color;
@@ -17160,7 +17160,9 @@ declare namespace ModelPrimitive {
     /**
      * gltf小模型 支持的样式信息
      * @property [url] - glTF模型的URI的字符串或资源属性。
-     * @property [scale = 1] - 整体缩放比例
+     * @property [scale = 1.0] - 缩放比例
+     * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑scale缩放，内部会计算像素对应的实际scale值。
+     * @property [maximumScale] - 内部计算minimumPixelSize对应的实际scale值时，限定的最大的scale缩放比例。
      * @property [scaleX = 1] - X轴方向缩放比例
      * @property [scaleY = 1] - Y轴方向缩放比例
      * @property [scaleZ = 1] - Z轴方向缩放比例
@@ -17168,8 +17170,6 @@ declare namespace ModelPrimitive {
      * @property [pitch = 0] - 俯仰角（度数值，0-360度），优先级高于orientation
      * @property [roll = 0] - 翻滚角（度数值，0-360度），优先级高于orientation
      * @property [mergeOrientation = false] - 当存在orientation时（如addDynamicPosition等），设置为true时，可以在orientation基础的方式值上叠加设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的处理
-     * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑缩放。
-     * @property [maximumScale] - 模型的最大比例尺寸。minimumPixelSize的上限。
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
      * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
@@ -17232,12 +17232,14 @@ declare namespace ModelPrimitive {
      * @property [loop = Cesium.ModelAnimationLoop.REPEAT] - 决定动画是否循环以及如何循环。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
         url?: string | Cesium.Resource;
         scale?: number;
+        minimumPixelSize?: number;
+        maximumScale?: number;
         scaleX?: number;
         scaleY?: number;
         scaleZ?: number;
@@ -17245,8 +17247,6 @@ declare namespace ModelPrimitive {
         pitch?: number;
         roll?: number;
         mergeOrientation?: boolean;
-        minimumPixelSize?: number;
-        maximumScale?: number;
         fill?: boolean;
         color?: string | Cesium.Color;
         opacity?: number;
@@ -17427,7 +17427,7 @@ declare namespace Pit {
         imageBottom: string;
         diffHeight: number;
         splitNum?: number;
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -17534,7 +17534,7 @@ declare namespace PlanePrimitive {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -17686,7 +17686,7 @@ declare namespace PointPrimitive {
         clampToGround?: boolean;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -17798,7 +17798,7 @@ declare namespace PolygonPrimitive {
      * @property [buffer] - 对坐标进行缓冲扩大buffer指定的半径范围，单位：米。如用于单体化建筑物扩大点方便鼠标拾取。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -17846,7 +17846,7 @@ declare namespace PolygonPrimitive {
         setHeight?: number | string | number[];
         addHeight?: number | string | number[];
         highlight?: PolygonPrimitive.StyleOptions | any;
-        label?: LabelPrimitive.StyleOptions | any | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -17954,7 +17954,7 @@ declare namespace PolylinePrimitive {
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -17985,7 +17985,7 @@ declare namespace PolylinePrimitive {
         setHeight?: number | string | number[];
         addHeight?: number | string | number[];
         highlight?: PolylinePrimitive.StyleOptions | any;
-        label?: LabelPrimitive.StyleOptions | any | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -18114,7 +18114,7 @@ declare namespace PolylineVolumePrimitive {
         renderState?: any;
         setHeight?: number | string | number[];
         addHeight?: number | string | number[];
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -18257,7 +18257,7 @@ declare namespace RectanglePrimitive {
         renderState?: any;
         setHeight?: number | string;
         addHeight?: number | string;
-        label?: LabelPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
     };
 }
 
@@ -18527,7 +18527,7 @@ declare namespace ScrollWall {
      * @property [reverse = false] - 方向：true往上、false往下
      * @property [style = 1] - 样式，可选值：1、2
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -18614,7 +18614,7 @@ declare namespace ThickWall {
      * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      */
@@ -18637,7 +18637,7 @@ declare namespace ThickWall {
         fragmentShaderSource?: string;
         renderState?: any;
         highlight?: WallPrimitive.StyleOptions | any;
-        label?: LabelPrimitive.StyleOptions | any | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -18838,7 +18838,7 @@ declare namespace WallPrimitive {
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -18867,7 +18867,7 @@ declare namespace WallPrimitive {
         setHeight?: number | string;
         addHeight?: number | string;
         highlight?: WallPrimitive.StyleOptions | any;
-        label?: LabelPrimitive.StyleOptions | any | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -18979,7 +18979,7 @@ declare namespace Water {
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
-     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -19023,7 +19023,7 @@ declare namespace Water {
         setHeight?: number | string | number[];
         addHeight?: number | string | number[];
         highlight?: PolygonPrimitive.StyleOptions | any;
-        label?: LabelPrimitive.StyleOptions | any | any;
+        label?: LabelEntity.StyleOptions | any | any;
     };
 }
 
@@ -25485,8 +25485,8 @@ declare class OsmLayer extends BaseTileLayer {
  *     <li><code>ter_z</code>: 地形渲染图注记</li>
  *     <li><code>xzqh</code>: 行政区划界线</li>
  * </ul>
+ * @param [options.url = "https://t{s}.tianditu.gov.cn/"] - 服务URL地址前缀
  * @param [options.key = mars3d.Token.tiandituArr] - 天地图服务Token，可以自行注册官网： {@link https://console.tianditu.gov.cn/api/key}
- * @param [options.url] - 服务URL地址，同xyz服务
  * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
  * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
  * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
@@ -25542,8 +25542,8 @@ declare class OsmLayer extends BaseTileLayer {
 declare class TdtLayer extends BaseTileLayer {
     constructor(options?: {
         layer?: string;
-        key?: string[];
         url?: string;
+        key?: string[];
         minimumLevel?: number;
         maximumLevel?: number;
         minimumTerrainLevel?: number;
@@ -31109,7 +31109,7 @@ declare namespace Satellite {
  * @param [options.cone] - 设置是否显示 卫星视椎体 和对应的样式
  * @param [options.path] - 设置是否显示 卫星轨迹路线 和对应的样式，属性还包含：<br />
  * //  * @param {boolean} [options.path.closure=false]  是否闭合轨道圆
- * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，创建Graphic后也可以openHighlight、closeHighlight方法来手动调用
+ * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
  * @param [highlight.model] - 设置是否显示 gltf卫星模型 和对应的样式
  * @param [highlight.label] - 设置是否显示 文本 和对应的样式
  * @param [highlight.billboard] - 设置是否显示 图标点 和对应的样式
@@ -34098,25 +34098,25 @@ declare class TerrainEditBase extends BaseThing {
      * @param id - id值
      * @returns 区域对象
      */
-    getAreaById(id: number): any;
+    getAreaById(id: number | string): any;
     /**
      * 隐藏单个区域
      * @param id - 区域id值
      * @returns 无
      */
-    hideArea(id: number): void;
+    hideArea(id: number | string): void;
     /**
      * 显示单个区域
      * @param id - 区域id值
      * @returns 无
      */
-    showArea(id: number): void;
+    showArea(id: number | string): void;
     /**
      * 移除单个区域
      * @param item - 区域的id值，或 addArea返回的区域对象
      * @returns 无
      */
-    removeArea(item: number | any): void;
+    removeArea(item: number | string | any): void;
     /**
      * 添加单个区域
      * @param positions - 坐标位置数组
@@ -34127,6 +34127,7 @@ declare class TerrainEditBase extends BaseThing {
      * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
+     * @param [options.id] - 外部自定义ID，注意不用有重复值。默认内部自动赋予
      * @returns 添加区域的记录对象
      */
     addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[], options?: {
@@ -34137,6 +34138,7 @@ declare class TerrainEditBase extends BaseThing {
             highQuality?: boolean;
             mutate?: boolean;
         };
+        id?: number | string;
     }): any;
 }
 
@@ -34482,6 +34484,7 @@ declare class TilesetEditBase extends BaseThing {
      * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
+     * @param [options.id] - 外部自定义ID，注意不用有重复值。默认内部自动赋予
      * @returns 添加区域的记录对象
      */
     addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[], options?: {
@@ -34491,31 +34494,32 @@ declare class TilesetEditBase extends BaseThing {
             highQuality?: boolean;
             mutate?: boolean;
         };
+        id?: number | string;
     }): any;
     /**
      * 根据id获取区域对象
      * @param id - id值
      * @returns 区域对象
      */
-    getAreaById(id: number): any;
+    getAreaById(id: number | string): any;
     /**
      * 隐藏单个区域
      * @param id - 区域id值
      * @returns 无
      */
-    hideArea(id: number): void;
+    hideArea(id: number | string): void;
     /**
      * 显示单个区域
      * @param id - 区域id值
      * @returns 无
      */
-    showArea(id: number): void;
+    showArea(id: number | string): void;
     /**
      * 移除单个区域
      * @param item - 区域的id，或 addArea返回的区域对象
      * @returns 无
      */
-    removeArea(item: number | any): void;
+    removeArea(item: number | string | any): void;
     /**
      * 转为Json简单对象，用于存储后再传参加载
      * @returns Json简单对象
@@ -34561,6 +34565,7 @@ declare class TilesetFlat extends TilesetEditBase {
      * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
+     * @param [options.id] - 外部自定义ID，注意不用有重复值。默认内部自动赋予
      * @returns 添加区域的记录对象
      */
     addArea(positions: string[] | any[][] | LngLatPoint[] | Cesium.Cartesian3[], options?: {
@@ -34570,6 +34575,7 @@ declare class TilesetFlat extends TilesetEditBase {
             highQuality?: boolean;
             mutate?: boolean;
         };
+        id?: number | string;
     }): any;
 }
 
@@ -34733,7 +34739,7 @@ declare class TilesetPlanClip extends BaseThing {
     /**
      * 裁剪类型（按方向类型正方向单面裁剪）
      */
-    type: ClipType;
+    type: string | number;
     /**
      * 裁剪区域坐标数组(按面或线裁剪)
      */
@@ -37845,8 +37851,9 @@ declare namespace thing {
 
 export {
   name, update, version, proj4, Tle,
-  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, MaterialType, GraphicType, LayerType, ControlType, EffectType, Lang, MoveType, ClipType, Icon, EditPointType,
-  DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil,
+  BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp,
+  MaterialType, GraphicType, LayerType, ControlType, EffectType, ThingType, Lang, MoveType, ClipType, Icon, EditPointType,
+  DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil, ThingUtil,
   BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
   material, graphic, edit, provider, layer, thing, effect, control, query,
   Map,

@@ -527,6 +527,7 @@ html {
   padding: 3px 10px;
   border: 1px solid #209ffd;
   background: #209ffd1c;
+  color: #ffffff;
 }
 
 .mars3d-popup-content {
@@ -535,4 +536,14 @@ html {
 
 .mars3d-divGraphic:hover {
   z-index: 999 !important;
+}
+
+.bootstrap-table  {
+  max-width: 400px !important;
+}
+
+.closeBtn {
+  float: right;
+  color: white;
+  cursor: pointer;
 }
