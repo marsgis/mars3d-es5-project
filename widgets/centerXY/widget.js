@@ -16,8 +16,8 @@
         type: "divwindow",
         url: "view.html",
         windowOptions: {
-          width: 300,
-          height: 280
+          width: 340,
+          height: 300
         }
       }
     }
@@ -66,6 +66,7 @@
         this.updateTen()
         this.updataDfm()
         this.updata3GKZone()
+        this.updata6GKZone()
       }
     }
     //点击地图坐标更新
@@ -108,6 +109,10 @@
         this.change3GKZone()
       })
 
+      $("#txtGk6X,#txtGk6Y,#txtGk6Alt").change(() => {
+        this.change6GKZone()
+      })
+
       $("#btnCenterXY").click(() => {
         if (currJD > 180 || currJD < -180) {
           haoutil.alert("请输入有效的经度值！")
@@ -143,6 +148,25 @@
             $(".viewDms").hide()
             $(".viewGk").show()
             this.updata3GKZone()
+            this.updata6GKZone()
+
+            break
+        }
+      })
+
+      $('input:radio[name="rdoGkType"]').change(() => {
+        let selectType = $('input:radio[name="rdoGkType"]:checked').val()
+        switch (selectType) {
+          case "1": // 三分度带
+            $(".viewGk6").hide()
+            $(".viewGk3").show()
+            this.updata3GKZone()
+            break
+          case "2": // 六分度带
+            $(".viewGk6").show()
+            $(".viewGk3").hide()
+            this.updata6GKZone()
+
             break
         }
       })
@@ -207,6 +231,25 @@
       currJD = gk3[0]
       currWD = gk3[1]
       currGD = Number($("#txtGk3Alt").val() || 0) //高度
+    }
+
+    //更新：2000平面坐标六分度
+    updata6GKZone() {
+      var zoon6 = mars3d.PointTrans.proj4Trans([currJD, currWD], mars3d.CRS.EPSG4326, mars3d.CRS.CGCS2000_GK_Zone_6) //十进制转2000平面六分度
+      $("#txtGk6X").val(mars3d.Util.formatNum(zoon6[0], 1))
+      $("#txtGk6Y").val(mars3d.Util.formatNum(zoon6[1], 1))
+      $("#txtGk6Alt").val(currGD)
+    }
+
+    //修改了：2000平面坐标六分度
+    change6GKZone() {
+      var jd = Number($("#txtGk6X").val()) //获取
+      var wd = Number($("#txtGk6Y").val())
+      var gk6 = mars3d.PointTrans.proj4Trans([jd, wd], mars3d.CRS.CGCS2000_GK_Zone_6, mars3d.CRS.EPSG4326)
+
+      currJD = gk6[0]
+      currWD = gk6[1]
+      currGD = Number($("#txtGk6Alt").val() || 0) //高度
     }
   }
 

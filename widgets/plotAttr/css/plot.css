@@ -660,6 +660,7 @@ textarea {
 }
 
 .dark .mp_input {
+  color: #fff;
   background-color: rgba(63, 72, 84, 0.6);
 }
 

@@ -1,5 +1,6 @@
 ﻿<div class="centerXY">
   <div>
+    <span>范围：</span>
     <div class="radio radio-info radio-inline">
       <input type="radio" id="rdoType1" name="rdoType" value="1" checked />
       <label for="rdoType1">十进制</label>
@@ -66,19 +67,50 @@
 
   <!-- 2000平面坐标 表单-->
   <form class="planeForm" autocomplete="off">
-    <div class="viewGk" style="display: none" title="大地2000高斯投影3度分带">
-      <div>
-        <label>纵坐标：</label>
-        <input type="text" id="txtGk3X" class="form-control" style="width: 160px; margin-top: 10px;" />
+    <div class="viewGk" style="display: none">
+      <div style=" margin-top: 10px;">
+        <span>分带：</span>
+        <div class="radio radio-info radio-inline">
+          <input type="radio" id="rdoGkType1" name="rdoGkType" value="1" checked />
+          <label for="rdoGkType1">三度带</label>
+        </div>
+        <div class="radio radio-info radio-inline">
+          <input type="radio" id="rdoGkType2" name="rdoGkType" value="2" />
+          <label for="rdoGkType2">六度带</label>
+        </div>
       </div>
-      <div>
-        <label>横坐标：</label>
-        <input type="text" id="txtGk3Y" class="form-control" style="width: 160px; margin-top: 10px;" />
+
+
+      <div class="viewGk3">
+        <div>
+          <label>纵坐标：</label>
+          <input type="text" id="txtGk3X" class="form-control" style="width: 160px; margin-top: 10px;" />
+        </div>
+        <div>
+          <label>横坐标：</label>
+          <input type="text" id="txtGk3Y" class="form-control" style="width: 160px; margin-top: 10px;" />
+        </div>
+        <div>
+          <label>高度值：</label>
+          <input type="text" id="txtGk3Alt" class="form-control" style="width: 160px; margin-top: 10px;" step="0.1" />
+        </div>
       </div>
-      <div>
-        <label>高度值：</label>
-        <input type="text" id="txtGk3Alt" class="form-control" style="width: 160px; margin-top: 10px;" step="0.1" />
+
+      <div class="viewGk6" style="display: none">
+        <div>
+          <label>纵坐标：</label>
+          <input type="text" id="txtGk6X" class="form-control" style="width: 160px; margin-top: 10px;" />
+        </div>
+        <div>
+          <label>横坐标：</label>
+          <input type="text" id="txtGk6Y" class="form-control" style="width: 160px; margin-top: 10px;" />
+        </div>
+        <div>
+          <label>高度值：</label>
+          <input type="text" id="txtGk6Alt" class="form-control" style="width: 160px; margin-top: 10px;" step="0.1" />
+        </div>
       </div>
+
     </div>
   </form>
   <!-- "坐标定位" button按钮 -->
