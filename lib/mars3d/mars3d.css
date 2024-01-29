@@ -1,10 +1,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.0
- * 编译日期：2024-01-14 21:58:08
+ * 版本信息：v3.7.2
+ * 编译日期：2024-01-29 17:14:58
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2023-03-17
+ * 使用单位：免费公开版 ，2024-01-15
  */
 
 /**地球容器div*/
@@ -847,7 +847,7 @@
 .mars3d-popup-tip-container {
   margin: 0 auto;
   width: 40px;
-  height: 20px;
+  height: 17px;
   position: relative;
   overflow: hidden;
 }
@@ -1015,4 +1015,7 @@
   left: 0;
   margin-left: -6px;
   border-right-color: rgba(63, 72, 84, 0.9);
+}
+.mars3d-divlayer-camera {
+  backface-visibility: hidden;
 }

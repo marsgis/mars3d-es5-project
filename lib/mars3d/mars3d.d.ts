@@ -2,10 +2,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.0
- * 编译日期：2024-01-14 21:58:08
+ * 版本信息：v3.7.2
+ * 编译日期：2024-01-29 17:14:58
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2023-03-17
+ * 使用单位：免费公开版 ，2024-01-15
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -7813,6 +7813,20 @@ declare class DivGraphic extends BaseGraphic {
         isFormat?: boolean;
     }): Cesium.Rectangle | any;
     /**
+     * 添加指定的className的calss样式
+     * @param className - class样式名称
+     * @param [isParent] - 多个子节点时，是否在根节点添加
+     * @returns 无
+     */
+    addClass(className: string, isParent?: boolean): void;
+    /**
+     * 移除指定的className的calss样式
+     * @param className - class样式名称
+     * @param [isParent] - 多个子节点时，是否在根节点移除
+     * @returns 无
+     */
+    removeClass(className: string, isParent?: boolean): void;
+    /**
      * 开始绘制创建矢量数据，绘制的数据会加载在layer图层。
      * @param layer - 图层
      * @returns 无
@@ -15416,6 +15430,10 @@ declare class BasePrimitive extends BaseGraphic {
      */
     readonly primitiveCollection: Cesium.PrimitiveCollection | Cesium.LabelCollection | Cesium.BillboardCollection | Cesium.PointPrimitiveCollection | Cesium.CloudCollection;
     /**
+     * 当加载贴地primitive数据的内部Cesium容器
+     */
+    readonly groundPrimitiveCollection: Cesium.PrimitiveCollection;
+    /**
      * 矢量数据对应的 Cesium内部对象
      */
     readonly primitive: Cesium.Primitive | Cesium.GroundPrimitive | Cesium.ClassificationPrimitive | any;
@@ -17562,6 +17580,28 @@ declare class ModelPrimitive extends BasePointPrimitive {
      * @returns 无
      */
     setOpacity(value: number): void;
+    /**
+     * 高亮闪烁
+     * @param options - 参数
+     * @param [options.time] - 闪烁的总时长(秒)，未设置时不自动停止。
+     * @param [options.step = 10] - 闪烁增量, 控制速度
+     * @param [options.color] - 高亮的颜色
+     * @param [options.maxAlpha = 0.3] - 闪烁的最大透明度，从 0 到 maxAlpha 渐变
+     * @param [options.onEnd] - 播放完成后的回调方法
+     * @returns 高亮闪烁控制 对象
+     */
+    startFlicker(options: {
+        time?: number;
+        step?: number;
+        color?: Cesium.Color | string;
+        maxAlpha?: number;
+        onEnd?: (...params: any[]) => any;
+    }): FlickerEntity;
+    /**
+     * 停止高亮闪烁
+     * @returns 无
+     */
+    stopFlicker(): void;
 }
 
 declare namespace Pit {
@@ -21497,6 +21537,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     primitiveCollection: Cesium.PrimitiveCollection;
     /**
+     * 当加载普通 贴地的 primitive类型数据的内部Cesium容器 {@link BasePrimitive}
+     */
+    groundPrimitiveCollection: Cesium.PrimitiveCollection;
+    /**
      * 当加载 DivGraphic 数据的内部DOM容器 {@link DivGraphic}
      */
     readonly container: HTMLDivElement;
@@ -21736,6 +21780,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.minPointNum] - 线面数据时限定的最小坐标个数
      * @param [options.maxPointNum] - 线面数据时限定的最大坐标个数
      * @param [options.validDrawPosition] - 外部自定义校验坐标,比如判断限定在指定区域内绘制。
+     * @param [options.updateDrawPosition] - 外部自定义更新坐标,可以自定义处理特殊业务返回修改后的新坐标。
      * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.availability] - 指定时间范围内显示该对象
@@ -21751,6 +21796,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         minPointNum?: number;
         maxPointNum?: number;
         validDrawPosition?: (...params: any[]) => any;
+        updateDrawPosition?: (...params: any[]) => any;
         drawShow?: boolean;
         addHeight?: number;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
@@ -21854,6 +21900,10 @@ declare class GraticuleLayer extends BaseLayer {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+    /**
+     * 网格数步长(度数)数组
+     */
+    steps: number[];
     /**
      * 对象添加到地图前创建一些对象的钩子方法，
      * 只会调用一次
@@ -23450,6 +23500,7 @@ declare class TerrainLayer extends BaseLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -23509,6 +23560,7 @@ declare class ArcGisCacheLayer extends BaseTileLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -23544,14 +23596,14 @@ declare namespace ArcGisLayer {
      * ArcGIS服务图层支持的{@link EventType}事件类型
      * @example
      * //绑定监听事件
-     * layer.on(mars3d.EventType.loadConfig, function (event) {
-     *   console.log('loadConfig', event)
+     * layer.on(mars3d.EventType.load, function (event) {
+     *   console.log('load', event)
      * })
-     * @property loadConfig - 加载metadata配置信息完成事件
+     * @property load - 加载完成事件
      * @property click - 鼠标单击事件【enablePickFeatures:true时,支持单击获取对应的矢量对象】
      */
     type EventType = {
-        loadConfig: string;
+        load: string;
         click: string;
     };
 }
@@ -23615,6 +23667,7 @@ declare namespace ArcGisLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -23691,6 +23744,7 @@ declare class ArcGisLayer extends BaseTileLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -23801,6 +23855,7 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -23859,6 +23914,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -24113,6 +24169,7 @@ declare namespace BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -24173,6 +24230,7 @@ declare class BaseTileLayer extends BaseLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -26229,6 +26287,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26312,6 +26371,7 @@ declare class WmsLayer extends BaseTileLayer {
         templateValues?: any;
         queryParameters?: any;
         headers?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -26418,6 +26478,7 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.hasAlphaChannel = true] - 如果此图像提供者提供的图像为真 包括一个Alpha通道；否则为假。如果此属性为false，则为Alpha通道，如果 目前，将被忽略。如果此属性为true，则任何没有Alpha通道的图像都将 它们的alpha随处可见。当此属性为false时，内存使用情况 和纹理上传时间可能会减少。
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26488,6 +26549,7 @@ declare class WmtsLayer extends BaseTileLayer {
         hasAlphaChannel?: boolean;
         tileWidth?: number;
         tileHeight?: number;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -26609,6 +26671,7 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系。
  * @param [options.id = createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26670,6 +26733,7 @@ declare class XyzLayer extends BaseTileLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -26733,8 +26797,8 @@ declare class ContextMenu extends BaseControl {
  * @param [options.moveStep = 10] - 平移步长 (米)
  * @param [options.dirStep = 25] - 相机原地旋转步长，值越大步长越小。
  * @param [options.rotateStep = 1.0] - 相机围绕目标点旋转速率，0.3 - 2.0
- * @param [options.minPitch = 0.01] - 最小仰角  0 - 1
- * @param [options.maxPitch = 0.95] - 最大仰角  0 - 1
+ * @param [options.minPitch = -89] - 最小仰角（单位：度）
+ * @param [options.maxPitch = 45] - 最大仰角（单位：度）
  * @param [options.minHeight = 0] - 最低高度（单位：米）
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -26771,7 +26835,7 @@ declare class KeyboardRoam extends BaseControl {
      */
     rotateStep: number;
     /**
-     * 最小仰角  0 - 1
+     * 最小仰角
      */
     minPitch: number;
     /**
@@ -26889,9 +26953,10 @@ declare class MouseEvent {
     /**
      * 瓦片图层上的矢量对象，动态获取
      * @param position - 坐标
+     * @param [clampToTileset] - 是否为贴模型的瓦片图层
      * @returns 完成时承诺
      */
-    pickImageryLayerFeatures(position: LngLatPoint | Cesium.Cartesian3 | any): Promise<any>;
+    pickImageryLayerFeatures(position: LngLatPoint | Cesium.Cartesian3 | any, clampToTileset?: boolean): Promise<any>;
 }
 
 /**
@@ -31095,7 +31160,7 @@ declare namespace FixedJammingRadar {
      */
     type JammerOptions = {
         id?: string;
-        position?: mars3d.LngLatPoint;
+        position?: LngLatPoint;
         pji?: number;
         gji?: number;
         bji?: number;
@@ -36923,6 +36988,12 @@ declare namespace PolyUtil {
         granularity?: number;
         rotation?: number;
     }): Cesium.Cartesian3[];
+    /**
+     * 获取地图视角四个顶点边界坐标点数组
+     * @param scene - 三维地图场景对象，一般用map.scene或viewer.scene
+     * @returns 边线上的坐标点数组
+     */
+    function getMapExtentPositions(scene: Cesium.Scene): Cesium.Cartesian3[];
     /**
      * 格式化Rectangle矩形对象,返回经纬度值
      * @param rectangle - 矩形对象
