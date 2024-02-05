@@ -2,15 +2,14 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.2
- * 编译日期：2024-01-29 17:14:58
+ * 版本信息：v3.7.3
+ * 编译日期：2024-02-05 13:28:43
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
 
 import * as Cesium from "mars3d-cesium"
 export { Cesium }
-export { Resource } from "mars3d-cesium"
 
 declare const version: string
 declare const update: string
@@ -3651,7 +3650,7 @@ declare class BrightnessEffect extends BaseEffect {
 }
 
 /**
- * 颜色校正 效果
+ * 全局 颜色校正 效果
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.brightness = 1.0] - 亮度
@@ -6010,9 +6009,6 @@ declare class ConeVisibility extends PointVisibility {
  * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.clampToTileset] - 是否进行贴模型。
  * @param [options.frameRateHeight = 30] - clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
- * @param [options.maxHeight] - 限定最高高度，避免计算异常数据
- * @param [options.minHeight] - 限定最低高度，避免计算异常数据
  * @param [options.camera] - 视角模式设置，包括：
  * @param [options.camera.type] - 视角模式类型，包括：'':无、'gs':跟随视角、'dy':第一视角、'sd':上帝视角
  * @param [options.camera.radius] - 'gs'跟随视角时的 初始俯仰距离值（单位：米）
@@ -6084,9 +6080,6 @@ declare class FixedRoute extends Route {
         autoMiddleDynamicPosition?: boolean;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
-        maxHeight?: number;
-        minHeight?: number;
         camera?: {
             type?: string;
             radius?: number;
@@ -6150,6 +6143,7 @@ declare class FixedRoute extends Route {
      * @param [options] - 控制参数
      * @param [options.splitNum = 100] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
      * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
@@ -6158,6 +6152,7 @@ declare class FixedRoute extends Route {
     autoSurfaceHeight(options?: {
         splitNum?: number;
         minDistance?: number;
+        exact?: boolean;
         has3dtiles?: boolean;
         objectsToExclude?: any;
         offset?: number;
@@ -6636,9 +6631,6 @@ declare namespace Route {
  * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
  * @param [options.clampToTileset] - 是否进行贴模型。
  * @param [options.frameRateHeight = 30] - clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
- * @param [options.maxHeight] - 限定最高高度，避免计算异常数据
- * @param [options.minHeight] - 限定最低高度，避免计算异常数据
  * @param [options.camera] - 视角模式设置，包括：
  * @param [options.camera.type] - 视角模式类型，包括：'':无、'gs':跟随视角、'dy':第一视角、'sd':上帝视角
  * @param [options.camera.radius] - 'gs'跟随视角时的 初始俯仰距离值（单位：米）
@@ -6697,9 +6689,6 @@ declare class Route extends BasePointPrimitive {
         autoMiddleDynamicPosition?: boolean;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
-        maxHeight?: number;
-        minHeight?: number;
         camera?: {
             type?: string;
             radius?: number;
@@ -8526,7 +8515,7 @@ declare class BaseEntity extends BaseGraphic {
      * 重新渲染对象
      * @returns 无
      */
-    reload(): void;
+    redraw(): void;
     /**
      * 高亮对象。
      * @param [highlightStyle] - 高亮的样式，具体见各{@link GraphicType}矢量数据的style参数。
@@ -8628,7 +8617,6 @@ declare class BaseEntity extends BaseGraphic {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateClamp = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
  * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
  * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
@@ -8664,7 +8652,6 @@ declare class BasePointEntity extends BaseEntity {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateClamp?: number;
-        objectsToExclude?: any;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
         autoMiddleDynamicPosition?: boolean;
@@ -9081,7 +9068,6 @@ declare namespace BillboardEntity {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
@@ -9117,7 +9103,6 @@ declare class BillboardEntity extends BasePointEntity {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         drawShow?: boolean;
         hasEdit?: boolean;
         hasEditContextMenu?: boolean;
@@ -11333,7 +11318,6 @@ declare namespace ModelEntity {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
  * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
  * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
@@ -11376,7 +11360,6 @@ declare class ModelEntity extends BasePointEntity {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
         autoMiddleDynamicPosition?: boolean;
@@ -12041,7 +12024,6 @@ declare namespace PointEntity {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
@@ -12077,7 +12059,6 @@ declare class PointEntity extends BasePointEntity {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         drawShow?: boolean;
         hasEdit?: boolean;
         hasEditContextMenu?: boolean;
@@ -15064,7 +15045,6 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
  * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
  * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
@@ -15107,7 +15087,6 @@ declare class BasePointPrimitive extends BasePrimitive {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
         autoMiddleDynamicPosition?: boolean;
@@ -15557,6 +15536,10 @@ declare class BasePrimitive extends BaseGraphic {
      * 显示隐藏状态
      */
     show: boolean;
+    /**
+     * 设置事件的启用和禁用状态
+     */
+    enabledEvent: boolean;
 }
 
 /**
@@ -15569,7 +15552,6 @@ declare class BasePrimitive extends BaseGraphic {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -15593,7 +15575,6 @@ declare class BillboardPrimitive extends BasePointPrimitive {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -17197,7 +17178,6 @@ declare class FrustumPrimitive extends BasePointPrimitive {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -17221,7 +17201,6 @@ declare class LabelPrimitive extends BasePointPrimitive {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -17502,7 +17481,6 @@ declare namespace ModelPrimitive {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
  * @param [options.numberOfDerivatives = 0] - 当使用addDynamicPosition设置为动画轨迹位置时，每个位置的导数的数量;即速度、加速度等。
  * @param [options.autoMiddleDynamicPosition] - 当使用addDynamicPosition设置为动画轨迹位置时，如果中间缺少数据时是否自动添加中间点。
@@ -17536,7 +17514,6 @@ declare class ModelPrimitive extends BasePointPrimitive {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
         autoMiddleDynamicPosition?: boolean;
@@ -17892,7 +17869,6 @@ declare namespace PointPrimitive {
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
- * @param [options.objectsToExclude] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -17917,7 +17893,6 @@ declare class PointPrimitive extends BasePointPrimitive {
         backwardExtrapolationType?: Cesium.ExtrapolationType;
         clampToTileset?: boolean;
         frameRateHeight?: number;
-        objectsToExclude?: any;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -20970,7 +20945,6 @@ declare namespace GeoJsonLayer {
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.clampToTileset] - 是否贴模型，内部自动使用mars3d.PointUtil.getSurfacePosition计算贴模型
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
@@ -21052,7 +21026,6 @@ declare class GeoJsonLayer extends GraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            clampToTileset?: boolean;
             style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             fontColor?: string;
@@ -21403,7 +21376,6 @@ declare namespace GraphicLayer {
  * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
  * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
  * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.clampToTileset] - 是否贴模型，内部自动使用mars3d.PointUtil.getSurfacePosition计算贴模型
  * @param [options.clustering.style] - 聚合点的样式参数
  * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
  * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
@@ -21469,7 +21441,6 @@ declare class GraphicLayer extends BaseGraphicLayer {
             pixelRange?: number;
             minimumClusterSize?: number;
             clampToGround?: boolean;
-            clampToTileset?: boolean;
             style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
             radius?: number;
             fontColor?: string;
@@ -21976,7 +21947,7 @@ declare namespace I3SLayer {
  * @param [options.preloadWhenHidden = false] - 当true时，tileset.show是false，也去预加载数据。
  * @param [options.preloadFlightDestinations = true] - 优化选择。当摄像机在飞行时，在摄像机的飞行目的地预加载贴图。
  * @param [options.preferLeaves = false] - 优化选择。最好先加载上叶子节点数据。这个参数默认是false，同等条件下，叶子节点会优先加载。但是Cesium的tile加载优先级有很多考虑条件，这个只是其中之一，如果skipLevelOfDetail=false，这个参数几乎无意义。所以要配合skipLevelOfDetail=true来使用，此时设置preferLeaves=true。这样我们就能最快的看见符合当前视觉精度的块，对于提升大数据以及网络环境不好的前提下有一点点改善意义。
- * @param [options.dynamicScreenSpaceError = false] - 优化选择。减少远离摄像头的贴图的屏幕空间误差。true时会在真正的全屏加载完之后才清晰化模型.
+ * @param [options.dynamicScreenSpaceError = true] - 优化选择。减少远离摄像头的贴图的屏幕空间误差。true时会在真正的全屏加载完之后才清晰化模型.
  * @param [options.dynamicScreenSpaceErrorDensity = 0.00278] - 密度用来调整动态画面空间误差，类似于雾密度。
  * @param [options.dynamicScreenSpaceErrorFactor = 4.0] - 用于增加计算的动态屏幕空间误差的因素。
  * @param [options.dynamicScreenSpaceErrorHeightFalloff = 0.25] - 瓷砖密度开始下降时的高度之比。
@@ -22586,7 +22557,7 @@ declare namespace TilesetLayer {
  * @param [options.preloadWhenHidden = false] - 当true时，tileset.show是false，也去预加载数据。
  * @param [options.preloadFlightDestinations = true] - 优化选择。当摄像机在飞行时，在摄像机的飞行目的地预加载贴图。
  * @param [options.preferLeaves = false] - 优化选择。最好先加载上叶子节点数据。这个参数默认是false，同等条件下，叶子节点会优先加载。但是Cesium的tile加载优先级有很多考虑条件，这个只是其中之一，如果skipLevelOfDetail=false，这个参数几乎无意义。所以要配合skipLevelOfDetail=true来使用，此时设置preferLeaves=true。这样我们就能最快的看见符合当前视觉精度的块，对于提升大数据以及网络环境不好的前提下有一点点改善意义。
- * @param [options.dynamicScreenSpaceError = false] - 优化选择。减少远离摄像头的贴图的屏幕空间误差。true时会在真正的全屏加载完之后才清晰化模型.
+ * @param [options.dynamicScreenSpaceError = true] - 优化选择。减少远离摄像头的贴图的屏幕空间误差。true时会在真正的全屏加载完之后才清晰化模型.
  * @param [options.dynamicScreenSpaceErrorDensity = 0.00278] - 密度用来调整动态画面空间误差，类似于雾密度。
  * @param [options.dynamicScreenSpaceErrorFactor = 4.0] - 用于增加计算的动态屏幕空间误差的因素。
  * @param [options.dynamicScreenSpaceErrorHeightFalloff = 0.25] - 瓷砖密度开始下降时的高度之比。
@@ -22610,6 +22581,7 @@ declare namespace TilesetLayer {
  * @param [options.imageBasedLighting] - 用于管理基于图像的光源的属性。
  * @param [options.luminanceAtZenith = 0.2] - 模型材质亮度，The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
+ * @param [options.disableCollision = false] - 是否关闭相机碰撞或拾取的碰撞。当<code>true</code>时，如果<code> map.scene.screenSpaceCameraController.enableCollisionDetection</code>为true，则相机将被允许进入或低于贴片集表面。
  * @param [options.enableShowOutline = true] - 是否启用模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 可以将其设置为false，以避免在加载时对几何图形进行额外处理。如果为false，则会忽略showOutlines和outlineColor选项。
  * @param [options.showOutline = true] - 是否显示模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 当为true时，将显示轮廓。当为false时，不显示轮廓。
  * @param [options.outlineColor = Color.BLACK] - 渲染outline轮廓时要使用的颜色。
@@ -22742,6 +22714,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         imageBasedLighting?: Cesium.ImageBasedLighting;
         luminanceAtZenith?: number;
         backFaceCulling?: boolean;
+        disableCollision?: boolean;
         enableShowOutline?: boolean;
         showOutline?: boolean;
         outlineColor?: Cesium.Color;
@@ -22949,6 +22922,14 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * 模型原始矩阵
      */
     readonly orginMatrix: Cesium.Matrix4;
+    /**
+     * 获取贴当前模型高度值。
+     * PS: 该方法将只考虑已加载的LOD数据，而不一定是LOD集中最详细的最底层数据。
+     * 当采样点云时，此函数将始终返回undefined。
+     * @param position - 坐标位置
+     * @returns 贴模型的高度
+     */
+    getHeight(position: string | any[] | LngLatPoint | Cesium.Cartesian3 | any): number;
     /**
      * 模型自动贴地计算及处理,
      * 因为模型在设计或生产时，模型的视角中心位置不一定在0,0,0点，此方法不是唯一准确的。
@@ -27158,6 +27139,18 @@ declare class Map extends BaseClass {
      */
     getCenter(): LngLatPoint;
     /**
+     * 获取贴地的高度值 (仅考虑当前视域内数据和精度下的高度)
+     * @param position - 坐标位置
+     * @param [options = {}] - 参数对象，具有以下属性:
+     * @param [options.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND] - 高度参考，决定是否仅贴模型、仅贴地形、全部都考虑
+     * @param [options.original = false] - 计算失败时是否返回原始高度值
+     * @returns 贴地的高度值
+     */
+    getHeight(position: string | any[] | LngLatPoint | Cesium.Cartesian3 | any, options?: {
+        heightReference?: Cesium.HeightReference;
+        original?: boolean;
+    }): number;
+    /**
      * 取相机到屏幕中心点的距离
      * @returns 相机到屏幕中心点的距离，单位：米
      */
@@ -28013,6 +28006,15 @@ declare namespace Map {
      * @property [showSkyBox] - 是否显示天空盒，如修改对象可以用 [map.scene.skyBox]{@link http://mars3d.cn/api/cesium/SkyBox.html}
      * @property [showSkyAtmosphere] - 是否显示地球大气层外光圈，如修改对象可以用 [map.scene.skyAtmosphere]{@link http://mars3d.cn/api/cesium/SkyAtmosphere.html}
      * @property [fog] - 是否启用雾化效果，如修改对象可以用 [map.scene.fog]{@link http://mars3d.cn/api/cesium/fog.html}
+     * @property [atmosphere] - 3D贴图和模型用于渲染天空大气、地面大气和雾的常见大气设置。
+     * @property [atmosphere.lightIntensity = 10.0] - 用于计算地面大气颜色的光的强度。
+     * @property [atmosphere.rayleighScaleHeight = 10000.0] - 地面大气散射方程中使用的瑞利尺度高度，单位为米。
+     * @property [atmosphere.mieScaleHeight = 3200.0] - 地面大气散射方程中使用的米氏尺度高度，单位为米。
+     * @property [atmosphere.mieAnisotropy = 0.9] - The anisotropy of the medium to consider for Mie scattering.
+     * @property [atmosphere.hueShift = 0.0] - The hue shift to apply to the atmosphere. Defaults to 0.0 (no shift).
+     * @property [atmosphere.saturationShift = 0.0] - The saturation shift to apply to the atmosphere. Defaults to 0.0 (no shift). A saturation shift of -1.0 is monochrome.
+     * @property [atmosphere.brightnessShift = 0.0] - The brightness shift to apply to the atmosphere. Defaults to 0.0 (no shift).A brightness shift of -1.0 is complete darkness, which will let space show through.
+     * @property [atmosphere.dynamicLighting] - When not DynamicAtmosphereLightingType.NONE, the selected light source will
      * @property [fxaa] - 是否开启快速抗锯齿
      * @property [highDynamicRange] - 是否关闭高动态范围渲染(不关闭时地图会变暗)
      * @property [backgroundColor] - 空间背景色 ，css颜色值
@@ -28099,6 +28101,16 @@ declare namespace Map {
         showSkyBox?: boolean;
         showSkyAtmosphere?: boolean;
         fog?: boolean;
+        atmosphere?: {
+            lightIntensity?: number;
+            rayleighScaleHeight?: number;
+            mieScaleHeight?: number;
+            mieAnisotropy?: number;
+            hueShift?: number;
+            saturationShift?: number;
+            brightnessShift?: number;
+            dynamicLighting?: number | Cesium.DynamicAtmosphereLightingType;
+        };
         fxaa?: boolean;
         highDynamicRange?: boolean;
         backgroundColor?: string;
@@ -34877,6 +34889,51 @@ declare class TilesetClip extends TilesetEditBase {
 }
 
 /**
+ * 3dtiles模型 颜色校正 的效果
+ * @param [options] - 参数对象，包括以下：
+ * @param options.layer - 需要模型分析的对象（3dtiles图层）
+ * @param [options.brightness = 1.0] - 亮度
+ * @param [options.contrast = 1.0] - 对比度
+ * @param [options.hue = 0.0] - 色调
+ * @param [options.saturation = 1.0] - 饱和度
+ * @param [options.id = createGuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
+ */
+declare class TilesetColorCorrection extends BaseThing {
+    constructor(options?: {
+        layer: TilesetLayer;
+        brightness?: number;
+        contrast?: number;
+        hue?: number;
+        saturation?: number;
+        id?: string | number;
+        enabled?: boolean;
+        eventParent?: BaseClass | boolean;
+    });
+    /**
+     * 需要分析的模型（3dtiles图层）
+     */
+    layer: TilesetLayer;
+    /**
+     * 亮度
+     */
+    brightness: number;
+    /**
+     * 对比度
+     */
+    contrast: number;
+    /**
+     * 色调
+     */
+    hue: number;
+    /**
+     * 饱和度
+     */
+    saturation: number;
+}
+
+/**
  * 3dtiles模型分析（裁剪、压平、淹没） 基础类
  * @param [options] - 参数对象，包括以下：
  * @param options.layer - 需要模型分析的对象（3dtiles图层）
@@ -36625,15 +36682,13 @@ declare namespace PointUtil {
      * @param scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param position - 坐标
      * @param [options = {}] - 参数对象:
-     * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
-     * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
-     * @param [options.width = 0.1] - Width of the intersection volume in meters.
+     * @param [options.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND] - 高度参考，决定是否仅贴模型、仅贴地形、全部都考虑
+     * @param [options.original = false] - 计算失败时是否返回原始高度值
      * @returns 贴地高度
      */
     function getHeight(scene: Cesium.Scene, position: Cesium.Cartesian3 | LngLatPoint, options?: {
-        has3dtiles?: boolean;
-        objectsToExclude?: any;
-        width?: number;
+        heightReference?: Cesium.HeightReference;
+        original?: boolean;
     }): number;
     /**
      * 异步精确计算坐标的 贴地(或贴模型)高度
@@ -36668,17 +36723,15 @@ declare namespace PointUtil {
      * @param scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param position - 坐标
      * @param [options = {}] - 参数对象，具有以下属性:
-     * @param [options.relativeHeight = fasle] - 是否在地形上侧的高度，在对象具备Cesium.HeightReference.RELATIVE_TO_GROUND时，可以设置为ture
+     * @param [options.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND] - 高度参考，决定是否仅贴模型、仅贴地形、全部都考虑
+     * @param [options.greater = true] - true时判断高度小于当前坐标时还是取原坐标,屏蔽小于本身坐标的计算结果
      * @param [options.maxHeight] - 可以限定最高高度，当计算的结果大于maxHeight时，原样返回，可以屏蔽计算误差的数据。
-     * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
-     * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，
      * @returns 贴地坐标
      */
     function getSurfacePosition(scene: Cesium.Scene, position: Cesium.Cartesian3, options?: {
-        relativeHeight?: boolean;
+        heightReference?: Cesium.HeightReference;
+        greater?: boolean;
         maxHeight?: number;
-        has3dtiles?: boolean;
-        objectsToExclude?: any;
     }): Cesium.Cartesian3;
     /**
      * 获取 屏幕XY坐标 对应的 笛卡尔三维坐标
@@ -36828,10 +36881,10 @@ declare namespace PolyUtil {
     /**
      * 求坐标数组的中心点
      * @param arr - 坐标数组
-     * @param height - 指定中心点的高度值，默认为所有点的最高高度
+     * @param [height] - 指定中心点的高度值，默认为所有点的最高高度
      * @returns 中心点坐标
      */
-    function centerOfMass(arr: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[], height: number): Cesium.Cartesian3;
+    function centerOfMass(arr: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[], height?: number): Cesium.Cartesian3;
     /**
      * 缓冲分析，求指定 点线面geojson对象 按width半径的 缓冲面对象
      * @param geojson - geojson格式对象
@@ -37655,7 +37708,7 @@ declare namespace Util {
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理,比如坐标纠偏 onPointTrans: mars3d.PointUtil.getTransFun(mars3d.ChinaCRS.GCJ02, map.chinaCRS)
-     * @returns Graphic构造参数数组（用于创建{@link BaseGraphic}）
+     * @returns Graphic构造参数数组（用于创建{@link BaseGraphic}），其中多面的最大一个面会有isMultiMax为true的属性
      */
     function geoJsonToGraphics(geojson: any, options?: {
         type?: GraphicType | string;
@@ -37689,7 +37742,7 @@ declare namespace Util {
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理
-     * @returns Graphic构造参数（用于创建{@link BaseGraphic}）
+     * @returns Graphic构造参数（用于创建{@link BaseGraphic}），其中多面的最大一个面会有isMultiMax为true的属性
      */
     function featureToGraphic(feature: any, options?: {
         type?: GraphicType | string;
@@ -38293,6 +38346,8 @@ declare namespace thing {
   export { TilesetClip }
   export { TilesetFlat }
   export { TilesetFlood }
+  export { TilesetShake }
+  export { TilesetColorCorrection }
 
   export { FirstPersonRoam }
   export { StreetView }
@@ -38302,6 +38357,7 @@ declare namespace thing {
 
   export { MatrixMove }
   export { MatrixRotate }
+  export { MatrixMove2 }
 }
 
 export {
