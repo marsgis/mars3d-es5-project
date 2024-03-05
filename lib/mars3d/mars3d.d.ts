@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.4
- * 编译日期：2024-02-20 12:25:01
+ * 版本信息：v3.7.5
+ * 编译日期：2024-02-25 10:19:42
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -301,6 +301,10 @@ declare enum EventType {
      */
     popupClose = "popupClose",
     /**
+     * popup的渲染更新事件
+     */
+    popupRender = "popupRender",
+    /**
      * tooltip弹窗打开后
      */
     tooltipOpen = "tooltipOpen",
@@ -308,6 +312,10 @@ declare enum EventType {
      * tooltip弹窗关闭
      */
     tooltipClose = "tooltipClose",
+    /**
+     * tooltip的渲染更新事件
+     */
+    tooltipRender = "tooltipRender",
     /**
      * 右键菜单 打开后
      */
@@ -6176,105 +6184,6 @@ declare class FixedRoute extends Route {
     }): Promise<any>;
 }
 
-/**
- * group组对象,可用于矢量数据树结构的虚拟节点
- * @param options - 参数对象，包括以下：
- * @param [options.graphics] - 子矢量对象数组，每个矢量对象的配置见按各类型API即可。
- * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
- * @param [options.show = true] - 矢量数据是否显示
- * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡
- * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
- * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
- */
-declare class GroupGraphic extends BaseGraphic {
-    constructor(options: {
-        graphics?: any;
-        id?: string | number;
-        name?: string;
-        show?: boolean;
-        eventParent?: BaseClass | boolean;
-        allowDrillPick?: boolean | ((...params: any[]) => any);
-        flyTo?: boolean;
-        flyToOptions?: any;
-    });
-    /**
-     * 是否空组 ，空组目前就图层管理用于图层分组节点（虚拟节点）。
-     */
-    readonly hasEmptyGroup: boolean;
-    /**
-     * 是否有子图层
-     */
-    readonly hasChildGraphic: boolean;
-    /**
-     * 子图层的个数
-     */
-    readonly length: number;
-    /**
-     * 添加所有子图层到map上
-     * @returns 当前对象本身，可以链式调用
-     */
-    addChildsToMap(): GroupGraphic;
-    /**
-     * 将所有子图层从map中移除
-     * @returns 当前对象本身，可以链式调用
-     */
-    removeMapChilds(): GroupGraphic;
-    /**
-     * 添加子图层，并绑定关联关系。
-     * @param childgraphic - 子图层对象
-     * @returns 当前对象本身，可以链式调用
-     */
-    addGraphic(childgraphic: BaseGraphic | any): GroupGraphic;
-    /**
-     * 移除子图层，并解除关联关系。
-     * @param childgraphic - 子图层对象
-     * @returns 当前对象本身，可以链式调用
-     */
-    removeGraphic(childgraphic: BaseGraphic | any): GroupGraphic;
-    /**
-     * 移除所有子图层
-     */
-    removeAllGraphic(): void;
-    /**
-     * 遍历每一个子图层并将其作为参数传递给回调函数
-     * @param method - 回调方法
-     * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
-     * @returns 当前对象本身,可以链式调用
-     */
-    eachGraphic(method: (...params: any[]) => any, context?: any): GroupGraphic;
-    /**
-     * 获取所有内置子图层对象
-     * @returns 所有子图层对象
-     */
-    getGraphics(): BaseGraphic[] | any;
-    /**
-     * 获取地图所有的子图层对象(包括pid和id关联的图层)
-     * @returns 所有子图层对象
-     */
-    getInMapChilds(): BaseGraphic[] | any;
-    /**
-     * 根据ID或取图层
-     * @param id - 图层id或uuid
-     * @returns 图层对象
-     */
-    getGraphicById(id: string | number): BaseGraphic | any | any;
-    /**
-     * 根据id或name属性获取图层
-     * @param name - 图层id或uuid或name值
-     * @returns 图层对象
-     */
-    getGraphic(name: string | number): BaseGraphic | any;
-    /**
-     * 是否有同名的子图层，一般用于新增时判断
-     * @param name - 图层名称
-     * @param [excludedGraphic] - 可以指定不进行判断的图层，比如当前图层本身
-     * @returns 是否同名
-     */
-    hasGraphic(name: string, excludedGraphic?: BaseGraphic): boolean;
-}
-
 declare namespace ParticleSystem {
     /**
      * 粒子效果 支持的样式信息
@@ -11981,7 +11890,7 @@ declare class PlaneEntity {
 declare namespace PointEntity {
     /**
      * 像素点 支持的样式信息
-     * @property [pixelSize = 10] - 像素大小
+     * @property [pixelSize = 6] - 像素大小
      * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
@@ -14160,6 +14069,105 @@ declare class StraightArrow extends PolygonEntity {
      * @returns 边界坐标点
      */
     static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
+}
+
+/**
+ * group组对象,可用于矢量数据树结构的虚拟节点
+ * @param options - 参数对象，包括以下：
+ * @param [options.graphics] - 子矢量对象数组，每个矢量对象的配置见按各类型API即可。
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class GroupGraphic extends BaseGraphic {
+    constructor(options: {
+        graphics?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 是否空组 ，空组目前就图层管理用于图层分组节点（虚拟节点）。
+     */
+    readonly hasEmptyGroup: boolean;
+    /**
+     * 是否有子图层
+     */
+    readonly hasChildGraphic: boolean;
+    /**
+     * 子图层的个数
+     */
+    readonly length: number;
+    /**
+     * 添加所有子图层到map上
+     * @returns 当前对象本身，可以链式调用
+     */
+    addChildsToMap(): GroupGraphic;
+    /**
+     * 将所有子图层从map中移除
+     * @returns 当前对象本身，可以链式调用
+     */
+    removeMapChilds(): GroupGraphic;
+    /**
+     * 添加子图层，并绑定关联关系。
+     * @param childgraphic - 子图层对象
+     * @returns 当前对象本身，可以链式调用
+     */
+    addGraphic(childgraphic: BaseGraphic | any): GroupGraphic;
+    /**
+     * 移除子图层，并解除关联关系。
+     * @param childgraphic - 子图层对象
+     * @returns 当前对象本身，可以链式调用
+     */
+    removeGraphic(childgraphic: BaseGraphic | any): GroupGraphic;
+    /**
+     * 移除所有子图层
+     */
+    removeAllGraphic(): void;
+    /**
+     * 遍历每一个子图层并将其作为参数传递给回调函数
+     * @param method - 回调方法
+     * @param [context] - 侦听器的上下文(this关键字将指向的对象)。
+     * @returns 当前对象本身,可以链式调用
+     */
+    eachGraphic(method: (...params: any[]) => any, context?: any): GroupGraphic;
+    /**
+     * 获取所有内置子图层对象
+     * @returns 所有子图层对象
+     */
+    getGraphics(): BaseGraphic[] | any;
+    /**
+     * 获取地图所有的子图层对象(包括pid和id关联的图层)
+     * @returns 所有子图层对象
+     */
+    getInMapChilds(): BaseGraphic[] | any;
+    /**
+     * 根据ID或取图层
+     * @param id - 图层id或uuid
+     * @returns 图层对象
+     */
+    getGraphicById(id: string | number): BaseGraphic | any | any;
+    /**
+     * 根据id或name属性获取图层
+     * @param name - 图层id或uuid或name值
+     * @returns 图层对象
+     */
+    getGraphic(name: string | number): BaseGraphic | any;
+    /**
+     * 是否有同名的子图层，一般用于新增时判断
+     * @param name - 图层名称
+     * @param [excludedGraphic] - 可以指定不进行判断的图层，比如当前图层本身
+     * @returns 是否同名
+     */
+    hasGraphic(name: string, excludedGraphic?: BaseGraphic): boolean;
 }
 
 /**
@@ -17917,7 +17925,7 @@ declare class PlanePrimitive extends BasePointPrimitive {
 declare namespace PointPrimitive {
     /**
      * 像素点 支持的样式信息
-     * @property [pixelSize = 10] - 像素大小
+     * @property [pixelSize = 6] - 像素大小
      * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
@@ -37660,7 +37668,7 @@ declare namespace Util {
     function stampGlobalId(obj: any): number;
     /**
      * 获取随机唯一uuid字符串,包含数字、大写字母、小写字母
-     * @param [prefix = 'M-'] - 前缀
+     * @param [prefix = 'm-'] - 前缀
      * @returns 字符串
      */
     function createGuid(prefix?: string): string;
@@ -38058,10 +38066,10 @@ declare namespace Util {
      * mars3d.Util.formatDate(date,"yyyy-MM-dd HH:mm:ss.S") ==> 2017-08-25 08:08:00.423
      * mars3d.Util.formatDate(date,"yyyy-M-d HH:mm:ss") ==> 2017-8-5 08:08:00
      * @param date - 时间
-     * @param fmt - 格式模版，月(M)、日(d)、12小时(h)、24小时(H)、分(m)、秒(s)、周(E)、季度(q) 可以用 1-2 个占位符; 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字).
+     * @param [fmt = "yyyy-MM-dd HH:mm:ss"] - 格式模版，月(M)、日(d)、12小时(h)、24小时(H)、分(m)、秒(s)、周(E)、季度(q) 可以用 1-2 个占位符; 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字).
      * @returns 指定格式的字符串
      */
-    function formatDate(date: Date, fmt: string): string;
+    function formatDate(date: Date, fmt?: string): string;
     /**
      * 格式化时长
      * @param strtime - 时长
