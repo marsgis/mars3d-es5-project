@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.7.5
- * 编译日期：2024-02-25 10:19:42
+ * 编译日期：2024-03-05 20:10:12
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -1889,6 +1889,7 @@ declare class BaseControl extends BaseThing {
  * 时钟及其动画的管理控制
  * @param [options] - 参数对象，包括以下：
  * @param [options.format = "yyyy-MM-dd HH:mm:ss"] - 当前时间格式化字符串
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -1898,6 +1899,7 @@ declare class BaseControl extends BaseThing {
 declare class ClockAnimate extends BaseControl {
     constructor(options?: {
         format?: string;
+        className?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -1910,11 +1912,11 @@ declare class ClockAnimate extends BaseControl {
  * 导航球控件
  * @param [options] - 参数对象，包括以下：
  * @param [options.rotation = true] - 是否启用调整俯仰角（按中间区域往四周拖拽）
- * @param [options.className = 'mars3d-compass'] - 样式名称，可以外部自定义样式。
  * @param [options.top] - css定位top位置, 如 top: '10px'
  * @param [options.bottom] - css定位bottom位置，支持配置'toolbar'自动跟随cesium-viewer-toolbar
  * @param [options.left] - css定位left位置
  * @param [options.right] - css定位right位置
+ * @param [options.className = "mars3d-compass"] - 样式名称，可以外部自定义样式。
  * @param [options.maxPitch = 0] - 最大俯仰角,度数
  * @param [options.minPitch = -90] - 最小俯仰角,度数
  * @param [options.outerSvg] - 外部圆环区域的SVG图片
@@ -1929,11 +1931,11 @@ declare class ClockAnimate extends BaseControl {
 declare class Compass extends BaseControl {
     constructor(options?: {
         rotation?: boolean;
-        className?: string;
         top?: string;
         bottom?: string;
         left?: string;
         right?: string;
+        className?: string;
         maxPitch?: string;
         minPitch?: string;
         outerSvg?: string;
@@ -1963,6 +1965,55 @@ declare class Compass extends BaseControl {
      * @returns 无
      */
     setRotationSvg(svg: string): void;
+    /**
+     * 对象添加到地图前创建一些对象的钩子方法，
+     * 只会调用一次
+     * @returns 无
+     */
+    _mountedHook(): void;
+    /**
+     * 对象添加到地图上的创建钩子方法，
+     * 每次add时都会调用
+     * @returns 无
+     */
+    _addedHook(): void;
+    /**
+     * 对象从地图上移除的创建钩子方法，
+     * 每次remove时都会调用
+     * @returns 无
+     */
+    _removedHook(): void;
+}
+
+/**
+ * 立方体视图控件
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.rotation = true] - 是否启用调整俯仰角（按中间区域往四周拖拽）
+ * @param [options.className] - 样式名称，可以外部自定义样式。
+ * @param [options.top] - css定位top位置, 如 top: '10px'
+ * @param [options.bottom] - css定位bottom位置，支持配置'toolbar'自动跟随cesium-viewer-toolbar
+ * @param [options.left] - css定位left位置
+ * @param [options.right] - css定位right位置
+ * @param [options.id = createGuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
+ * @param [options.insertIndex] - 可以自定义插入到父容器中的index顺序，默认是插入到最后面。
+ * @param [options.insertBefore] - 可以自定义插入到指定兄弟容器的前面，与insertIndex二选一。
+ */
+declare class CubeView extends BaseControl {
+    constructor(options?: {
+        rotation?: boolean;
+        className?: string;
+        top?: string;
+        bottom?: string;
+        left?: string;
+        right?: string;
+        id?: string | number;
+        enabled?: boolean;
+        parentContainer?: HTMLElement;
+        insertIndex?: number;
+        insertBefore?: HTMLElement | string;
+    });
     /**
      * 对象添加到地图前创建一些对象的钩子方法，
      * 只会调用一次
@@ -2051,6 +2102,7 @@ declare class BaseLayerPicker extends BaseCzmControl {
  * 全屏按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
  * @param [options.fullscreenElement = document.body] - 当按下全屏按钮时，要置于全屏模式的元素或id
+ * @param [options.icon] - 按钮图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
@@ -2060,6 +2112,7 @@ declare class BaseLayerPicker extends BaseCzmControl {
 declare class FullscreenButton extends BaseCzmControl {
     constructor(options?: {
         fullscreenElement?: Element | string;
+        icon?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2099,6 +2152,7 @@ declare class Geocoder extends BaseCzmControl {
  * 全屏按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
  * @param [options.title = "初始视图"] - 提示信息
+ * @param [options.icon] - 按钮图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
@@ -2108,6 +2162,7 @@ declare class Geocoder extends BaseCzmControl {
 declare class HomeButton extends BaseCzmControl {
     constructor(options?: {
         title?: string;
+        icon?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2123,6 +2178,7 @@ declare class HomeButton extends BaseCzmControl {
 /**
  * 帮助按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
+ * @param [options.icon] - 按钮图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
@@ -2131,6 +2187,7 @@ declare class HomeButton extends BaseCzmControl {
  */
 declare class NavigationHelpButton extends BaseCzmControl {
     constructor(options?: {
+        icon?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2279,6 +2336,7 @@ declare namespace DistanceLegend {
  * @param [options.bottom] - css定位bottom位置
  * @param [options.left] - css定位left位置
  * @param [options.right] - css定位right位置
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2291,6 +2349,7 @@ declare class DistanceLegend extends BaseControl {
         bottom?: string;
         left?: string;
         right?: string;
+        className?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2353,6 +2412,7 @@ declare namespace LocationBar {
  * @param [options.style.bottom] - css定位bottom位置
  * @param [options.style.left] - css定位left位置
  * @param [options.style.right] - css定位right位置
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.cacheTime = 50] - 鼠标移动的缓存时间
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -2372,6 +2432,7 @@ declare class LocationBar extends BaseControl {
             left?: string;
             right?: string;
         };
+        className?: string;
         cacheTime?: number;
         id?: string | number;
         enabled?: boolean;
@@ -2396,7 +2457,7 @@ declare class LocationBar extends BaseControl {
  * @param [options.effect] - 添加的特效
  * @param [options.mouse] - 鼠标操作相关配置参数
  * @param [options.terrain] - 地形服务配置
- * @param [options.className = "mars3d-container  mars3d-mapCompare"] - 对比地图DIV的样式名称
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2442,6 +2503,7 @@ declare class MapCompare extends BaseControl {
  * @param [options] - 参数对象，包括以下：
  * @param [options.leftLayer] - 左侧区域瓦片图层
  * @param [options.rightLayer] - 右侧区域瓦片图层
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2452,6 +2514,7 @@ declare class MapSplit extends BaseControl {
     constructor(options?: {
         leftLayer?: BaseTileLayer | BaseTileLayer[] | any;
         rightLayer?: BaseTileLayer | BaseTileLayer[] | any;
+        className?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2500,6 +2563,7 @@ declare class MapSplit extends BaseControl {
 /**
  * 鼠标滚轮缩放美化样式(指示图标)控件
  * @param [options] - 参数对象，包括以下：
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2508,6 +2572,7 @@ declare class MapSplit extends BaseControl {
  */
 declare class MouseDownView extends BaseControl {
     constructor(options?: {
+        className?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2529,6 +2594,7 @@ declare class MouseDownView extends BaseControl {
  * @param [options.style.bottom] - css定位bottom位置
  * @param [options.style.left] - css定位left位置
  * @param [options.style.right] - css定位right位置
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.flyToOptions] - 小地图的定位参数
  * @param [options.flyToOptions.scale = 2] - 缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
  * @param [options.flyToOptions.duration = 0] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
@@ -2553,6 +2619,7 @@ declare class OverviewMap extends BaseControl {
             left?: string;
             right?: string;
         };
+        className?: string;
         flyToOptions?: {
             scale?: number;
             duration?: number;
@@ -2614,6 +2681,7 @@ declare namespace ToolButton {
  * @param [options.title = ''] - 按钮标题
  * @param [options.icon] - 按钮图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
  * @param [options.click] - 按钮单击后的回调方法
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2625,6 +2693,7 @@ declare class ToolButton extends BaseControl {
         title?: string | ((...params: any[]) => any);
         icon?: string;
         click?: (...params: any[]) => any;
+        className?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2643,6 +2712,7 @@ declare class ToolButton extends BaseControl {
  * @param [options.relativeAmount = 2] - 放大缩小的相对量（调整步长）
  * @param [options.zoomOutIcon] - 缩小按钮 图片url路径 或 字体图标class名
  * @param [options.zoomInIcon] - 放大按钮 图片url路径 或 字体图标class名
+ * @param [options.className] - 样式名称，可以外部自定义样式。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2654,6 +2724,7 @@ declare class Zoom extends BaseControl {
         relativeAmount?: string;
         zoomOutIcon?: string;
         zoomInIcon?: string;
+        className?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2944,6 +3015,7 @@ declare class ColorRamp {
  * @param [options.sources.positiveZ] - 映射面的图片url
  * @param [options.sources.negativeZ] - 映射面的图片url
  * @param [options.show = true] - 是否显示
+ * @param [options.maxHeight = 230000] - 最大高度，限定超出该高度不显示近地天空盒
  */
 declare class GroundSkyBox extends Cesium.SkyBox {
     constructor(options: {
@@ -2956,6 +3028,7 @@ declare class GroundSkyBox extends Cesium.SkyBox {
             negativeZ?: string;
         };
         show?: boolean;
+        maxHeight?: number;
     });
 }
 
@@ -3118,6 +3191,11 @@ declare class LngLatPoint {
      * @returns 符串，示例 "113.123456,31.123456,30.1"
      */
     toString(): string;
+    /**
+     * 转换为普通object对象，便于保存json
+     * @returns 普通object对象
+     */
+    toObject(): any;
     /**
      * 转换为笛卡尔坐标
      * @param clone - 是否复制
@@ -3883,6 +3961,7 @@ declare class OutlineEffect extends BaseEffect {
  * @param [options.size = 20] - 粒子大小
  * @param [options.speed = 10] - 速度
  * @param [options.direction = -30] - 方向（度），0度垂直向下
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果, 传入-1时不限制
  */
 declare class RainEffect extends BaseEffect {
     constructor(options?: {
@@ -3890,7 +3969,12 @@ declare class RainEffect extends BaseEffect {
         size?: number;
         speed?: number;
         direction?: number;
+        maxHeight?: number;
     });
+    /**
+     * 最高限定高度，超出该高度不显示积雪效果
+     */
+    maxHeight: number;
     /**
      * 速度
      */
@@ -3911,7 +3995,7 @@ declare class RainEffect extends BaseEffect {
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.alpha = 1.0] - 覆盖强度  0-1
  * @param [options.layer] - 如果传值3dtiles图层，只对该模型生效
- * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果, 传入-1时不限制
  */
 declare class SnowCoverEffect extends BaseEffect {
     constructor(options?: {
@@ -3936,7 +4020,7 @@ declare class SnowCoverEffect extends BaseEffect {
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.speed = 10] - 速度
  * @param [options.scale = 10.0] - 粒子大小
- * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果, 传入-1时不限制
  */
 declare class SnowEffect extends BaseEffect {
     constructor(options?: {
@@ -4604,6 +4688,7 @@ declare class BaseCombine extends BasePrimitive {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4640,6 +4725,7 @@ declare class BasePointCombine extends BasePolyCombine {
         style?: any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -4686,6 +4772,7 @@ declare class BasePointCombine extends BasePolyCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4722,6 +4809,7 @@ declare class BasePolyCombine extends BaseCombine {
         style?: any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -4796,6 +4884,7 @@ declare class BasePolyCombine extends BaseCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4832,6 +4921,7 @@ declare class BoxCombine extends BasePointCombine {
         style?: BoxPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -4871,6 +4961,7 @@ declare class BoxCombine extends BasePointCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4907,6 +4998,7 @@ declare class CircleCombine extends BasePointCombine {
         style?: CirclePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -4946,6 +5038,7 @@ declare class CircleCombine extends BasePointCombine {
  * @param [options.style] - 所有线的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -4982,6 +5075,7 @@ declare class CorridorCombine extends BasePolyCombine {
         style?: CorridorPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5021,6 +5115,7 @@ declare class CorridorCombine extends BasePolyCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5057,6 +5152,7 @@ declare class CylinderCombine extends BasePointCombine {
         style?: CylinderPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5096,6 +5192,7 @@ declare class CylinderCombine extends BasePointCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5132,6 +5229,7 @@ declare class EllipsoidCombine extends BasePointCombine {
         style?: EllipsoidPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5250,6 +5348,7 @@ declare class FlatBillboard extends BaseCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.fixedFrameTransform = Cesium.Transforms.northEastDownToFixedFrame] - 参考系
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -5287,6 +5386,7 @@ declare class FrustumCombine extends BasePointCombine {
         style?: FrustumPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         fixedFrameTransform?: Cesium.Transforms.LocalFrameToFixedFrame;
         appearance?: Cesium.Appearance;
@@ -5327,6 +5427,7 @@ declare class FrustumCombine extends BasePointCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5363,6 +5464,7 @@ declare class PlaneCombine extends BasePointCombine {
         style?: PlanePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5402,6 +5504,7 @@ declare class PlaneCombine extends BasePointCombine {
  * @param [options.style] - 所有面的公共样式信息, 【仅支持同属性同材质，纯色支持多颜色】
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * //  * @param {string} [options.highlight.type] 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5436,81 +5539,8 @@ declare class PolygonCombine extends BasePolyCombine {
             attr?: any;
         }[];
         style?: PolygonPrimitive.StyleOptions | any;
-        highlight?: PolygonPrimitive.StyleOptions | any;
-        appearance?: Cesium.Appearance;
-        attributes?: Cesium.Appearance;
-        depthFailAppearance?: Cesium.Appearance;
-        vertexCacheOptimize?: boolean;
-        interleave?: boolean;
-        compressVertices?: boolean;
-        releaseGeometryInstances?: boolean;
-        allowPicking?: boolean;
-        cull?: boolean;
-        asynchronous?: boolean;
-        debugShowBoundingVolume?: boolean;
-        debugShowShadowVolume?: boolean;
-        popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions | any;
-        tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions | any;
-        contextmenuItems?: any;
-        id?: string | number;
-        name?: string;
-        show?: boolean;
-        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
-        eventParent?: BaseClass | boolean;
-        allowDrillPick?: boolean | ((...params: any[]) => any);
-        flyTo?: boolean;
-        flyToOptions?: any;
-    });
-}
-
-/**
- * 大数据线集合 (合并渲染) Primitive图元 矢量对象
- * @param options - 参数对象，包括以下：
- * @param [options.instances] - 线信息 数组，单个对象包括：
- * @param options.instances.positions - 坐标位置
- * @param [options.instances.style] - 样式信息
- * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
- * @param [options.style] - 所有线的公共样式信息
- * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
- * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
- * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
- * @param [options.attributes] - [cesium原生]每个实例的属性。
- * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
- * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
- * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
- * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
- * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
- * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
- * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
- * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
- * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
- * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
- * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
- * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
- * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
- * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
- * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
- * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
- * @param [options.show = true] - 矢量数据是否显示
- * @param [options.availability] - 指定时间范围内显示该对象
- * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
- * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
- * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
- */
-declare class PolylineCombine extends BasePolyCombine {
-    constructor(options: {
-        instances?: {
-            positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
-            style?: PolylinePrimitive.StyleOptions | any;
-            attr?: any;
-        }[];
-        style?: PolylinePrimitive.StyleOptions | any;
         highlight?: {
-            type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5550,6 +5580,84 @@ declare class PolylineCombine extends BasePolyCombine {
  * @param [options.style] - 所有线的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
+ * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
+ * @param [options.attributes] - [cesium原生]每个实例的属性。
+ * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
+ * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
+ * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
+ * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
+ * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
+ * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
+ * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
+ * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
+ * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
+ * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class PolylineCombine extends BasePolyCombine {
+    constructor(options: {
+        instances?: {
+            positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
+            style?: PolylinePrimitive.StyleOptions | any;
+            attr?: any;
+        }[];
+        style?: PolylinePrimitive.StyleOptions | any;
+        highlight?: {
+            type?: string;
+            enabled?: boolean;
+        };
+        appearance?: Cesium.Appearance;
+        attributes?: Cesium.Appearance;
+        depthFailAppearance?: Cesium.Appearance;
+        vertexCacheOptimize?: boolean;
+        interleave?: boolean;
+        compressVertices?: boolean;
+        releaseGeometryInstances?: boolean;
+        allowPicking?: boolean;
+        cull?: boolean;
+        asynchronous?: boolean;
+        debugShowBoundingVolume?: boolean;
+        debugShowShadowVolume?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+}
+
+/**
+ * 大数据线集合 (合并渲染) Primitive图元 矢量对象
+ * @param options - 参数对象，包括以下：
+ * @param [options.instances] - 线信息 数组，单个对象包括：
+ * @param options.instances.positions - 坐标位置
+ * @param [options.instances.style] - 样式信息
+ * @param [options.instances.attr] - 矢量数据的 属性信息，可以任意附加属性。
+ * @param [options.style] - 所有线的公共样式信息
+ * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
+ * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5586,6 +5694,7 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
         style?: PolylineVolumePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5625,6 +5734,7 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
  * @param [options.style] - 所有面的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5661,6 +5771,7 @@ declare class RectangleCombine extends BasePolyCombine {
         style?: RectanglePrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -5700,6 +5811,7 @@ declare class RectangleCombine extends BasePolyCombine {
  * @param [options.style] - 所有线的公共样式信息
  * @param [options.highlight] - 鼠标移入或单击后的对应高亮的部分样式(仅支持Color纯色材质)
  * @param [options.highlight.type] - 触发高亮的方式，默认鼠标移入，可以指定为type:'click'为单击后高亮
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -5736,6 +5848,7 @@ declare class WallCombine extends BasePolyCombine {
         style?: WallPrimitive.StyleOptions | any;
         highlight?: {
             type?: string;
+            enabled?: boolean;
         };
         appearance?: Cesium.Appearance;
         attributes?: Cesium.Appearance;
@@ -8519,6 +8632,7 @@ declare class BaseEntity extends BaseGraphic {
 /**
  * 单个坐标的点状Entity矢量数据 基类
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param [options.orientation] - 指定实体方向的属性。
  * @param options.style - 矢量数据的 样式信息，具体见各类数据的说明
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
@@ -8930,6 +9044,8 @@ declare namespace BillboardEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -8980,6 +9096,7 @@ declare namespace BillboardEntity {
 /**
  * 图标点  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -9112,6 +9229,8 @@ declare namespace BoxEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9150,6 +9269,7 @@ declare namespace BoxEntity {
 /**
  * 盒子  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
@@ -9323,6 +9443,8 @@ declare namespace CanvasLabelEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      */
     type StyleOptions = any | {
         text?: string;
@@ -9373,6 +9495,7 @@ declare namespace CanvasLabelEntity {
 /**
  * Canvas 文本点（label转图片）
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -9461,6 +9584,8 @@ declare namespace CircleEntity {
      * @property [zIndex] - 图层顺序，数字大的在上面。只对同类型贴地(clampToGround: true) 的部分线面矢量对象间有效 *
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9505,6 +9630,7 @@ declare namespace CircleEntity {
 /**
  * 圆、圆柱  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -9710,6 +9836,8 @@ declare namespace ConeTrack {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -9747,6 +9875,7 @@ declare namespace ConeTrack {
 /**
  * 圆锥追踪体
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param [options.targetPosition] - 追踪的目标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
@@ -9871,6 +10000,8 @@ declare namespace CorridorEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10083,6 +10214,8 @@ declare namespace CylinderEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10120,6 +10253,7 @@ declare namespace CylinderEntity {
 /**
  * 圆锥  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
@@ -10225,6 +10359,8 @@ declare namespace DivBillboardEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10275,6 +10411,7 @@ declare namespace DivBillboardEntity {
  * HTML转图片后的 图标点Entity，
  * 需要引入html2canvas或domtoimage插件进行DOM转图片
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -10515,6 +10652,8 @@ declare namespace EllipseEntity {
      * @property [zIndex] - 图层顺序，数字大的在上面。只对同类型贴地(clampToGround: true) 的部分线面矢量对象间有效 *
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10559,6 +10698,7 @@ declare namespace EllipseEntity {
 /**
  * 椭圆、椭圆柱  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -10654,6 +10794,8 @@ declare namespace EllipsoidEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10723,6 +10865,7 @@ declare namespace EllipsoidEntity {
 /**
  * 球、半球、椭球  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
@@ -10855,6 +10998,8 @@ declare namespace FontBillboardEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -10907,6 +11052,7 @@ declare namespace FontBillboardEntity {
  * Font CSS字体点转图片后的图标点  Entity,
  * 需要引入html2canvas或domtoimage插件进行DOM转图片
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -11008,6 +11154,8 @@ declare namespace LabelEntity {
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [templateEmptyStr = ""] - 当text存在模版字符串配置时，空值时显示的内容
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      */
     type StyleOptions = any | {
         text?: string;
@@ -11063,6 +11211,7 @@ declare namespace LabelEntity {
 /**
  * 文字  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -11187,6 +11336,8 @@ declare namespace ModelEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -11239,6 +11390,7 @@ declare namespace ModelEntity {
 /**
  * gltf小模型  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
@@ -11485,6 +11637,8 @@ declare namespace PathEntity {
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      */
     type StyleOptions = any | {
         width?: number;
@@ -11787,6 +11941,8 @@ declare namespace PlaneEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -11826,6 +11982,7 @@ declare namespace PlaneEntity {
 /**
  * 平面  Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
@@ -11913,6 +12070,8 @@ declare namespace PointEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -11946,6 +12105,7 @@ declare namespace PointEntity {
 /**
  * 像素点 Entity对象
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -12061,6 +12221,8 @@ declare namespace PolygonEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -12273,6 +12435,8 @@ declare namespace PolylineEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string} [label.text = "文字"] 文本内容，换行可以用换行符'\n'。
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
@@ -12419,6 +12583,8 @@ declare namespace PolylineVolumeEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -12563,6 +12729,8 @@ declare namespace RectangleEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -12859,6 +13027,7 @@ declare namespace RectangularSensor {
 /**
  * 相控阵雷达  Entity对象，该对象暂不支持鼠标交互和拾取
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.orientation] - 实体方向
@@ -13136,6 +13305,8 @@ declare namespace WallEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -14731,6 +14902,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
  * 非直接调用，由 Measure 类统一创建及管理
  * @param options - 参数对象，包括以下：
  * @param [options.crs = CRS.CGCS2000_GK_Zone_3] - 按指定坐标系显示坐标值,false不显示
+ * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -15690,6 +15862,8 @@ declare namespace BoxPrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -15831,6 +16005,8 @@ declare namespace CirclePrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16210,6 +16386,8 @@ declare namespace ConeTrackPrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16362,6 +16540,8 @@ declare namespace CorridorPrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16496,6 +16676,8 @@ declare namespace CylinderPrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -16942,6 +17124,8 @@ declare namespace EllipsoidPrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -17079,6 +17263,8 @@ declare namespace FrustumPrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -17290,6 +17476,8 @@ declare namespace LightCone {
      * @property [height = 1000] - 锥体高度，相对于椭球面的高度。(单位：米)
      * @property [distanceDisplayCondition] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      */
     type StyleOptions = any | {
         color?: string | Cesium.Color;
@@ -17497,6 +17685,8 @@ declare namespace ModelPrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -17819,6 +18009,8 @@ declare namespace PlanePrimitive {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -18082,6 +18274,8 @@ declare namespace PolygonPrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -18239,6 +18433,8 @@ declare namespace PolylinePrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -18814,6 +19010,8 @@ declare namespace ScrollWall {
      * @property [style = 1] - 样式，可选值：1、2
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -18901,6 +19099,8 @@ declare namespace ThickWall {
      * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
      * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      */
@@ -19125,6 +19325,8 @@ declare namespace WallPrimitive {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -19267,6 +19469,8 @@ declare namespace Water {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示 ，额外支持：<br />
      * //  * @property {string|LngLatPoint} [label.position] 文字所在位置，默认是矢量对象本身的center属性值。支持配置 'center'：围合面的内部中心点坐标，'{xxxx}'配置属性字段, 或者直接指定坐标值。
      * //  * @property {boolean} [label.showAll] MultiPolygon和MultiLineString时，是否显示所有注记，默认只在最大坐标数的面或线上显示。
@@ -22480,6 +22684,7 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param [options.customShader] - 自定义shader效果
  * @param [options.highlight] - 高亮及其样式配置
  * @param [options.highlight.type] - 鼠标移入高亮 或 单击高亮(type:'click')
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.highlight.all] - 是否整体高亮， true:模型整体全部高亮，false:单个构件高亮
  * @param [options.highlight.color = '#FFFF00'] - 颜色，支持rgba字符串
  * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link OutlineEffect}方式高亮。
@@ -22528,6 +22733,7 @@ declare class OsmBuildingsLayer extends TilesetLayer {
         customShader?: Cesium.CustomShader;
         highlight?: {
             type?: string;
+            enabled?: boolean;
             all?: boolean;
             color?: string | ((...params: any[]) => any);
             outlineEffect?: boolean;
@@ -22652,6 +22858,7 @@ declare namespace TilesetLayer {
  * @param [options.editUpAxis = Cesium.Axis.Z] - 标识模型的轴方向(建筑物特效、模型压平等功能中使用)
  * @param [options.highlight] - 高亮及其样式配置
  * @param [options.highlight.type] - 鼠标移入高亮 或 单击高亮(type:'click')
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.highlight.color = '#FFFF00'] - 颜色，支持rgba字符串
  * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link OutlineEffect}方式高亮。
  * @param [options.highlight.filter] - 可以设置筛选排除一些构件, 排除的构件在filter方法内返回false
@@ -22697,7 +22904,7 @@ declare namespace TilesetLayer {
  * @param [options.imageBasedLighting] - 用于管理基于图像的光源的属性。
  * @param [options.luminanceAtZenith = 0.2] - 模型材质亮度，The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
- * @param [options.disableCollision = false] - 是否关闭相机碰撞或拾取的碰撞。当<code>true</code>时，如果<code> map.scene.screenSpaceCameraController.enableCollisionDetection</code>为true，则相机将被允许进入或低于贴片集表面。
+ * @param [options.enableCollision = false] - 是否启用picking碰撞拾取。如果<code> map.scene.screenSpaceCameraController.enableCollisionDetection</code>为true，则相机将被阻止低于模型表面。
  * @param [options.enableShowOutline = true] - 是否启用模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 可以将其设置为false，以避免在加载时对几何图形进行额外处理。如果为false，则会忽略showOutlines和outlineColor选项。
  * @param [options.showOutline = true] - 是否显示模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 当为true时，将显示轮廓。当为false时，不显示轮廓。
  * @param [options.outlineColor = Color.BLACK] - 渲染outline轮廓时要使用的颜色。
@@ -22784,6 +22991,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         editUpAxis?: Cesium.Axis;
         highlight?: {
             type?: string;
+            enabled?: boolean;
             color?: string | ((...params: any[]) => any);
             outlineEffect?: boolean;
             filter?: (...params: any[]) => any;
@@ -22830,7 +23038,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         imageBasedLighting?: Cesium.ImageBasedLighting;
         luminanceAtZenith?: number;
         backFaceCulling?: boolean;
-        disableCollision?: boolean;
+        enableCollision?: boolean;
         enableShowOutline?: boolean;
         showOutline?: boolean;
         outlineColor?: Cesium.Color;
@@ -23737,6 +23945,7 @@ declare namespace ArcGisLayer {
  * @param [options.hasToGraphic] - 筛选或判断是否解析，单击获取到的数据进行按需筛选解析，大数据解析很卡，可以设定阀值屏蔽大数据，避免卡顿，number类型时代表字符串长度值。
  * @param [options.highlight] - 鼠标单击高亮显示对应的矢量数据 及其样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.highlight.type] - 构造成的矢量数据类型。
+ * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -23812,6 +24021,7 @@ declare class ArcGisLayer extends BaseTileLayer {
         hasToGraphic?: number | boolean | ((...params: any[]) => any);
         highlight?: {
             type?: GraphicType | string;
+            enabled?: boolean;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -23910,6 +24120,7 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param [options] - 参数对象，包括以下：
  * @param options.url - 用于请求瓦片图块的URL模板，比如："http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer"
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是一个数组，数组中的每个元素都是一个子域。
+ * @param [options.token] - 用于通过ArcGIS MapServer服务进行身份验证的ArcGIS令牌。
  * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
  * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
  * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
@@ -23969,6 +24180,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
     constructor(options?: {
         url: string;
         subdomains?: string | string[];
+        token?: string;
         minimumLevel?: number;
         maximumLevel?: number;
         minimumTerrainLevel?: number;
@@ -27187,7 +27399,7 @@ declare class Map extends BaseClass {
      */
     readonly effects: any;
     /**
-     * 获取地图上已构造的thing特效对象
+     * 获取地图上已构造的thing对象
      */
     readonly thing: any;
     /**
@@ -28116,9 +28328,15 @@ declare namespace Map {
      * @property [resolutionScale = 1.0] - 获取或设置渲染分辨率的缩放比例。小于1.0的值可以改善性能不佳的设备上的性能，而值大于1.0则将以更高的速度呈现分辨率，然后缩小比例，从而提高视觉保真度。例如，如果窗口小部件的尺寸为640x480，则将此值设置为0.5将导致场景以320x240渲染，然后在设置时按比例放大设置为2.0将导致场景以1280x960渲染，然后按比例缩小。
      *
      * 以下是Cesium.Scene对象相关参数
+     * @property [backgroundColor] - 背景色 ，css颜色值
+     * @property [backgroundImage] - 背景图片 ，css属性值(对应的是 map.container.style.backgroundImage 值)
+     * @property [backgroundType] - 当背景色、背景图片、天空盒3个值均存在时，已哪个优先，可选值：color、image、skybox
+     * @property [showSkyBox] - 是否显示默认天空盒，如修改对象可以用 [map.scene.skyBox]{@link http://mars3d.cn/api/cesium/SkyBox.html}
+     * @property [skyBox] - 天空盒对象，不使用默认天空盒时设置。
+     * @property [skyBox.type] - 天空盒类型，可选值：default(内置)、skyBox（普通）、ground、multiple
+     * @property [skyBox.sources] - 天空盒的6个立方体映射面的图片url
      * @property [showSun] - 是否显示太阳，如修改对象可以用 [map.scene.sun]{@link http://mars3d.cn/api/cesium/Sun.html}
      * @property [showMoon] - 是否显示月亮，如修改对象可以用 [map.scene.moon]{@link http://mars3d.cn/api/cesium/Moon.html}
-     * @property [showSkyBox] - 是否显示天空盒，如修改对象可以用 [map.scene.skyBox]{@link http://mars3d.cn/api/cesium/SkyBox.html}
      * @property [showSkyAtmosphere] - 是否显示地球大气层外光圈，如修改对象可以用 [map.scene.skyAtmosphere]{@link http://mars3d.cn/api/cesium/SkyAtmosphere.html}
      * @property [fog] - 是否启用雾化效果，如修改对象可以用 [map.scene.fog]{@link http://mars3d.cn/api/cesium/fog.html}
      * @property [atmosphere] - 3D贴图和模型用于渲染天空大气、地面大气和雾的常见大气设置。
@@ -28132,7 +28350,6 @@ declare namespace Map {
      * @property [atmosphere.dynamicLighting] - When not DynamicAtmosphereLightingType.NONE, the selected light source will
      * @property [fxaa] - 是否开启快速抗锯齿
      * @property [highDynamicRange] - 是否关闭高动态范围渲染(不关闭时地图会变暗)
-     * @property [backgroundColor] - 空间背景色 ，css颜色值
      *
      * 以下是Cesium.Viewer所支持的options【控件相关的写在另外的control属性中】
      * @property [sceneMode = Cesium.SceneMode.SCENE3D] - 初始场景模式。可以设置进入场景后初始是2D、2.5D、3D 模式。
@@ -28211,9 +28428,16 @@ declare namespace Map {
         removeDblClick?: boolean;
         ionToken?: string;
         resolutionScale?: number;
+        backgroundColor?: string;
+        backgroundImage?: string;
+        backgroundType?: boolean;
+        showSkyBox?: boolean;
+        skyBox?: {
+            type?: string;
+            sources?: any;
+        };
         showSun?: boolean;
         showMoon?: boolean;
-        showSkyBox?: boolean;
         showSkyAtmosphere?: boolean;
         fog?: boolean;
         atmosphere?: {
@@ -28228,7 +28452,6 @@ declare namespace Map {
         };
         fxaa?: boolean;
         highDynamicRange?: boolean;
-        backgroundColor?: string;
         sceneMode?: Cesium.SceneMode;
         scene3DOnly?: boolean;
         mapProjection?: Cesium.MapProjection | CRS;
@@ -31669,13 +31892,15 @@ declare namespace Satellite {
  * @param [options.cone] - 设置是否显示 卫星视椎体 和对应的样式
  * @param [options.path] - 设置是否显示 卫星轨迹路线 和对应的样式，属性还包含：<br />
  * //  * @param {boolean} [options.path.closure=false]  是否闭合轨道圆
- * @param [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
- * @param [highlight.model] - 设置是否显示 gltf卫星模型 和对应的样式
- * @param [highlight.label] - 设置是否显示 文本 和对应的样式
- * @param [highlight.billboard] - 设置是否显示 图标点 和对应的样式
- * @param [highlight.point] - 设置是否显示 像素点 和对应的样式
- * @param [highlight.cone] - 设置是否显示 卫星视椎体 和对应的样式
- * @param [highlight.path] - 设置是否显示 卫星轨迹路线 和对应的样式
+ * @param [options.highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+ * //  * @param {string} [options.highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+ * //  * @param {boolean} [options.highlight.enabled=true] 是否启用
+ * @param [options.highlight.model] - 设置是否显示 gltf卫星模型 和对应的样式
+ * @param [options.highlight.label] - 设置是否显示 文本 和对应的样式
+ * @param [options.highlight.billboard] - 设置是否显示 图标点 和对应的样式
+ * @param [options.highlight.point] - 设置是否显示 像素点 和对应的样式
+ * @param [options.highlight.cone] - 设置是否显示 卫星视椎体 和对应的样式
+ * @param [options.highlight.path] - 设置是否显示 卫星轨迹路线 和对应的样式
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
@@ -31698,17 +31923,18 @@ declare class Satellite extends Route {
         point?: PointEntity.StyleOptions | any;
         cone?: SatelliteSensor.StyleOptions | any | any;
         path?: PolylineEntity.StyleOptions | any;
+        highlight?: {
+            model?: ModelEntity.StyleOptions | any;
+            label?: LabelEntity.StyleOptions | any;
+            billboard?: BillboardEntity.StyleOptions | any;
+            point?: PointEntity.StyleOptions | any;
+            cone?: SatelliteSensor.StyleOptions | any | any;
+            path?: PolylineEntity.StyleOptions | any;
+        };
         frameRate?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
-    }, highlight?: {
-        model?: ModelEntity.StyleOptions | any;
-        label?: LabelEntity.StyleOptions | any;
-        billboard?: BillboardEntity.StyleOptions | any;
-        point?: PointEntity.StyleOptions | any;
-        cone?: SatelliteSensor.StyleOptions | any | any;
-        path?: PolylineEntity.StyleOptions | any;
     });
     /**
      * 卫星TLE算法类对象
@@ -38155,6 +38381,7 @@ declare namespace control {
   export { Zoom }
   export { ToolButton }
   export { Compass }
+  export { CubeView }
   export { DistanceLegend }
   export { MapSplit }
   export { MapCompare }
@@ -38456,6 +38683,7 @@ declare namespace layer {
   export { BusineDataLayer }
   export { TilesetLayer }
   export { OsmBuildingsLayer }
+  export { I3SLayer }
   export { GraticuleLayer }
   export { LodGraphicLayer }
   export { GeodePoiLayer }

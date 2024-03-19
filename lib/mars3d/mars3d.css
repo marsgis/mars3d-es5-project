@@ -2,7 +2,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.7.5
- * 编译日期：2024-02-25 10:19:42
+ * 编译日期：2024-03-05 20:10:12
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -274,6 +274,58 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+.mars3d-cubeview {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+}
+.mars3d-cubeview-cube {
+  width: 50%;
+  height: 50%;
+  top: 25%;
+  transform-style: preserve-3d;
+  margin: auto;
+  position: relative;
+  will-change: transform;
+  font-family: monospace;
+  font-weight: bold;
+}
+.mars3d-cubeview-cube > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  color: rgba(0, 0, 0, 0.6);
+  background-color: #e0e1e2;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+.mars3d-cubeview-side-t {
+  transform: rotatex(90deg) translateZ(25px);
+}
+.mars3d-cubeview-side-w {
+  transform: rotateY(-90deg) translateZ(25px);
+  border-right: 2px solid blue !important;
+  border-bottom: 2px solid green !important;
+}
+.mars3d-cubeview-side-s {
+  border-left: 2px solid blue !important;
+  border-bottom: 2px solid red !important;
+  transform: translateZ(25px);
+}
+.mars3d-cubeview-side-e {
+  transform: rotateY(90deg) translateZ(25px);
+}
+.mars3d-cubeview-side-n {
+  transform: rotateY(180deg) translateZ(25px);
+}
+.mars3d-cubeview-side-b {
+  transform: rotateX(-90deg) translateZ(25px);
+  border-top: 2px solid red !important;
+  border-left: 2px solid green !important;
+}
 .mars3d-distance-legend {
   position: absolute;
   width: 125px;
@@ -421,6 +473,8 @@
 }
 .mar3d-toolButton {
   cursor: pointer;
+  margin: 0 3px;
+  padding: 0;
 }
 .mar3d-toolButton img,
 .mar3d-toolButton svg,
