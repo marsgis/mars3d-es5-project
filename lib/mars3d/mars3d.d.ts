@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.5
- * 编译日期：2024-03-05 20:10:12
+ * 版本信息：v3.7.8
+ * 编译日期：2024-03-25 20:24:46
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -974,61 +974,220 @@ declare enum Lang {
      */
     type = "cn",
     /**
-     * Cesium renderError 错误弹窗
+     * Cesium内部 renderError时 错误弹窗
      */
     RenderingHasStopped = "WebGL\u53D1\u751F\u6E32\u67D3\u9519\u8BEF,\u6E32\u67D3\u5DF2\u7ECF\u505C\u6B62,\u8BF7\u5237\u65B0\u9875\u9762\u3002",
+    /**
+     * Cesium内部 渲染try catch异常时 错误弹窗
+     */
     ErrorConstructingCesiumWidget = "WebGL\u53D1\u751F\u6E32\u67D3\u9519\u8BEF,\u6E32\u67D3\u5DF2\u7ECF\u505C\u6B62,\u8BF7\u5237\u65B0\u9875\u9762\u3002",
+    /**
+     * {@link Animation } 控件相关
+     */
     Today = "\u4ECA\u5929",
+    /**
+     * {@link Animation } 控件相关
+     */
     TodayRealTime = "\u4ECA\u5929\uFF08\u5B9E\u9645\u65F6\u95F4\uFF09",
+    /**
+     * {@link Animation } 控件相关
+     */
     Pause = "\u6682\u505C",
+    /**
+     * {@link Animation } 控件相关
+     */
     PlayReverse = "\u540E\u9000\u64AD\u653E",
+    /**
+     * {@link Animation } 控件相关
+     */
     PlayForward = "\u524D\u8FDB\u64AD\u653E",
+    /**
+     * {@link Animation } 控件相关
+     */
     CurrentTimeNotInRange = "\u5F53\u524D\u65F6\u95F4\u4E0D\u5728\u8303\u56F4\u5185",
+    /**
+     * {@link BaseLayerPicker } 控件相关
+     */
     Imagery = "\u5F71\u50CF",
+    /**
+     * {@link BaseLayerPicker } 控件相关
+     */
     CesiumIon = "\u5B98\u65B9ION",
+    /**
+     * {@link BaseLayerPicker } 控件相关
+     */
     Other = "\u5176\u4ED6",
+    /**
+     * {@link BaseLayerPicker } 控件：地形服务
+     */
     Terrain = "\u5730\u5F62\u670D\u52A1",
+    /**
+     * {@link BaseLayerPicker } 控件：无地形
+     */
     EllipsoidTerrainProvider = "\u65E0\u5730\u5F62",
+    /**
+     * {@link BaseLayerPicker } 控件：无地形提示
+     */
     EllipsoidTerrainProviderTooltip = "WGS84\u6807\u51C6\u692D\u7403\u4F53\uFF0C\u6CA1\u6709\u5730\u5F62\u6570\u636E",
+    /**
+     * {@link BaseLayerPicker } 控件：有地形
+     */
     TerrainProvider = "\u6709\u5730\u5F62",
+    /**
+     * {@link BaseLayerPicker } 控件：有地形提示
+     */
     TerrainProviderTooltip = "\u63D0\u4F9B\u7684\u9AD8\u7CBE\u5EA6\u7684DEM\u5730\u5F62\u670D\u52A1",
+    /**
+     * {@link FullscreenButton } 控件：全屏
+     */
     FullScreen = "\u5168\u5C4F",
+    /**
+     * {@link FullscreenButton } 控件：退出全屏
+     */
     ExitFullScreen = "\u9000\u51FA\u5168\u5C4F",
+    /**
+     * {@link FullscreenButton } 控件：全屏不可用
+     */
     FullScreenUnavailable = "\u5168\u5C4F\u4E0D\u53EF\u7528",
-    EnterAnAddressOrLandmark = "\u8BF7\u8F93\u5165\u5730\u5740...",
+    /**
+     * {@link Geocoder } 控件：请输入关键字
+     */
+    EnterAnAddressOrLandmark = "\u8BF7\u8F93\u5165\u5173\u952E\u5B57...",
+    /**
+     * {@link Geocoder } 控件：查询中
+     */
     Searching = "\u67E5\u8BE2\u4E2D...",
+    /**
+     * {@link HomeButton } 控件title
+     */
     ViewHome = "\u521D\u59CB\u89C6\u56FE",
+    /**
+     * {@link NavigationHelpButton } 控件title
+     */
     NavigationInstructions = "\u5E2E\u52A9",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     Mouse = "\u9F20\u6807\u64CD\u4F5C",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     Touch = "\u89E6\u6478\u624B\u52BF",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     PanView = "\u5E73\u79FB\u89C6\u56FE",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     LeftClickDrag = "\u9F20\u6807\u5DE6\u952E+\u62D6\u62FD",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     ZoomView = "\u7F29\u653E\u89C6\u56FE",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     RightClick = "\u53F3\u952E+\u62D6\u62FD\uFF0C\u6216\u8005",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     MouseWheelScroll = "\u4E2D\u952E\u6EDA\u52A8",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     RotateView = "\u65CB\u8F6C\u89C6\u56FE",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     MiddleClickDrag = "\u4E2D\u952E\u6309\u4E0B\u62D6\u62FD\uFF0C\u6216\u8005",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     CtrlAndClickDrag = "\u6309Ctrl\u952E \u540C\u65F6 \u5DE6/\u53F3\u952E\u62D6\u62FD",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     OneFingerDrag = "\u5355\u6307\u62D6\u52A8",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     TwoFingerPinch = "\u53CC\u6307\u5411\u5185\u6216\u5411\u5916\u6ED1\u52A8",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     TiltView = "\u503E\u659C\u89C6\u56FE",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     TwoFingerDragSameDirection = "\u53CC\u6307\u6309\u76F8\u540C\u65B9\u5411\u62D6\u52A8",
+    /**
+     * {@link NavigationHelpButton } 控件内容相关
+     */
     TwoFingerDragOppositeDirection = "\u53CC\u6307\u6309\u76F8\u53CD\u65B9\u5411\u62D6\u52A8",
+    /**
+     * {@link ProjectionPicker } 控件：透视投影
+     */
     PerspectiveProjection = "\u900F\u89C6\u6295\u5F71",
+    /**
+     * {@link ProjectionPicker } 控件：正射投影
+     */
     OrthographicProjection = "\u6B63\u5C04\u6295\u5F71",
+    /**
+     * {@link SceneModePicker } 控件：二维视图
+     */
     _2D = "\u4E8C\u7EF4\u89C6\u56FE",
+    /**
+     * {@link SceneModePicker } 控件：三维视图
+     */
     _3D = "\u4E09\u7EF4\u89C6\u56FE",
+    /**
+     * {@link SceneModePicker } 控件：哥伦布2.5D视图
+     */
     ColumbusView = "\u54E5\u4F26\u5E032.5D\u89C6\u56FE",
+    /**
+     * {@link VRButton } 控件：进入VR模式
+     */
     EnterVRMode = "\u8FDB\u5165VR\u6A21\u5F0F",
+    /**
+     * {@link VRButton } 控件：退出VR模式
+     */
     ExitVRMode = "\u9000\u51FAVR\u6A21\u5F0F",
+    /**
+     * {@link VRButton } 控件：VR模式不可用
+     */
     VRModeIsUnavailable = "VR\u6A21\u5F0F\u4E0D\u53EF\u7528",
+    /**
+     * {@link Zoom } 控件：放大
+     */
     "_放大" = "\u653E\u5927",
+    /**
+     * {@link Zoom } 控件：缩小
+     */
     "_缩小" = "\u7F29\u5C0F",
+    /**
+     * {@link ClockAnimate } 控件：暂停
+     */
     "_暂停" = "\u6682\u505C",
+    /**
+     * {@link ClockAnimate } 控件：继续
+     */
     "_继续" = "\u7EE7\u7EED",
+    /**
+     * {@link Compass } 控件相关
+     */
     "_导航球" = "\u5BFC\u822A\u7403",
+    /**
+     * {@link Compass } 控件相关
+     */
     "_拖拽调整俯仰角" = "\u62D6\u62FD\u8C03\u6574\u4FEF\u4EF0\u89D2",
+    /**
+     * {@link Compass } 控件相关
+     */
     "_拖拽调整四周方向角" = "\u62D6\u62FD\u8C03\u6574\u56DB\u5468\u65B9\u5411\u89D2\uFF0C\u53CC\u51FB\u56DE\u6B63\u5317",
+    /**
+     * 内置右键菜单相关
+     */
     "_查看此处坐标" = "\u67E5\u770B\u6B64\u5904\u5750\u6807",
     "_位置信息" = "\u4F4D\u7F6E\u4FE1\u606F",
     "_经度" = "\u7ECF\u5EA6",
@@ -1096,6 +1255,9 @@ declare enum Lang {
     "_场景出图" = "\u573A\u666F\u51FA\u56FE",
     "_图上量算" = "\u56FE\u4E0A\u91CF\u7B97",
     "_删除测量" = "\u5220\u9664\u6D4B\u91CF",
+    /**
+     * 图上量算 tooltip 相关
+     */
     "_角度" = "\u89D2\u5EA6",
     "_距离" = "\u8DDD\u79BB",
     "_面积" = "\u9762\u79EF",
@@ -1124,6 +1286,9 @@ declare enum Lang {
     "_秒" = "\u79D2",
     "_分钟" = "\u5206\u949F",
     "_小时" = "\u5C0F\u65F6",
+    /**
+     * 标绘 tooltip 相关
+     */
     "_单击开始绘制" = "\u5355\u51FB\u5F00\u59CB\u7ED8\u5236",
     "_单击完成绘制" = "\u5355\u51FB\u5B8C\u6210\u7ED8\u5236",
     "_双击完成绘制" = "\u53CC\u51FB\u5B8C\u6210\u7ED8\u5236",
@@ -1156,6 +1321,9 @@ declare enum Lang {
     "_无法删除不能少于最小点数" = "\u65E0\u6CD5\u5220\u9664\uFF0C\u70B9\u6570\u91CF\u4E0D\u80FD\u5C11\u4E8E",
     "_删除" = "\u5220\u9664",
     "_半径" = "\u534A\u5F84",
+    /**
+     * ModelEntity 标绘时的tooltip加载中提示
+     */
     "_加载模型中" = "\u52A0\u8F7D\u6A21\u578B\u4E2D,\u8BF7\u7A0D\u7B49\u2026"
 }
 
@@ -1451,6 +1619,7 @@ declare namespace MaterialType {
      * @property [color = new Cesium.Color(1.0, 1.0, 0.0, 0.5)] - 颜色
      * @property [alphaPower = 1.5] - 透明度系数
      * @property [diffusePower = 1.6] - 漫射系数
+     * @property [isInner = false] - 渐变方向， true向内、false外向
      * @property [center = new Cesium.Cartesian2(0.5, 0.5)] - 渐变位置，默认在中心
      */
     const PolyGradient: string;
@@ -1911,7 +2080,6 @@ declare class ClockAnimate extends BaseControl {
 /**
  * 导航球控件
  * @param [options] - 参数对象，包括以下：
- * @param [options.rotation = true] - 是否启用调整俯仰角（按中间区域往四周拖拽）
  * @param [options.top] - css定位top位置, 如 top: '10px'
  * @param [options.bottom] - css定位bottom位置，支持配置'toolbar'自动跟随cesium-viewer-toolbar
  * @param [options.left] - css定位left位置
@@ -1922,6 +2090,8 @@ declare class ClockAnimate extends BaseControl {
  * @param [options.outerSvg] - 外部圆环区域的SVG图片
  * @param [options.innerSvg] - 中心球区域的SVG图片
  * @param [options.rotationArcSvg] - rotation为true时，按中间区域往四周拖拽时，调整俯仰角的对外部圆环的半弧遮盖SVG图片
+ * @param [options.rotation = true] - 是否启用调整俯仰角（按中间区域往四周拖拽）
+ * @param [options.clickToNorth = true] - 是否启用双击外部圆环区域视角调整为正北
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -1930,7 +2100,6 @@ declare class ClockAnimate extends BaseControl {
  */
 declare class Compass extends BaseControl {
     constructor(options?: {
-        rotation?: boolean;
         top?: string;
         bottom?: string;
         left?: string;
@@ -1941,6 +2110,8 @@ declare class Compass extends BaseControl {
         outerSvg?: string;
         innerSvg?: string;
         rotationArcSvg?: string;
+        rotation?: boolean;
+        clickToNorth?: boolean;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -2038,7 +2209,7 @@ declare class CubeView extends BaseControl {
  * 时钟仪表控制 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
  * @param [options.ticks = [0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 30.0, 60.0, 120.0, 300.0, 600.0, 900.0, 1800.0, 3600.0]] - 可选的步长
- * @param [formatTimeStr = true] - 是否格式化时间文本为普通格式 ，比如 yyyy-MM-dd 、HH:mm:ss
+ * @param [options.formatTimeStr = true] - 是否格式化时间文本为普通格式 ，比如 yyyy-MM-dd 、HH:mm:ss
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.container
@@ -2048,12 +2219,13 @@ declare class CubeView extends BaseControl {
 declare class Animation extends BaseCzmControl {
     constructor(options?: {
         ticks?: number[];
+        formatTimeStr?: boolean;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
         insertBefore?: HTMLElement | string;
-    }, formatTimeStr?: boolean);
+    });
 }
 
 /**
@@ -10780,7 +10952,7 @@ declare namespace EllipsoidEntity {
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
-     * @property [outlineColor = "#ffffff"] - 边框颜色
+     * @property [outlineColor = Cesium.Color.BLACK] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [stackPartitions = 64] - 指定竖向划分数量
      * @property [slicePartitions = 64] - 指定横向划分数量
@@ -12913,6 +13085,12 @@ declare class RectangleEntity extends BasePolyEntity {
      * 位置坐标数组
      */
     readonly points: LngLatPoint[] | Cesium.Cartesian3[] | any[];
+    /**
+     * 按Cesium.CallbackProperty的方式 更新坐标集合（更加平滑）
+     * @param [positions] - 坐标数组
+     * @returns 当前坐标集合
+     */
+    setCallbackPositions(positions?: string[] | any[][] | LngLatPoint[]): Cesium.Cartesian3[];
     /**
      * 飞行定位至 数据所在的视角
      * @param [options = {}] - 参数对象:
@@ -20887,10 +21065,10 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.data] - geojson格式规范数据对象，与url二选一即可。
  * @param [options.dataColumn] - 接口返回数据中，对应的业务数据数组所在的读取字段名称，支持多级(用.分割)；如果数据直接返回数组时可以不配置。
  * @param [options.formatData] - 可以对加载的数据进行格式化或转换操作
- * @param [options.lngColumn = "lng"] - 点坐标时，经度值对应的字段名称
+ * @param [options.formatPosition] - 可以对加载的坐标进行格式化或转换操作，优先级高于lngColumn、latColumn、altColumn
+ * @param [options.lngColumn = "lng"] - 点坐标时，经度值对应的字段名称, 如果数据内有position字段，position的优先级高于lngColumn
  * @param [options.latColumn = "lat"] - 点坐标时，纬度值对应的字段名称
  * @param [options.altColumn = "alt"] - 点坐标时，高度值对应的字段名称
- * @param [options.formatPosition] - 可以对加载的坐标进行格式化或转换操作
  * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
@@ -20959,10 +21137,10 @@ declare class BusineDataLayer extends GraphicLayer {
         data?: any;
         dataColumn?: string;
         formatData?: (...params: any[]) => any;
+        formatPosition?: (...params: any[]) => any;
         lngColumn?: string;
         latColumn?: string;
         altColumn?: string;
-        formatPosition?: (...params: any[]) => any;
         onCreateGraphic?: (...params: any[]) => any;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         opacity?: number;
@@ -22251,7 +22429,23 @@ declare namespace I3SLayer {
  * @param [options.traceFetches = false] - 调试选项。当为true时，每当获取I3S tile时记录一条消息。
  * @param [options.geoidTiledTerrainProvider] - arcgis地形服务。如果定义了，I3S模型将基于此地形服务的偏移量进行移位。需要将与重力相关高度的I3S数据集定位在正确的位置。
  *
- * //以下是3dtiles图层参数
+ * //以下是TilesetLayer图层参数
+ * @param [options.position] - 自定义新的中心点位置（移动模型）
+ * @param [options.position.lng] - 经度值, -180 至 180
+ * @param [options.position.lat] - 纬度值, -90 至 90
+ * @param [options.position.alt] - 高度值（单位：米）
+ * @param [options.position.alt_offset] - 相对于模型本身高度的偏移值（单位：米） ，如果有alt时已alt优先。
+ * @param [options.rotation] - 自定义旋转方向（旋转模型）
+ * @param options.rotation.x - X方向，角度值0-360
+ * @param options.rotation.y - Y方向，角度值0-360
+ * @param options.rotation.z - 四周方向，角度值0-360
+ * @param [options.scale = 1] - 自定义缩放比例，整体等比例缩放
+ * @param [options.scaleX = 1] - 单独自定义缩放X轴方向比例
+ * @param [options.scaleY = 1] - 单独自定义缩放Y轴方向比例
+ * @param [options.scaleZ = 1] - 单独自定义缩放Z轴方向比例
+ *
+ *
+ * //以下是Cesium3DTileset参数
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
  * @param [options.cacheBytes = 536870912] - 如果缓存包含当前视图不需要的块，则块缓存将被修剪到的大小(以字节为单位)。
  * @param [options.maximumCacheOverflowBytes = 536870912] - 如果当前视图需要超过{@link Cesium3DTileset#cacheBytes}，则允许缓存净空的最大额外内存(以字节为单位)。
@@ -22323,6 +22517,21 @@ declare class I3SLayer extends BaseGraphicLayer {
         url: string | Cesium.Resource;
         traceFetches?: boolean;
         geoidTiledTerrainProvider?: any | Cesium.ArcGISTiledElevationTerrainProvider;
+        position?: {
+            lng?: number;
+            lat?: number;
+            alt?: number;
+            alt_offset?: number;
+        };
+        rotation?: {
+            x: number;
+            y: number;
+            z: number;
+        };
+        scale?: number;
+        scaleX?: number;
+        scaleY?: number;
+        scaleZ?: number;
         maximumScreenSpaceError?: number;
         cacheBytes?: number;
         maximumCacheOverflowBytes?: number;
@@ -22831,10 +23040,12 @@ declare namespace TilesetLayer {
  * 3dtiles 三维模型图层。
  * @param options - 参数对象， 构造参数建议从{@link http://mars3d.cn/editor-vue.html?id=layer-tileset/manager/edit|模型编辑页面}设置后保存参数后拷贝json参数即可。参数包括以下：
  * @param [options.url] - tileset的主JSON文件的 url
- * @param [options.assetId] - ion资源时对应的assetId
  * @param [options.maximumScreenSpaceError = 16] - 用于驱动细化细节级别的最大屏幕空间错误。可以简单理解为：数值加大，能让最终成像变模糊。
- * @param [options.cacheBytes = 536870912] - 额定显存大小(以字节为单位)，允许在这个值上下波动。
- * @param [options.maximumCacheOverflowBytes = 536870912] - 最大显存大小(以字节为单位)。
+ * @param [options.assetId] - ion资源时对应的assetId
+ * @param [options.ionAccessToken = Cesium.Ion.defaultAccessToken] - ion资源时对应的token
+ * @param [options.ionServer = Cesium.Ion.defaultServer] - ion资源时对应的server
+ * @param [options.cacheBytes = 1073741824] - 额定显存大小(以字节为单位)，允许在这个值上下波动。
+ * @param [options.maximumCacheOverflowBytes = 2147483648] - 最大显存大小(以字节为单位)。
  * @param [options.maximumMemoryUsage = 512] - 【cesium 1.107+弃用】数据集可以使用的最大内存量(以MB计)，这个参数要根据当前客户端显卡显存来配置，如果我们场景只显示这一个模型数据，这个可以设置到显存的50% 左右，比如我的显存是4G，这个可以设置到2048左右。那么既保证不超过显存限制，又可以最大利用显存缓存。<br />
  * @param [options.position] - 自定义新的中心点位置（移动模型）
  * @param [options.position.lng] - 经度值, -180 至 180
@@ -22962,8 +23173,10 @@ declare namespace TilesetLayer {
 declare class TilesetLayer extends BaseGraphicLayer {
     constructor(options: {
         url?: string | Cesium.Resource;
-        assetId?: number;
         maximumScreenSpaceError?: number;
+        assetId?: number;
+        ionAccessToken?: string;
+        ionServer?: string | Cesium.Resource;
         cacheBytes?: number;
         maximumCacheOverflowBytes?: number;
         maximumMemoryUsage?: number;
@@ -29936,6 +30149,7 @@ declare class PolyFacetMaterialProperty extends BaseMaterialProperty {
  * @param [options.color = new Cesium.Color(1.0, 1.0, 0.0, 0.5)] - 颜色
  * @param [options.alphaPower = 1.5] - 透明度系数
  * @param [options.diffusePower = 1.6] - 漫射系数
+ * @param [options.isInner = false] - 渐变方向， true向内(周边浅中间深)、false外向(周边深中间浅)
  * @param [options.center = new Cesium.Cartesian2(0.5, 0.5)] - 渐变位置，默认在中心
  */
 declare class PolyGradientMaterialProperty extends BaseMaterialProperty {
@@ -29943,6 +30157,7 @@ declare class PolyGradientMaterialProperty extends BaseMaterialProperty {
         color?: string | Cesium.Color;
         alphaPower?: number;
         diffusePower?: number;
+        isInner?: boolean;
         center?: Cesium.Cartesian2;
     });
     /**
@@ -29954,9 +30169,13 @@ declare class PolyGradientMaterialProperty extends BaseMaterialProperty {
      */
     diffusePower: number;
     /**
+     * 渐变方向， true向内、false外向
+     */
+    alphaPower: boolean;
+    /**
      * 透明度系数
      */
-    alphaPower: number;
+    isInner: number;
     /**
      * 渐变位置，默认在中心
      */
@@ -30879,7 +31098,7 @@ declare class HeatLayer extends BaseLayer {
  * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.zIndex = 9] - 图层对应DIV的zIndex层级
- * @param [dataSet] - mapv.DataSet数据集,可以参考[ MapV数据集对象说明]{@link https://github.com/huiyan-fe/mapv/blob/master/src/data/DataSet.md}
+ * @param [dataSet] - mapv.DataSet数据集,可以参考[MapV数据集对象说明]{@link https://github.com/huiyan-fe/mapv/blob/master/src/data/DataSet.md}
  */
 declare class MapVLayer extends BaseLayer {
     constructor(options: {
@@ -31491,7 +31710,8 @@ declare class ConicSensor extends BasePointPrimitive {
 
 declare namespace FixedJammingRadar {
     /**
-     * 内置固定算法的干扰雷达, 对应的干扰机参数
+     * 内置固定算法的干扰雷达, 对应的干扰机参数，
+     * 【需要引入  mars3d-space 插件库】
      * @property [id] - 唯一标识
      * @property [position] - [111, 41, 40000] 干扰机经纬度位置
      * @property [pji] - 干扰机发射功率
@@ -31648,7 +31868,8 @@ declare namespace JammingRadar {
 }
 
 /**
- * 干扰雷达 矢量对象
+ * 干扰雷达 矢量对象，
+ * 【需要引入  mars3d-space 插件库】
  * @param options - 参数对象，包括以下：
  * @param [options.position] - 坐标位置
  * @param options.vertexs - 顶点位置信息二维数组，第1层为平面一圈，第2层为竖直方向各圈，其中值包括：平面上的方向(角度值) heading、垂直上的方向(角度值) pitch、 半径（单位：米）radius
@@ -33769,6 +33990,7 @@ declare namespace Shadows {
 /**
  * 日照分析
  * @param [options] - 参数对象，包括以下：
+ * @param [options.darkness = 0.3] - 阴影透明度, 0-1，值越大越透明
  * @param [options.multiplier = 1600] - 时钟倍率，控制速度
  * @param [options.time] - 当前时间
  * @param [options.terrain = true] - 是否启用地形的阴影效果，在平原地区或无地形时可以关闭
@@ -33779,6 +34001,7 @@ declare namespace Shadows {
  */
 declare class Shadows extends BaseThing {
     constructor(options?: {
+        darkness?: number;
         multiplier?: number;
         time?: Date;
         terrain?: boolean;
@@ -34940,6 +35163,11 @@ declare class TerrainEditBase extends BaseThing {
         };
         id?: number | string;
     }): any;
+    /**
+     * 转为Json简单对象，用于存储后再传参加载
+     * @returns Json简单对象
+     */
+    toJSON(): any;
 }
 
 /**

@@ -17,6 +17,16 @@ $(function () {
     }
   })
 
+  $("#tab_attr").click(function () {
+    $(".mp_tab_ava").hide()
+    $(".mp_tab_con").show()
+  })
+
+  $("#tab_availability").click(function () {
+    $(".mp_tab_con").show() // 隐藏则整个ul列表隐藏
+    $(".mp_tab_ava").hide()
+  })
+
   // mp_tree
   $(".open").click(changeOpenShowHide)
 })

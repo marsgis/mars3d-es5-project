@@ -173,6 +173,19 @@ var plotEdit = {
         let attrName = edit.name
         let attrVal = attr.style[attrName] ?? edit.defval
 
+        if (edit?.next) {
+          if (!attr.style[attrName]) {
+            attr.style[attrName] = {}
+          }
+
+          let val = null
+          if (edit.contant && attr.style[edit.contant]) {
+            val = attr.style[edit.contant]
+          }
+
+          attrVal = attr.style[attrName][edit.next] ?? val ?? edit.defval
+        }
+
         //材质时
         if (edit.name === "materialType") {
           attrVal = this._materialType_selectd || attrVal
@@ -208,10 +221,58 @@ var plotEdit = {
             inHtml +=
               '<tr  id="' + parnamemat + "tr_" + maItem.name + '" > <td class="nametd">' + maItem.label + "</td>  <td>" + input.html + "</td>  </tr>"
           })
+        } else if (edit.next && edit.next === "materialType") {
+          attrVal = this._next_materialType_selectd || attrVal
+
+          let input = this.getAttrInput(parname, attrName, attrVal, edit)
+          if (input.fun) {
+            let name = attrName
+            if (edit.next) {
+              name = name + "-" + edit.next
+            }
+            arrFun.push({ parname: parname, name: name, value: attrVal, edit: edit, fun: input.fun })
+          }
+          inHtml += '<tr  id="' + parname + "tr_" + attrName + '" > <td class="nametd">' + edit.label + "</td>  <td>" + input.html + "</td>  </tr>"
+
+          let defStyle //style.js 材质默认值
+          edit.data.forEach((m) => {
+            if (m.value === attrVal || m.value === attrVal + "2") {
+              defStyle = m || {}
+            }
+          })
+
+          const materialOptions = attr.style[attrName].materialOptions || {}
+
+          let thisMaterialConfig = window.materialConfig[attrVal.split("-")[0]]
+          thisMaterialConfig.forEach((maItem) => {
+            if (!getViewShow(maItem, materialOptions)) {
+              return
+            }
+            let parnamemat = "plot_attr_style_mat"
+
+            // 初始化进入默认值的取值顺序 1. 本身属性 2. 父参数中数值 3. 关联参数  4. style.js 材质默认值 5. material.js 的默认值
+            materialOptions[maItem.name] =
+              materialOptions[maItem.name] ?? attr.style[attrName][maItem.name] ?? attr.style[defStyle?.contant] ?? defStyle?.defval ?? maItem.defval
+
+            let input = this.getAttrInput(parnamemat, maItem.name, materialOptions[maItem.name], { ...maItem, parent: edit })
+            if (input.fun) {
+              let name = maItem.name
+              if (edit.next) {
+                name = name + "-" + edit.next
+              }
+              arrFun.push({ parname: parnamemat, name: name, value: materialOptions[maItem.name], edit: { ...maItem, parent: edit }, fun: input.fun })
+            }
+            inHtml +=
+              '<tr  id="' + parnamemat + "tr_" + maItem.name + '" > <td class="nametd">' + maItem.label + "</td>  <td>" + input.html + "</td>  </tr>"
+          })
         } else {
           let input = this.getAttrInput(parname, attrName, attrVal, edit)
           if (input.fun) {
-            arrFun.push({ parname: parname, name: attrName, value: attrVal, edit: edit, fun: input.fun })
+            let name = attrName
+            if (edit.next) {
+              name = name + "-" + edit.next
+            }
+            arrFun.push({ parname: parname, name: name, value: attrVal, edit: edit, fun: input.fun })
           }
           inHtml += '<tr  id="' + parname + "tr_" + attrName + '" > <td class="nametd">' + edit.label + "</td>  <td>" + input.html + "</td>  </tr>"
         }
@@ -492,6 +553,14 @@ var plotEdit = {
       attrVal = ""
     }
 
+    if (edit.next) {
+      attrName = attrName + "-" + edit.next
+    }
+
+    if (edit.parent && edit.parent?.next) {
+      attrName = attrName + "-" + edit.parent.next
+    }
+
     let that = this
 
     let inHtml = ""
@@ -516,7 +585,7 @@ var plotEdit = {
         inHtml = '<textarea  id="' + parname + attrName + '"     class="mp_input" style="height:50px;resize: none;" >' + attrVal + "</textarea>"
 
         fun = function (parname, attrName, attrVal, edit) {
-          $("#" + parname + attrName).on("input propertychange", function (e) {
+          $("#" + parname + attrName).on("change", function (e) {
             let attrVal = $(this).val()
             if (attrVal.length == 0) {
               attrVal = ""
@@ -528,11 +597,14 @@ var plotEdit = {
         }
         break
       case "number":
-        inHtml = '<input id="' + parname + attrName + '" type="number" value="' + (attrVal || 0) + '"    class="mp_input"/>'
+        if (edit.toFixed) {
+          attrVal = attrVal.toFixed(edit.toFixed)
+        }
+
+        inHtml = '<input id="' + parname + attrName + '" type="number" value="' + (attrVal || 0) + '" step="0.01"   class="mp_input"/>'
         fun = function (parname, attrName, attrVal, edit) {
           $("#" + parname + attrName).on("input propertychange", function (e) {
             let attrVal = Number($(this).val())
-
             that.updateAttr(parname, attrName, attrVal, edit)
           })
         }
@@ -567,7 +639,11 @@ var plotEdit = {
         inHtml = '<select id="' + parname + attrName + '" class="mp_select"    data-value="' + attrVal + '" >'
         for (let jj = 0; jj < edit.data.length; jj++) {
           let temp = edit.data[jj]
-          inHtml += '<option value="' + temp.value + '">' + temp.label + "</option>"
+          if (attrVal === "Image2" && temp.value === "Image") {
+            inHtml += '<option value="Image2">' + temp.label + "</option>"
+          } else {
+            inHtml += '<option value="' + temp.value + '">' + temp.label + "</option>"
+          }
         }
         inHtml += "</select>"
 
@@ -582,7 +658,7 @@ var plotEdit = {
               if (temp.impact == null) {
                 continue
               }
-              if (temp.value === attrVal) {
+              if (temp.value === attrVal || temp.value === attrVal + "2") {
                 thisSel = temp
                 continue
               }
@@ -699,13 +775,27 @@ var plotEdit = {
 
   //属性面板值修改后触发此方法
   updateAttr: function (parname, attrName, attrVal, edit) {
+    attrName = attrName.split("-")[0]
+
     switch (parname) {
       default:
         break
       case "plot_attr_style_": {
         let newStyle = {}
-        newStyle[attrName] = attrVal
-        this._last_attr.style[attrName] = attrVal
+
+        // 拥有二级菜单
+        if (edit.next) {
+          newStyle[attrName] = {}
+          newStyle[attrName][edit.next] = attrVal
+
+          if (!this._last_attr.style[attrName]) {
+            this._last_attr.style[attrName] = {}
+          }
+          this._last_attr.style[attrName][edit.next] = attrVal
+        } else {
+          newStyle[attrName] = attrVal
+          this._last_attr.style[attrName] = attrVal
+        }
 
         let type = this._last_attr.styleType || this._last_attr.type
         if (
@@ -755,6 +845,28 @@ var plotEdit = {
           this._last_attr.style[attrName] = attrVal
 
           this.startEditing(this._last_attr)
+        } else if (edit.next && edit.next === "materialType") {
+          newStyle[attrName].materialOptions = {}
+
+          let defStyle //父元素 材质默认值
+          edit.data.forEach((m) => {
+            if (m.value === attrVal) {
+              defStyle = m.defval || {}
+            }
+          })
+          this._next_materialType_selectd = attrVal
+
+          attrVal = attrVal.split("-")[0]
+          window.materialConfig[attrVal].forEach((p) => {
+            // 更新时的默认值的取值顺序 1. style.js 材质默认值 2. material.json 的默认值
+            newStyle[attrName].materialOptions[p.name] = defStyle[p.name] ?? p.defval
+          })
+          this._last_attr.style[attrName].materialOptions = newStyle[attrName].materialOptions
+
+          newStyle[attrName][edit.next] = attrVal
+          this._last_attr.style[attrName][edit.next] = attrVal
+
+          this.startEditing(this._last_attr)
         } else if (edit.type == "radio") {
           this.startEditing(this._last_attr)
         }
@@ -764,10 +876,23 @@ var plotEdit = {
       }
       case "plot_attr_style_mat": {
         let newStyle = {}
-        newStyle[attrName] = attrVal
 
-        this._last_attr.style.materialOptions = this._last_attr.style.materialOptions || {}
-        this._last_attr.style.materialOptions[attrName] = attrVal
+        // 拥有二级菜单
+        if (edit?.parent?.next) {
+          const parent = edit?.parent
+          newStyle[parent.name] = {}
+          newStyle[parent.name][attrName] = attrVal
+
+          if (!this._last_attr.style[parent.name].materialOptions) {
+            this._last_attr.style[parent.name].materialOptions = {}
+          }
+          this._last_attr.style[parent.name].materialOptions[attrName] = attrVal
+        } else {
+          newStyle[attrName] = attrVal
+
+          this._last_attr.style.materialOptions = this._last_attr.style.materialOptions || {}
+          this._last_attr.style.materialOptions[attrName] = attrVal
+        }
 
         this.startEditing(this._last_attr)
 
