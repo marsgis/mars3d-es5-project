@@ -1247,6 +1247,15 @@ const styleConfig = {
         }
       },
       {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return graphicType.endsWith("P")
+        }
+      },
+      {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
@@ -1424,6 +1433,15 @@ const styleConfig = {
         }
       },
       {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return graphicType.endsWith("P")
+        }
+      },
+      {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
@@ -1596,7 +1614,7 @@ const styleConfig = {
         name: "outlineColor",
         label: "边框颜色",
         type: "color",
-        defval: "#ffffff",
+        defval: "#000000",
         show(style, allStyle, graphicType) {
           return style.outline
         }
@@ -1746,6 +1764,15 @@ const styleConfig = {
         defval: false,
         show(style, allStyle, graphicType) {
           return !style.clampToGround
+        }
+      },
+      {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return graphicType.endsWith("P")
         }
       }
     ]
@@ -3009,6 +3036,15 @@ const styleConfig = {
         }
       },
       {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return graphicType.endsWith("P")
+        }
+      },
+      {
         name: "zIndex",
         label: "层级顺序",
         type: "number",
@@ -3187,6 +3223,15 @@ const styleConfig = {
         defval: false,
         show(style, allStyle, graphicType) {
           return !style.clampToGround
+        }
+      },
+      {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return graphicType.endsWith("P")
         }
       },
 
@@ -3396,6 +3441,15 @@ const styleConfig = {
           return !style.clampToGround
         }
       },
+      {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return graphicType.endsWith("P")
+        }
+      },
 
       {
         name: "clampToGround",
@@ -3464,6 +3518,7 @@ const styleConfig = {
           return !style.clampToGround
         }
       },
+
       {
         name: "diffHeight",
         label: "立体高度",
