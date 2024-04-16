@@ -81,7 +81,7 @@
         "icon": "/img/basemaps/google_img.png",
         "type": "google",
         "layer": "img_d",
-        "show": false
+        "show": true
       },
       {
         "pid": 10,
@@ -92,7 +92,7 @@
           { "name": "底图", "type": "tdt", "layer": "img_d" },
           { "name": "注记", "type": "tdt", "layer": "img_z" }
         ],
-        "show": true
+        "show": false
       },
       {
         "pid": 10,

@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.7.10
- * 编译日期：2024-04-12 13:34:36
+ * 编译日期：2024-04-16 08:33:24
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -4314,7 +4314,7 @@ declare namespace BaseGraphic {
      * @property editRemovePoint - 编辑删除了点 标绘事件
      * @property editStyle - 图上编辑修改了相关style属性 标绘事件
      * @property editStop - 停止编辑 标绘事件
-     * @property load - gltf模型加载完成后【仅gltf模型相关对象存在】
+     * @property load - 相关数据或对象加载完成后【仅 ModelEntity、ModelPrimitive、DivGraphic 类及其子类部分对象存在】
      * @property stop - 模型addDynamicPosition添加的动态点，到时时间停止后触发【仅addDynamicPosition动态点时存在】
      */
     type EventType = {
@@ -23218,7 +23218,7 @@ declare namespace TilesetLayer {
  * @param [options.imageBasedLighting] - 用于管理基于图像的光源的属性。
  * @param [options.luminanceAtZenith = 0.2] - 模型材质亮度，The sun's luminance at the zenith in kilo candela per meter squared to use for this model's procedural environment map.
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
- * @param [options.enableCollision = false] - 是否启用picking碰撞拾取。如果<code> map.scene.screenSpaceCameraController.enableCollisionDetection</code>为true，则相机将被阻止低于模型表面。
+ * @param [options.enableCollision = false] - 是否启用picking碰撞拾取，贴模型时需要开启。如果<code> map.scene.screenSpaceCameraController.enableCollisionDetection</code>为true，则相机将被阻止低于模型表面。
  * @param [options.enableShowOutline = true] - 是否启用模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 可以将其设置为false，以避免在加载时对几何图形进行额外处理。如果为false，则会忽略showOutlines和outlineColor选项。
  * @param [options.showOutline = true] - 是否显示模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 当为true时，将显示轮廓。当为false时，不显示轮廓。
  * @param [options.outlineColor = Color.BLACK] - 渲染outline轮廓时要使用的颜色。
@@ -25541,7 +25541,8 @@ declare class GeeLayer extends BaseTileLayer {
 }
 
 /**
- * 谷歌
+ * 谷歌地图，
+ * 【如果谷歌地址被封时，img_d图层时会改用高德等国内地图进行显示】
  * @param [options] - 参数对象，包括以下：
  * @param [options.layer] - 图层类型，以及以下内容:<br />
  * <ul>
@@ -28566,7 +28567,8 @@ declare namespace Map {
      * @property [fxaa] - 是否开启快速抗锯齿
      * @property [highDynamicRange] - 是否关闭高动态范围渲染(不关闭时地图会变暗)
      * @property [logarithmicDepthBuffer = true] - 是否使用对数深度缓冲区。启用此选项将允许在多截锥体中减少截锥体，提高性能。此属性依赖于所支持的fragmentDepth。
-     *
+     * @property [verticalExaggeration = 1.0] - 地形夸张倍率，用于放大地形的标量。请注意，地形夸张不会修改其他相对于椭球的图元。
+     * @property [verticalExaggerationRelativeHeight = 0.0] - 地形被夸大的高度。默认为0.0（相对于椭球表面缩放）。高于此高度的地形将向上缩放，低于此高度的地形将向下缩放。请注意，地形夸大不会修改任何其他图元，因为它们是相对于椭球体定位的。
      *
      *
      * 以下是Cesium.Viewer所支持的options【控件相关的写在另外的control属性中】
@@ -28606,9 +28608,7 @@ declare namespace Map {
      * @property [globe.showGroundAtmosphere = true] - 是否在地球上绘制的地面大气
      * @property [globe.enableLighting = false] - 是否显示晨昏线，可以看到地球的昼夜区域
      * @property [globe.tileCacheSize = 100] - 地形图块缓存的大小，表示为图块数。任何其他只要不需要渲染，就会释放超出此数目的图块这个框架。较大的数字将消耗更多的内存，但显示细节更快例如，当缩小然后再放大时。
-     * @property [globe.verticalExaggeration = 1.0] - 地形夸张倍率，用于放大地形的标量。请注意，地形夸张不会修改其他相对于椭球的图元。
      * @property [globe.realAlt = false] - 在测量高度和下侧提示的高度信息中是否将地形夸张倍率后的值转换为实际真实高度值(=拾取值/地形夸张倍率)。
-     * @property [globe.verticalExaggerationRelativeHeight = 0.0] - 地形被夸大的高度。默认为0.0（相对于椭球表面缩放）。高于此高度的地形将向上缩放，低于此高度的地形将向下缩放。请注意，地形夸大不会修改任何其他图元，因为它们是相对于椭球体定位的。
      *
      * 以下是Cesium.ScreenSpaceCameraController对象相关参数
      * @property [cameraController] - 相机操作相关参数
@@ -28671,6 +28671,8 @@ declare namespace Map {
         fxaa?: boolean;
         highDynamicRange?: boolean;
         logarithmicDepthBuffer?: boolean;
+        verticalExaggeration?: number;
+        verticalExaggerationRelativeHeight?: number;
         sceneMode?: Cesium.SceneMode;
         scene3DOnly?: boolean;
         mapProjection?: Cesium.MapProjection | CRS;
@@ -28708,9 +28710,7 @@ declare namespace Map {
             showGroundAtmosphere?: boolean;
             enableLighting?: boolean;
             tileCacheSize?: number;
-            verticalExaggeration?: number;
             realAlt?: boolean;
-            verticalExaggerationRelativeHeight?: number;
         };
         cameraController?: {
             minimumZoomDistance?: number;
@@ -38321,11 +38321,13 @@ declare namespace Util {
      * @param attr - Cesium内的属性对象
      * @param [options = {}] - 参数对象:
      * @param [options.onlySimpleType] - 是否只获取简易类型的对象
+     * @param [options.showNull = false] - 是否显示空值
      * @param [options.noArray] - onlySimpleType：true时，并且不取数组
      * @returns 最简的键值对属性对象
      */
     function getAttrVal(attr: any, options?: {
         onlySimpleType?: boolean;
+        showNull?: boolean;
         noArray?: boolean;
     }): any;
     /**
