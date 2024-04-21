@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.10
- * 编译日期：2024-04-16 08:33:24
+ * 版本信息：v3.7.11
+ * 编译日期：2024-04-21 20:32:00
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -8103,6 +8103,10 @@ declare namespace DivLightPoint {
      * @property [label.text] - 文本内容
      * @property [label.color] - 文本颜色
      * @property [label.templateEmptyStr = ""] - 当text存在模版字符串配置时，空值时显示的内容
+     * @property [billboard] - 图标
+     * @property [billboard.image] - 图标URL
+     * @property [billboard.horizontalOrigin] - 横向方向的定位
+     * @property [billboard.verticalOrigin] - 垂直方向的定位
      * @property [offsetX] - 用于非规则div时，横向偏移的px像素值
      * @property [offsetY] - 用于非规则div时，垂直方向偏移的px像素值
      * @property [scaleByDistance = false] - 是否按视距缩放
@@ -8127,6 +8131,11 @@ declare namespace DivLightPoint {
             text?: string;
             color?: string;
             templateEmptyStr?: string;
+        };
+        billboard?: {
+            image?: string;
+            horizontalOrigin?: Cesium.HorizontalOrigin;
+            verticalOrigin?: Cesium.VerticalOrigin;
         };
         offsetX?: number;
         offsetY?: number;
@@ -15250,6 +15259,7 @@ declare class SectionMeasure extends DistanceMeasure {
  * 注意：<br />
  * 1. 需要地形和模型等需要分析区域对应的数据加载完成后才能分析。<br />
  * 2. 如果有遮挡了分析区域的任何矢量对象，都需要分析前隐藏下，分析结束后再改回显示。<br />
+ * 3. 不同视角下深度图差异会结果也有差异，大量计算时积少成多对结果就有一定误差
  *
  * 说明：<br />
  * 1. 挖方量: 计算“基准面”到地表之间的凸出部分进行挖掉的体积。<br />
@@ -22184,6 +22194,12 @@ declare class GraphicLayer extends BaseGraphicLayer {
         stopEdit?: boolean;
     }): any;
     /**
+     * 参数方式添加矢量对象, 同addGraphic
+     * @param json - 矢量数据构造参数，可以用toJSON方法导出的值
+     * @returns 添加后的Graphic对象
+     */
+    loadJSON(json: any | any): BaseGraphic | BaseGraphic[];
+    /**
      * 加载转换GeoJSON格式规范数据为Graphic后加载到图层中。
      * @param geojson - GeoJSON格式规范数据
      * @param [options] - 加载控制参数,包含：
@@ -22226,10 +22242,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
     setOpacity(value: number): void;
     /**
      * 添加Graphic矢量数据
-     * @param graphic - 矢量数据
+     * @param graphic - 矢量数据 或 对应的构造参数对象(需要有type值)
      * @returns 添加后的Graphic对象
      */
-    addGraphic(graphic: BaseGraphic | BaseGraphic[] | any): BaseGraphic | BaseGraphic[];
+    addGraphic(graphic: BaseGraphic | BaseGraphic[] | any | any): BaseGraphic | BaseGraphic[];
     /**
      * 移除Graphic矢量数据
      * @param graphic - 矢量数据
@@ -24295,7 +24311,7 @@ declare namespace ArcGisLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
- * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -24486,7 +24502,7 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
- * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -24801,7 +24817,7 @@ declare namespace BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
- * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26785,7 +26801,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
- * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -26977,7 +26993,7 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.hasAlphaChannel = true] - 如果此图像提供者提供的图像为真 包括一个Alpha通道；否则为假。如果此属性为false，则为Alpha通道，如果 目前，将被忽略。如果此属性为true，则任何没有Alpha通道的图像都将 它们的alpha随处可见。当此属性为false时，内存使用情况 和纹理上传时间可能会减少。
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
- * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -27173,7 +27189,7 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
- * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -27834,9 +27850,9 @@ declare class Map extends BaseClass {
     /**
      * 获取所有图层
      * @param [options] - 参数对象，包括以下：
-     * @param [options.basemaps] - 默认不比较及处理，true:返回所有basemps中配置图层，false：排除所有所有basemps中配置图层
-     * @param [options.layers] - 默认不比较及处理，true:返回所有operationallayers中配置图层，false：排除所有operationallayers中配置图层
-     * @param [options.childs = true] - 是否获取GroupLayer内的子图层
+     * @param [options.basemaps] - 默认不比较及处理，true:返回所有basemps中配置图层，false：排除所有所有basemps中配置图层[但已加到map的除外]
+     * @param [options.layers] - 默认不比较及处理，true:返回所有operationallayers中配置图层，false：排除所有operationallayers中配置图层[但已加到map的除外]
+     * @param [options.childs = true] - 是否获取GroupLayer内的已经实例化的子图层[没有加到map的图层不会去读取内部子图层]
      * @returns 图层数组
      */
     getLayers(options?: {
@@ -28566,7 +28582,7 @@ declare namespace Map {
      * @property [atmosphere.dynamicLighting] - When not DynamicAtmosphereLightingType.NONE, the selected light source will
      * @property [fxaa] - 是否开启快速抗锯齿
      * @property [highDynamicRange] - 是否关闭高动态范围渲染(不关闭时地图会变暗)
-     * @property [logarithmicDepthBuffer = true] - 是否使用对数深度缓冲区。启用此选项将允许在多截锥体中减少截锥体，提高性能。此属性依赖于所支持的fragmentDepth。
+     * @property [logarithmicDepthBuffer = true] - 是否使用对数深度缓冲区。启用此选项将允许在多截锥体中减少截锥体，提高性能。此属性依赖于所支持的fragmentDepth。 [当贴地面出现阴影体或遮挡时设置为false]
      * @property [verticalExaggeration = 1.0] - 地形夸张倍率，用于放大地形的标量。请注意，地形夸张不会修改其他相对于椭球的图元。
      * @property [verticalExaggerationRelativeHeight = 0.0] - 地形被夸大的高度。默认为0.0（相对于椭球表面缩放）。高于此高度的地形将向上缩放，低于此高度的地形将向下缩放。请注意，地形夸大不会修改任何其他图元，因为它们是相对于椭球体定位的。
      *
@@ -29071,7 +29087,7 @@ declare namespace Map {
      * @property leftDown - 左键鼠标按下 鼠标事件
      * @property leftUp - 左键鼠标按下后释放 鼠标事件
      * @property mouseMove - 鼠标移动 鼠标事件
-     * @property mouseMoveTarget - 鼠标移动（拾取目标，并延迟处理） 鼠标事件
+     * @property mouseMoveTarget - 鼠标移动（拾取目标，并延迟处理） 鼠标事件 [标绘、测量等功能会禁用该事件]
      * @property wheel - 鼠标滚轮滚动 鼠标事件
      * @property rightClick - 右键单击 鼠标事件
      * @property rightDown - 右键鼠标按下 鼠标事件
@@ -34136,7 +34152,8 @@ declare class Shadows extends BaseThing {
      */
     clear(): void;
     /**
-     * 开始 日照阴影率 分析
+     * 开始 日照阴影率 分析。
+     * 已知问题：不同视角下ShadowMap精度存在差异，分析结果会存在误差，尽量俯视整个区域进行分析
      * @param options - 参数
      * @param options.startDate - 开始时间
      * @param options.endDate - 结束时间
