@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.11
- * 编译日期：2024-04-21 20:32:00
+ * 版本信息：v3.7.12
+ * 编译日期：2024-05-03 15:00:04
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -587,7 +587,9 @@ declare enum EventType {
  * 矢量数据类型
  */
 declare enum GraphicType {
+    group,
     label,
+    canvasLabel,
     labelP,
     point,
     pointP,
@@ -600,22 +602,29 @@ declare enum GraphicType {
     modelP,
     plane,
     planeP,
+    planeC,
     doubleSidedPlane,
+    cloud,
     box,
     boxP,
+    boxC,
     circle,
     circleP,
+    circleC,
     ellipse,
     cylinder,
     cylinderP,
+    cylinderC,
     coneTrack,
     coneTrackP,
     ellipsoid,
     ellipsoidP,
+    ellipsoidC,
     particleSystem,
     lightCone,
     tetrahedron,
     frustum,
+    frustumC,
     arcFrustum,
     rectangularSensor,
     camberRadar,
@@ -630,15 +639,18 @@ declare enum GraphicType {
     polylineC,
     polylineVolume,
     polylineVolumeP,
+    polylineVolumeC,
     path,
     route,
     fixedRoute,
     corridor,
     corridorP,
+    corridorC,
     road,
     dynamicRiver,
     wall,
     wallP,
+    wallC,
     scrollWall,
     diffuseWall,
     thickWall,
@@ -652,15 +664,18 @@ declare enum GraphicType {
     pitEntity,
     video2D,
     video3D,
-    viewShed,
+    videoP,
     rectangle,
     rectangleP,
+    rectangleC,
     div,
     divLightPoint,
     divUpLabel,
     divBoderLabel,
     popup,
     tooltip,
+    divPlane,
+    pointMeasure,
     distanceMeasure,
     distanceSurfaceMeasure,
     sectionMeasure,
@@ -684,7 +699,14 @@ declare enum GraphicType {
     isosTriangle,
     closeVurve,
     gatheringPlace,
-    group
+    viewShed,
+    pointLight,
+    spotLight,
+    volumeCloud,
+    pointVisibility,
+    coneVisibility,
+    skylineBody,
+    viewDome
 }
 
 /**
@@ -12414,7 +12436,7 @@ declare namespace PolygonEntity {
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
      * //  * @property {boolean} [outlineStyle.closure = true] 边线是否闭合
      * @property [textureCoordinates] - 纹理坐标，是Cartesian2的UV坐标数组的多边形层次结构。对贴地对象无效。
-     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。【编辑状态下开启了会无法拾取】
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
@@ -12425,7 +12447,7 @@ declare namespace PolygonEntity {
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
      * @property [closeBottom = true] - 当为false时，离开挤压多边形的底部打开。
-     * @property [arcType = Cesium.ArcType.GEODESIC] - 多边形的边缘必须遵循的线条类型。
+     * @property [arcType] - 多边形的边缘必须遵循的线条类型。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定多边形是投射还是接收来自光源的阴影。
      * @property [clampToGround = false] - 是否贴地
@@ -12640,7 +12662,7 @@ declare namespace PolylineEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [arcType = Cesium.ArcType.GEODESIC] - 折线段必须遵循的线的类型。
+     * @property [arcType] - 折线段必须遵循的线的类型。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 如果arcType不是arcType.none，则指定每个纬度和经度之间的角距离的数字属性。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
@@ -18486,7 +18508,7 @@ declare namespace PolygonPrimitive {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [arcType = Cesium.ArcType.GEODESIC] - 多边形的边缘必须遵循的线条类型。
+     * @property [arcType] - 多边形的边缘必须遵循的线条类型。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      * @property [clampToGround = false] - 是否贴地
@@ -18660,7 +18682,7 @@ declare namespace PolylinePrimitive {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [arcType = Cesium.ArcType.GEODESIC] - 折线段必须遵循的线的类型。
+     * @property [arcType] - 折线段必须遵循的线的类型。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 如果arcType不是arcType.none，则指定每个纬度和经度之间的角距离的数字属性。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
@@ -19099,7 +19121,7 @@ declare namespace ReflectionWater {
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
      * @property [closeBottom = true] - 当为false时，离开挤压多边形的底部打开。
-     * @property [arcType = Cesium.ArcType.GEODESIC] - 多边形的边缘必须遵循的线条类型。
+     * @property [arcType] - 多边形的边缘必须遵循的线条类型。
      */
     type StyleOptions = any | {
         color?: string;
@@ -19686,7 +19708,7 @@ declare namespace Water {
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
      * @property [closeBottom = true] - 当为false时，离开挤压多边形的底部打开。
-     * @property [arcType = Cesium.ArcType.GEODESIC] - 多边形的边缘必须遵循的线条类型。
+     * @property [arcType] - 多边形的边缘必须遵循的线条类型。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      * @property [classificationType = Cesium.ClassificationType.BOTH] - 指定贴地时的覆盖类型，是只对地形、3dtiles 或 两者同时。
@@ -23227,6 +23249,7 @@ declare namespace TilesetLayer {
  * @param [options.immediatelyLoadDesiredLevelOfDetail = false] - 当skipLevelOfDetail为true时，只有满足最大屏幕空间错误的tiles才会被下载。跳过因素将被忽略，并且只加载所需的块。
  * @param [options.loadSiblings = false] - 当skipLevelOfDetail = true时，判断遍历过程中是否总是下载可见块的兄弟块。如果为true则不会在已加载完模型后，自动从中心开始超清化模型。
  * @param [options.clippingPlanes] - {@link Cesium.ClippingPlaneCollection}用于选择性地禁用tile集的渲染。
+ * @param [clippingPolygons] - The {@link Cesium.ClippingPolygonCollection} 用于选择性地禁用tile集的渲染。
  * @param [options.classificationType] - 确定地形、3D贴图或两者都将被这个贴图集分类。有关限制和限制的详细信息，请参阅{@link cesium3dtilesset #classificationType}。
  * @param [options.ellipsoid = Ellipsoid.WGS84] - The ellipsoid determining the size and shape of the globe.
  * @param [options.pointCloudShading] - 基于几何误差和光照构造一个{@link Cesium.PointCloudShading}对象来控制点衰减的选项。
@@ -23431,7 +23454,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         };
         flyTo?: boolean;
         flyToOptions?: any;
-    });
+    }, clippingPolygons?: Cesium.ClippingPolygonCollection);
     /**
      * 原始的旋转角度，示例：{ x: 0, y: 0, z: 0 }
      */
@@ -27653,6 +27676,11 @@ declare class Map extends BaseClass {
      * 是否全局启用highlight ，如果在某些场景，如标绘时，可以手动关闭下
      */
     highlightEnabled: boolean;
+    /**
+     * 是否全局启用availability ，
+     * 如果在某些场景不想availability生效，仅播放时生效时，可以先手动关闭下，播放时再开启
+     */
+    availabilityEnabled: boolean;
     /**
      * 获取将在地球上渲染的ImageryLayer图像图层的集合[贴模型时]
      */
@@ -35312,7 +35340,7 @@ declare class TerrainPlanClip extends BaseThing {
         eventParent?: BaseClass | boolean;
     });
     /**
-     * 开挖区域的 坐标位置数组
+     * 单个模式下，开挖区域的 坐标位置数组
      */
     positions: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[];
     /**
@@ -35323,6 +35351,12 @@ declare class TerrainPlanClip extends BaseThing {
      * 是否外切开挖
      */
     clipOutSide: boolean;
+    /**
+     * 按线切割地球
+     * @param positions - 坐标位置数组
+     * @returns 无
+     */
+    setLine(positions: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[]): void;
     /**
      * 清除开挖
      * @returns 无
@@ -35383,6 +35417,7 @@ declare class TerrainUplift extends TerrainEditBase {
  * @param [options] - 参数对象，包括以下：
  * @param [options.positions] - 限高区域坐标数组
  * @param [options.height] - 限高高度（单位米）,相对于bottomHeight模型地面的海拔高度的相对高度。
+ * @param [options.diffHeight = 1000] - 限高的高度差（单位米）,相对于height的相对高度。
  * @param [options.bottomHeight] - 模型地面的海拔高度（单位米）
  * @param [options.color = "#ffffff"] - 颜色
  * @param [options.id = createGuid()] - 对象的id标识
@@ -35393,6 +35428,7 @@ declare class LimitHeight extends BaseThing {
     constructor(options?: {
         positions?: any[][] | string[] | LngLatPoint[] | Cesium.Cartesian3[];
         height?: number;
+        diffHeight?: number;
         bottomHeight?: number;
         color?: string | Cesium.Color;
         id?: string | number;
@@ -35411,6 +35447,10 @@ declare class LimitHeight extends BaseThing {
      * 限高高度（单位米）,相对于bottomHeight模型地面的海拔高度的相对高度。
      */
     height: number;
+    /**
+     * 模型地面的海拔高度（单位：米）
+     */
+    diffHeight: number;
     /**
      * 模型地面的海拔高度（单位：米）
      */
@@ -35549,6 +35589,7 @@ declare class TilesetBoxClip extends BaseThing {
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.clipOutSide = false] - 是否外裁剪
  * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35559,6 +35600,7 @@ declare class TilesetClip extends TilesetEditBase {
         area?: any;
         clipOutSide?: boolean;
         precise?: boolean;
+        czm?: boolean;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -35567,6 +35609,11 @@ declare class TilesetClip extends TilesetEditBase {
      * 是否外裁剪
      */
     clipOutSide: boolean;
+    /**
+     * 清除分析
+     * @returns 无
+     */
+    clear(): void;
 }
 
 /**
@@ -35638,6 +35685,10 @@ declare class TilesetEditBase extends BaseThing {
      */
     readonly list: any;
     /**
+     * 需要分析的模型 对应的 Cesium3DTileset 对象
+     */
+    readonly tileset: Cesium.Cesium3DTileset;
+    /**
      * 需要分析的模型（3dtiles图层）
      */
     layer: TilesetLayer;
@@ -35645,10 +35696,6 @@ declare class TilesetEditBase extends BaseThing {
      * 相对高度 (单位：米)，基于 压平/淹没区域 最低点高度的偏移量
      */
     readonly editHeight: number;
-    /**
-     * 需要分析的模型 对应的 Cesium3DTileset 对象
-     */
-    readonly tileset: Cesium.Cesium3DTileset;
     /**
      * 已添加的区域个数
      */
@@ -35891,9 +35938,13 @@ declare class TilesetPlanClip extends BaseThing {
      */
     layer: TilesetLayer;
     /**
-     * 裁剪面集合
+     * 裁剪平面集合
      */
     readonly planes: Cesium.ClippingPlaneCollection;
+    /**
+     * 裁剪多边形面集合
+     */
+    readonly polygons: Cesium.ClippingPolygonCollection;
     /**
      * 获取当前转换计算模型逆矩阵，
      * 用于 局部坐标系 与 世界坐标系 的转换。
@@ -38887,6 +38938,7 @@ declare namespace graphic {
   //扩展的普通primitive
   export { LightCone }
   export { Water }
+  export { Mask }
   export { DiffuseWall }
   export { ScrollWall }
   export { DynamicRiver }
@@ -38894,9 +38946,12 @@ declare namespace graphic {
   export { Pit }
   export { DoubleSidedPlane }
   export { ReflectionWater }
+  export { VideoPrimitive }
 
   //批量大数据primitive
   export { BaseCombine }
+  export { BasePointCombine }
+  export { BasePolyCombine }
   export { FlatBillboard }
   export { PlaneCombine }
   export { BoxCombine }
@@ -38930,6 +38985,7 @@ declare namespace graphic {
   export { Video3D }
   export { Route }
   export { FixedRoute }
+
   export { PointLight }
   export { SpotLight }
   export { VolumeCloud }
