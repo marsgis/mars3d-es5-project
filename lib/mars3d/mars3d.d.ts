@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.7.12
- * 编译日期：2024-05-03 15:00:04
+ * 编译日期：2024-05-06 21:30:23
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -38628,9 +38628,10 @@ declare namespace Util {
      * 导出下载文本文件
      * @param fileName - 文件完整名称，需要含后缀名
      * @param string - 文本内容
+     * @param [mimeType] - MIME类型,如：'text/plain'、'text/html'、'application/json'
      * @returns 无
      */
-    function downloadFile(fileName: string, string: string): void;
+    function downloadFile(fileName: string, string: string, mimeType?: string): void;
     /**
      * 获取浏览器类型及版本
      * @returns 浏览器类型及版本,示例：{ type: 'Chrome', version: 71 }
