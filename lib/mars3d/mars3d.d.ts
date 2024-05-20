@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.12
- * 编译日期：2024-05-06 21:30:23
+ * 版本信息：v3.7.15
+ * 编译日期：2024-05-20 10:34:34
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -2372,6 +2372,8 @@ declare class HomeButton extends BaseCzmControl {
  * 帮助按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
  * @param [options.icon] - 按钮图标,可以是：图片url路径、base64字符串、svg字符串、字体图标class名
+ * @param [options.firstOpen = true] - 是否首次自动弹出帮助信息面板
+ * @param [options.localStorageName = "cesium-hasSeenNavHelp"] - 首次加载页面后执行：window.localStorage.setItem(localStorageName, "true")
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
@@ -2381,6 +2383,8 @@ declare class HomeButton extends BaseCzmControl {
 declare class NavigationHelpButton extends BaseCzmControl {
     constructor(options?: {
         icon?: string;
+        firstOpen?: string;
+        localStorageName?: string;
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
@@ -3178,10 +3182,17 @@ declare class ColorRamp {
     /**
      * 获取对应值的色带上的颜色值
      * @param val - 数值
-     * @param [alpha = 0.8] - 颜色的透明度
+     * @param [alphaDef = 0.8] - 颜色的透明度
      * @returns 该值在色带上对应的颜色值，比如 "rgba(256, 0, 0, 0.8)"
      */
-    getColor(val: number, alpha?: number): string;
+    getColor(val: number, alphaDef?: number): string;
+    /**
+     * 获取对应值的色带上的颜色值
+     * @param val - 数值
+     * @param [alphaDef = 0.8] - 颜色的透明度
+     * @returns 该值在色带上对应的颜色值
+     */
+    getCesiumColor(val: number, alphaDef?: number): Cesium.Color;
 }
 
 /**
@@ -4002,11 +4013,11 @@ declare class DepthOfFieldEffect extends BaseEffect {
  * 雾场景效果
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
- * @param [options.fogByDistance = new Cesium.Cartesian4(10, 0.0, 1000, 0.9)] - 雾强度
+ * @param [options.fogByDistance = new Cesium.Cartesian4(10, 0.0, 1000, 0.9)] - 雾强度,4个数字代表：最近距离，强度值，最远距离，强度值(0.0-1.0)
  * @param [options.fogByDistance_near] - 最近距离，可以与fogByDistance二选一
- * @param [options.fogByDistance_nearValue] - 最近强度，可以与fogByDistance二选一
+ * @param [options.fogByDistance_nearValue] - 最近强度(0.0-1.0)，可以与fogByDistance二选一
  * @param [options.fogByDistance_far] - 最远距离，可以与fogByDistance二选一
- * @param [options.fogByDistance_farValue] - 最远强度，可以与fogByDistance二选一
+ * @param [options.fogByDistance_farValue] - 最远强度(0.0-1.0)，可以与fogByDistance二选一
  * @param [options.color = Cesium.Color.WHITE] - 雾颜色
  * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示雾场景效果
  */
@@ -4022,7 +4033,7 @@ declare class FogEffect extends BaseEffect {
         maxHeight?: number;
     });
     /**
-     * 雾强度
+     * 雾强度,4个数字代表：最近距离，强度值，最远距离，强度值(0.0-1.0)
      */
     fogByDistance: Cesium.Cartesian4;
     /**
@@ -4539,7 +4550,7 @@ declare class BaseGraphic extends BaseClass {
     addTo(layer: GraphicLayer): BaseGraphic | any;
     /**
      * 从图层上移除，同 layer.removeGraphic
-     * @param [hasDestroy] - 是否调用destroy释放
+     * @param [hasDestroy = true] - 是否调用destroy释放
      * @returns 无
      */
     remove(hasDestroy?: boolean): void;
@@ -11722,6 +11733,10 @@ declare class ModelEntity extends BasePointEntity {
      */
     scale: number;
     /**
+     * 卷帘对比时，设置所在的屏幕，NONE时不分屏
+     */
+    splitDirection: Cesium.SplitDirection;
+    /**
      * 获取模型完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
      * @example
      * modelEntity.readyPromise.then(function(layer) {
@@ -12785,10 +12800,6 @@ declare class PolylineEntity extends BasePolyEntity {
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: Cesium.PolylineGraphics;
-    /**
-     * 位置坐标数组 （笛卡尔坐标）, 赋值时可以传入LatLngPoint数组对象
-     */
-    positions: Cesium.Cartesian3[];
 }
 
 declare namespace PolylineVolumeEntity {
@@ -14993,6 +15004,7 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离和高度值 文本中保留的小数位
+ * @param [options.hasAbs] - 显示的 高度值 是否取绝对值，默认时:高度下降为负数、上升是正数。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
@@ -15026,6 +15038,7 @@ declare class HeightMeasure extends PolylineEntity {
         attr?: any | BaseGraphic.AjaxAttr;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
+        hasAbs?: boolean;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
@@ -18110,6 +18123,10 @@ declare class ModelPrimitive extends BasePointPrimitive {
      * Z轴方向缩放比例
      */
     scaleZ: number;
+    /**
+     * 卷帘对比时，设置所在的屏幕，NONE时不分屏
+     */
+    splitDirection: Cesium.SplitDirection;
     /**
      * 获取模型完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
      */
@@ -21527,6 +21544,7 @@ declare namespace GeoJsonLayer {
  * @param [options.chinaCRS] - 标识数据的国内坐标系（用于自动纠偏或加偏）
  * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
  * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
+ * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
  * @param [options.mask] - 标识是否绘制区域边界的反选遮罩层，也可以传入object配置范围： { xmin: 73.0, xmax: 136.0, ymin: 3.0, ymax: 59.0 }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
@@ -21607,6 +21625,7 @@ declare class GeoJsonLayer extends GraphicLayer {
         chinaCRS?: ChinaCRS;
         format?: (...params: any[]) => any;
         onCreateGraphic?: (...params: any[]) => any;
+        filter?: (...params: any[]) => any;
         mask?: boolean | any;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         opacity?: number;
@@ -21812,7 +21831,7 @@ declare class GraphicGroupLayer extends GroupLayer {
     eachGraphic(method: (...params: any[]) => any, context?: any): GraphicGroupLayer;
     /**
      * 清除图层内所有矢量数据
-     * @param [hasDestroy = false] - 是否释放矢量对象
+     * @param [hasDestroy = true] - 是否释放矢量对象
      * @returns 无
      */
     clear(hasDestroy?: boolean): void;
@@ -22188,6 +22207,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     allowDrillPick: boolean | ((...params: any[]) => any);
     /**
+     * 卷帘对比时，设置所在的屏幕，NONE时不分屏[仅对Model小模型矢量数据有效]
+     */
+    splitDirection: Cesium.SplitDirection;
+    /**
      * 对象从地图上移除的创建钩子方法，
      * 每次remove时都会调用
      * @returns 无
@@ -22236,6 +22259,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onEachFeature] - 创建每个Graphic前的回调
+     * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
      * @returns 转换后的Graphic对象数组
      */
     loadGeoJSON(geojson: string | any, options?: {
@@ -22250,6 +22274,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
             mutate?: boolean;
         };
         onEachFeature?: (...params: any[]) => any;
+        filter?: (...params: any[]) => any;
     }): BaseGraphic[];
     /**
      * 获取当前图层聚合点列表
@@ -22271,7 +22296,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
     /**
      * 移除Graphic矢量数据
      * @param graphic - 矢量数据
-     * @param [hasDestroy = false] - 是否释放矢量对象
+     * @param [hasDestroy = true] - 是否释放矢量对象
      * @returns 当前对象本身，可以链式调用
      */
     removeGraphic(graphic: BaseGraphic | any, hasDestroy?: boolean): GraphicLayer;
@@ -23007,7 +23032,7 @@ declare class LodGraphicLayer extends GraphicLayer {
     updateGraphic(graphic: BaseGraphic | any, attr: any): void;
     /**
      * 清除图层内所有矢量数据
-     * @param [hasDestroy = false] - 是否释放矢量对象
+     * @param [hasDestroy = true] - 是否释放矢量对象
      * @returns 无
      */
     clear(hasDestroy?: boolean): void;
@@ -25581,7 +25606,7 @@ declare class GeeLayer extends BaseTileLayer {
 
 /**
  * 谷歌地图，
- * 【如果谷歌地址被封时，img_d图层时会改用高德等国内地图进行显示】
+ * 【如果谷歌地址被封时，img_d图层时会自动改用高德等其他地图进行显示】
  * @param [options] - 参数对象，包括以下：
  * @param [options.layer] - 图层类型，以及以下内容:<br />
  * <ul>
@@ -27127,8 +27152,8 @@ declare class WmtsLayer extends BaseTileLayer {
  *     <li><code>{x}</code>:切片方案中的图块X坐标，其中0是最西端的图块。</li>
  *     <li><code>{y}</code>: 切片方案中的图块Y坐标，其中0是最北的图块。</li>
  *     <li><code>{s}</code>:可用的子域之一，用于克服浏览器对每个主机的并发请求数的限制。</li>
+ *     <li><code>{reverseY}</code>:切片方案中的图块Y坐标，其中0是最南端的图块，是y的翻转值, 用于TMS服务。</li>
  *     <li><code>{reverseX}</code>: 切片方案中的图块X坐标，其中0是最东的图块。</li>
- *     <li><code>{reverseY}</code>:切片方案中的图块Y坐标，其中0是最南端的图块,用于TMS服务。</li>
  *     <li><code>{reverseZ}</code>:在切片方案中切片的级别，其中级别0是四叉树金字塔的最大级别。为了使用reverseZ，必须定义maximumLevel。</li>
  *     <li><code>{westDegrees}</code>: 瓦片图块在测地角度上的西边缘。</li>
  *     <li><code>{southDegrees}</code>:瓦片图块在测地角度上的南边缘。</li>
@@ -27583,6 +27608,14 @@ declare class Map extends BaseClass {
      */
     readonly cesiumWidget: Cesium.CesiumWidget;
     /**
+     * 获取地图完成解析加载完成的Promise承诺, 等价于load事件(区别在于load事件必须在load完成前绑定才能监听)。
+     * @example
+     * map.readyPromise.then(function(map) {
+     *       console.log("load完成", map)
+     *     })
+     */
+    readonly readyPromise: Promise<BaseLayer | any>;
+    /**
      * 获取或设置相机当前正在跟踪的Entity实例。
      */
     trackedEntity: Cesium.Entity | BaseEntity | undefined | any;
@@ -27668,7 +27701,7 @@ declare class Map extends BaseClass {
      */
     lang: Lang | any;
     /**
-     * 鼠标滚轮放大的步长比例，
+     * 鼠标滚轮缩放的步长比例，
      * 初始化时可传参 scene.cameraController.zoomFactor
      */
     zoomFactor: number;
@@ -27830,7 +27863,7 @@ declare class Map extends BaseClass {
     /**
      * 移除图层
      * @param layer - 需要移除的图层
-     * @param [hasDestroy] - 是否释放 destroy
+     * @param [hasDestroy = false] - 是否释放 destroy
      * @returns 当前对象本身，可以链式调用
      */
     removeLayer(layer: BaseLayer, hasDestroy?: boolean): Map;
@@ -27909,7 +27942,7 @@ declare class Map extends BaseClass {
     /**
      * 移除控件
      * @param control - 需要移除的控件
-     * @param [hasDestroy] - 是否释放
+     * @param [hasDestroy = false] - 是否释放
      * @returns 当前对象本身，可以链式调用
      */
     removeControl(control: BaseControl, hasDestroy?: boolean): Map;
@@ -27943,7 +27976,7 @@ declare class Map extends BaseClass {
     /**
      * 移除特效对象
      * @param effect - 需要移除的特效对象
-     * @param [hasDestroy] - 是否释放
+     * @param [hasDestroy = false] - 是否释放
      * @returns 当前对象本身，可以链式调用
      */
     removeEffect(effect: BaseEffect, hasDestroy?: boolean): Map;
@@ -27963,7 +27996,7 @@ declare class Map extends BaseClass {
     /**
      * 移除Thing对象
      * @param item - 需要移除的Thing对象
-     * @param [hasDestroy] - 是否释放
+     * @param [hasDestroy = false] - 是否释放
      * @returns 当前对象本身，可以链式调用
      */
     removeThing(item: BaseThing, hasDestroy?: boolean): Map;
@@ -28658,7 +28691,7 @@ declare namespace Map {
      * @property [cameraController] - 相机操作相关参数
      * @property [cameraController.minimumZoomDistance = 1.0] - 相机最近视距，变焦时相机位置的最小量级（以米为单位），默认为1。该值是相机与地表(含地形)的相对距离。
      * @property [cameraController.maximumZoomDistance = 50000000.0] - 相机最远视距，变焦时相机位置的最大值（以米为单位）。该值是相机与地表(含地形)的相对距离。
-     * @property [cameraController.zoomFactor = 3.0] - 滚轮放大倍数，控制鼠标滚轮操作的步长
+     * @property [cameraController.zoomFactor = 3.0] - 鼠标滚轮缩放的步长比例
      * @property [cameraController.minimumCollisionTerrainHeight = 80000] - 最小碰撞高度，低于此高度时绕鼠标键绕圈，大于时绕视图中心点绕圈。
      * @property [cameraController.constrainedAxis = true] - 南北极绕轴心旋转，为false时 解除在南北极区域鼠标操作限制
      * @property [cameraController.enableRotate = true] - 2D和3D视图下，是否允许用户旋转相机
@@ -34012,6 +34045,7 @@ declare class Measure extends BaseThing {
      * @param [options.label] - 测量结果文本的样式
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
+     * @param [options.hasAbs] - 显示的 高度值 是否取绝对值，默认时:高度下降为负数、上升是正数。
      * @returns 绘制创建完成的Promise，返回 高度测量 对象
      */
     height(options?: {
@@ -34019,6 +34053,7 @@ declare class Measure extends BaseThing {
         label?: LabelEntity.StyleOptions | any | any;
         unit?: string;
         decimal?: number;
+        hasAbs?: boolean;
     }): Promise<HeightMeasure | any>;
     /**
      * 三角高度测量，
@@ -35179,6 +35214,7 @@ declare type getSlope_endItem = (event: {
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
  * @param [options.diffHeight] - 当显示开挖区域的井时，设置所有区域的挖掘深度（单位：米）
  * @param [options.splitNum = 30] - 当显示开挖区域的井时，井墙面每两点之间插值个数(概略值，有经纬网网格来插值)
+ * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35191,6 +35227,7 @@ declare class TerrainClip extends TerrainEditBase {
         imageBottom?: string;
         diffHeight?: number;
         splitNum?: number;
+        czm?: boolean;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -38440,6 +38477,7 @@ declare namespace Util {
      * @param [symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
      * @param [symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
      * @param [attr] - 数据属性对象
+     * @param [callbackResult] - callback时的第3个回调参数
      * @returns style样式
      */
     function getSymbolStyle(symbol: {
@@ -38447,7 +38485,7 @@ declare namespace Util {
         styleField?: string;
         styleFieldOptions?: any;
         callback?: (...params: any[]) => any;
-    }, attr?: any): any;
+    }, attr?: any, callbackResult?: any): any;
     /**
      * geojson格式 转 arcgis服务的json格式
      * @param geojson - geojson格式
@@ -38490,6 +38528,7 @@ declare namespace Util {
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理,比如坐标纠偏 onPointTrans: mars3d.PointUtil.getTransFun(mars3d.ChinaCRS.GCJ02, map.chinaCRS)
+     * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
      * @returns Graphic构造参数数组（用于创建{@link BaseGraphic}），其中多面的最大一个面会有isMultiMax为true的属性
      */
     function geoJsonToGraphics(geojson: any, options?: {
@@ -38510,6 +38549,7 @@ declare namespace Util {
             mutate?: boolean;
         };
         onPointTrans?: (...params: any[]) => any;
+        filter?: (...params: any[]) => any;
     }): any;
     /**
      * GeoJSON格式的Feature单个对象转为 Graphic构造参数（用于创建{@link BaseGraphic}）
@@ -38524,6 +38564,7 @@ declare namespace Util {
      * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理
+     * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
      * @returns Graphic构造参数（用于创建{@link BaseGraphic}），其中多面的最大一个面会有isMultiMax为true的属性
      */
     function featureToGraphic(feature: any, options?: {
@@ -38536,6 +38577,7 @@ declare namespace Util {
             mutate?: boolean;
         };
         onPointTrans?: (...params: any[]) => any;
+        filter?: (...params: any[]) => any;
     }): any;
     /**
      * 根据当前高度获取地图层级
