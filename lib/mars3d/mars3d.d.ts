@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.15
- * 编译日期：2024-05-20 10:34:34
+ * 版本信息：v3.7.16
+ * 编译日期：2024-05-28 08:54:33
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -15530,8 +15530,8 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
@@ -16037,8 +16037,8 @@ declare class BasePrimitive extends BaseGraphic {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -17677,8 +17677,8 @@ declare class FrustumPrimitive extends BasePointPrimitive {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -18053,8 +18053,8 @@ declare namespace ModelPrimitive {
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.maxCacheCount = 50] - 当使用addDynamicPosition设置为动画轨迹位置时，保留的坐标点数量，传-1时不限制
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.referenceFrame = Cesium.ReferenceFrame.FIXED] - 当使用addDynamicPosition设置为动画轨迹位置时，position位置被定义的参考系。
@@ -18447,8 +18447,8 @@ declare namespace PointPrimitive {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.frameRate = 1] - 当postion为CallbackProperty时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
- * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认为最后一个坐标位置。
- * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认为第一个坐标位置。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时为第一个坐标位置。
  * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -22782,49 +22782,6 @@ declare class I3SLayer extends BaseGraphicLayer {
      * 重新加载模型
      */
     reload(): void;
-    /**
-     * 飞行定位至图层数据所在的视角
-     * @param [options = {}] - 参数对象:
-     * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
-     * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
-     * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
-     * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
-     * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
-     * @param [options.complete] - 飞行完成后要执行的函数。
-     * @param [options.cancel] - 飞行取消时要执行的函数。
-     * @param [options.endTransform] - 变换矩阵表示飞行结束时相机所处的参照系。
-     * @param [options.maximumHeight] - 飞行高峰时的最大高度。
-     * @param [options.pitchAdjustHeight] - 如果相机飞得比这个值高，在飞行过程中调整俯仰以向下看，并保持地球在视口。
-     * @param [options.flyOverLongitude] - 地球上的两点之间总有两条路。这个选项迫使相机选择战斗方向飞过那个经度。
-     * @param [options.flyOverLongitudeWeight] - 仅在通过flyOverLongitude指定的lon上空飞行，只要该方式的时间不超过flyOverLongitudeWeight的短途时间。
-     * @param [options.convert = true] - 是否将目的地从世界坐标转换为场景坐标（仅在不使用3D时相关）。
-     * @param [options.easingFunction] - 控制在飞行过程中如何插值时间。
-     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
-     */
-    flyTo(options?: {
-        radius?: number;
-        scale?: number;
-        heading?: number;
-        pitch?: number;
-        roll?: number;
-        minHeight?: number;
-        maxHeight?: number;
-        height?: number;
-        duration?: number;
-        complete?: Cesium.Camera.FlightCompleteCallback;
-        cancel?: Cesium.Camera.FlightCancelledCallback;
-        endTransform?: Cesium.Matrix4;
-        maximumHeight?: number;
-        pitchAdjustHeight?: number;
-        flyOverLongitude?: number;
-        flyOverLongitudeWeight?: number;
-        convert?: boolean;
-        easingFunction?: Cesium.EasingFunction.Callback;
-    }): Promise<boolean>;
 }
 
 declare namespace LodGraphicLayer {
@@ -23712,49 +23669,6 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * @returns 无
      */
     stopEditing(): void;
-    /**
-     * 飞行定位至图层数据所在的视角
-     * @param [options = {}] - 参数对象:
-     * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
-     * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
-     * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
-     * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
-     * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
-     * @param [options.complete] - 飞行完成后要执行的函数。
-     * @param [options.cancel] - 飞行取消时要执行的函数。
-     * @param [options.endTransform] - 变换矩阵表示飞行结束时相机所处的参照系。
-     * @param [options.maximumHeight] - 飞行高峰时的最大高度。
-     * @param [options.pitchAdjustHeight] - 如果相机飞得比这个值高，在飞行过程中调整俯仰以向下看，并保持地球在视口。
-     * @param [options.flyOverLongitude] - 地球上的两点之间总有两条路。这个选项迫使相机选择战斗方向飞过那个经度。
-     * @param [options.flyOverLongitudeWeight] - 仅在通过flyOverLongitude指定的lon上空飞行，只要该方式的时间不超过flyOverLongitudeWeight的短途时间。
-     * @param [options.convert = true] - 是否将目的地从世界坐标转换为场景坐标（仅在不使用3D时相关）。
-     * @param [options.easingFunction] - 控制在飞行过程中如何插值时间。
-     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
-     */
-    flyTo(options?: {
-        radius?: number;
-        scale?: number;
-        heading?: number;
-        pitch?: number;
-        roll?: number;
-        minHeight?: number;
-        maxHeight?: number;
-        height?: number;
-        duration?: number;
-        complete?: Cesium.Camera.FlightCompleteCallback;
-        cancel?: Cesium.Camera.FlightCancelledCallback;
-        endTransform?: Cesium.Matrix4;
-        maximumHeight?: number;
-        pitchAdjustHeight?: number;
-        flyOverLongitude?: number;
-        flyOverLongitudeWeight?: number;
-        convert?: boolean;
-        easingFunction?: Cesium.EasingFunction.Callback;
-    }): Promise<boolean>;
 }
 
 /**
@@ -25060,49 +24974,6 @@ declare class BaseTileLayer extends BaseLayer {
      * 透明度，取值范围：0.0-1.0
      */
     opacity: number;
-    /**
-     * 飞行定位至图层数据所在的视角
-     * @param [options = {}] - 参数对象:
-     * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
-     * @param [options.scale = 1.2] - 线面数据时，缩放比例，可以控制视角比矩形略大一些，这样效果更友好。
-     * @param [options.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
-     * @param [options.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
-     * @param [options.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
-     * @param [options.minHeight] - 定位时相机的最小高度值，用于控制避免异常数据
-     * @param [options.maxHeight] - 定位时相机的最大高度值，用于控制避免异常数据
-     * @param [options.height] - 矩形区域时的高度值, 默认取地形高度值
-     * @param [options.duration] - 飞行时间（单位：秒）。如果省略，SDK内部会根据飞行距离计算出理想的飞行时间。
-     * @param [options.complete] - 飞行完成后要执行的函数。
-     * @param [options.cancel] - 飞行取消时要执行的函数。
-     * @param [options.endTransform] - 变换矩阵表示飞行结束时相机所处的参照系。
-     * @param [options.maximumHeight] - 飞行高峰时的最大高度。
-     * @param [options.pitchAdjustHeight] - 如果相机飞得比这个值高，在飞行过程中调整俯仰以向下看，并保持地球在视口。
-     * @param [options.flyOverLongitude] - 地球上的两点之间总有两条路。这个选项迫使相机选择战斗方向飞过那个经度。
-     * @param [options.flyOverLongitudeWeight] - 仅在通过flyOverLongitude指定的lon上空飞行，只要该方式的时间不超过flyOverLongitudeWeight的短途时间。
-     * @param [options.convert = true] - 是否将目的地从世界坐标转换为场景坐标（仅在不使用3D时相关）。
-     * @param [options.easingFunction] - 控制在飞行过程中如何插值时间。
-     * @returns 如果飞行成功则解析为true的承诺，如果当前未在场景中可视化目标或取消飞行，则为false的Promise
-     */
-    flyTo(options?: {
-        radius?: number;
-        scale?: number;
-        heading?: number;
-        pitch?: number;
-        roll?: number;
-        minHeight?: number;
-        maxHeight?: number;
-        height?: number;
-        duration?: number;
-        complete?: Cesium.Camera.FlightCompleteCallback;
-        cancel?: Cesium.Camera.FlightCancelledCallback;
-        endTransform?: Cesium.Matrix4;
-        maximumHeight?: number;
-        pitchAdjustHeight?: number;
-        flyOverLongitude?: number;
-        flyOverLongitudeWeight?: number;
-        convert?: boolean;
-        easingFunction?: Cesium.EasingFunction.Callback;
-    }): Promise<boolean>;
 }
 
 /**
@@ -28423,10 +28294,9 @@ declare class Map extends BaseClass {
         easingFunction?: Cesium.EasingFunction.Callback;
     }): Promise<boolean>;
     /**
-     * 是否在调用了openFlyAnimation正在进行开场动画
-     * @returns 是否在开场动画
+     * 调用了openFlyAnimation正在进行开场动画的Promise
      */
-    isFlyAnimation(): boolean;
+    readonly flyAnimationPromise: Promise<boolean>;
     /**
      * 执行开场动画，动画播放地球飞行定位到指定区域（1.旋转地球+2.降低高度+3.指定视角）
      * @param [options = {}] - 参数对象:
@@ -31231,6 +31101,7 @@ declare class HeatLayer extends BaseLayer {
  * @param [options.depthTest = true] - 是否进行计算深度判断，在地球背面或被遮挡时不显示（大数据时，需要关闭）
  * @param [options.fixedHeight = 0] - 点的固定的海拔高度
  * @param [options.clampToGround = false] - 点是否贴地
+ * @param [options.pointerEvents = false] - 图层是否可以进行鼠标交互，为false时可以穿透操作及缩放地图
  * @param [options.多个参数] - 支持mapv本身所有drawOptions图层样式参数，具体查阅 [mapv库drawOptions文档]{@link https://github.com/huiyan-fe/mapv/wiki/%E7%B1%BB%E5%8F%82%E8%80%83} ，也可以 [在线编辑图层样式]{@link https://mapv.baidu.com/editor/}
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
@@ -31254,6 +31125,7 @@ declare class MapVLayer extends BaseLayer {
         depthTest?: boolean;
         fixedHeight?: number;
         clampToGround?: boolean;
+        pointerEvents?: boolean;
         多个参数?: any;
         id?: string | number;
         pid?: string | number;
@@ -33645,6 +33517,7 @@ declare class TdtPOI {
      * @param queryOptions.text - 检索关键字。支持多个关键字并集检索，不同关键字间以空格符号分隔，最多支持10个关键字检索。
      * @param [queryOptions.types = ''] - 检索分类偏好，与text组合进行检索，多个分类以","分隔（POI分类），如果需要严格按分类检索，请通过text参数设置
      * @param [queryOptions.graphic] - 限定的搜索区域
+     * @param [queryOptions.city] - 当不存在graphic时，可以重新限定查询的城市(行政区的国标码)
      * @param [queryOptions.limit = false] - 取值为"true"，严格返回限定区域内检索结果
      * @param [queryOptions.page = 0] - 分页页码，默认为0, 0代表第一页，1代表第二页，以此类推。常与 count 搭配使用，仅当返回结果为poi时可以翻页。
      * @param [queryOptions.count = 20] - 单次召回POI数量，默认为10条记录，最大返回20条。多关键字检索时，返回的记录数为关键字个数*count。多关键词检索时，单页返回总数=关键词数量*count
@@ -33656,6 +33529,7 @@ declare class TdtPOI {
         text: string;
         types?: string;
         graphic?: BaseGraphic | any;
+        city?: string;
         limit?: boolean;
         page?: number;
         count?: number;
@@ -33667,7 +33541,7 @@ declare class TdtPOI {
      * @param queryOptions - 查询参数
      * @param queryOptions.text - 检索关键字。支持多个关键字并集检索，不同关键字间以空格符号分隔，最多支持10个关键字检索。
      * @param [queryOptions.types = ''] - 检索分类偏好，与text组合进行检索，多个分类以","分隔（POI分类），如果需要严格按分类检索，请通过text参数设置
-     * @param [queryOptions.city] - 可以重新限定查询的区域，默认为类构造时传入的city
+     * @param [queryOptions.city] - 可以重新限定查询的城市(行政区的国标码)
      * @param [queryOptions.level = 18] - 查询的级别,1-18级
      * @param [queryOptions.mapBound] - 查询的地图范围: "minx,miny,maxx,maxy"
      * @param [queryOptions.count = 20] - 单次召回POI数量，最大返回300条。多关键字检索时，返回的记录数为关键字个数*count。多关键词检索时，单页返回总数=关键词数量*count
