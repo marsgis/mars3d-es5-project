@@ -12,13 +12,13 @@ const header = require("gulp-header")
 const htmlmin = require("gulp-htmlmin")
 const cheerio = require("gulp-cheerio")
 const cssmin = require("gulp-clean-css")
-// const obfuscator = require("javascript-obfuscator")
+const obfuscator = require("javascript-obfuscator")
 
-// const through2 = require("through2")
-// const Vinyl = require("vinyl")
-// const JavaScriptObfuscator = require("javascript-obfuscator")
-// const PluginError = require("plugin-error")
-// const applySourceMap = require("vinyl-sourcemaps-apply")
+const through2 = require("through2")
+const Vinyl = require("vinyl")
+const JavaScriptObfuscator = require("javascript-obfuscator")
+const PluginError = require("plugin-error")
+const applySourceMap = require("vinyl-sourcemaps-apply")
 
 const fs = require("fs")
 const path = require("path")
@@ -155,7 +155,7 @@ gulp.task("build", (done) => {
               throwOnlyCopy(srcPath, srcFile, outFilePath, err)
             })
           )
-          // .pipe(optsObfuscator.compact ? obfuscatorGulp(optsObfuscator) : header(banner, bannerData))
+          .pipe(optsObfuscator.compact ? obfuscatorGulp(optsObfuscator) : header(banner, bannerData))
           .pipe(header(banner, bannerData))
           .pipe(gulp.dest(outFilePath))
         break
@@ -193,15 +193,15 @@ gulp.task("build", (done) => {
                         compact: false
                       })
 
-                      // if (optsObfuscator.compact) {
-                      //   //高级加密
-                      //   optsObfuscator.controlFlowFlattening = true
-                      //   var obfuscationResult = obfuscator.obfuscate(result.code, optsObfuscator)
-                      //   script.text(obfuscationResult.getObfuscatedCode())
-                      // } else {
-                      //普通加密
-                      script.text(result.code)
-                      // }
+                      if (optsObfuscator.compact) {
+                        //高级加密
+                        optsObfuscator.controlFlowFlattening = true
+                        var obfuscationResult = obfuscator.obfuscate(result.code, optsObfuscator)
+                        script.text(obfuscationResult.getObfuscatedCode())
+                      } else {
+                        //普通加密
+                        script.text(result.code)
+                      }
                     }
                   } catch (err) {
                     console.log("转换html出错了", err)
@@ -327,45 +327,45 @@ function throwOnlyCopy(srcPath, pathname, outFilePath, message) {
   }
 }
 
-// function obfuscatorGulp(options = {}) {
-//   return through2.obj(function (file, enc, cb) {
-//     if (file.isNull()) {
-//       return cb(null, file)
-//     }
-//     if (!file.isBuffer()) {
-//       throw new PluginError("gulp-javascript-obfuscator", "Only Buffers are supported!")
-//     }
-//     if (file.sourceMap) {
-//       options.sourceMap = true
-//       options.inputFileName = file.relative
-//       options.sourceMapMode = "separate"
-//     }
+function obfuscatorGulp(options = {}) {
+  return through2.obj(function (file, enc, cb) {
+    if (file.isNull()) {
+      return cb(null, file)
+    }
+    if (!file.isBuffer()) {
+      throw new PluginError("gulp-javascript-obfuscator", "Only Buffers are supported!")
+    }
+    if (file.sourceMap) {
+      options.sourceMap = true
+      options.inputFileName = file.relative
+      options.sourceMapMode = "separate"
+    }
 
-//     try {
-//       const obfuscationResult = JavaScriptObfuscator.obfuscate(String(file.contents), options)
-//       file.contents = Buffer.from(obfuscationResult.getObfuscatedCode())
-//       if (options.sourceMap && options.sourceMapMode !== "inline") {
-//         if (file.sourceMap) {
-//           const sourceMap = JSON.parse(obfuscationResult.getSourceMap())
-//           sourceMap.file = file.sourceMap.file
-//           applySourceMap(file, sourceMap)
-//         } else {
-//           this.push(
-//             new Vinyl({
-//               cwd: file.cwd,
-//               base: file.base,
-//               path: file.path + ".map",
-//               contents: Buffer.from(obfuscationResult.getSourceMap())
-//             })
-//           )
-//         }
-//       }
-//       return cb(null, file)
-//     } catch (err) {
-//       throw new PluginError("gulp-javascript-obfuscator", err)
-//     }
-//   })
-// }
+    try {
+      const obfuscationResult = JavaScriptObfuscator.obfuscate(String(file.contents), options)
+      file.contents = Buffer.from(obfuscationResult.getObfuscatedCode())
+      if (options.sourceMap && options.sourceMapMode !== "inline") {
+        if (file.sourceMap) {
+          const sourceMap = JSON.parse(obfuscationResult.getSourceMap())
+          sourceMap.file = file.sourceMap.file
+          applySourceMap(file, sourceMap)
+        } else {
+          this.push(
+            new Vinyl({
+              cwd: file.cwd,
+              base: file.base,
+              path: file.path + ".map",
+              contents: Buffer.from(obfuscationResult.getSourceMap())
+            })
+          )
+        }
+      }
+      return cb(null, file)
+    } catch (err) {
+      throw new PluginError("gulp-javascript-obfuscator", err)
+    }
+  })
+}
 
 // eslint-disable-next-line no-extend-native
 Date.prototype.format = function (fmt) {

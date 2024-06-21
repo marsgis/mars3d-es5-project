@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.16
- * 编译日期：2024-05-28 08:54:33
+ * 版本信息：v3.7.19
+ * 编译日期：2024-06-21 15:30:38
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -597,6 +597,7 @@ declare enum GraphicType {
     divBillboard,
     fontBillboard,
     billboardP,
+    divBillboardP,
     flatBillboard,
     model,
     modelP,
@@ -3602,7 +3603,7 @@ declare class MarsArray {
 }
 
 /**
- * 3个天空盒（可以平滑过度）, 在场景周围绘制星星等太空背景。
+ * 3个近地天空盒（可以平滑过度）, 在场景周围绘制星星等太空背景。
  * 天空盒子是用真正的赤道平均春分点(TEME)轴定义的。仅在3D中支持。当转换为2D或哥伦布视图时，天空盒会淡出。
  * 天空盒子的大小不能超过{@link Cesium.Scene#maximumCubeMapSize}。
  * @example
@@ -4621,10 +4622,12 @@ declare class BaseGraphic extends BaseClass {
      * 获取数据的矩形边界
      * @param [options] - 控制参数
      * @param [options.isFormat = false] - 是否格式化，格式化时示例： { xmin: 73.16895, xmax: 134.86816, ymin: 12.2023, ymax: 54.11485 }
+     * @param [options.onePoint = true] - 一个点位时是否返回边界值
      * @returns isFormat：true时，返回格式化对象，isFormat：false时返回Cesium.Rectangle对象
      */
     getRectangle(options?: {
         isFormat?: boolean;
+        onePoint?: boolean;
     }): Cesium.Rectangle | any;
     /**
      * 获取数据的最大高度
@@ -4836,10 +4839,28 @@ declare class BaseGraphic extends BaseClass {
      */
     closeSmallTooltip(): BaseGraphic | any;
     /**
-     * 后端获取实时属性值，当存在attr是动态属性配置时可用【attr.type === "ajax" && attr.url】
+     * 是否 后端动态属性
+     */
+    readonly hasAjaxAttr: boolean;
+    /**
+     * 获取后端动态属性，当存在attr是动态属性配置时可用【attr.type === "ajax" && attr.url】
      * @returns 实时获取当前的动态属性值
      */
     getAjaxAttr(): any;
+    /**
+     * 是否 后端动态坐标
+     */
+    readonly hasAjaxPostion: boolean;
+    /**
+     * 设置后端动态坐标，当存在点状对象是动态属性配置时可用【position.type === "ajax" && position.url)】
+     * @param position - 动态坐标配置
+     * @returns 是否后端动态坐标
+     */
+    setAjaxPostion(position: BaseGraphic.AjaxPosition): boolean;
+    /**
+     * 清除 后端动态坐标
+     */
+    clearAjaxPostion(): void;
     /**
      * 当前类的构造参数
      */
@@ -6288,6 +6309,7 @@ declare namespace ConeVisibility {
  * @param [options.targetPosition] - 目标视点位置,可以替代style中的相机heading\pitch\roll方向和distance距离参数
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -6299,6 +6321,7 @@ declare class ConeVisibility extends PointVisibility {
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
         style: ConeVisibility.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        depthBiasStep?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -6701,6 +6724,7 @@ declare namespace PointLight {
  * @param options.position - 位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -6711,6 +6735,7 @@ declare class PointLight extends BasePointPrimitive {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         style: PointLight.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        depthBiasStep?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -6755,6 +6780,7 @@ declare namespace PointVisibility {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.terrain = true] - 是否启用地形分析，会自动开启深度检测
+ * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -6766,6 +6792,7 @@ declare class PointVisibility extends BasePointPrimitive {
         style: PointVisibility.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         terrain?: boolean;
+        depthBiasStep?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -7274,6 +7301,7 @@ declare namespace SpotLight {
  * @param options.position - 位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -7284,6 +7312,7 @@ declare class SpotLight extends PointLight {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         style: SpotLight.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        depthBiasStep?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -7412,6 +7441,7 @@ declare namespace Video3D {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.play = true] - 初始化后默认是播放还是停止状态
+ * @param [options.synchronizer = true] - 是否内部加VideoSynchronizer同步时钟
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -7426,6 +7456,7 @@ declare class Video3D extends ViewShed {
         style: Video3D.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         play?: boolean;
+        synchronizer?: boolean;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -7471,6 +7502,7 @@ declare namespace ViewDome {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性。
+ * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -7483,6 +7515,7 @@ declare class ViewDome extends BasePointPrimitive {
         position?: LngLatPoint | Cesium.Cartesian3 | number[];
         style: ViewDome.StyleOptions | any;
         attr?: any;
+        depthBiasStep?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -7548,6 +7581,7 @@ declare namespace ViewShed {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.terrain = true] - 是否启用地形的阴影效果，在平原地区或无地形时可以关闭
+ * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -7562,6 +7596,7 @@ declare class ViewShed extends BasePointPrimitive {
         style: ViewShed.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         terrain?: boolean;
+        depthBiasStep?: number;
         id?: string | number;
         name?: string;
         show?: boolean;
@@ -10222,7 +10257,7 @@ declare namespace CorridorEntity {
      * @property [cornerType] - 指定边角的样式。
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [extrudedHeightReference = Cesium.HeightReference.NONE] - 指定挤压高度相对于什么的属性。
      * @property [fill = true] - 是否填充。
@@ -12373,6 +12408,7 @@ declare namespace PointEntity {
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
+ * @param [options.matrixMoveRadius = 200] - 右键菜单中，按轴平移时，轴的半径，参考{@link MatrixMove}
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -12408,6 +12444,7 @@ declare class PointEntity extends BasePointEntity {
         drawShow?: boolean;
         hasEdit?: boolean;
         hasEditContextMenu?: boolean;
+        matrixMoveRadius?: number;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -12456,7 +12493,7 @@ declare namespace PolygonEntity {
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [extrudedHeightReference = Cesium.HeightReference.NONE] - 指定挤压高度相对于什么的属性。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
@@ -12958,7 +12995,7 @@ declare namespace RectangleEntity {
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [extrudedHeightReference = Cesium.HeightReference.NONE] - 指定挤压高度相对于什么的属性。
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
@@ -13403,9 +13440,12 @@ declare namespace Video2D {
  * 视频融合（投射2D平面）,
  * 根据相机位置、方向等参数，在相机前面生成一个PolygonEntity面，然后贴视频纹理
  * @param options - 参数对象，包括以下：
+ * @param [options.position] - 相机坐标位置
  * @param [options.targetPosition] - 目标视点位置,可以替代style中的相机heading\pitch\roll方向和distance距离参数
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.play = true] - 初始化后默认是播放还是停止状态
+ * @param [options.synchronizer = true] - 是否内部加VideoSynchronizer同步时钟
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -13425,6 +13465,8 @@ declare class Video2D extends PolygonEntity {
         targetPosition?: LngLatPoint | Cesium.Cartesian3 | number[];
         style: Video2D.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        play?: boolean;
+        synchronizer?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -15218,6 +15260,11 @@ declare class PointMeasure extends PointEntity {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.splitNum = 200] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
+ * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+ * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
+ * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.label] - 测量结果文本的样式
  * @param [options.decimal = 2] - 显示的 距离值 文本中保留的小数位
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -15235,7 +15282,6 @@ declare class PointMeasure extends PointEntity {
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.hasMidPoint = true] - 编辑时，是否可以增加中间点
  * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
- * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -15254,6 +15300,11 @@ declare class SectionMeasure extends DistanceMeasure {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolylineEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        splitNum?: number;
+        minDistance?: number;
+        has3dtiles?: boolean;
+        objectsToExclude?: any;
+        exact?: boolean;
         label?: LabelEntity.StyleOptions | any;
         decimal?: number;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
@@ -15271,7 +15322,6 @@ declare class SectionMeasure extends DistanceMeasure {
         hasMoveEdit?: boolean;
         hasMidPoint?: boolean;
         hasHeightEdit?: boolean;
-        exact?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -16784,7 +16834,7 @@ declare namespace CorridorPrimitive {
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
@@ -17125,6 +17175,148 @@ declare class DiffuseWall extends BasePolyPrimitive {
      * 矢量数据对应的 Cesium内部对象 (不同子类中实现)
      */
     readonly czmObject: Cesium.Entity | Cesium.Primitive | Cesium.GroundPrimitive | Cesium.ClassificationPrimitive | any;
+}
+
+declare namespace DivBillboardPrimitive {
+    /**
+     * HTML转图片后的图标点Primitive 支持的样式信息
+     * @property html - Html内容
+     * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
+     * @property [scale = 1] - 图像大小的比例
+     * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [horizontalOrigin] - 横向方向的定位
+     * @property [verticalOrigin] - 垂直方向的定位
+     * @property [width] - 指定广告牌的宽度(以像素为单位)，覆盖图片本身大小。
+     * @property [height] - 指定广告牌的高度(以像素为单位)，覆盖图片本身大小。
+     * @property [hasPixelOffset = false] - 是否存在偏移量
+     * @property [pixelOffsetX = 0] - 横向偏移像素
+     * @property [pixelOffsetY = 0] - 纵向偏移像素
+     * @property [pixelOffset = Cartesian2.ZERO] - 指定像素偏移量。
+     * @property [scaleByDistance = false] - 是否按视距缩放 或 设置基于与相机的距离缩放点
+     * @property [scaleByDistance_far = 1000000] - 上限
+     * @property [scaleByDistance_farValue = 0.1] - 比例值
+     * @property [scaleByDistance_near = 1000] - 下限
+     * @property [scaleByDistance_nearValue = 1] - 比例值
+     * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定该广告牌将显示在与摄像机的多大距离
+     * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
+     * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [clampToGround = false] - 是否贴地
+     * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
+     * @property [visibleDepth = true] - 是否被遮挡
+     * @property [disableDepthTestDistance] - 指定从相机到禁用深度测试的距离。
+     * @property [color = Color.WHITE] - 附加的颜色
+     * @property [eyeOffset = Cartesian3.ZERO] - 眼偏移量
+     * @property [alignedAxis = Cartesian3.ZERO] - 指定单位旋转向量轴。
+     * @property [sizeInMeters] - 指定该广告牌的大小是否应该以米来度量。
+     * @property [translucencyByDistance] - 用于基于与相机的距离设置半透明度。
+     * @property [pixelOffsetScaleByDistance] - 用于基于与相机的距离设置pixelOffset。
+     * @property [pixelOffsetScaleByDistance_far = 1000000] - 上限
+     * @property [pixelOffsetScaleByDistance_farValue = 0.1] - 比例值
+     * @property [pixelOffsetScaleByDistance_near = 1000] - 下限
+     * @property [pixelOffsetScaleByDistance_nearValue = 1] - 比例值
+     * @property [imageSubRegion] - 定义用于广告牌的图像的子区域，而不是从左下角开始以像素为单位的整个图像。
+     * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
+     * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @param {boolean} [highlight.enabled=true] 是否启用
+     * @property [label] - 支持附带文字的显示
+     */
+    type StyleOptions = any | {
+        html: string;
+        opacity?: number;
+        scale?: number;
+        rotation?: number;
+        rotationDegree?: number;
+        horizontalOrigin?: Cesium.HorizontalOrigin;
+        verticalOrigin?: Cesium.VerticalOrigin;
+        width?: number;
+        height?: number;
+        hasPixelOffset?: boolean;
+        pixelOffsetX?: number;
+        pixelOffsetY?: number;
+        pixelOffset?: Cesium.Cartesian2 | number[];
+        scaleByDistance?: boolean | Cesium.NearFarScalar;
+        scaleByDistance_far?: number;
+        scaleByDistance_farValue?: number;
+        scaleByDistance_near?: number;
+        scaleByDistance_nearValue?: number;
+        distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
+        distanceDisplayCondition_far?: number;
+        distanceDisplayCondition_near?: number;
+        clampToGround?: boolean;
+        heightReference?: Cesium.HeightReference;
+        visibleDepth?: boolean;
+        disableDepthTestDistance?: number;
+        color?: Cesium.Color;
+        eyeOffset?: Cesium.Cartesian3;
+        alignedAxis?: Cesium.Cartesian3;
+        sizeInMeters?: boolean;
+        translucencyByDistance?: Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance?: boolean | Cesium.NearFarScalar;
+        pixelOffsetScaleByDistance_far?: number;
+        pixelOffsetScaleByDistance_farValue?: number;
+        pixelOffsetScaleByDistance_near?: number;
+        pixelOffsetScaleByDistance_nearValue?: number;
+        imageSubRegion?: Cesium.BoundingRectangle;
+        setHeight?: number | string;
+        addHeight?: number | string;
+        highlight?: DivBillboardPrimitive.StyleOptions | any;
+        label?: LabelEntity.StyleOptions | any;
+    };
+}
+
+/**
+ * HTML转图片后的 图标点Primitive，
+ * 需要引入html2canvas或domtoimage插件进行DOM转图片
+ * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时，在任何可用坐标之后一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时最后一个坐标位置。
+ * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.NONE] - 当使用addDynamicPosition设置为动画轨迹位置时， 在任何可用坐标之前一次请求值时要执行的推断类型，默认不显示，Cesium.ExtrapolationType.HOLD时为第一个坐标位置。
+ * @param [options.clampToTileset] - 当使用addDynamicPosition设置为动画轨迹位置时，是否进行贴模型。
+ * @param [options.frameRateHeight = 30] - 当使用addDynamicPosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class DivBillboardPrimitive extends BillboardPrimitive {
+    constructor(options: {
+        position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | BaseGraphic.AjaxPosition | number[] | string;
+        style: DivBillboardPrimitive.StyleOptions | any;
+        attr?: any | BaseGraphic.AjaxAttr;
+        forwardExtrapolationType?: Cesium.ExtrapolationType;
+        backwardExtrapolationType?: Cesium.ExtrapolationType;
+        clampToTileset?: boolean;
+        frameRateHeight?: number;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 图像、URI或Canvas
+     */
+    image: string | HTMLCanvasElement;
 }
 
 declare namespace DoubleSidedPlane {
@@ -18516,7 +18708,7 @@ declare namespace PolygonPrimitive {
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的样式，会覆盖outlineColor、outlineOpacity
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
@@ -18953,7 +19145,7 @@ declare namespace RectanglePrimitive {
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的样式，会覆盖outlineColor、outlineOpacity
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
      * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
@@ -19130,10 +19322,12 @@ declare namespace ReflectionWater {
      * @property [animationSpeed = 1.0] - 控制水的动画速度的数字。
      * @property [specularIntensity = 0.3] - 控制镜面反射强度的数字。
      * @property [lightDirection = new Cesium.Cartesian3(0, 0, 1)] - 光照方向，单位向量。原点为水面中心点，水面中心点由 options.positions 决定，X、Y、Z轴对应水面中心点的东、北、上方向。（默认为0,0,1）
+     * @property [farDistance = 10000] - 指定相机距离超过指定距离
+     * @property [farColor = "#91B3FF"] - 相机距离超过farDistance时的水面的颜色
      * @property [stRotation = 0] - 水流方向的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 水流方向的角度（度数值，0-360度），与stRotation二选一
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
@@ -19141,7 +19335,7 @@ declare namespace ReflectionWater {
      * @property [arcType] - 多边形的边缘必须遵循的线条类型。
      */
     type StyleOptions = any | {
-        color?: string;
+        color?: string | Cesium.Color;
         opacity?: number;
         normalMap?: string;
         reflectivity?: number;
@@ -19151,6 +19345,8 @@ declare namespace ReflectionWater {
         animationSpeed?: number;
         specularIntensity?: number;
         lightDirection?: Cesium.Cartesian3;
+        farDistance?: number;
+        farColor?: string | Cesium.Color;
         stRotation?: number;
         stRotationDegree?: number;
         height?: number;
@@ -19720,7 +19916,7 @@ declare namespace Water {
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
-     * @property [diffHeight = 100] - 高度差（走廊本身的高度），与extrudedHeight二选一。
+     * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
      * @property [closeTop = true] - 当为false时，离开一个挤压多边形的顶部打开。
@@ -26875,6 +27071,7 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.pickFeaturesUrl] - enablePickFeatures为true时，用于单击查看矢量对象功能的对应wms服务url。
  * @param [options.getFeatureInfoParameters] - 在单击坐标处通过GetFeatureInfo请求接口时,传递给WMS服务器的附加参数。
  * @param [options.pickFeatures] - 外部自定义单击请求对应矢量数据的处理。与pickFeaturesUrl二选一
+ * @param [options.getFeatureInfoFormat = "json"] - 服务请求返回的数据格式，默认是geojson格式，如果是xml时传入"xml"
  * @param [options.highlight] - 鼠标单击高亮显示对应的矢量数据 及其样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.highlight.type] - 构造成的矢量数据类型。
  * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
@@ -26944,6 +27141,7 @@ declare class WmtsLayer extends BaseTileLayer {
         pickFeaturesUrl?: Cesium.Resource | string;
         getFeatureInfoParameters?: any;
         pickFeatures?: (...params: any[]) => any;
+        getFeatureInfoFormat?: string;
         highlight?: {
             type?: GraphicType | string;
         };
@@ -31985,7 +32183,7 @@ declare namespace RectSensor {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.lookAt] - 椎体方向追踪的目标（椎体方向跟随变化，位置不变）
+ * @param [options.lookAt] - 椎体方向及长度(未传入length时)追踪的目标（椎体方向跟随变化，位置不变）
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
@@ -33807,25 +34005,29 @@ declare class Measure extends BaseThing {
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式
      *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
+     * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
-     * @param [options.splitNum = 200] - 插值数，将线段分割的个数(概略值，有经纬网网格来插值)
+     * @param [options.splitNum = 200] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
-     * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
-     * @param [options.decimal = 2] - 显示的文本中保留的小数位
+     * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
+     * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @returns 绘制创建完成的Promise，返回 剖面分析控制类矢量对象
      */
     section(options?: {
         style?: PolylineEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any | any;
+        decimal?: number;
         unit?: string;
         maxPointNum?: number;
         addHeight?: number;
         splitNum?: number;
+        minDistance?: number;
         has3dtiles?: boolean;
+        objectsToExclude?: any;
         exact?: boolean;
-        decimal?: number;
     }): Promise<SectionMeasure | any>;
     /**
      * 面积测量（水平面）
@@ -34548,6 +34750,7 @@ declare namespace MatrixMove {
  * 坐标点按XYZ轴平移图上编辑处理类
  * @param [options] - 参数对象，包括以下：
  * @param [options.position] - 坐标位置
+ * @param [options.radius = 200] - 半径
  * @param [options.onChange] - 编辑移动了坐标后的回调方法
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -34558,6 +34761,7 @@ declare namespace MatrixMove {
 declare class MatrixMove extends BaseThing {
     constructor(options?: {
         position?: LngLatPoint | Cesium.Cartesian3 | number[];
+        radius?: number;
         onChange?: (...params: any[]) => any;
         id?: string | number;
         enabled?: boolean;
@@ -34579,6 +34783,7 @@ declare class MatrixMove extends BaseThing {
  * 坐标点按XYZ轴平移图上编辑处理类
  * @param [options] - 参数对象，包括以下：
  * @param [options.position] - 坐标位置
+ * @param [options.radius = 100] - 半径
  * @param [options.onChange] - 编辑移动了坐标后的回调方法
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -34589,6 +34794,7 @@ declare class MatrixMove extends BaseThing {
 declare class MatrixMove2 extends BaseThing {
     constructor(options?: {
         position?: LngLatPoint | Cesium.Cartesian3 | number[];
+        radius?: number;
         onChange?: (...params: any[]) => any;
         id?: string | number;
         enabled?: boolean;
@@ -34617,6 +34823,7 @@ declare class MatrixMove2 extends BaseThing {
  * @param [options.heading = 0] - 方向角 （度数值，0-360度）
  * @param [options.pitch = 0] - 俯仰角（度数值，0-360度）
  * @param [options.roll = 0] - 翻滚角（度数值，0-360度）
+ * @param [options.radius = 200] - 半径
  * @param [options.onChange] - 旋转了方向后的回调方法
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -34630,6 +34837,7 @@ declare class MatrixRotate extends MatrixMove {
         heading?: number;
         pitch?: number;
         roll?: number;
+        radius?: number;
         onChange?: (...params: any[]) => any;
         id?: string | number;
         enabled?: boolean;
@@ -35694,7 +35902,7 @@ declare class TilesetFlat extends TilesetEditBase {
     /**
      * 更新压平高度
      * @param height - 压平高度，单位：米
-     * @param [id] - 精确模式下指定更新的区域id，为空时更新所有，掩膜模式下无效
+     * @param [id] - 精确模式（precise:true）下指定更新的区域id，为空时更新所有，掩膜模式下无效
      */
     updateHeight(height: number, id?: number): void;
     /**
@@ -38834,6 +39042,7 @@ declare namespace graphic {
   //基础primitive
   export { PointPrimitive }
   export { BillboardPrimitive }
+  export { DivBillboardPrimitive }
   export { CloudPrimitive }
   export { LabelPrimitive }
   export { ModelPrimitive }
