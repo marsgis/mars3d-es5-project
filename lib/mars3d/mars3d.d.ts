@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.19
- * 编译日期：2024-06-21 15:30:38
+ * 版本信息：v3.7.20
+ * 编译日期：2024-07-01 17:13:06
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -9684,10 +9684,11 @@ declare class BrushLineEntity extends PolylineEntity {
 declare namespace CanvasLabelEntity {
     /**
      * Canvas 文本点（label转图片） 支持的样式信息
-     * @property [text = "文字"] - 文本内容  (提示：暂不支持换行)
+     * @property [text = "文字"] - 文本内容
      * @property [scale = 1.0] - 指定缩放比例。
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
+     * @property [spacing] - 字间距
      * @property [font_family = "楷体"] - 字体 ,可选项：微软雅黑,宋体,楷体,隶书,黑体 等
      * @property [font_size = 30] - 字体大小
      * @property [font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
@@ -9734,6 +9735,7 @@ declare namespace CanvasLabelEntity {
         scale?: number;
         horizontalOrigin?: Cesium.HorizontalOrigin;
         verticalOrigin?: Cesium.VerticalOrigin;
+        spacing?: number;
         font_family?: string;
         font_size?: number;
         font_weight?: string;
@@ -12703,7 +12705,7 @@ declare namespace PolylineEntity {
      * @property [color = "#ffffff"] - 颜色
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [randomColor = false] - 是否随机颜色
-     * @property [depthFailMaterial] - 指定当折线位于地形之下时用于绘制折线的材质。
+     * @property [depthFailMaterial] - 当折线被地形遮挡时显示的材质(需开启深度检测)。
      * @property [closure = false] - 是否闭合, 在positions是属性机制的回调对象时无效
      * @property [outline = false] - 是否衬色
      * @property [outlineColor = "#ffffff"] - 衬色颜色
@@ -15211,10 +15213,10 @@ declare class HeightTriangleMeasure extends HeightMeasure {
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
- * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
- * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
- * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
- * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.closeOnClick = false] - 是否在单击Map地图时，自动关闭当前popup弹窗
+ * @param [options.autoClose = false] - 在打开弹窗时，是否自动关闭之前的popup弹窗
+ * @param [options.animation = false] - 是否执行打开时的popup动画效果
+ * @param [options.popup] - 绑定的popup弹窗值的自定义回调方法
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name = ''] - 矢量数据名称
@@ -15238,10 +15240,10 @@ declare class PointMeasure extends PointEntity {
         drawShow?: boolean;
         hasEdit?: boolean;
         hasEditContextMenu?: boolean;
-        popup?: string | any[] | ((...params: any[]) => any);
-        popupOptions?: Popup.StyleOptions | any;
-        tooltip?: string | any[] | ((...params: any[]) => any);
-        tooltipOptions?: Tooltip.StyleOptions | any;
+        closeOnClick?: boolean;
+        autoClose?: boolean;
+        animation?: boolean;
+        popup?: (...params: any[]) => any;
         contextmenuItems?: any;
         id?: string | number;
         name?: string;
@@ -15251,6 +15253,12 @@ declare class PointMeasure extends PointEntity {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+    /**
+     * 启用或禁用所有内部控件（含tooltip、popup、contextmenu）
+     * @param value - 是否启用
+     * @returns 无
+     */
+    enableControl(value: boolean): void;
 }
 
 /**
@@ -18006,6 +18014,7 @@ declare class LightCone extends BasePointPrimitive {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
+ * //  * @param {boolean} [options.style.global=true] 是否全球遮罩, 全球遮罩时偶尔存在地球背面对象的碎片面出现
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
@@ -18887,7 +18896,7 @@ declare namespace PolylinePrimitive {
      * @property [depthFail] - 是否显示遮挡
      * @property [depthFailColor] - 纯色时，遮挡处颜色
      * @property [depthFailOpacity] - 纯色时，遮挡处透明度
-     * @property [depthFailMaterial] - 遮挡处材质
+     * @property [depthFailMaterial] - 当折线被地形遮挡时显示的材质(需开启深度检测)
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
@@ -23427,7 +23436,7 @@ declare namespace TilesetLayer {
  * @param [options.immediatelyLoadDesiredLevelOfDetail = false] - 当skipLevelOfDetail为true时，只有满足最大屏幕空间错误的tiles才会被下载。跳过因素将被忽略，并且只加载所需的块。
  * @param [options.loadSiblings = false] - 当skipLevelOfDetail = true时，判断遍历过程中是否总是下载可见块的兄弟块。如果为true则不会在已加载完模型后，自动从中心开始超清化模型。
  * @param [options.clippingPlanes] - {@link Cesium.ClippingPlaneCollection}用于选择性地禁用tile集的渲染。
- * @param [clippingPolygons] - The {@link Cesium.ClippingPolygonCollection} 用于选择性地禁用tile集的渲染。
+ * @param [options.clippingPolygons] - The {@link Cesium.ClippingPolygonCollection} 用于选择性地禁用tile集的渲染。
  * @param [options.classificationType] - 确定地形、3D贴图或两者都将被这个贴图集分类。有关限制和限制的详细信息，请参阅{@link cesium3dtilesset #classificationType}。
  * @param [options.ellipsoid = Ellipsoid.WGS84] - The ellipsoid determining the size and shape of the globe.
  * @param [options.pointCloudShading] - 基于几何误差和光照构造一个{@link Cesium.PointCloudShading}对象来控制点衰减的选项。
@@ -23566,6 +23575,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         immediatelyLoadDesiredLevelOfDetail?: boolean;
         loadSiblings?: boolean;
         clippingPlanes?: Cesium.ClippingPlaneCollection;
+        clippingPolygons?: Cesium.ClippingPolygonCollection;
         classificationType?: Cesium.ClassificationType;
         ellipsoid?: Cesium.Ellipsoid;
         pointCloudShading?: any;
@@ -23632,7 +23642,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
         };
         flyTo?: boolean;
         flyToOptions?: any;
-    }, clippingPolygons?: Cesium.ClippingPolygonCollection);
+    });
     /**
      * 原始的旋转角度，示例：{ x: 0, y: 0, z: 0 }
      */
@@ -24261,10 +24271,10 @@ declare class TerrainLayer extends BaseLayer {
  * </ul>
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是一个数组，数组中的每个元素都是一个子域。
  * @param [options.upperCase] - url请求的瓦片图片名称是否大写。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -24424,10 +24434,10 @@ declare namespace ArcGisLayer {
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -24621,10 +24631,10 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param options.url - 用于请求瓦片图块的URL模板，比如："http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer"
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是一个数组，数组中的每个元素都是一个子域。
  * @param [options.token] - 用于通过ArcGIS MapServer服务进行身份验证的ArcGIS令牌。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -24767,10 +24777,10 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是一个数组，数组中的每个元素都是一个子域。
  * @param [options.bigfont] - 当layer为vec或img_z时，来标识使用是否大写字体。
  * @param [options.style] - 当layer为custom时，标识的样式，可选值：dark,midnight,grayscale,hardedge,light,redalert,googlelite,grassgreen,pink,darkgreen,bluish
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -24932,10 +24942,10 @@ declare namespace BaseTileLayer {
 /**
  * 栅格Tile瓦片图层 基类
  * @param [options] - 参数对象，包括以下：
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25181,10 +25191,10 @@ declare class BaseTileLayer extends BaseLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url = 'https://dev.virtualearth.net'] - 托管影像图像的Bing Maps服务器的网址。
  * @param [options.tileDiscardPolicy] - 于确定图块是否为无效，应将其丢弃。如果未指定此值，则为默认 {@link DiscardMissingTileImagePolicy} 用于平铺的地图服务器，并且{@link NeverTileDiscardPolicy} 用于非平铺地图服务器。在前一种情况下， 我们要求最大图块级别的图块0,0并检查像素（0,0），（200,20），（20,200）， （80,110）和（160，130）。如果所有这些像素都是透明的，则丢弃检查为 禁用，并且不会丢弃任何图块。如果它们中的任何一种具有不透明的颜色， 在这些像素位置具有相同值的图块将被丢弃。的最终结果 对于标准ArcGIS Server，这些默认值应该是正确的图块丢弃。确保 不会丢弃任何图块，为此构造并传递 {@link NeverTileDiscardPolicy} 参数。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25325,10 +25335,10 @@ declare class BingLayer extends BaseTileLayer {
 /**
  * 空白图层，目前主要在Lod矢量数据加载作为事件触发使用。
  * @param [options] - 参数对象，包括以下：
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25412,10 +25422,10 @@ declare class EmptyTileLayer extends BaseTileLayer {
  * @param [options.url] - 当未指定layer类型时，可以传入外部指定url的服务地址，常用于离线服务。
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
  * @param [options.bigfont] - 当layer为vec时，来标识使用是否大写字体。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25544,10 +25554,10 @@ declare class GaodeLayer extends BaseTileLayer {
  * @param [options] - 参数对象，包括以下：
  * @param options.url - 承载瓦片服务的谷歌地球企业服务器的url
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25684,10 +25694,10 @@ declare class GeeLayer extends BaseTileLayer {
  * </ul>
  * @param [options.url] - 当未指定layer类型时，可以传入外部指定url的服务地址，常用于离线服务。
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25821,10 +25831,10 @@ declare class GoogleLayer extends BaseTileLayer {
  * @param [options.glowWidth = 3] - 用于渲染线发光效果的线的宽度。
  * @param [options.backgroundColor = 'rgba(0,0,0,0)'] - 背景填充颜色。
  * @param [options.canvasSize = 256] - 用于渲染的画布的大小。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -25936,10 +25946,10 @@ declare class GridLayer extends BaseTileLayer {
  * @param [options] - 参数对象，包括以下：
  * @param options.url - 图片url地址
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26074,10 +26084,10 @@ declare class ImageLayer extends BaseTileLayer {
  * @param [options.token] - 同accessToken，别名
  * @param [options.tilesize = 512] - 图像块的大小。
  * @param [options.scaleFactor = true] - 确定贴图是否以 @2x 比例因子渲染。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26213,10 +26223,10 @@ declare class MapboxLayer extends BaseTileLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'] - 服务url地址
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel = 18] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26348,10 +26358,10 @@ declare class OsmLayer extends BaseTileLayer {
  * </ul>
  * @param [options.url = "https://t{s}.tianditu.gov.cn/"] - 服务URL地址前缀
  * @param [options.key = mars3d.Token.tiandituArr] - 天地图服务Token，可以自行注册官网： {@link https://console.tianditu.gov.cn/api/key}
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26486,10 +26496,10 @@ declare class TdtLayer extends BaseTileLayer {
  * @param [options.style] - 当layer为custom时，标识的样式，可选值：灰白地图:3,暗色地图:4
  * @param [options.url] - 当未指定layer类型时，可以传入外部指定url的服务地址，常用于离线服务。
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是一个数组，数组中的每个元素都是一个子域。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26612,10 +26622,10 @@ declare class TencentLayer extends BaseTileLayer {
  * 瓦片信息，一般用于测试
  * @param [options] - 参数对象，包括以下：
  * @param [options.color = rgba(255,0,0,1)] - 画瓦片边框线和标签的颜色
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26720,10 +26730,10 @@ declare class TileInfoLayer extends BaseTileLayer {
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
  * @param [options.fileExtension = 'png'] - 服务器上图像的文件扩展名。
  * @param [options.flipXY] - gdal2tiles.py的旧版本将tilemapresource.xml中的X和Y值翻转了。指定此选项将执行相同的操作，从而允许加载这些不正确的图块集。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -26881,10 +26891,10 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.popupOptions.titleField] - 标题对应的属性字段名称
  * @param [options.popupOptions.noTitle] - 不显示标题
  * @param [options.popupOptions.showNull = false] - 是否显示空值
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -27074,10 +27084,10 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.getFeatureInfoFormat = "json"] - 服务请求返回的数据格式，默认是geojson格式，如果是xml时传入"xml"
  * @param [options.highlight] - 鼠标单击高亮显示对应的矢量数据 及其样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.highlight.type] - 构造成的矢量数据类型。
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -27253,10 +27263,10 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param [options.assetId] - ion资源时对应的assetId
  * @param [options.ionToken = mars3d.Token.ion] - ion资源时对应的token
  * @param [options.ionServer = Cesium.Ion.defaultServer] - ion资源时对应的server
- * @param [options.minimumLevel = 0] - 瓦片所支持的最低层级，如果数据没有第0层，该参数必须配置,当地图小于该级别时，平台不去请求服务数据。
- * @param [options.maximumLevel] - 瓦片所支持的最大层级,大于该层级时会显示上一层拉伸后的瓦片，当地图大于该级别时，平台不去请求服务数据。
- * @param [options.minimumTerrainLevel] - 展示影像图层的最小地形细节级别，小于该级别时，平台不显示影像数据。
- * @param [options.maximumTerrainLevel] - 展示影像图层的最大地形细节级别，大于该级别时，平台不显示影像数据。
+ * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
+ * @param [options.maximumLevel = 18] - 服务所支持的最大层级,大于该级别时会显示maximumLevel层数据图片拉伸后的效果。
+ * @param [options.minimumTerrainLevel] - 图层显示的最小层级，小于该级别时，平台不显示0至minimumTerrainLevel级数据。
+ * @param [options.maximumTerrainLevel] - 图层显示的最大层级，大于该级别时，平台不显示大于maximumTerrainLevel级数据。
  * @param [options.rectangle] - 瓦片数据的矩形区域范围
  * @param options.rectangle.xmin - 最小经度值, -180 至 180
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
@@ -30679,6 +30689,7 @@ declare class ScanLineMaterialProperty extends BaseMaterialProperty {
  * @param [options.font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
  * @param [options.fill = true] - 是否填充
  * @param [options.color = "#ffff00"] - 文本颜色
+ * @param [options.spacing] - 字间距
  * @param [options.stroke = false] - 是否描边文本。
  * @param [options.strokeColor = new Cesium.Color(1.0, 1.0, 1.0, 0.8)] - 描边的颜色。
  * @param [options.strokeWidth = 2] - 描边的宽度。
@@ -30701,6 +30712,7 @@ declare class TextMaterialProperty extends Image2MaterialProperty {
         font?: string;
         fill?: boolean;
         color?: string;
+        spacing?: number;
         stroke?: boolean;
         strokeColor?: string | Cesium.Color;
         strokeWidth?: number;
@@ -30991,6 +31003,7 @@ declare class CylinderWaveMaterial extends Cesium.Material {
  * @param [options.font_weight = "normal"] - 是否加粗 ,可选项：bold (解释：是),normal (解释：否),
  * @param [options.font_style = "normal"] - 是否斜体 ,可选项：italic (解释：是),normal (解释：否),
  * @param [options.font = '30px normal normal 楷体'] - 上叙4个属性的一次性指定CSS字体的属性。
+ * @param [options.spacing] - 字间距
  * @param [options.fill = true] - 是否填充
  * @param [options.color = new Cesium.Color(1.0, 1.0, 0.0, 1.0)] - 文本颜色
  * @param [options.stroke = false] - 是否描边文本。
@@ -31012,6 +31025,7 @@ declare class TextMaterial extends Cesium.Material {
         font_weight?: string;
         font_style?: string;
         font?: string;
+        spacing?: number;
         fill?: boolean;
         color?: string | Cesium.Color;
         stroke?: boolean;
@@ -31563,17 +31577,19 @@ declare class Tle {
      */
     getEciPosition(datetime: Date | Cesium.JulianDate | number): Cesium.Cartesian3 | undefined;
     /**
-     * 获取卫星指定时间所在的 ECI惯性坐标和地理坐标
-     * @param datetime - 指定的时间
-     * @returns ECI惯性坐标和地理坐标等信息
+     * 获取卫星指定时间所在的坐标(用于cesium内property坐标)
+     * @param time - 指定的时间
+     * @param [isFixed] - 是否Cesium.ReferenceFrame.FIXED 地固系
+     * @returns 坐标
      */
-    getEciPositionAndGeodetic(datetime: Date | Cesium.JulianDate | number): any | undefined;
+    getPosition(time: Date | Cesium.JulianDate | number, isFixed?: boolean): Cesium.Cartesian3 | undefined;
     /**
      * 获取卫星指定时间 所在的位置坐标(经纬度)
      * @param datetime - 指定的时间
+     * @param [isFixed] - 是否Cesium.ReferenceFrame.FIXED 地固系
      * @returns 卫星当前经纬度位置
      */
-    getPoint(datetime: Date | Cesium.JulianDate | number): LngLatPoint | undefined;
+    getPoint(datetime: Date | Cesium.JulianDate | number, isFixed?: boolean): LngLatPoint | undefined;
     /**
      * 获取 地面地点 对卫星的 天文观测值
      * @param point - 地面地点经纬度坐标
@@ -31597,6 +31613,14 @@ declare class Tle {
      * @returns ECEF(地心地固坐标系) 坐标
      */
     static getEcfPosition(tle1: string, tle2: string, datetime: Date | Cesium.JulianDate | number): Cesium.Cartesian3 | undefined;
+    /**
+     * 获取卫星指定时间所在的 ECI惯性坐标
+     * @param tle1 - 卫星TLE的第一行
+     * @param tle2 - 卫星TLE的第二行
+     * @param datetime - 指定的时间
+     * @returns ECI(地心惯性坐标系)坐标
+     */
+    static getEciPosition(tle1: string, tle2: string, datetime: Date | Cesium.JulianDate | number): Cesium.Cartesian3 | undefined;
     /**
      * 获取 格林尼治恒星时(GMST)时间
      * @param datetime - 时间对象
@@ -33157,12 +33181,14 @@ declare class BaiduPOI {
  * 参考文档：{@link https://lbs.amap.com/api/webservice/guide/api/search}
  * @param [options] - 参数对象，包括以下：
  * @param [options.key = mars3d.Token.gaodeArr] - 高德KEY,在实际项目中请使用自己申请的高德KEY，因为我们的key不保证长期有效。
+ * @param [options.chinaCRS = "WGS84"] - 标识当前地图的国内坐标系,传入 map.chinaCRS
  * @param [options.headers = {}] - 将被添加到HTTP请求头。
  * @param [options.proxy] - 加载资源时使用的代理。
  */
 declare class GaodePOI {
     constructor(options?: {
         key?: string[];
+        chinaCRS?: ChinaCRS | string;
         headers?: any;
         proxy?: Cesium.DefaultProxy;
     });
@@ -33320,12 +33346,14 @@ declare class GaodePOI {
  * 参考文档：{@link https://lbs.amap.com/api/webservice/guide/api/direction}
  * @param [options] - 参数对象，包括以下：
  * @param [options.key = mars3d.Token.gaodeArr] - 百度KEY,在实际项目中请使用自己申请的高德KEY，因为我们的key不保证长期有效。
+ * @param [options.chinaCRS = "WGS84"] - 标识当前地图的国内坐标系,传入 map.chinaCRS
  * @param [options.headers = {}] - 将被添加到HTTP请求头。
  * @param [options.proxy] - 加载资源时使用的代理。
  */
 declare class GaodeRoute {
     constructor(options?: {
         key?: string[];
+        chinaCRS?: ChinaCRS | string;
         headers?: any;
         proxy?: Cesium.DefaultProxy;
     });
@@ -34166,11 +34194,17 @@ declare class Measure extends BaseThing {
      * 坐标测量 popup
      * @param [options] - 控制参数
      * @param [options.style] - 点的样式
+     * @param [options.closeOnClick = false] - 是否在单击Map地图时，自动关闭当前popup弹窗
+     * @param [options.autoClose = false] - 在打开弹窗时，是否自动关闭之前的popup弹窗
+     * @param [options.animation = false] - 是否执行打开时的popup动画效果
      * @param [options.popup] - 绑定的popup弹窗值的自定义回调方法
      * @returns 绘制创建完成的Promise，返回 坐标测量控制类 对象
      */
     point(options?: {
         style?: PointEntity.StyleOptions | any;
+        closeOnClick?: boolean;
+        autoClose?: boolean;
+        animation?: boolean;
         popup?: (...params: any[]) => any;
     }): Promise<PointMeasure | any>;
     /**
@@ -38436,6 +38470,7 @@ declare namespace Util {
      * @param [options.title] - 标题
      * @param [options.edit = false] - 是否返回编辑输入框
      * @param [options.width = 190] - edit:true时的，编辑输入框宽度值
+     * @param [options.templateEmptyStr = true] - template是字符串时，是否将模板中未匹配项转为空值
      * @returns Html字符串
      */
     function getTemplateHtml(options?: {
@@ -38445,6 +38480,7 @@ declare namespace Util {
         title?: string;
         edit?: boolean;
         width?: number;
+        templateEmptyStr?: boolean;
     }): string;
     /**
      * 获取Cesium对象值的最终value值，
@@ -38687,10 +38723,11 @@ declare namespace Util {
     }, templateValues?: any): Cesium.Resource;
     /**
      * 文字转base64图片
-     * @param text - 文字内容 (提示：暂不支持换行)
+     * @param text - 文字内容
      * @param [textStyle = {}] - 参数对象:
      * @param [textStyle.font = '10px sans-serif'] - 使用的CSS字体。
      * @param [textStyle.textBaseline = 'bottom'] - 文本的基线。
+     * @param [textStyle.spacing] - 字间距
      * @param [textStyle.fill = true] - 是否填充文本。
      * @param [textStyle.fillColor = Cesium.Color.WHITE] - 填充颜色。
      * @param [textStyle.stroke = false] - 是否描边文本。
@@ -38707,6 +38744,7 @@ declare namespace Util {
     function getTextImage(text: string, textStyle?: {
         font?: string;
         textBaseline?: string;
+        spacing?: number;
         fill?: boolean;
         fillColor?: Cesium.Color;
         stroke?: boolean;
