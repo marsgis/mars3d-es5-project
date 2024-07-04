@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.7.20
- * 编译日期：2024-07-01 17:13:06
+ * 编译日期：2024-07-04 22:50:56
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -31579,17 +31579,17 @@ declare class Tle {
     /**
      * 获取卫星指定时间所在的坐标(用于cesium内property坐标)
      * @param time - 指定的时间
-     * @param [isFixed] - 是否Cesium.ReferenceFrame.FIXED 地固系
+     * @param [isFixed] - 是否返回Cesium.ReferenceFrame.FIXED地固系坐标
      * @returns 坐标
      */
     getPosition(time: Date | Cesium.JulianDate | number, isFixed?: boolean): Cesium.Cartesian3 | undefined;
     /**
      * 获取卫星指定时间 所在的位置坐标(经纬度)
-     * @param datetime - 指定的时间
-     * @param [isFixed] - 是否Cesium.ReferenceFrame.FIXED 地固系
+     * @param time - 指定的时间
+     * @param [isFixed] - 是否返回Cesium.ReferenceFrame.FIXED地固系坐标
      * @returns 卫星当前经纬度位置
      */
-    getPoint(datetime: Date | Cesium.JulianDate | number, isFixed?: boolean): LngLatPoint | undefined;
+    getPoint(time: Date | Cesium.JulianDate | number, isFixed?: boolean): LngLatPoint | undefined;
     /**
      * 获取 地面地点 对卫星的 天文观测值
      * @param point - 地面地点经纬度坐标
@@ -38756,6 +38756,26 @@ declare namespace Util {
         outline?: boolean;
         outlineWidth?: number;
         outlineColor?: Cesium.Color;
+    }): HTMLCanvasElement;
+    /**
+     * 继续期望绘制在Canvas上的文本的高宽值，
+     * 获取结果后可以执行：context.fillText(item.text, item.x, item.y, spacingWidth)
+     * @param context - const context = canvas.getContext("2d")
+     * @param text - 文字内容
+     * @param [textStyle = {}] - 参数对象:
+     * @param [textStyle.font = '10px sans-serif'] - 使用的CSS字体。
+     * @param [textStyle.spacing] - 字间距
+     * @param [textStyle.fill = true] - 是否填充文本。
+     * @param [textStyle.stroke = false] - 是否描边文本。
+     * @param [textStyle.padding = 0] - 要在文本周围添加的填充的像素大小。
+     * @returns canvas对象
+     */
+    function measureCanvasText(context: string, text: string, textStyle?: {
+        font?: string;
+        spacing?: number;
+        fill?: boolean;
+        stroke?: boolean;
+        padding?: number;
     }): HTMLCanvasElement;
     /**
      * 获取用于EntityCluster聚合的圆形图标对象
