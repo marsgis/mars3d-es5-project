@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.7.20
- * 编译日期：2024-07-04 22:50:56
+ * 版本信息：v3.7.22
+ * 编译日期：2024-07-15 21:20:28
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-01-15
  */
@@ -2076,7 +2076,8 @@ declare class BaseControl extends BaseThing {
 }
 
 /**
- * 时钟及其动画的管理控制
+ * 时钟及其动画的管理控制，
+ * 控件界面的相关值取自 map.clock 下相关属性值。
  * @param [options] - 参数对象，包括以下：
  * @param [options.format = "yyyy-MM-dd HH:mm:ss"] - 当前时间格式化字符串
  * @param [options.className] - 样式名称，可以外部自定义样式。
@@ -4599,7 +4600,8 @@ declare class BaseGraphic extends BaseClass {
      */
     setStyle(newStyle: any): BaseGraphic | any;
     /**
-     * 设置透明度, 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -5587,7 +5589,8 @@ declare class FlatBillboard extends BaseCombine {
      */
     clear(): void;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -7390,7 +7393,8 @@ declare class Tetrahedron extends BasePointPrimitive {
      */
     readonly modelMatrix: Cesium.Matrix4;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -7536,7 +7540,8 @@ declare class ViewDome extends BasePointPrimitive {
      */
     hiddenColor: string | Cesium.Color;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -7650,7 +7655,8 @@ declare class ViewShed extends BasePointPrimitive {
      */
     setView(): void;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -8039,7 +8045,8 @@ declare class DivGraphic extends BaseGraphic {
      */
     html: string | HTMLDivElement;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -8525,6 +8532,16 @@ declare class EditDivGraphic extends EditBase {
      * @returns 当前对象本身，可以链式调用
      */
     disable(): EditBase;
+    /**
+     * 开启 平移矩阵
+     * @param [graphic] - 矢量对象
+     * @param [eventRM] - 事件对象，仅用于传递
+     */
+    startMoveMatrix(graphic?: BaseGraphic, eventRM?: any): void;
+    /**
+     * 停止 平移矩阵
+     */
+    stopMoveMatrix(): void;
 }
 
 declare namespace Popup {
@@ -8843,7 +8860,8 @@ declare class BaseEntity extends BaseGraphic {
      */
     closeHighlight(): void;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -9456,7 +9474,8 @@ declare class BillboardEntity extends BasePointEntity {
      */
     image: string | HTMLCanvasElement;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -11573,7 +11592,8 @@ declare class LabelEntity {
      */
     stopBounce(): void;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -11865,7 +11885,8 @@ declare class ModelEntity extends BasePointEntity {
         easingFunction?: Cesium.EasingFunction.Callback;
     }): Promise<boolean>;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -13546,7 +13567,8 @@ declare class Video2D extends PolygonEntity {
      */
     play: boolean;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -16025,7 +16047,8 @@ declare class BasePrimitive extends BaseGraphic {
      */
     setOffsetHeight(height?: number, index?: number | undefined): void;
     /**
-     * 设置透明度, 不是所有类型均支持调整透明度，主要看数据类型和材质类型决定。
+     * 设置整体透明度(globalAlpha值) , 非全部矢量数据都支持，具体需要对应Graphic支持才有效
+     * 对象本身透明度请修改 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -16145,7 +16168,8 @@ declare class BillboardPrimitive extends BasePointPrimitive {
      */
     image: string | HTMLCanvasElement;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -17537,7 +17561,8 @@ declare class DynamicRiver extends BasePolyPrimitive {
      */
     setOffsetHeight(height: number, time: number): void;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -17927,7 +17952,8 @@ declare class LabelPrimitive extends BasePointPrimitive {
      */
     readonly text: string;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -17998,7 +18024,8 @@ declare class LightCone extends BasePointPrimitive {
      */
     color: Cesium.Color;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -18333,7 +18360,8 @@ declare class ModelPrimitive extends BasePointPrimitive {
      */
     readonly readyPromise: Promise<Cesium.Model>;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -20789,7 +20817,8 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      */
     lblAddFun(position: Cesium.Cartesian3 | Cesium.SampledPositionProperty | any, labelattr: any, attr: any): Cesium.Label;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -22487,7 +22516,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     getClusterList(): any[];
     /**
-     * 设置透明度 , 非全部矢量数据都支持，具体需要对应Graphic支持才有效
+     * 设置整体透明度(globalAlpha值) , 非全部矢量数据都支持，具体需要对应Graphic支持才有效
+     * 对象本身透明度请修改 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -31769,7 +31799,8 @@ declare class CamberRadar extends BasePointPrimitive {
      */
     color: Cesium.Color;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -31929,7 +31960,8 @@ declare class ConicSensor extends BasePointPrimitive {
      */
     readonly intersectEllipsoid: boolean;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -32299,7 +32331,8 @@ declare class RectSensor extends BasePointPrimitive {
      */
     readonly intersectEllipsoid: boolean;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -32475,7 +32508,7 @@ declare namespace SatelliteSensor {
      * @property [angle1 = 5] - 圆锥的角度或者四棱锥的第一个角度，半场角度，取值范围 0.1-89.9
      * @property [angle2 = 5] - 四棱锥的第二个角度，半场角度，取值范围 0.1-89.9
      * @property [angle = 5] - 夹角1和夹角2相同时，可以传入angle一个属性
-     * @property [length] - 指定的半径长度（米），默认与地球进行相交运算
+     * @property [length] - 默认按与地球相交的距离展示，传值时按传入值的半径长度显示（米）
      * @property [heading = 0] - 方向角 （角度值 0-360）
      * @property [pitch = 0] - 俯仰角（角度值 0-360）
      * @property [roll = 0] - 翻滚角（角度值 0-360）
@@ -32607,7 +32640,8 @@ declare class SatelliteSensor extends BasePointPrimitive {
      */
     readonly intersectEllipsoid: number;
     /**
-     * 设置透明度
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
      * @param value - 透明度
      * @returns 无
      */
@@ -37429,7 +37463,7 @@ declare namespace PointTrans {
      * @param [toProjParams = 'EPSG:4326'] - 转为返回的结果坐标系
      * @returns 返回结果坐标系的对应坐标数组,示例：[[115.866936, 35.062583],[115.866923, 35.062565]]
      */
-    function proj4TransArr(coords: number[], fromProjParams: string, toProjParams?: string): number[];
+    function proj4TransArr(coords: number[], fromProjParams: string | CRS, toProjParams?: string | CRS): number[];
     /**
      * Cesium笛卡尔空间坐标 转 经纬度坐标 ,等价于 LngLatPoint.toArray
      * 常用于转换geojson
