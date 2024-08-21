@@ -37,7 +37,7 @@
     "gulp-util": "^3.0.8",
     "http-server": "^14.1.1",
     "javascript-obfuscator": "^0.28.5",
-    "mars3d": "~3.7.0",
+    "mars3d": "~3.8.0",
     "plugin-error": "^1.0.1",
     "prettier": "^2.8.8",
     "through2": "^2.0.5",

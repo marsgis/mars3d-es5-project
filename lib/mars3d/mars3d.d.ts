@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.8.0
- * 编译日期：2024-08-18 14:55:48
+ * 编译日期：2024-08-21 14:03:10
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -1883,7 +1883,7 @@ declare enum ThingType {
 
 /**
  * SDK中涉及到的所有第3方地图服务的Token令牌key，
- * 【重要提示：为了避免后期失效，请全部重新赋值换成自己的key】
+ * 【重要提示：内值key可能限定了流量或失效，请全部重新赋值换成自己的key】
  */
 declare namespace Token {
     /**
@@ -1918,7 +1918,7 @@ declare namespace Token {
     function updateBing(item: string): void;
     /**
      * 天地图key数组，
-     * 官网： {@link https://console.tianditu.gov.cn/api/key}
+     * 官网： {@link https://console.tianditu.gov.cn/api/key} (应用类型：浏览器端)
      */
     const tiandituArr: string[];
     /**
@@ -1946,7 +1946,7 @@ declare namespace Token {
     function updateGaode(item: string | string[]): void;
     /**
      * 百度key数组，
-     * 官网： {@link http://lbsyun.baidu.com/apiconsole/key#/home}
+     * 官网： {@link http://lbsyun.baidu.com/apiconsole/key#/home} (应用类别:服务端)
      */
     const baiduArr: string[];
     /**
@@ -5120,9 +5120,10 @@ declare class BasePolyCombine extends BaseCombine {
     openHighlight(highlightStyle?: any, closeLast?: boolean, pickedObject?: any | number): void;
     /**
      * 清除已选中的高亮，原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
+     * @param [pickedObject] - 指定需要高亮的子对象, 如果是mars3d的相关事件内时，可以取 event.pickedObject ，如果是number时传入instances对象index值
      * @returns 无
      */
-    closeHighlight(): void;
+    closeHighlight(pickedObject?: any | number): void;
     /**
      * 打开绑定的弹窗
      * @param index - 更新的instances对象index值
@@ -16159,6 +16160,19 @@ declare class BasePrimitive extends BaseGraphic {
 declare namespace BillboardIndicator {
     /**
      * 可拖拽的图标点 支持的样式信息
+     * @property [label] - 文字及其样式
+     * @property [rectColor] - 可拖拽矩形颜色
+     * @property [rectX = -100] - 可拖拽矩形的原点，离静态圆点的X轴距离
+     * @property [rectY = -50] - 可拖拽矩形的原点，离静态圆点的Y轴距离
+     * @property [autoPoistion] - 是否自动判断连接最近的矩形四个角
+     * @property [lineWidth = 2] - 连线的宽度
+     * @property [lineColor = "yellow"] - 连线的颜色
+     * @property [lineDash] - 虚线时的 "5,10"
+     * @property [pointColor] - 圆点颜色
+     * @property [pointSize] - 圆点大小
+     * @property [pointOutline] - 是否加载圆点边框
+     * @property [pointOutlineWidth] - 圆点边框宽度
+     * @property [pointOutlineColor] - 圆点边框yanse
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
@@ -16196,28 +16210,23 @@ declare namespace BillboardIndicator {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
-     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
-     * //  * @param {boolean} [highlight.enabled=true] 是否启用
-     * @param label - 文本
-     * @param label.text - 文本内容（可拖拽矩形内的文本）
-     * @param [label.font] - 文本字体
-     * @param [label.color] - 文本颜色
-     * @param [label.align] - 文本对齐方式
-     * @param [label.baseline] - 文本基线
-     * @param [rectColor] - 可拖拽矩形颜色
-     * @param [rectX = -100] - 可拖拽矩形的原点，离静态圆点的X轴距离
-     * @param [rectY = -50] - 可拖拽矩形的原点，离静态圆点的Y轴距离
-     * @param [autoPoistion] - 是否自动判断连接最近的矩形四个角
-     * @param [lineWidth = 2] - 连线的宽度
-     * @param [lineColor = "yellow"] - 连线的颜色
-     * @param [lineDash] - 虚线时的 "5,10"
-     * @param [pointColor] - 圆点颜色
-     * @param [pointSize] - 圆点大小
-     * @param [pointOutline] - 是否加载圆点边框
-     * @param [pointOutlineWidth] - 圆点边框宽度
-     * @param [pointOutlineColor] - 圆点边框yanse
+     * //  * @property {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @property {boolean} [highlight.enabled=true] 是否启用
      */
     type StyleOptions = any | {
+        label?: LabelEntity.StyleOptions | any;
+        rectColor?: string;
+        rectX?: number;
+        rectY?: number;
+        autoPoistion?: boolean;
+        lineWidth?: number;
+        lineColor?: string;
+        lineDash?: string;
+        pointColor?: string;
+        pointSize?: number;
+        pointOutline?: boolean;
+        pointOutlineWidth?: number;
+        pointOutlineColor?: string;
         opacity?: number;
         scale?: number;
         rotation?: number;
@@ -16259,7 +16268,8 @@ declare namespace BillboardIndicator {
 }
 
 /**
- * 可拖拽的图标点
+ * 可拖拽的图标点 ,
+ * 考虑大批量渲染性能，BillboardIndicator类存在限制：  (1)多个数据不同样式仅使用第一个style来同样式渲染;  (2)不支持setStyle更新部分样式。
  * @param options - 参数对象，包括以下：
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
@@ -16319,9 +16329,12 @@ declare class BillboardIndicator extends BillboardPrimitive {
      */
     image: string | HTMLCanvasElement;
     /**
-     * 显示隐藏状态
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
+     * @param value - 透明度
+     * @returns 无
      */
-    show: boolean;
+    setOpacity(value: number): void;
 }
 
 /**
@@ -35644,6 +35657,7 @@ declare type getSlope_endItem = (event: {
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
  * @param [options.diffHeight] - 当显示开挖区域的井时，设置所有区域的挖掘深度（单位：米）
  * @param [options.splitNum = 30] - 当显示开挖区域的井时，井墙面每两点之间插值个数(概略值，有经纬网网格来插值)
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -35657,6 +35671,7 @@ declare class TerrainClip extends TerrainEditBase {
         imageBottom?: string;
         diffHeight?: number;
         splitNum?: number;
+        exact?: boolean;
         czm?: boolean;
         id?: string | number;
         enabled?: boolean;
@@ -35790,6 +35805,7 @@ declare class TerrainFlat extends TerrainEditBase {
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
  * @param [options.diffHeight] - 当显示开挖区域的井时，设置区域的挖掘深度（单位：米）
  * @param [options.splitNum = 30] - 当显示开挖区域的井时，井墙面每两点之间插值个数
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35802,6 +35818,7 @@ declare class TerrainPlanClip extends BaseThing {
         imageBottom?: string;
         diffHeight?: number;
         splitNum?: number;
+        exact?: boolean;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -35840,6 +35857,7 @@ declare class TerrainPlanClip extends BaseThing {
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
  * @param [options.diffHeight] - 当显示开挖区域的井时，设置所有区域的挖掘深度（单位：米）
  * @param [options.splitNum = 30] - 当显示开挖区域的井时，井墙面每两点之间插值个数(概略值，有经纬网网格来插值)
+ * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -35852,6 +35870,7 @@ declare class TerrainUplift extends TerrainEditBase {
         imageBottom?: string;
         diffHeight?: number;
         splitNum?: number;
+        exact?: boolean;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
