@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.8.0
- * 编译日期：2024-08-21 14:03:10
+ * 版本信息：v3.8.1
+ * 编译日期：2024-09-01 21:06:35
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -12889,7 +12889,7 @@ declare class PolylineEntity extends BasePolyEntity {
         callback?: (...params: any[]) => any;
     }): void;
     /**
-     * 停止 流动生长动画
+     * 停止 流动生长(贪吃蛇)动画
      * @returns 无
      */
     stopSnakeAnimation(): void;
@@ -26358,11 +26358,11 @@ declare class ImageLayer extends BaseTileLayer {
 /**
  * Mapbox地图服务
  * @param [options] - 参数对象，包括以下：
- * @param [options.url = 'https://api.mapbox.com/styles/v1/'] - Mapbox服务器网址。
- * @param [options.username = 'marsgis'] - 地图帐户的用户名。
+ * @param options.username - 地图帐户的用户名。
  * @param options.styleId - Mapbox样式ID。
- * @param [options.accessToken = mars3d.Token.mapbox] - 图像的Token公共访问令牌。
- * @param [options.token] - 同accessToken，别名
+ * @param options.token - 图像的Token公共访问令牌。
+ * @param [options.accessToken] - 同token，别名
+ * @param [options.url = 'https://api.mapbox.com/styles/v1/'] - Mapbox服务器网址。
  * @param [options.tilesize = 512] - 图像块的大小。
  * @param [options.scaleFactor = true] - 确定贴图是否以 @2x 比例因子渲染。
  * @param [options.minimumLevel = 0] - 服务支持的最小层级，如果服务数据中没有第0层，该参数必须配置,当地图缩放小于该级别时，平台会请求minimumLevel级数据合并展示。
@@ -26422,11 +26422,11 @@ declare class ImageLayer extends BaseTileLayer {
  */
 declare class MapboxLayer extends BaseTileLayer {
     constructor(options?: {
-        url?: Cesium.Resource | string;
-        username?: string;
+        username: string;
         styleId: string;
+        token: string;
         accessToken?: string;
-        token?: string;
+        url?: Cesium.Resource | string;
         tilesize?: number;
         scaleFactor?: boolean;
         minimumLevel?: number;
@@ -32107,6 +32107,8 @@ declare namespace ConicSensor {
      * @property [roll = 0] - 翻滚角（角度值 0-360）
      * @property [color = Cesium.Color.YELLOW] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [slices = 36] - 周围的边数,数值调小可以优化效率
+     * @property [slicesR = 1] - 半径方向的边数,数值调小可以优化效率
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色
      * @property [topShow = true] - 是否显示顶
@@ -32127,6 +32129,8 @@ declare namespace ConicSensor {
         roll?: number;
         color?: string | Cesium.Color;
         opacity?: number;
+        slices?: number;
+        slicesR?: number;
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         topShow?: boolean;
@@ -32472,6 +32476,7 @@ declare namespace RectSensor {
      * @property [roll = 0] - 翻滚角（角度值 0-360）
      * @property [color = Cesium.Color.YELLOW] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [slices = 4] - 周围的边数,数值调小可以优化效率
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色
      * @property [topShow = true] - 是否显示顶
@@ -32494,6 +32499,7 @@ declare namespace RectSensor {
         roll?: number;
         color?: string | Cesium.Color;
         opacity?: number;
+        slices?: number;
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         topShow?: boolean;
@@ -32790,6 +32796,9 @@ declare namespace SatelliteSensor {
      * @property [roll = 0] - 翻滚角（角度值 0-360）
      * @property [color = "rgba(255,255,0,0.4)"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [slices = 4] - 周围的边数,数值调小可以优化效率
+     * @property [slicesC = 36] - 圆锥时，周围的边数,数值调小可以优化效率
+     * @property [slicesR = 1] - 圆锥时，半径方向的边数,数值调小可以优化效率
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色
      * @property [rayEllipsoid = false] - 是否求交地球计算
@@ -32809,6 +32818,9 @@ declare namespace SatelliteSensor {
         roll?: number;
         color?: string | Cesium.Color;
         opacity?: number;
+        slices?: number;
+        slicesC?: number;
+        slicesR?: number;
         outline?: boolean;
         outlineColor?: string | Cesium.Color;
         rayEllipsoid?: boolean;
@@ -37260,9 +37272,10 @@ declare namespace DrawUtil {
     /**
      * 根据类型获取编辑点样式
      * @param [type = mars3d.EditPointType.Control] - 类型
+     * @param [exStyle] - 覆盖样式
      * @returns 样式对象
      */
-    function getEditPointStyle(type?: EditPointType | number): PointPrimitive.StyleOptions | any | any;
+    function getEditPointStyle(type?: EditPointType | number, exStyle?: PointPrimitive.StyleOptions | any | any): PointPrimitive.StyleOptions | any | any;
 }
 
 /**
