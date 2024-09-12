@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.8.1
- * 编译日期：2024-09-01 21:06:35
+ * 版本信息：v3.8.3
+ * 编译日期：2024-09-12 11:40:34
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -1451,6 +1451,14 @@ declare namespace MaterialType {
      */
     const PolylineDash: string;
     /**
+     * 线：箭头虚线(等长度虚线间隔)
+     * @property [color = Cesium.Color.WHITE] - 颜色
+     * @property [gapColor = Cesium.Color.TRANSPARENT] - 虚线间隔颜色，默认为透明
+     * @property [dashLength = 16.0] - 虚线间隔长度，以像素为单位
+     * @property [dashPattern = 255.0] - 指定的16位模式
+     */
+    const LineDashArrow: string;
+    /**
      * 线：点划线虚线
      * @property [color = Cesium.Color.WHITE] - 颜色
      * @property [gapColor = Cesium.Color.TRANSPARENT] - 虚线间隔颜色，默认为透明
@@ -1932,7 +1940,7 @@ declare namespace Token {
     function updateTianditu(item: string | string[]): void;
     /**
      * 高德key数组，
-     * 官网： {@link https://console.amap.com/dev/key/app}
+     * 官网： {@link https://console.amap.com/dev/key/app} (服务平台类型：Web服务)
      */
     const gaodeArr: string[];
     /**
@@ -4101,11 +4109,13 @@ declare namespace OutlineEffect {
  * 对象轮廓描边效果
  * @param [options] - 参数对象
  * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
+ * @param [options.closeOnClick = true] - 是否在单击Map地图时，自动关闭当前弹窗
  * @param [options.enabled = true] - 对象的启用状态
  */
 declare class OutlineEffect extends BaseEffect {
     constructor(options?: {
         eventType?: EventType | boolean;
+        closeOnClick?: boolean;
         enabled?: boolean;
     });
     /**
@@ -6294,6 +6304,9 @@ declare namespace ConeVisibility {
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
      * @property [addHeight] - 在坐标点增加的高度值，规避遮挡，效果更友好
      * @property [showFrustum = false] - 是否显示视椎体框线
+     * @property [visibleAreaColor = new Cesium.Color(0, 1, 0)] - 可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
+     * @property [hiddenAreaColor = new Cesium.Color(1, 0, 0)] - 不可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
+     * @property [opacity = 0.6] - 透明度 0.0 - 1.0，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
      */
     type StyleOptions = any | {
         radius?: number;
@@ -6304,6 +6317,9 @@ declare namespace ConeVisibility {
         roll?: number;
         addHeight?: number;
         showFrustum?: boolean;
+        visibleAreaColor?: Cesium.Color | string;
+        hiddenAreaColor?: Cesium.Color | string;
+        opacity?: number;
     };
 }
 
@@ -6776,11 +6792,17 @@ declare namespace PointVisibility {
      * @property [radius = 1] - 区域半径,单位米
      * @property [addHeight] - 在坐标点增加的高度值，规避遮挡，效果更友好
      * @property [showFrustum = false] - 是否显示视椎体框线
+     * @property [visibleAreaColor = new Cesium.Color(0, 1, 0)] - 可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
+     * @property [hiddenAreaColor = new Cesium.Color(1, 0, 0)] - 不可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
+     * @property [opacity = 0.6] - 透明度 0.0 - 1.0，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
      */
     type StyleOptions = any | {
         radius?: number;
         addHeight?: number;
         showFrustum?: boolean;
+        visibleAreaColor?: Cesium.Color | string;
+        hiddenAreaColor?: Cesium.Color | string;
+        opacity?: number;
     };
 }
 
@@ -6810,9 +6832,17 @@ declare class PointVisibility extends BasePointPrimitive {
         eventParent?: BaseClass | boolean;
     });
     /**
-     * 混合系数0-1
+     * 混合系数0-1，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
      */
     opacity: number;
+    /**
+     * 可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
+     */
+    visibleAreaColor: Cesium.Color;
+    /**
+     * 不可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
+     */
+    hiddenAreaColor: Cesium.Color;
     /**
      * 场景的ShadowMap阴影图
      */
@@ -9905,7 +9935,7 @@ declare namespace CircleEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离。
+     * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离,可以控制圆的平滑度(值越小越平滑)。
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定椭圆是投射还是接收来自光源的阴影。
@@ -10977,7 +11007,7 @@ declare namespace EllipseEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
-     * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离。
+     * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离,可以控制圆的平滑度(值越小越平滑)。
      * @property [numberOfVerticalLines = 16] - 指定沿轮廓的周长绘制的垂直线的数量。
      * @property [hasShadows = false] - 是否投射阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定椭圆是投射还是接收来自光源的阴影。
@@ -16549,7 +16579,7 @@ declare namespace CirclePrimitive {
      * @property [extrudedHeight] - 指定圆的挤压面相对于椭球面的高度。
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
      * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
-     * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离。
+     * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离,可以控制圆的平滑度(值越小越平滑)。
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
@@ -29046,7 +29076,7 @@ declare namespace Map {
      * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [maximumRenderTimeChange = 0.0] - 如果requestRenderMode为true，这个值定义了在请求渲染之前允许的模拟时间的最大变化。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [depthPlaneEllipsoidOffset = 0.0] - 调整DepthPlane以处理椭球体零标高以下的渲染伪影。
-     * @property [msaaSamples = 1] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
+     * @property [msaaSamples = 4] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
      *
      * 以下是Cesium.Globe对象相关参数
      * @property [globe] - globe地球相关参数
@@ -30078,6 +30108,58 @@ declare class LineCrossMaterialProperty extends BaseMaterialProperty {
      * 虚线百分比
      */
     dashPower: number;
+    /**
+     * 指定的16位模式
+     */
+    dashPattern: number;
+    /**
+     * 获取 材质名称
+     * @param [time] - 检索值的时间。
+     * @returns 材质名称
+     */
+    getType(time?: Cesium.JulianDate): string;
+    /**
+     * 获取所提供时间的属性值。
+     * @param [time] - 检索值的时间。
+     * @param [result] - 用于存储值的对象，如果省略，则创建并返回一个新的实例。
+     * @returns 修改的result参数或一个新的实例(如果没有提供result参数)。
+     */
+    getValue(time?: Cesium.JulianDate, result?: any): any;
+    /**
+     * 将此属性与提供的属性进行比较并返回, 如果两者相等返回true，否则为false
+     * @param [other] - 比较的对象
+     * @returns 两者是同一个对象
+     */
+    equals(other?: Cesium.Property): boolean;
+}
+
+/**
+ * 箭头虚线(等长度虚线间隔) 材质
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.color = Cesium.Color.WHITE] - 颜色
+ * @param [options.gapColor = Cesium.Color.TRANSPARENT] - 虚线间隔颜色，默认为透明
+ * @param [options.dashLength = 16.0] - 虚线间隔长度，以像素为单位
+ * @param [options.dashPattern = 255.0] - 指定的16位模式
+ */
+declare class LineDashArrowMaterialProperty extends BaseMaterialProperty {
+    constructor(options?: {
+        color?: Cesium.Color;
+        gapColor?: Cesium.Color;
+        dashLength?: number;
+        dashPattern?: number;
+    });
+    /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 虚线间隔颜色，默认为透明
+     */
+    gapColor: Cesium.Color;
+    /**
+     * 虚线间隔长度，以像素为单位
+     */
+    dashLength: number;
     /**
      * 指定的16位模式
      */
@@ -32476,7 +32558,7 @@ declare namespace RectSensor {
      * @property [roll = 0] - 翻滚角（角度值 0-360）
      * @property [color = Cesium.Color.YELLOW] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
-     * @property [slices = 4] - 周围的边数,数值调小可以优化效率
+     * @property [slices = 1] - 周围的边数,数值调小可以优化效率
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色
      * @property [topShow = true] - 是否显示顶
@@ -37733,9 +37815,10 @@ declare namespace PointTrans {
     /**
      * 经度/纬度 十进制 转为 度分秒格式
      * @param value - 经度或纬度值
+     * @param [toFixedLen = 0] - 秒的小数位数
      * @returns 度分秒对象，如： { degree:113, minute:24, second:40 }
      */
-    function degree2dms(value: number): any;
+    function degree2dms(value: number, toFixedLen?: number): any;
     /**
      * 经度/纬度  度分秒 转为 十进制
      * @param degree - 度
@@ -39696,7 +39779,7 @@ declare namespace thing {
 }
 
 export {
-  name, update, version, proj4, Tle,
+  name, update, version, proj4, Tle, WindUtil,
   BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp,
   MaterialType, GraphicType, LayerType, ControlType, EffectType, ThingType, Lang, MoveType, ClipType, Icon, EditPointType,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil, ThingUtil,
