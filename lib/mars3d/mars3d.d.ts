@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.8.3
- * 编译日期：2024-09-12 11:40:34
+ * 编译日期：2024-09-22 12:56:51
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -2331,7 +2331,10 @@ declare class FullscreenButton extends BaseCzmControl {
 /**
  * 地名查找按钮 控件 (Cesium原生)
  * @param [options] - 参数对象，包括以下：
- * @param [service = "gaode"] - 服务处理类， string时内置支持： "gaode"高德POI服务,"ion"原生Cesium服务
+ * @param [options.service = "gaode"] - 服务处理类， string时内置支持： "gaode"高德POI服务,"ion"原生Cesium服务
+ * @param [options.key = mars3d.Token.gaodeArr] - "gaode"高德POI服务时,高德KEY,在实际项目中请使用自己申请的高德KEY，因为我们的key不保证长期有效。
+ * @param [options.parameters] - 其他查询参数
+ * @param [options.parameters.types = '110000|120000|130000|140000|180000|190000'] - 检索分类偏好，与text组合进行检索，多个分类以","分隔（POI分类），如果需要严格按分类检索，请通过text参数设置
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.parentContainer] - 控件加入的父容器，默认为map所在的DOM map.toolbar
@@ -2340,12 +2343,17 @@ declare class FullscreenButton extends BaseCzmControl {
  */
 declare class Geocoder extends BaseCzmControl {
     constructor(options?: {
+        service?: string | Cesium.GeocoderService[] | undefined;
+        key?: string | string[];
+        parameters?: {
+            types?: string;
+        };
         id?: string | number;
         enabled?: boolean;
         parentContainer?: HTMLElement;
         insertIndex?: number;
         insertBefore?: HTMLElement | string;
-    }, service?: string | Cesium.GeocoderService[] | undefined);
+    });
     /**
      * 父容器DOM对象
      */
@@ -11211,22 +11219,19 @@ declare namespace EllipsoidEntity {
         label?: LabelEntity.StyleOptions | any;
     };
     /**
-     * 动态扫描面 参数
-     * @property planeOptions - 扫描面构造参数
-     * @property [planeOptions.type = 'heading'] - 扫描旋转的方向，可选值：'heading'，'pitch'，'roll'
-     * @property [planeOptions.step = 0.5] - 旋转的步长（角度），控制速度
-     * @property [planeOptions.min] - 旋转的最小值（角度）
-     * @property [planeOptions.max] - 旋转的最大值（角度）
-     * @property [planeOptions.style] - 样式信息
+     * 扫描面构造参数
+     * @property [type = 'heading'] - 扫描旋转的方向，可选值：'heading'，'pitch'，'roll'
+     * @property [step = 0.5] - 旋转的步长（角度），控制速度
+     * @property [min] - 旋转的最小值（角度）
+     * @property [max] - 旋转的最大值（角度）
+     * @property [style] - 样式信息
      */
     type ScanPlaneOptions = {
-        planeOptions: {
-            type?: string;
-            step?: number;
-            min?: number;
-            max?: number;
-            style?: EllipsoidEntity.StyleOptions | any;
-        };
+        type?: string;
+        step?: number;
+        min?: number;
+        max?: number;
+        style?: EllipsoidEntity.StyleOptions | any;
     };
 }
 
@@ -13149,6 +13154,7 @@ declare namespace RectangleEntity {
  * @param options - 参数对象，包括以下：
  * @param [options.positions] - 坐标位置
  * @param [options.rectangle] - 矩形范围，与positions二选一。
+ * @param [options.coordinates] - rectangle的别名
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -13182,6 +13188,7 @@ declare class RectangleEntity extends BasePolyEntity {
     constructor(options: {
         positions?: LngLatPoint[] | Cesium.Cartesian3[] | any[] | Cesium.PositionProperty | Cesium.CallbackProperty;
         rectangle?: Cesium.Rectangle | Cesium.PositionProperty | Cesium.CallbackProperty;
+        coordinates?: Cesium.Rectangle | Cesium.PositionProperty | Cesium.CallbackProperty;
         style: RectangleEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
@@ -14992,6 +14999,9 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+ * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
+ * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
  * @param [options.minPointNum = 2] - 绘制时，至少需要点的个数
  * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
  * @param [options.updateDrawPosition] - 绘制时，外部自定义更新坐标,可以自定义处理特殊业务返回修改后的新坐标。
@@ -15026,6 +15036,9 @@ declare class DistanceMeasure extends PolylineEntity {
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
+        unit?: string;
+        addHeight?: number;
+        showAddText?: boolean;
         minPointNum?: number;
         maxPointNum?: number;
         updateDrawPosition?: (...params: any[]) => any;
@@ -27382,9 +27395,11 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.subdomains] - URL模板中用于 {s} 占位符的子域。 如果此参数是单个字符串，则字符串中的每个字符都是一个子域。如果是 一个数组，数组中的每个元素都是一个子域。
  * @param [options.format = 'image/jpeg'] - 要从服务器检索的瓦片图像的MIME类型。
  * @param options.layer - WMTS请求的层名。
- * @param options.style - WMTS请求的样式名称。
- * @param options.tileMatrixSetID - 用于WMTS请求的TileMatrixSet的标识符。
+ * @param [options.style] - WMTS请求的样式名称。
+ * @param [options.tileMatrixSet] - 用于WMTS请求的TileMatrixSet的标识符。
+ * @param [options.tileMatrixSetID] - 同tileMatrixSet，Cesium原生参数
  * @param [options.tileMatrixLabels] - 瓦片矩阵中用于WMTS请求的标识符列表，每个瓦片矩阵级别一个。
+ * @param [options.tileMatrixBefore] - 用于WMTS请求的tilematrix，当tileMatrixLabels是有规律的前缀+层级时，可以用tilematrixBefore配置前缀字符串即可。
  * @param [options.clock] - 一个时钟实例，用于确定时间维度的值。指定' times '时需要。
  * @param [options.times] - TimeIntervalCollection 的数据属性是一个包含时间动态维度及其值的对象。
  * @param [options.getCapabilities = true] - 是否通过服务本身的GetCapabilities来读取一些参数，减少options配置项
@@ -27455,9 +27470,11 @@ declare class WmtsLayer extends BaseTileLayer {
         subdomains?: string | string[];
         format?: string;
         layer: string;
-        style: string;
-        tileMatrixSetID: string;
+        style?: string;
+        tileMatrixSet?: string;
+        tileMatrixSetID?: string;
         tileMatrixLabels?: string[];
+        tileMatrixBefore?: string;
         clock?: Cesium.Clock;
         times?: Cesium.TimeIntervalCollection;
         getCapabilities?: boolean;
@@ -29076,6 +29093,8 @@ declare namespace Map {
      * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [maximumRenderTimeChange = 0.0] - 如果requestRenderMode为true，这个值定义了在请求渲染之前允许的模拟时间的最大变化。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [depthPlaneEllipsoidOffset = 0.0] - 调整DepthPlane以处理椭球体零标高以下的渲染伪影。
+     * @property [blurActiveElementOnCanvasFocus = true] - 控制当用户点击或悬停在Viewer的画布上时，是否将焦点从当前DOM元素中移出。如果设置为true，则会自动将焦点从当前的DOM元素中移开，以便Viewer可以接收键盘事件和鼠标事件。这个属性对于在Web应用程序中使用Viewer时很有用，因为用户可能需要与其他DOM元素进行交互，例如输入文本或单击按钮。如果不把焦点从当前元素移开，用户将不能使用键盘或鼠标来与Viewer进行交互。需要注意的是，默认情况下，此属性被设置为true，因此当用户点击或悬停在Viewer的画布上时，焦点将会自动从当前的DOM元素中移开。如果您想要保留焦点，请将该属性设置为false。
+     * @property [depthPlaneEllipsoidOffset = 0.0] - 可以指定深度测试平面相对于椭球体表面的偏移量。这个属性通常用于解决多个三维模型重叠时出现的Z-fighting问题，即两个或多个物体处于同一深度位置，导致图像闪烁或不清晰。
      * @property [msaaSamples = 4] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
      *
      * 以下是Cesium.Globe对象相关参数
@@ -29179,6 +29198,8 @@ declare namespace Map {
         terrainShadows?: Cesium.ShadowMode;
         requestRenderMode?: boolean;
         maximumRenderTimeChange?: number;
+        depthPlaneEllipsoidOffset?: number;
+        blurActiveElementOnCanvasFocus?: boolean;
         depthPlaneEllipsoidOffset?: number;
         msaaSamples?: number;
         globe?: {
@@ -33415,7 +33436,7 @@ declare class WindLayer extends BaseLayer {
  */
 declare class BaiduPOI {
     constructor(options?: {
-        key?: string[];
+        key?: string | string[];
         city?: string;
         headers?: any;
         proxy?: Cesium.DefaultProxy;
@@ -33591,7 +33612,7 @@ declare class BaiduPOI {
  */
 declare class GaodePOI {
     constructor(options?: {
-        key?: string[];
+        key?: string | string[];
         chinaCRS?: ChinaCRS | string;
         headers?: any;
         proxy?: Cesium.DefaultProxy;
@@ -33756,7 +33777,7 @@ declare class GaodePOI {
  */
 declare class GaodeRoute {
     constructor(options?: {
-        key?: string[];
+        key?: string | string[];
         chinaCRS?: ChinaCRS | string;
         headers?: any;
         proxy?: Cesium.DefaultProxy;
@@ -34099,7 +34120,7 @@ declare class QueryGeoServer extends BaseClass {
  */
 declare class TdtPOI {
     constructor(options?: {
-        key?: string[];
+        key?: string | string[];
         headers?: any;
         proxy?: Cesium.DefaultProxy;
     });
@@ -36168,7 +36189,8 @@ declare class TilesetBoxClip extends BaseThing {
  * @param options.layer - 需要裁剪的对象（3dtiles图层）
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.clipOutSide = false] - 是否外裁剪
- * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重（模型面积越大越严重）
+ * @param [options.maxCanvasSize = 4096] - 掩膜模式下最大分辨率半径（单位：像素）,值过大时会WebGL报错: INVALID_VALUE: texImage2D: no canvas
  * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -36180,6 +36202,7 @@ declare class TilesetClip extends TilesetEditBase {
         area?: any;
         clipOutSide?: boolean;
         precise?: boolean;
+        maxCanvasSize?: number;
         czm?: boolean;
         id?: string | number;
         enabled?: boolean;
@@ -36344,7 +36367,8 @@ declare class TilesetEditBase extends BaseThing {
  * @param [options.area] - 多区域数组对象, 示例： [{ positions: [[108.959062, 34.220134, 397], [108.959802, 34.220147, 397], [108.959106, 34.21953, 398]] }]
  * @param [options.editHeight] - 模型基准高度(单位：米)，基于压平/淹没区域最低点高度的纠偏，也支持定义在模型图层中
  * @param [options.raise = true] - 是否开启区域抬高
- * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重（模型面积越大越严重）
+ * @param [options.maxCanvasSize = 4096] - 掩膜模式下最大分辨率半径（单位：像素）
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -36356,6 +36380,7 @@ declare class TilesetFlat extends TilesetEditBase {
         editHeight?: number;
         raise?: boolean;
         precise?: boolean;
+        maxCanvasSize?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -36419,7 +36444,8 @@ declare namespace TilesetFlood {
  * @param [options.color = new Cesium.Color(0.15, 0.7, 0.95, 0.5)] - 淹没颜色
  * @param [options.floodAll] - 是否对整个模型进行分析
  * @param [options.limitMin = false] - 显示效果中是否不显示最低高度以下的部分颜色
- * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重
+ * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重（模型面积越大越严重）
+ * @param [options.maxCanvasSize = 4096] - 掩膜模式下最大分辨率半径（单位：像素）
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -36435,6 +36461,7 @@ declare class TilesetFlood extends TilesetEditBase {
         floodAll?: boolean;
         limitMin?: boolean;
         precise?: boolean;
+        maxCanvasSize?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -39451,6 +39478,7 @@ declare namespace material {
   export { LineFlowColorMaterialProperty }
   export { LineFlowMaterialProperty }
   export { LineTrailMaterialProperty }
+  export { LineDashArrowMaterialProperty }
   export { NeonLightMaterialProperty }
   export { ODLineMaterialProperty }
   export { PolyAsphaltMaterialProperty }
