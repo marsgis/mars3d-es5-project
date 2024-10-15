@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.8.3
- * 编译日期：2024-09-22 12:56:51
+ * 版本信息：v3.8.4
+ * 编译日期：2024-10-15 23:02
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -1596,6 +1596,8 @@ declare namespace MaterialType {
      * @property [repeat = new Cesium.Cartesian2(1.0, 1.0)] - 指定图像在每个方向上重复的次数
      * @property [noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
      * @property [rotation = 0] - 旋转角度，0-360
+     * @property [hasMask = false] - 是否存在遮盖图片。
+     * @property [maskImage] - 遮盖融合的图片url地址，可用于视频等场景下的四周羽化效果。
      */
     const Image2: string;
     /**
@@ -3327,7 +3329,7 @@ declare class GroupThing extends BaseThing {
     getInMapChilds(): BaseThing[];
     /**
      * 根据ID或取Thing对象
-     * @param id - Thing对象id或uuid
+     * @param id - Thing对象id
      * @returns Thing对象对象
      */
     getThingById(id: string | number): BaseThing | any;
@@ -6556,7 +6558,7 @@ declare class FixedRoute extends Route {
      * 计算贴地线
      * @param [options] - 控制参数
      * @param [options.splitNum = 100] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
@@ -6575,7 +6577,7 @@ declare class FixedRoute extends Route {
      * 获取剖面数据
      * @param [options] - 控制参数
      * @param [options.splitNum = 100] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
@@ -12531,6 +12533,13 @@ declare class PointEntity extends BasePointEntity {
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: Cesium.PointGraphics;
+    /**
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
+     * @param value - 透明度
+     * @returns 无
+     */
+    setOpacity(value: number): void;
 }
 
 declare namespace PolygonEntity {
@@ -13486,6 +13495,7 @@ declare namespace Video2D {
      * 视频融合（投射2D平面） 支持的样式信息
      * @property [url] - 视频对应url地址
      * @property [container] - 视频对应的video标签,与url二选一
+     * @property [maskImage] - 遮盖融合的图片url地址，可用于视频等场景下的四周羽化效果。
      * @property angle - 水平张角(度数)
      * @property angle2 - 垂直张角(度数)
      * @property distance - 投射距离
@@ -13512,6 +13522,7 @@ declare namespace Video2D {
     type StyleOptions = any | {
         url?: string;
         container?: HTMLVideoElement;
+        maskImage?: string;
         angle: number;
         angle2: number;
         distance: number;
@@ -14722,7 +14733,7 @@ declare class GroupGraphic extends BaseGraphic {
     getInMapChilds(): BaseGraphic[] | any;
     /**
      * 根据ID或取图层
-     * @param id - 图层id或uuid
+     * @param id - 图层id
      * @returns 图层对象
      */
     getGraphicById(id: string | number): BaseGraphic | any | any;
@@ -15379,7 +15390,7 @@ declare class PointMeasure extends PointEntity {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.splitNum = 200] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
- * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+ * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
  * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
  * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
  * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
@@ -15473,15 +15484,16 @@ declare class SectionMeasure extends DistanceMeasure {
  * @param [options.showPoly = true] - 是否显示基准面
  * @param [options.showWall = false] - 是否显示围墙面
  * @param [options.polygonWallStyle] - 围墙面的样式
- * @param [options.showBox = true] - 是否显示填挖盒子
- * @param [options.fillColor = Cesium.Color.YELLOW.withAlpha(0.5)] - 填方盒子的颜色
- * @param [options.cutColor = Cesium.Color.RED.withAlpha(0.5)] - 挖方盒子的颜色
- * @param [options.offsetHeight = 0] - 盒子偏移显示的高度值，可以将盒子显示在空中来展示
  * @param [options.label] - 测量结果文本的样式
- * @param [options.showFillVolume = true] - 是否显示填方体积结果文本
- * @param [options.fillVolumeName = '填方体积'] - 填方体积结果的名称
+ * @param [options.offsetHeight = 0] - 盒子偏移显示的高度值，可以将盒子显示在空中来展示
+ * @param [options.showDigBox = true] - 是否显示挖方盒子
+ * @param [options.digBoxColor = "rgba(255, 0, 0, 0.3)"] - 挖方盒子的颜色
  * @param [options.showDigVolume = true] - 是否显示挖方体积结果文本
  * @param [options.digVolumeName = '挖方体积'] - 挖方体积结果的名称
+ * @param [options.showFillBox = true] - 是否显示填方盒子
+ * @param [options.fillBoxColor = "rgba(140, 230, 50, 0.3)"] - 填方盒子的颜色
+ * @param [options.showFillVolume = true] - 是否显示填方体积结果文本
+ * @param [options.fillVolumeName = '填方体积'] - 填方体积结果的名称
  * @param [options.showArea = true] - 是否显示横切面积结果文本
  * @param [options.areaName = '横切面积'] - 横切面积结果的名称
  * @param [options.measured] - 传入历史计算的值，可以固化测量结果，避免地形精度和视角剔除带来的测量结果每次不同
@@ -15509,15 +15521,16 @@ declare class VolumeDepthMeasure extends AreaMeasure {
         showPoly?: boolean;
         showWall?: boolean;
         polygonWallStyle?: PolygonEntity.StyleOptions | any;
-        showBox?: boolean;
-        fillColor?: string | Cesium.Color;
-        cutColor?: string | Cesium.Color;
-        offsetHeight?: number;
         label?: LabelEntity.StyleOptions | any;
-        showFillVolume?: boolean;
-        fillVolumeName?: string;
+        offsetHeight?: number;
+        showDigBox?: boolean;
+        digBoxColor?: string | Cesium.Color;
         showDigVolume?: boolean;
         digVolumeName?: string;
+        showFillBox?: boolean;
+        fillBoxColor?: string | Cesium.Color;
+        showFillVolume?: boolean;
+        fillVolumeName?: string;
         showArea?: boolean;
         areaName?: string;
         measured?: {
@@ -15560,9 +15573,13 @@ declare class VolumeDepthMeasure extends AreaMeasure {
      */
     maxHeight: number;
     /**
-     * 是否显示填挖盒子
+     * 是否显示填方盒子
      */
-    showBox: boolean;
+    showFillBox: boolean;
+    /**
+     * 是否显示挖方盒子
+     */
+    showDigBox: boolean;
     /**
      * 更新测量结果的文本
      * @param unit - 计量单位,{@link MeasureUtil#formatArea} 可选值：计量单位，可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用m或km
@@ -18996,6 +19013,13 @@ declare class PointPrimitive extends BasePointPrimitive {
      * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
      */
     position: Cesium.Cartesian3 | LngLatPoint;
+    /**
+     * 设置整体透明度(globalAlpha值) , 非全部矢量数据都支持，具体需要对应Graphic支持才有效
+     * 对象本身透明度请修改 graphic.setStyle({ opacity: value })
+     * @param value - 透明度
+     * @returns 无
+     */
+    setOpacity(value: number): void;
 }
 
 declare namespace PolygonPrimitive {
@@ -21068,6 +21092,12 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
         类参数?: any;
     }): CzmGeoJsonLayer;
     /**
+     * 根据id取矢量数据对象
+     * @param id - 矢量数据id
+     * @returns 矢量数据对象
+     */
+    getEntityById(id: string | number): Cesium.Entity | any;
+    /**
      * 加载新数据 或 刷新数据
      * @param symbol - 设置新的symbol 矢量数据样式.  {@link GraphicType}
      * @param symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
@@ -21547,7 +21577,11 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param [options.token] - 用于通过ArcGIS MapServer服务进行身份验证的ArcGIS令牌。
  * @param [options.where] - 用于筛选数据的where查询条件
  * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
+ * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
+ * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+ * @param [options.mask] - 标识是否绘制区域边界的反选遮罩层，也可以传入object配置范围： { xmin: 73.0, xmax: 136.0, ymin: 3.0, ymax: 59.0 }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.toPrimitive] - 是否将entity类型转为primivate类型渲染（比如数据的point改为pointP展示）
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
@@ -21606,7 +21640,11 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
         token?: string;
         where?: string;
         format?: (...params: any[]) => any;
+        onCreateGraphic?: (...params: any[]) => any;
+        filter?: (...params: any[]) => any;
+        mask?: boolean | any;
         allowDrillPick?: boolean | ((...params: any[]) => any);
+        toPrimitive?: boolean;
         opacity?: number;
         zIndex?: number;
         symbol?: {
@@ -22326,7 +22364,7 @@ declare class GraphicGroupLayer extends GroupLayer {
     getGraphics(): BaseGraphic[];
     /**
      * 根据id或uuid取矢量数据对象
-     * @param id - 矢量数据id或uuid
+     * @param id - 矢量数据id
      * @returns 矢量数据对象
      */
     getGraphicById(id: string | number): BaseGraphic | any;
@@ -24501,7 +24539,7 @@ declare class GroupLayer extends BaseGraphicLayer {
     getInMapChilds(): BaseLayer[] | GraphicLayer[];
     /**
      * 根据ID或取图层
-     * @param id - 图层id或uuid
+     * @param id - 图层id
      * @returns 图层对象
      */
     getLayerById(id: string | number): BaseLayer | GraphicLayer | any;
@@ -24534,6 +24572,11 @@ declare class GroupLayer extends BaseGraphicLayer {
      * @returns 无
      */
     toBottom(): void;
+    /**
+     * 重新加载图层
+     * @returns 无
+     */
+    reload(): void;
 }
 
 /**
@@ -28309,7 +28352,7 @@ declare class Map extends BaseClass {
     getLayer(attrValue: string | number, attrName?: string): BaseLayer | any;
     /**
      * 根据ID或取图层 ，包括config.json配置的图层
-     * @param id - 图层id或uuid
+     * @param id - 图层id
      * @returns 图层对象
      */
     getLayerById(id: string | number): BaseLayer | any;
@@ -29092,7 +29135,6 @@ declare namespace Map {
      * @property [terrainShadows = Cesium.ShadowMode.RECEIVE_ONLY] - 确定地形是否投射或接收来自光源的阴影。
      * @property [requestRenderMode = false] - 是否显式渲染，如果为真，渲染帧只会在需要时发生，这是由场景中的变化决定的。启用可以减少你的应用程序的CPU/GPU使用量，并且在移动设备上使用更少的电池，但是需要使用 {@link Scene#requestRender} 在这种模式下显式地渲染一个新帧。在许多情况下，在API的其他部分更改场景后，这是必要的。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
      * @property [maximumRenderTimeChange = 0.0] - 如果requestRenderMode为true，这个值定义了在请求渲染之前允许的模拟时间的最大变化。参见 {@link https://cesium.com/blog/2018/01/24/cesium-scene-rendering-performance/|Improving Performance with Explicit Rendering}.
-     * @property [depthPlaneEllipsoidOffset = 0.0] - 调整DepthPlane以处理椭球体零标高以下的渲染伪影。
      * @property [blurActiveElementOnCanvasFocus = true] - 控制当用户点击或悬停在Viewer的画布上时，是否将焦点从当前DOM元素中移出。如果设置为true，则会自动将焦点从当前的DOM元素中移开，以便Viewer可以接收键盘事件和鼠标事件。这个属性对于在Web应用程序中使用Viewer时很有用，因为用户可能需要与其他DOM元素进行交互，例如输入文本或单击按钮。如果不把焦点从当前元素移开，用户将不能使用键盘或鼠标来与Viewer进行交互。需要注意的是，默认情况下，此属性被设置为true，因此当用户点击或悬停在Viewer的画布上时，焦点将会自动从当前的DOM元素中移开。如果您想要保留焦点，请将该属性设置为false。
      * @property [depthPlaneEllipsoidOffset = 0.0] - 可以指定深度测试平面相对于椭球体表面的偏移量。这个属性通常用于解决多个三维模型重叠时出现的Z-fighting问题，即两个或多个物体处于同一深度位置，导致图像闪烁或不清晰。
      * @property [msaaSamples = 4] - 如果提供，该值控制多样本抗混叠的速率。典型的多采样率是每像素2、4，有时是8个采样。更高的MSAA采样率可能会影响性能，以换取更好的视觉质量。这个值只适用于支持多样本渲染目标的WebGL2上下文。
@@ -29119,6 +29161,7 @@ declare namespace Map {
      * @property [cameraController.enableTilt = true] - 3D和哥伦布视图下，是否允许用户倾斜相机
      * @property [cameraController.enableZoom = true] - 是否允许 用户放大和缩小视图
      * @property [cameraController.enableCollisionDetection = true] - 是否允许 地形相机的碰撞检测
+     * @property [cameraController.maximumTiltAngle] - 这个角度，相对于椭球法线，限制了用户可以倾斜相机的最大值。如果<code>undefined</code>，则相机倾斜的角度不受限制。
      *
      * 以下是Cesium.Clock时钟相关参数
      * @property [clock] - 时钟相关参数
@@ -29198,7 +29241,6 @@ declare namespace Map {
         terrainShadows?: Cesium.ShadowMode;
         requestRenderMode?: boolean;
         maximumRenderTimeChange?: number;
-        depthPlaneEllipsoidOffset?: number;
         blurActiveElementOnCanvasFocus?: boolean;
         depthPlaneEllipsoidOffset?: number;
         msaaSamples?: number;
@@ -29222,6 +29264,7 @@ declare namespace Map {
             enableTilt?: boolean;
             enableZoom?: boolean;
             enableCollisionDetection?: boolean;
+            maximumTiltAngle?: boolean;
         };
         clock?: {
             currentTime?: string | Cesium.JulianDate;
@@ -29974,6 +30017,7 @@ declare class EllipsoidWaveMaterialProperty extends BaseMaterialProperty {
  * @param [options.rotation = 0] - 旋转角度，0-360
  * @param [options.repeat = new Cesium.Cartesian2(1.0, 1.0)] - 指定图像在每个方向上重复的次数
  * @param [options.noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
+ * @param [options.maskImage] - 遮盖融合的图片url地址，可用于视频等场景下的四周羽化效果。
  */
 declare class Image2MaterialProperty extends BaseMaterialProperty {
     constructor(options?: {
@@ -29986,6 +30030,7 @@ declare class Image2MaterialProperty extends BaseMaterialProperty {
         rotation?: number;
         repeat?: Cesium.Cartesian2;
         noWhite?: boolean;
+        maskImage?: string;
     });
     /**
      * 背景图片URL
@@ -32319,9 +32364,17 @@ declare class ConicSensor extends BasePointPrimitive {
      */
     pitch: number;
     /**
+     * 俯仰角，弧度值
+     */
+    readonly pitchRadians: number;
+    /**
      * 滚转角，左右摆动的角度，0-360度角度值
      */
     roll: number;
+    /**
+     * 滚转角，弧度值
+     */
+    readonly rollRadians: number;
     /**
      * 是否显示地面投影
      */
@@ -32696,9 +32749,17 @@ declare class RectSensor extends BasePointPrimitive {
      */
     pitch: number;
     /**
+     * 俯仰角，弧度值
+     */
+    readonly pitchRadians: number;
+    /**
      * 滚转角，左右摆动的角度，0-360度角度值
      */
     roll: number;
+    /**
+     * 滚转角，弧度值
+     */
+    readonly rollRadians: number;
     /**
      * 获取当前转换计算模型矩阵。如果方向或位置未定义，则返回undefined。
      */
@@ -32958,7 +33019,7 @@ declare namespace SatelliteSensor {
  */
 declare class SatelliteSensor extends BasePointPrimitive {
     constructor(options?: {
-        position?: LngLatPoint | Cesium.Cartesian3 | number[];
+        position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | number[];
         orientation?: Cesium.Property | any;
         style: SatelliteSensor.StyleOptions | any;
         attr?: any;
@@ -33270,6 +33331,10 @@ declare class CanvasWindLayer extends BaseLayer {
      * 风场数据，数据结构见类的构造方法说明
      */
     data: CanvasWindLayer.DataOptions;
+    /**
+     * 坐标数据对应的矩形边界
+     */
+    readonly rectangle: Cesium.Rectangle;
     /**
      * 设置 风场数据
      * @param data - 风场数据
@@ -34463,7 +34528,7 @@ declare class Measure extends BaseThing {
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.splitNum = 200] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
@@ -34841,7 +34906,7 @@ declare class Sightline extends BaseThing {
      * @param [options = {}] - 控制参数，包括：
      * @param [options.offsetHeight = 0] - 在起点增加的高度值，比如加上人的身高
      * @param [options.splitNum = 50] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值时的最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值时的最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @returns 分析结果完成的Promise
      */
     addAsync(origin: Cesium.Cartesian3, target: Cesium.Cartesian3, options?: {
@@ -37107,6 +37172,13 @@ declare class PointStyleConver extends BaseStyleConver {
      * @returns json简单对象
      */
     static toJSON(czmVal: any, style?: any, isEntity?: boolean): any;
+    /**
+     * 设置Label全局透明度
+     * @param point - 文本对象
+     * @param value - 透明度
+     * @returns 无
+     */
+    static setOpacity(point: Cesium.PointGraphics | Cesium.PointPrimitive, value: number): void;
 }
 
 /**
@@ -38550,7 +38622,7 @@ declare namespace PolyUtil {
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param options.positions - 坐标数组
      * @param [options.splitNum = 100] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.height = 0] - 坐标的高度
      * @param [options.surfaceHeight = true] - 是否计算贴地高度 （非精确计算，根据当前加载的地形和模型数据情况有关）
      * @returns 插值后的路线坐标数组
@@ -38582,7 +38654,7 @@ declare namespace PolyUtil {
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param options.positions - 坐标数组
      * @param [options.splitNum = 100] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
@@ -38636,7 +38708,7 @@ declare namespace PolyUtil {
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param options.positions - 坐标数组
      * @param [options.splitNum = 100] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
@@ -38753,7 +38825,7 @@ declare namespace PolyUtil {
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param options.positions - 坐标数组
      * @param [options.splitNum = 100] - 计算的间隔长度,数据量不能大于Cesium.ContextLimits.maximumTextureSize
-     * @param [options.minDistance] - 插值最小间隔(单位：米)，优先级高于splitNum
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.cameraHeight = scene.camera.positionCartographic.height] - 相机高度
      * @returns 计算完成的相关数据
      */
