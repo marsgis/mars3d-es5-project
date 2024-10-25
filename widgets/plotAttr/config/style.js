@@ -216,7 +216,7 @@ const styleConfig = {
         name: "font_family",
         label: "字体",
         type: "combobox",
-        defval: "楷体",
+        defval: "微软雅黑",
         data: [
           { label: "微软雅黑", value: "微软雅黑" },
           { label: "宋体", value: "宋体" },
@@ -527,7 +527,7 @@ const styleConfig = {
   billboard: {
     name: "图标点标记",
     primitive: true,
-    extends: ["divBillboard", "canvasBillboard"],
+    extends: ["divBillboard", "divBillboardP", "canvasBillboard"],
     style: [
       { name: "opacity", label: "透明度", type: "slider", defval: 1.0, min: 0, max: 1, step: 0.01 },
       { name: "scale", label: "大小比例", type: "number", step: 1, defval: 1.0 },
@@ -861,6 +861,97 @@ const styleConfig = {
 
       { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false },
       { name: "html", label: "Html文本", type: "label", defval: "" }
+    ]
+  },
+  billboardIndicator: {
+    name: "可拖拽图标点",
+    style: [
+      { name: "opacity", label: "透明度", type: "slider", defval: 1.0, min: 0, max: 1, step: 0.01 },
+      { name: "scale", label: "大小比例", type: "number", step: 1, min: 0, defval: 1.0 },
+
+      {
+        name: "scaleByDistance",
+        label: "是否按视距缩放",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "scaleByDistance_far",
+        label: "上限",
+        type: "number",
+        step: 1,
+        defval: 1000000.0,
+        show(style, allStyle, graphicType) {
+          return style.scaleByDistance
+        }
+      },
+      {
+        name: "scaleByDistance_farValue",
+        label: "比例值",
+        type: "number",
+        step: 1,
+        defval: 0.1,
+        show(style, allStyle, graphicType) {
+          return style.scaleByDistance
+        }
+      },
+      {
+        name: "scaleByDistance_near",
+        label: "下限",
+        type: "number",
+        step: 1,
+        defval: 1000.0,
+        show(style, allStyle, graphicType) {
+          return style.scaleByDistance
+        }
+      },
+      {
+        name: "scaleByDistance_nearValue",
+        label: "比例值",
+        type: "number",
+        step: 1,
+        defval: 1.0,
+        show(style, allStyle, graphicType) {
+          return style.scaleByDistance
+        }
+      },
+
+      {
+        name: "distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show(style, allStyle, graphicType) {
+          return style.distanceDisplayCondition
+        }
+      },
+      {
+        name: "distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show(style, allStyle, graphicType) {
+          return style.distanceDisplayCondition
+        }
+      },
+      {
+        name: "clampToGround",
+        label: "是否贴地",
+        type: "radio",
+        defval: false,
+        show(style, allStyle, graphicType) {
+          return !style.diffHeight || style.diffHeight !== 0
+        }
+      },
+      { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true },
     ]
   },
 
@@ -1466,6 +1557,7 @@ const styleConfig = {
   cylinder: {
     name: "圆锥体",
     primitive: true,
+    extends: ["coneTrack", "coneTrackP"],
     style: [
       { name: "topRadius", label: "顶部半径", type: "number", step: 1, defval: 0.0 },
       { name: "bottomRadius", label: "底部半径", type: "number", step: 1, defval: 100.0 },
@@ -2308,7 +2400,9 @@ const styleConfig = {
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
 
-      { name: "topShow", label: "显示顶盖", type: "radio", defval: true }
+      { name: "topShow", label: "显示顶盖", type: "radio", defval: true },
+
+      { name: "rayEllipsoid", label: "求交地球", type: "radio", defval: false }
     ]
   },
   pointLight: {
@@ -2374,6 +2468,7 @@ const styleConfig = {
         data: [
           { label: "实线", value: "Color" },
           { label: "虚线", value: "PolylineDash" },
+          { label: "虚线箭头", value: "LineDashArrow" },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "箭头", value: "PolylineArrow" },
           { label: "光晕", value: "PolylineGlow" },
@@ -2389,7 +2484,11 @@ const styleConfig = {
           { label: "流动arrow", value: "LineFlow-3", defval: { image: "img/textures/line-arrow-right.png", repeat_x: 10 } },
           { label: "流动aqua", value: "LineFlow-4", defval: { image: "img/textures/line-color-aqua.png", repeat_x: 10 } },
           { label: "流动azure", value: "LineFlow-5", defval: { image: "img/textures/line-color-azure.png", repeat_x: 10 } },
-          { label: "流动red", value: "LineFlow-6", defval: { image: "img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 } },
+          {
+            label: "流动red",
+            value: "LineFlow-6",
+            defval: { image: "img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 }
+          },
           { label: "流动yellow", value: "LineFlow-7", defval: { image: "img/textures/line-color-yellow.png", color: "#ffff00", repeat_x: 10 } },
           { label: "流动colour", value: "LineFlow-8", defval: { image: "img/textures/line-colour.png", repeat_x: 10 } },
           { label: "流动gradual", value: "LineFlow-9", defval: { image: "img/textures/line-gradual.png", repeat_x: 10 } },
@@ -2399,7 +2498,9 @@ const styleConfig = {
           { label: "流动vertebral", value: "LineFlow-14", defval: { image: "img/textures/line-vertebral.png", repeat_x: 10 } },
           { label: "流动vertebral-blue", value: "LineFlow-15", defval: { image: "img/textures/line-vertebral-blue.png", repeat_x: 10 } },
           { label: "流动fence-line", value: "LineFlow-16", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动transarrow", value: "LineFlow-17", defval: { image: "img/textures/line-arrow-trans.png", repeat_x: 10 } }
+          { label: "流动transarrow", value: "LineFlow-17", defval: { image: "img/textures/line-arrow-trans.png", repeat_x: 10 } },
+          { label: "流动天青", value: "LineFlow-18", defval: { image: "img/textures/line-color-yellow.png", color: "#33e8df", repeat_x: 1 } },
+          { label: "天青pulse", value: "LineFlow-19", defval: { image: "img/textures/line-color-yellow.png", color: "#33e8df", width: 8 } }
         ],
         show(style, allStyle, graphicType) {
           return this.data.some((item) => item.value === style.materialType)
@@ -2615,7 +2716,21 @@ const styleConfig = {
           { label: "流动arrow", value: "LineFlow", defval: { image: "img/textures/arrow.png", repeat_x: 10 } },
           { label: "流动arrowh", value: "LineFlow-1", defval: { image: "img/textures/arrow-h.png", repeat_x: 10 } },
           { label: "流动fence", value: "LineFlow-2", defval: { image: "img/textures/fence.png", axisY: true } },
-          { label: "流动line", value: "LineFlow-3", defval: { image: "img/textures/fence-line.png", axisY: true } }
+          { label: "流动line", value: "LineFlow-3", defval: { image: "img/textures/fence-line.png", axisY: true } },
+          {
+            label: "图片fence",
+            value: "LineFlow-4",
+            defval: {
+              image: "img/textures/fence.png",
+              axisY: true,
+              color: "#ff0000",
+              image2: "img/textures/tanhao.png",
+              color2: "#FFFF00",
+              outline: false,
+              diffHeight: 1000,
+              lastMaterialType: "Image"
+            }
+          }
         ],
         show(style, allStyle, graphicType) {
           return style.fill !== false && this.data.some((item) => item.value === style.materialType)
@@ -3083,6 +3198,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
+        max: 10000000,
         show(style, allStyle, graphicType) {
           return !style.clampToGround
         }
@@ -3636,7 +3752,10 @@ const styleConfig = {
       { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },
       { name: "animationSpeed", label: "动画速度", type: "number", min: 0.1, max: 10.0, step: 0.1, defval: 1.0 },
       { name: "specularIntensity", label: "反射强度", type: "slider", min: 0.0, max: 0.9, step: 0.01, defval: 0.3 },
-      { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 }
+      { name: "distortion", label: "倒影扭曲程度", type: "number", min: 0.0, max: 10.0, step: 0.1, defval: 3.7 },
+
+      { name: "farDistance", label: "远距离", type: "number", step: 1, defval: 10000 },
+      { name: "farColor", label: "远距离颜色", type: "color", defval: "#91B3FF" }
     ]
   }
 }

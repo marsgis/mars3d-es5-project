@@ -7,6 +7,11 @@ const materialConfig = {
     { name: "gapColor", label: "间隔颜色", type: "color", defval: "rgba(255,255,255,0)" },
     { name: "dashLength", label: "虚线间长", type: "number", step: 1, defval: 16.0 }
   ],
+  LineDashArrow: [
+    { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+    { name: "gapColor", label: "间隔颜色", type: "color", defval: "rgba(255,255,255,0)" },
+    { name: "dashLength", label: "虚线间长", type: "number", step: 1, defval: 16.0 }
+  ],
   PolylineOutline: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "outlineColor", label: "衬色", type: "color", defval: "rgba(255,255,255,0)" },
@@ -29,6 +34,7 @@ const materialConfig = {
       type: "number",
       step: 1,
       defval: 1,
+      max: 1000000, // 数据过大会导致流动线看不见
       show(style, allStyle, graphicType) {
         return !style.axisY
       }
@@ -132,7 +138,7 @@ const materialConfig = {
         { label: "黑体", value: "黑体" }
       ]
     },
-    { name: "font_size", label: "字体大小", type: "number", step: 1, defval: 100 },
+    { name: "font_size", label: "字体大小", type: "number", min: 1, max: 2000, step: 1, defval: 100 },
     {
       name: "font_weight",
       label: "是否加粗",
@@ -225,6 +231,7 @@ const materialConfig = {
   ],
   PolyGradient: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+    { name: "isInner", label: "渐变方向", type: "radio", defval: false },
     { name: "alphaPower", label: "透明系数", type: "number", min: 0, max: 50, step: 0.1, defval: 1.5 },
     { name: "diffusePower", label: "漫射系数", type: "number", min: 0, max: 50, step: 0.1, defval: 1.6 }
   ],
