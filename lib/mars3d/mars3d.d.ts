@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.8.5
- * 编译日期：2024-10-25 21:50
+ * 编译日期：2024-10-27 22:46
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -272,7 +272,15 @@ declare enum EventType {
      */
     stop = "stop",
     /**
-     * 地图zoomIn/zoomOut方法缩放事件
+     * 矢量图层聚合 本批次渲染完成
+     */
+    clusterStop = "clusterStop",
+    /**
+     * 矢量图层聚合中，单个grpahic本身聚合状态发生变更时
+     */
+    clusterItemChange = "clusterItemChange",
+    /**
+     * 地图zoomIn/zoomOut方法缩放事件,地图本身的变化监听cameraChanged事件
      */
     zoom = "zoom",
     /**
@@ -4486,6 +4494,10 @@ declare class BaseGraphic extends BaseClass {
      */
     show: boolean;
     /**
+     * 是否被聚合
+     */
+    readonly isCluster: boolean;
+    /**
      * 指定时间范围内显示该对象 [提示：仅部分子类实现，非所有对象都支持]
      * @example
      * // cesium原生写法,单个
@@ -7945,6 +7957,7 @@ declare namespace DivGraphic {
      * @property [clampToGround = false] - 是否贴地
      * @property [heightReference = Cesium.HeightReference.NONE] - 指定高度相对于什么的属性。
      * @property [timeRender] - 是否实时刷新全部HTML，此时需要绑定html需传入回调方法。
+     * @property [template] - 公共外框部分html内容模版
      * @property [templateEmptyStr = ''] - html中如果存在模版时，空值时显示的内容
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
@@ -7968,6 +7981,7 @@ declare namespace DivGraphic {
         clampToGround?: boolean;
         heightReference?: Cesium.HeightReference;
         timeRender?: boolean;
+        template?: string;
         templateEmptyStr?: string;
         setHeight?: number | string;
         addHeight?: number | string;
@@ -14753,7 +14767,7 @@ declare class GroupGraphic extends BaseGraphic {
     getGraphicById(id: string | number): BaseGraphic | any | any;
     /**
      * 根据id或name属性获取图层
-     * @param name - 图层id或uuid或name值
+     * @param name - 图层id或name值
      * @returns 图层对象
      */
     getGraphic(name: string | number): BaseGraphic | any;
@@ -16473,6 +16487,19 @@ declare class BillboardPrimitive extends BasePointPrimitive {
      * @returns 无
      */
     setOpacity(value: number): void;
+    /**
+     * 计算标签原点的屏幕空间位置，考虑眼偏移和像素偏移
+     * @param [result] - 返回的对象(优化效率用的)
+     * @returns 屏幕空间位置，注意：屏幕空间原点是画布的左上角；X从从左到右，Y从上到下递增。
+     */
+    getWindowCoordinates(result?: Cesium.Cartesian2): Cesium.Cartesian2;
+    /**
+     * 获取以coord屏幕坐标为中心的图标的屏幕空间边界框。
+     * @param coord - 屏幕空间位置
+     * @param [result] - 返回的对象(优化效率用的)
+     * @returns 屏幕空间边界框
+     */
+    getBoundingBox(coord: Cesium.Cartesian2, result?: Cesium.BoundingRectangle): Cesium.BoundingRectangle;
 }
 
 declare namespace BoxPrimitive {
@@ -18257,6 +18284,19 @@ declare class LabelPrimitive extends BasePointPrimitive {
      * @returns 无
      */
     setOpacity(value: number): void;
+    /**
+     * 计算标签原点的屏幕空间位置，考虑眼偏移和像素偏移
+     * @param [result] - 存储结果的对象
+     * @returns 屏幕空间位置，注意：屏幕空间原点是画布的左上角；X从从左到右，Y从上到下递增。
+     */
+    getWindowCoordinates(result?: Cartesian2): Cartesian2;
+    /**
+     * 获取以coord屏幕坐标为中心的图标的屏幕空间边界框。
+     * @param coord - 屏幕空间位置
+     * @param [result] - 返回的对象(优化效率用的)
+     * @returns 屏幕空间边界框
+     */
+    getBoundingBox(coord: Cesium.Cartesian2, result?: Cesium.BoundingRectangle): Cesium.BoundingRectangle;
 }
 
 declare namespace LightCone {
@@ -19025,6 +19065,19 @@ declare class PointPrimitive extends BasePointPrimitive {
      * 当加载primitive数据的内部Cesium容器
      */
     readonly primitiveCollection: Cesium.PointPrimitiveCollection;
+    /**
+     * 计算标签原点的屏幕空间位置，考虑眼偏移和像素偏移
+     * @param [result] - 存储结果的对象
+     * @returns 屏幕空间位置，注意：屏幕空间原点是画布的左上角；X从从左到右，Y从上到下递增。
+     */
+    getWindowCoordinates(result?: Cartesian2): Cartesian2;
+    /**
+     * 获取以coord屏幕坐标为中心的图标的屏幕空间边界框。
+     * @param coord - 屏幕空间位置
+     * @param [result] - 返回的对象(优化效率用的)
+     * @returns 屏幕空间边界框
+     */
+    getBoundingBox(coord: Cesium.Cartesian2, result?: Cesium.BoundingRectangle): Cesium.BoundingRectangle;
     /**
      * 位置坐标 （笛卡尔坐标）, 赋值时可以传入LatLngPoint对象
      */
@@ -21452,17 +21505,13 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
  * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
  * @param [options.buildings.height = 3.5] - 层高的  固定层高数值（如:10） 或 属性字段名称（如:{height}）
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
- * @param [options.clustering.radiusIn = radius-5] - 圆形图标的内圆半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 圆形图标的背景颜色，默认自动处理
- * @param [options.clustering.colorIn = 'rgba(110, 204, 57, 0.5)'] - 圆形图标的内圆背景颜色，默认自动处理
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -21534,17 +21583,13 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
             cloumn?: string;
             height?: string | number;
         };
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            radiusIn?: number;
-            fontColor?: string;
-            color?: string;
-            colorIn?: string;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -21767,20 +21812,13 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
- * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
- * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
- * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
- * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
- * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'}
@@ -21842,20 +21880,13 @@ declare class BusineDataLayer extends GraphicLayer {
             callback?: (...params: any[]) => any;
         };
         graphicOptions?: any;
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            fontColor?: string;
-            color?: string;
-            opacity?: number;
-            borderWidth?: number;
-            borderColor?: string;
-            borderOpacity?: number;
-            getImage?: (...params: any[]) => any;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         proxy?: string;
         templateValues?: any;
@@ -21933,17 +21964,13 @@ declare class BusineDataLayer extends GraphicLayer {
  * @param options.symbol.styleOptions - 点的Style样式。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
  * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
- * @param [options.clustering] - 设置聚合相关参数：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
- * @param [options.clustering.radiusIn = radius-5] - 圆形图标的内圆半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 圆形图标的背景颜色，默认自动处理
- * @param [options.clustering.colorIn = 'rgba(110, 204, 57, 0.5)'] - 圆形图标的内圆背景颜色，默认自动处理
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
  * @param [options.name = ''] - 图层名称
@@ -21985,17 +22012,13 @@ declare class GeodePoiLayer extends LodGraphicLayer {
             styleField?: string;
             styleFieldOptions?: any;
         };
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            radiusIn?: number;
-            fontColor?: string;
-            color?: string;
-            colorIn?: string;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         id?: string | number;
         pid?: string | number;
@@ -22130,20 +22153,13 @@ declare namespace GeoJsonLayer {
  * @param [options.templateValues] - 一个对象，用于替换Url中的模板值的键/值对
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'}
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' }
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
- * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
- * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
- * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
- * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
- * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -22215,20 +22231,13 @@ declare class GeoJsonLayer extends GraphicLayer {
         templateValues?: any;
         queryParameters?: any;
         headers?: any;
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            fontColor?: string;
-            color?: string;
-            opacity?: number;
-            borderWidth?: number;
-            borderColor?: string;
-            borderOpacity?: number;
-            getImage?: (...params: any[]) => any;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -22379,7 +22388,7 @@ declare class GraphicGroupLayer extends GroupLayer {
      */
     getGraphics(): BaseGraphic[];
     /**
-     * 根据id或uuid取矢量数据对象
+     * 根据id取矢量数据对象
      * @param id - 矢量数据id
      * @returns 矢量数据对象
      */
@@ -22568,20 +22577,13 @@ declare namespace GraphicLayer {
  * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
- * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
- * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
- * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
- * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
- * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -22636,20 +22638,13 @@ declare class GraphicLayer extends BaseGraphicLayer {
             callback?: (...params: any[]) => any;
         };
         allowDrillPick?: boolean | ((...params: any[]) => any);
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            fontColor?: string;
-            color?: string;
-            opacity?: number;
-            borderWidth?: number;
-            borderColor?: string;
-            borderOpacity?: number;
-            getImage?: (...params: any[]) => any;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -22698,9 +22693,9 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     isContinued: boolean;
     /**
-     * 是否聚合(点数据时)
+     * 是否开启聚合(点数据时) ，如果修改属性请调用setOptions方法
      */
-    clustering: boolean;
+    clusterEnabled: boolean;
     /**
      * 当加载Entity类型数据的内部Cesium容器 {@link BaseEntity}
      */
@@ -22875,8 +22870,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     removeGraphic(graphic: BaseGraphic | any, hasDestroy?: boolean): GraphicLayer;
     /**
-     * 根据id或uuid取矢量数据对象
-     * @param id - 矢量数据id或uuid
+     * 根据id取矢量数据对象
+     * @param id - 矢量数据id
      * @returns 矢量数据对象
      */
     getGraphicById(id: string | number): BaseGraphic | any;
@@ -22915,6 +22910,12 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @returns 矢量数据数组
      */
     getGraphics(hasPrivate?: boolean): BaseGraphic[] | any[];
+    /**
+     * 根据 id集合列表 取 矢量数据对象列表
+     * @param ids - 矢量数据id列表
+     * @returns 矢量数据对象列表
+     */
+    getGraphicsByIds(ids: string[] | number[]): BaseGraphic[];
     /**
      * 清除图层内所有矢量数据
      * @param [hasDestroy = true] - 是否释放矢量对象
@@ -23431,16 +23432,13 @@ declare namespace LodGraphicLayer {
  * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.radius = 28] - 圆形图标的整体半径大小（单位：像素）
- * @param [options.clustering.radiusIn = radius-5] - 圆形图标的内圆半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 圆形图标的背景颜色，默认自动处理
- * @param [options.clustering.colorIn = 'rgba(110, 204, 57, 0.5)'] - 圆形图标的内圆背景颜色，默认自动处理
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -23500,16 +23498,13 @@ declare class LodGraphicLayer extends GraphicLayer {
             merge?: boolean;
             callback?: (...params: any[]) => any;
         };
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            radius?: number;
-            radiusIn?: number;
-            fontColor?: string;
-            color?: string;
-            colorIn?: string;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -23618,20 +23613,13 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
- * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
- * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
- * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
- * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
- * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -23693,20 +23681,13 @@ declare class ModelLayer extends GraphicLayer {
             callback?: (...params: any[]) => any;
         };
         allowDrillPick?: boolean | ((...params: any[]) => any);
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            fontColor?: string;
-            color?: string;
-            opacity?: number;
-            borderWidth?: number;
-            borderColor?: string;
-            borderOpacity?: number;
-            getImage?: (...params: any[]) => any;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -24474,20 +24455,13 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
  * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
  * @param [options.buildings.height = 3.5] - 层高的  固定层高数值（如:10） 或 属性字段名称（如:{height}）
- * @param [options.clustering] - 设置聚合相关参数（仅对Label、Point、Billboard 3种对象有效）：
- * @param [options.clustering.enabled = false] - 是否开启聚合
- * @param [options.clustering.pixelRange = 20] - 多少像素矩形范围内聚合
- * @param [options.clustering.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
- * @param [options.clustering.clampToGround = true] - 是否贴地
- * @param [options.clustering.style] - 聚合点的样式参数
- * @param [options.clustering.radius = 26] - 内置样式时，圆形图标的半径大小（单位：像素）
- * @param [options.clustering.fontColor = '#ffffff'] - 内置样式时，数字的颜色
- * @param [options.clustering.color = 'rgba(181, 226, 140, 0.6)'] - 内置样式时，圆形图标的背景颜色
- * @param [options.clustering.opacity = 0.5] - 内置样式时，圆形图标的透明度
- * @param [options.clustering.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
- * @param [options.clustering.borderColor = 'rgba(110, 204, 57, 0.5)'] - 内置样式时，圆形图标的边框颜色
- * @param [options.clustering.borderOpacity = 0.6] - 内置样式时，圆形图标边框的透明度
- * @param [options.clustering.getImage] - 自定义聚合的图标样式，例如：getImage:function(count) { return image}
+ * @param [options.cluster] - 设置聚合相关参数(点状对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
  * @param [options.popupOptions.title] - 固定的标题名称
@@ -24570,20 +24544,13 @@ declare class WfsLayer extends LodGraphicLayer {
             cloumn?: string;
             height?: string | number;
         };
-        clustering?: {
+        cluster?: {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            clampToGround?: boolean;
-            style?: BillboardEntity.StyleOptions | any | PointEntity.StyleOptions | any | any;
-            radius?: number;
-            fontColor?: string;
-            color?: string;
-            opacity?: number;
-            borderWidth?: number;
-            borderColor?: string;
-            borderOpacity?: number;
-            getImage?: (...params: any[]) => any;
+            includePoly?: number;
+            image?: string | ((...params: any[]) => any) | getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
         };
         popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
         popupOptions?: {
@@ -24742,7 +24709,7 @@ declare class GroupLayer extends BaseGraphicLayer {
     getLayerById(id: string | number): BaseLayer | GraphicLayer | any;
     /**
      * 根据id或name属性获取图层
-     * @param name - 图层id或uuid或name值
+     * @param name - 图层id或name值
      * @returns 图层对象
      */
     getLayer(name: string | number): BaseLayer | GraphicLayer;
@@ -38008,17 +37975,11 @@ declare namespace MeasureUtil {
         end: getClampDistance_endItem;
     }): Promise<any>;
     /**
-     * 计算面积（空间平面）
+     * 计算坐标范围内 三维空间平面面积
      * @param positions - 坐标数组
      * @returns 面积，单位：平方米
      */
     function getArea(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
-    /**
-     * 求坐标数组的 横切平面的面积（基于turf.area）
-     * @param positions - 坐标数组
-     * @returns 距离（单位：米）
-     */
-    function getSurfaceArea(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
     /**
      * 计算三角形面积（空间平面）
      * @param pos1 - 三角形顶点坐标1
@@ -38028,7 +37989,7 @@ declare namespace MeasureUtil {
      */
     function getTriangleArea(pos1: Cesium.Cartesian3, pos2: Cesium.Cartesian3, pos3: Cesium.Cartesian3): number;
     /**
-     * 计算贴地面积(单位：平方米)
+     * 计算坐标范围内 贴地形的插值三角网平面面积(单位：平方米)
      * @param positions - 坐标数组
      * @param options - 参数对象，具有以下属性:
      * @param options.scene - 三维地图场景对象，一般用map.scene或viewer.scene
@@ -38043,6 +38004,12 @@ declare namespace MeasureUtil {
         has3dtiles?: boolean;
         exact?: boolean;
     }): Promise<any>;
+    /**
+     * 计算坐标范围内 投影在椭球面平面的二维平面面积（基于turf.area计算）
+     * @param positions - 坐标数组
+     * @returns 距离（单位：米）
+     */
+    function getSurfaceArea(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
     /**
      * 计算2点的角度值，角度已正北为0度，顺时针为正方向
      * @param startPosition - 需要计算的点
@@ -39518,27 +39485,31 @@ declare namespace Util {
         padding?: number;
     }): HTMLCanvasElement;
     /**
-     * 获取用于EntityCluster聚合的圆形图标对象
-     * @param count - 数字
-     * @param [options = {}] - 参数对象:
-     * @param [options.radius = 26] - 圆形图标的整体半径大小（单位：像素）
-     * @param [options.color = 'rgba(181, 226, 140, 0.6)'] - 圆形图标的背景颜色
-     * @param [options.opacity = 0.5] - 圆形图标的透明度
-     * @param [options.borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
-     * @param [options.borderColor = 'rgba(110, 204, 57, 0.5)'] - 圆形图标的边框背景颜色
-     * @param [options.borderOpacity = 0.6] - 圆形图标边框的透明度
-     * @param [options.fontColor = '#ffffff'] - 数字的颜色
-     * @returns base64图片对象，包含 data URI 的DOMString。
+     * 面内进行贴地(或贴模型)插值, 返回三角网等计算结果 的回调方法
+     * @property [fontColor = '#ffffff'] - 数字的颜色
+     * @property [radius = 26] - 圆形图标的整体半径大小（单位：像素）
+     * @property [color = 'rgba(181, 226, 140, 0.6)'] - 圆形图标的背景颜色
+     * @property [opacity = 0.5] - 圆形图标的透明度
+     * @property [borderWidth = 5] - 圆形图标的边框宽度（单位：像素），0不显示
+     * @property [borderColor = 'rgba(110, 204, 57, 0.5)'] - 圆形图标的边框背景颜色
+     * @property [borderOpacity = 0.6] - 圆形图标边框的透明度
      */
-    function getCircleImage(count: number, options?: {
+    type getCircleImageOptions = {
+        fontColor?: string;
         radius?: number;
         color?: string;
         opacity?: number;
         borderWidth?: number;
         borderColor?: string;
         borderOpacity?: number;
-        fontColor?: string;
-    }): string;
+    };
+    /**
+     * 获取用于聚合的圆形图标对象
+     * @param count - 数字
+     * @param [options = {}] - 参数对象:
+     * @returns base64图片对象，包含 data URI 的DOMString。
+     */
+    function getCircleImage(count: number, options?: any): string;
     /**
      * 导出下载图片文件
      * @param name - 图片文件名称， 后缀名默认为.png
