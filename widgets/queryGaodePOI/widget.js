@@ -145,12 +145,12 @@
       this.map.addLayer(this.graphicLayer)
 
       // 下侧状态栏提示
-      const locationBar = this.map.controls.locationBar?.container
+      const locationBar = this.map.control.locationBar?.container
       if (locationBar) {
         this.queryAddressDOM = mars3d.DomUtil.create(
           "div",
           "mars3d-locationbar-content mars3d-locationbar-autohide",
-          this.map.controls.locationBar.container
+          this.map.control.ocationBar.container
         )
         this.queryAddressDOM.style.marginRight = "50px"
       }

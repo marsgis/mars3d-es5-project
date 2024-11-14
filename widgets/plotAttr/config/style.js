@@ -1206,7 +1206,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -1287,14 +1287,14 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
         show(style, allStyle, graphicType) {
           return style.outline && !style.diffHeight
@@ -1400,7 +1400,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -1471,14 +1471,14 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
         show(style, allStyle, graphicType) {
           return style.outline && !style.diffHeight
@@ -1790,7 +1790,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" }
@@ -1913,7 +1913,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" }
@@ -2479,28 +2479,28 @@ const styleConfig = {
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动blue", value: "LineFlow", defval: { image: "img/textures/line-arrow-blue.png", repeat_x: 10 } },
-          { label: "流动dovetail", value: "LineFlow-2", defval: { image: "img/textures/line-arrow-dovetail.png", repeat_x: 10 } },
-          { label: "流动arrow", value: "LineFlow-3", defval: { image: "img/textures/line-arrow-right.png", repeat_x: 10 } },
-          { label: "流动aqua", value: "LineFlow-4", defval: { image: "img/textures/line-color-aqua.png", repeat_x: 10 } },
-          { label: "流动azure", value: "LineFlow-5", defval: { image: "img/textures/line-color-azure.png", repeat_x: 10 } },
+          { label: "流动blue", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-blue.png", repeat_x: 10 } },
+          { label: "流动dovetail", value: "LineFlow-2", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-dovetail.png", repeat_x: 10 } },
+          { label: "流动arrow", value: "LineFlow-3", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-right.png", repeat_x: 10 } },
+          { label: "流动aqua", value: "LineFlow-4", defval: { image: "//data.mars3d.cn/img/textures/line-color-aqua.png", repeat_x: 10 } },
+          { label: "流动azure", value: "LineFlow-5", defval: { image: "//data.mars3d.cn/img/textures/line-color-azure.png", repeat_x: 10 } },
           {
             label: "流动red",
             value: "LineFlow-6",
-            defval: { image: "img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 }
+            defval: { image: "//data.mars3d.cn/img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 }
           },
-          { label: "流动yellow", value: "LineFlow-7", defval: { image: "img/textures/line-color-yellow.png", color: "#ffff00", repeat_x: 10 } },
-          { label: "流动colour", value: "LineFlow-8", defval: { image: "img/textures/line-colour.png", repeat_x: 10 } },
-          { label: "流动gradual", value: "LineFlow-9", defval: { image: "img/textures/line-gradual.png", repeat_x: 10 } },
-          { label: "流动pulse", value: "LineFlow-10", defval: { image: "img/textures/line-pulse.png" } },
-          { label: "流动sprite", value: "LineFlow-11", defval: { image: "img/textures/line-sprite.png", repeat_x: 10 } },
-          { label: "流动tarans", value: "LineFlow-13", defval: { image: "img/textures/line-tarans.png" } },
-          { label: "流动vertebral", value: "LineFlow-14", defval: { image: "img/textures/line-vertebral.png", repeat_x: 10 } },
-          { label: "流动vertebral-blue", value: "LineFlow-15", defval: { image: "img/textures/line-vertebral-blue.png", repeat_x: 10 } },
-          { label: "流动fence-line", value: "LineFlow-16", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动transarrow", value: "LineFlow-17", defval: { image: "img/textures/line-arrow-trans.png", repeat_x: 10 } },
-          { label: "流动天青", value: "LineFlow-18", defval: { image: "img/textures/line-color-yellow.png", color: "#33e8df", repeat_x: 1 } },
-          { label: "天青pulse", value: "LineFlow-19", defval: { image: "img/textures/line-color-yellow.png", color: "#33e8df", width: 8 } }
+          { label: "流动yellow", value: "LineFlow-7", defval: { image: "//data.mars3d.cn/img/textures/line-color-yellow.png", color: "#ffff00", repeat_x: 10 } },
+          { label: "流动colour", value: "LineFlow-8", defval: { image: "//data.mars3d.cn/img/textures/line-colour.png", repeat_x: 10 } },
+          { label: "流动gradual", value: "LineFlow-9", defval: { image: "//data.mars3d.cn/img/textures/line-gradual.png", repeat_x: 10 } },
+          { label: "流动pulse", value: "LineFlow-10", defval: { image: "//data.mars3d.cn/img/textures/line-pulse.png" } },
+          { label: "流动sprite", value: "LineFlow-11", defval: { image: "//data.mars3d.cn/img/textures/line-sprite.png", repeat_x: 10 } },
+          { label: "流动tarans", value: "LineFlow-13", defval: { image: "//data.mars3d.cn/img/textures/line-tarans.png" } },
+          { label: "流动vertebral", value: "LineFlow-14", defval: { image: "//data.mars3d.cn/img/textures/line-vertebral.png", repeat_x: 10 } },
+          { label: "流动vertebral-blue", value: "LineFlow-15", defval: { image: "//data.mars3d.cn/img/textures/line-vertebral-blue.png", repeat_x: 10 } },
+          { label: "流动fence-line", value: "LineFlow-16", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动transarrow", value: "LineFlow-17", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-trans.png", repeat_x: 10 } },
+          { label: "流动天青", value: "LineFlow-18", defval: { image: "//data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", repeat_x: 1 } },
+          { label: "天青pulse", value: "LineFlow-19", defval: { image: "//data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", width: 8 } }
         ],
         show(style, allStyle, graphicType) {
           return this.data.some((item) => item.value === style.materialType)
@@ -2623,8 +2623,8 @@ const styleConfig = {
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
         show(style, allStyle, graphicType) {
           return this.data.some((item) => item.value === style.materialType)
@@ -2705,7 +2705,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -2713,18 +2713,18 @@ const styleConfig = {
 
           { label: "走马灯", value: "WallScroll" },
 
-          { label: "流动arrow", value: "LineFlow", defval: { image: "img/textures/arrow.png", repeat_x: 10 } },
-          { label: "流动arrowh", value: "LineFlow-1", defval: { image: "img/textures/arrow-h.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-2", defval: { image: "img/textures/fence.png", axisY: true } },
-          { label: "流动line", value: "LineFlow-3", defval: { image: "img/textures/fence-line.png", axisY: true } },
+          { label: "流动arrow", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/arrow.png", repeat_x: 10 } },
+          { label: "流动arrowh", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/arrow-h.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-2", defval: { image: "//data.mars3d.cn/img/textures/fence.png", axisY: true } },
+          { label: "流动line", value: "LineFlow-3", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", axisY: true } },
           {
             label: "图片fence",
             value: "LineFlow-4",
             defval: {
-              image: "img/textures/fence.png",
+              image: "//data.mars3d.cn/img/textures/fence.png",
               axisY: true,
               color: "#ff0000",
-              image2: "img/textures/tanhao.png",
+              image2: "//data.mars3d.cn/img/textures/tanhao.png",
               color2: "#FFFF00",
               outline: false,
               diffHeight: 1000,
@@ -3025,7 +3025,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -3080,14 +3080,14 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
         show(style, allStyle, graphicType) {
           return style.outline && !style.diffHeight
@@ -3220,7 +3220,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -3291,14 +3291,14 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
         show(style, allStyle, graphicType) {
           return style.outline && !style.diffHeight
@@ -3436,7 +3436,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -3507,14 +3507,14 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "img/tietu/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
         show(style, allStyle, graphicType) {
           return style.outline && !style.diffHeight
@@ -3605,7 +3605,7 @@ const styleConfig = {
 
       { name: "baseWaterColor", label: "基础颜色", type: "color", defval: "#123e59" },
       { name: "blendColor", label: "混合颜色", type: "color", defval: "#123e59" },
-      { name: "normalMap", label: "反射图片", type: "label", defval: "img/textures/waterNormals.jpg" },
+      { name: "normalMap", label: "反射图片", type: "label", defval: "//data.mars3d.cn/img/textures/waterNormals.jpg" },
       { name: "frequency", label: "波数", type: "number", min: 1, max: 100000, step: 1, defval: 9000 },
       { name: "amplitude", label: "水波振幅", type: "number", min: 0, max: 100, step: 1, defval: 5.0 },
       { name: "animationSpeed", label: "动画速度", type: "slider", min: 0, max: 1, step: 0.01, defval: 0.03 },
@@ -3746,7 +3746,7 @@ const styleConfig = {
     style: [
       { name: "color", label: "水面颜色", type: "color", defval: "#7badd0" },
       { name: "opacity", label: "透明度", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.9 },
-      { name: "normalMap", label: "水扰动的法线图", type: "label", defval: "img/textures/waterNormals.jpg" },
+      { name: "normalMap", label: "水扰动的法线图", type: "label", defval: "//data.mars3d.cn/img/textures/waterNormals.jpg" },
       { name: "reflectivity", label: "反射率", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.5 },
       { name: "ripple", label: "波纹大小", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 50.0 },
       { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },
