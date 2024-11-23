@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.8.7
- * 编译日期：2024-11-14 18:36
+ * 版本信息：v3.8.8
+ * 编译日期：2024-11-23 11:59
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -1502,14 +1502,15 @@ declare namespace MaterialType {
     const PolylineGlow: string;
     /**
      * 线状: 流动图片（适用于线和墙）
-     * @property image - 背景图片URL
-     * @property [color = new Cesium.Color(1, 0, 0, 1.0)] - 背景图片颜色
+     * @property image - 图片URL
+     * @property [color = new Cesium.Color(1, 0, 0, 1.0)] - 图片颜色
      * @property [repeat = new Cesium.Cartesian2(1.0, 1.0)] - 横纵方向重复次数
-     * @property [speed = 10] - 速度，值越大越快
      * @property [axisY = false] - 是否Y轴朝上
      * @property [mixt = false] - 默认为color颜色，true时color颜色与图片颜色混合
-     * @property [hasImage2 = false] - 是否有2张图片的混合模式
-     * @property [image2 = Cesium.Material.DefaultImageId] - 第2张背景图片URL地址
+     * @property [speed = 10] - 速度
+     * @property [bgColor = Cesium.Color.TRANSPARENT] - 背景颜色，在透明处显示
+     * @property [hasImage2 = false] - 是否有背景图片的混合模式，已image2为底，不透明处显示image
+     * @property [image2] - 第2张背景图片URL地址
      * @property [color2 = new Cesium.Color(1, 1, 1)] - 第2张背景图片颜色
      */
     const LineFlow: string;
@@ -14614,6 +14615,12 @@ declare class DoubleArrow extends PolygonEntity {
 }
 
 /**
+ * Parallelogram对象 标绘处理对应的编辑类
+ */
+declare class EditParallelogram extends EditPolygon {
+}
+
+/**
  * Regular对象 标绘处理对应的编辑类
  */
 declare class EditRegular extends EditPolygon {
@@ -14913,6 +14920,67 @@ declare class Lune extends PolygonEntity {
      * @returns 边界坐标点
      */
     static getOutlinePositions(positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[], options?: any): Cesium.Cartesian3[];
+}
+
+/**
+ * 平行四边形  Entity矢量数据
+ * @param options - 参数对象，包括以下：
+ * @param options.position - 中心点坐标位置
+ * @param [options.positions] - 坐标位置
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
+ * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
+ * @param [options.parent] - 要与此实体关联的父实体。
+ * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name = ''] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class Parallelogram extends PolygonEntity {
+    constructor(options: {
+        position: LngLatPoint | Cesium.Cartesian3 | any[];
+        positions?: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
+        style: PolygonEntity.StyleOptions | any;
+        attr?: any | BaseGraphic.AjaxAttr;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        description?: Cesium.Property | string;
+        viewFrom?: Cesium.Property;
+        parent?: Cesium.Entity;
+        onBeforeCreate?: (...params: any[]) => any;
+        hasMoveEdit?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 中心点坐标
+     */
+    readonly centerOfMass: Cesium.Cartesian3;
+    /**
+     * 编辑处理类
+     */
+    readonly EditClass: EditRegular;
 }
 
 /**
@@ -18570,10 +18638,11 @@ declare namespace FrustumPrimitive {
      * 四棱锥体 支持的样式信息
      * @property [angle] - 四棱锥体张角（角度值，取值范围 0.01-89.99）
      * @property [angle2 = angle] - 四棱锥体张角2，（角度值，取值范围 0.01-89.99）
-     * @property [length = 100] - 长度值（单位：米），没有指定targetPosition时有效
      * @property [heading = 0] - 方向角 （度数值，0-360度），没有指定targetPosition时有效
      * @property [pitch = 0] - 俯仰角（度数值，0-360度），没有指定targetPosition时有效
      * @property [roll = 0] - 翻滚角（度数值，0-360度），没有指定targetPosition时有效
+     * @property [length = 100] - 长度值（单位：米），对应far值，没有指定targetPosition时有效
+     * @property [near = 0.01] - 近面距视点的距离（单位：米）
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
@@ -18598,10 +18667,11 @@ declare namespace FrustumPrimitive {
     type StyleOptions = any | {
         angle?: number;
         angle2?: number;
-        length?: number;
         heading?: number;
         pitch?: number;
         roll?: number;
+        length?: number;
+        near?: number;
         materialType?: string;
         materialOptions?: any;
         material?: Cesium.Material;
@@ -21354,6 +21424,12 @@ declare class BaseLayer extends BaseClass {
      */
     show: boolean;
     /**
+     * 获取当前对象真实实际的显示状态
+     * @param time - 当前时间
+     * @returns 真实的实时显示状态，当时序范围外，被聚合时返回的是false
+     */
+    getRealShow(time: Cesium.JulianDate): boolean;
+    /**
      * 是否可以调整透明度
      */
     readonly hasOpacity: boolean;
@@ -23276,7 +23352,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     hasEdit: boolean;
     /**
-     * 是否正在编辑状态
+     * 是否正在绘制状态
      */
     readonly isDrawing: boolean;
     /**
@@ -24873,7 +24949,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
     /**
      * 颜色校正 对象
      */
-    readonly colorCorrection: TilesetPlanClip;
+    readonly colorCorrection: TilesetColorCorrection;
     /**
      * 是否可以编辑
      */
@@ -28789,6 +28865,10 @@ declare class Map extends BaseClass {
      */
     readonly scene: Cesium.Scene;
     /**
+     * 获取globe球。 [Cesium.Scene]{@link http://mars3d.cn/api/cesium/Globe.html}
+     */
+    readonly globe: Cesium.Globe;
+    /**
      * 获取相机 [Cesium.Camera]{@link http://mars3d.cn/api/cesium/Camera.html}
      */
     readonly camera: Cesium.Camera;
@@ -28884,6 +28964,10 @@ declare class Map extends BaseClass {
      * 默认矢量图层，简单场景时可快捷使用
      */
     readonly graphicLayer: GraphicLayer;
+    /**
+     * 是否有矢量图层正在绘制状态
+     */
+    readonly isDrawing: boolean;
     /**
      * 获取当前地图层级（概略），一般为0-21层
      */
@@ -29106,12 +29190,14 @@ declare class Map extends BaseClass {
      * @param [options.basemaps] - 默认不比较及处理，true:返回所有basemps中配置图层，false：排除所有所有basemps中配置图层[但已加到map的除外]
      * @param [options.layers] - 默认不比较及处理，true:返回所有operationallayers中配置图层，false：排除所有operationallayers中配置图层[但已加到map的除外]
      * @param [options.childs = true] - 是否获取GroupLayer内的已经实例化的子图层[没有加到map的图层不会去读取内部子图层]
+     * @param [options.filter] - 筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
      * @returns 图层数组
      */
     getLayers(options?: {
         basemaps?: boolean;
         layers?: boolean;
         childs?: boolean;
+        filter?: (...params: any[]) => any;
     }): BaseLayer[] | any[];
     /**
      * 获取所有basemps底图图层
@@ -29906,8 +29992,25 @@ declare namespace Map {
      * @property [globe.depthTestAgainstTerrain = false] - 是否启用深度监测,可以开启来测试矢量对象是否在地形下面或被遮挡。
      * @property [globe.showGroundAtmosphere = true] - 是否在地球上绘制的地面大气
      * @property [globe.enableLighting = false] - 是否显示晨昏线，可以看到地球的昼夜区域
-     * @property [globe.tileCacheSize = 100] - 地形图块缓存的大小，表示为图块数。任何其他只要不需要渲染，就会释放超出此数目的图块这个框架。较大的数字将消耗更多的内存，但显示细节更快例如，当缩小然后再放大时。
      * @property [globe.realAlt = false] - 在测量高度和下侧提示的高度信息中是否将地形夸张倍率后的值转换为实际真实高度值(=拾取值/地形夸张倍率)。
+     * @property [globe.maximumScreenSpaceError = 2] - 用于驱动细节细化级别的最大屏幕空间误差。值越高，性能越好，但视觉质量越低。
+     * @property [globe.tileCacheSize = 100] - 地形图块缓存的大小，表示为图块数。任何其他只要不需要渲染，就会释放超出此数目的图块这个框架。较大的数字将消耗更多的内存，但显示细节更快例如，当缩小然后再放大时。
+     * @property [globe.loadingDescendantLimit = 20] - 获取或设置被视为'太多'的加载后代切片的数量。如果某个图块的加载后代过多，则该图块将在任何它的后代将被加载和渲染。这意味着更多的反馈给用户以较长的整体加载时间为代价进行操作。设置为0将导致每个要连续加载的图块级别，显着增加了加载时间。设置大数量（例如1000）将最大限度地减少已加载但易于生成的图块数量经过漫长的等待，细节立即全部出现。
+     * @property [globe.preloadAncestors = true] - 是否应预加载渲染图块的祖先。将此设置为true可优化缩小体验，并在平移时新暴露的区域。缺点是需要加载更多的图块。
+     * @property [globe.preloadSiblings = false] - 是否应预加载渲染图块的同级。将此设置为true会导致加载与渲染图块具有相同父级图块的图块，即使如果他们被淘汰。将此设置为true可能会提供更好的平移体验加载更多瓷砖的成本。
+     * @property [globe.showWaterEffect = true] - 如果应在全球范围内显示动画波浪效果，则为true被水覆盖；否则为假。如果 terrainProvider 不提供水面罩。
+     * @property [globe.showSkirts = true] - 是否显示地形裙。地形裙是从瓷砖边缘向下延伸的几何形状，用于隐藏相邻瓷砖之间的接缝。当相机位于地下或启用半透明时，总是隐藏的。
+     * @property [globe.backFaceCulling = true] - 是否淘汰后向地形。当相机位于地下或启用半透明时，背面不会被剔除。
+     * @property [globe.vertexShadowDarkness = 0.3] - 确定顶点阴影的暗度。这仅在<code>enableLighting</code>为<code>true</code]时生效。
+     * @property [globe.atmosphereBrightnessShift = 0] - 亮度变化适用于大气。默认为0.0（无移位）。-1.0的亮度偏移是完全黑暗，这将使空间显示出来。
+     * @property [globe.atmosphereHueShift = 0] - 色调变化适用于大气。默认为0.0（无移位）。色相偏移1.0表示可用色相完全旋转。
+     * @property [globe.atmosphereSaturationShift = 0] - 饱和度偏移将应用于大气。默认为0.0（无移位）。-1.0的饱和度偏移是单色的。
+     * @property [globe.lightingFadeInDistance = pi * ellipsoid.minimumRadius] - 恢复照明的距离。这只会当 enableLighting 或 showGroundAtmosphere 为 true 时生效。
+     * @property [globe.lightingFadeOutDistance = 1/2 * pi * ellipsoid.minimumRadius] - 一切都变亮的距离。这只会当 enableLighting 或 showGroundAtmosphere 为 true 时生效。
+     * @property [globe.nightFadeInDistance = 5/2 * pi * ellipsoid.minimumRadius] - 夜晚的黑暗从地面大气逐渐消失到昏暗的地面大气的距离。这只会当 enableLighting 或 showGroundAtmosphere 为 true 时生效。
+     * @property [globe.nightFadeOutDistance = 1/2 * pi * ellipsoid.minimumRadius] - 夜晚的黑暗从地面大气逐渐消失到明亮的地面大气的距离。这只会当 enableLighting 或 showGroundAtmosphere 为 true 时生效。
+     *
+     *
      *
      * 以下是Cesium.ScreenSpaceCameraController对象相关参数
      * @property [cameraController] - 相机操作相关参数
@@ -30010,8 +30113,23 @@ declare namespace Map {
             depthTestAgainstTerrain?: boolean;
             showGroundAtmosphere?: boolean;
             enableLighting?: boolean;
-            tileCacheSize?: number;
             realAlt?: boolean;
+            maximumScreenSpaceError?: number;
+            tileCacheSize?: number;
+            loadingDescendantLimit?: number;
+            preloadAncestors?: boolean;
+            preloadSiblings?: boolean;
+            showWaterEffect?: boolean;
+            showSkirts?: boolean;
+            backFaceCulling?: boolean;
+            vertexShadowDarkness?: number;
+            atmosphereBrightnessShift?: number;
+            atmosphereHueShift?: number;
+            atmosphereSaturationShift?: number;
+            lightingFadeInDistance?: number;
+            lightingFadeOutDistance?: number;
+            nightFadeInDistance?: number;
+            nightFadeOutDistance?: number;
         };
         cameraController?: {
             minimumZoomDistance?: number;
@@ -31168,14 +31286,15 @@ declare class LineFlowColorMaterialProperty extends BaseMaterialProperty {
 /**
  * 线状 流动效果 材质
  * @param [options] - 参数对象，包括以下：
- * @param options.image - 背景图片URL
- * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 背景图片颜色
+ * @param options.image - 图片URL
+ * @param [options.color = new Cesium.Color(1, 0, 0, 1.0)] - 图片颜色
  * @param [options.repeat = new Cesium.Cartesian2(1.0, 1.0)] - 横纵方向重复次数
  * @param [options.axisY = false] - 是否Y轴朝上
  * @param [options.mixt = false] - 默认为color颜色，true时color颜色与图片颜色混合
  * @param [options.speed = 10] - 速度
  * @param [options.duration] - 播放总时长，单位：秒 （会覆盖speed参数）
- * @param [options.hasImage2 = false] - 是否有2张图片的混合模式
+ * @param [options.bgColor = Cesium.Color.TRANSPARENT] - 背景颜色，在透明处显示
+ * @param [options.hasImage2 = false] - 是否有背景图片的混合模式，已image2为底，不透明处显示image
  * @param [options.image2] - 第2张背景图片URL地址
  * @param [options.color2 = new Cesium.Color(1, 1, 1)] - 第2张背景图片颜色
  */
@@ -31188,6 +31307,7 @@ declare class LineFlowMaterialProperty extends BaseMaterialProperty {
         mixt?: boolean;
         speed?: number;
         duration?: number;
+        bgColor?: string | Cesium.Color;
         hasImage2?: boolean;
         image2?: string;
         color2?: string | Cesium.Color;
@@ -31232,6 +31352,10 @@ declare class LineFlowMaterialProperty extends BaseMaterialProperty {
      * 是否有2张图片的混合模式
      */
     hasImage2: boolean;
+    /**
+     * 背景颜色，在透明处显示
+     */
+    bgColor: Cesium.Color;
     /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
@@ -35581,6 +35705,14 @@ declare class Measure extends BaseThing {
      */
     readonly graphics: BaseGraphic[];
     /**
+     * 是否正在绘制状态
+     */
+    readonly isDrawing: boolean;
+    /**
+     * 是否正在编辑状态
+     */
+    readonly isEditing: boolean;
+    /**
      * 是否有进行量算
      */
     readonly hasMeasure: boolean;
@@ -36338,7 +36470,7 @@ declare class RotatePoint extends BaseThing {
  * 1、右键拖拽，以相机视角为中心进行旋转;
  * 2、中键拖拽，可以升高或降低相机高度;
  * 3、左键双击，飞行定位到该点;
- * 4、右键双击，围绕该点旋转。
+ * 4、右键双击，围绕该点旋转(再次右键单击停止旋转)。
  * @param [options] - 参数对象，包括以下：
  * @param [options.rotateSpeed = 30] - 右键拖拽时，旋转速度，正负控制方向。
  * @param [options.heightStep = 0.2] - 中键拖拽时，高度移动比例，控制升高或降低相机高度的速度
@@ -39855,7 +39987,7 @@ declare namespace PolyUtil {
      * 抽析简化点数量
      * @param positions - 坐标数组
      * @param [options] - 控制参数
-     * @param [options.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+     * @param [options.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位，比如0.000001、0.00001、0.0001、0.001、0.01
      * @param [options.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
      * @param [options.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @returns 坐标数组
@@ -40881,6 +41013,7 @@ declare namespace graphic {
   export { Regular }
   export { Sector }
   export { StraightArrow }
+  export { Parallelogram }
 
   //量算对象
   export { PointMeasure }

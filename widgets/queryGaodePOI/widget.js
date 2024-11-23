@@ -150,7 +150,7 @@
         this.queryAddressDOM = mars3d.DomUtil.create(
           "div",
           "mars3d-locationbar-content mars3d-locationbar-autohide",
-          this.map.control.ocationBar.container
+          this.map.control.locationBar.container
         )
         this.queryAddressDOM.style.marginRight = "50px"
       }
