@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.8.8
- * 编译日期：2024-11-23 11:59
+ * 编译日期：2024-11-25 23:40
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：免费公开版 ，2024-08-01
  */
@@ -3883,7 +3883,7 @@ declare class MultipleSkyBox extends Cesium.SkyBox {
  * @param [options.duration] - 时长秒数，当没有配置stop时，内部自动算：stop= start + duration
  * @param [options.delay] - 延迟执行秒数，当没有配置start时，内部自动算：start=前面的stop + delay
  * @param [options.id = createGuid()] - 任务id标识
- * @param [options.name = ''] - 任务名称
+ * @param [options.name] - 任务名称
  * @param [options.enabled = true] - 任务是否禁用
  * @param [options.eventParent] - 指定的事件冒泡对象，false时不冒泡事件
  */
@@ -4681,7 +4681,7 @@ declare namespace BaseGraphic {
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.script] - 用于矢量对象加载后执行的js脚本，提示：目前主要是Studio平台绑定自定义脚本使用
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -5297,7 +5297,7 @@ declare class BaseCombine extends BasePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5381,7 +5381,7 @@ declare class BasePointCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5494,7 +5494,7 @@ declare class BasePolyCombine extends BaseCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5571,7 +5571,7 @@ declare class BoxCombine extends BasePointCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5648,7 +5648,7 @@ declare class CircleCombine extends BasePointCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5725,7 +5725,7 @@ declare class CorridorCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5802,7 +5802,7 @@ declare class CylinderCombine extends BasePointCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5878,7 +5878,7 @@ declare namespace FlatBillboard {
  * @param [options.distanceDisplayCondition = new Cesium.DistanceDisplayCondition(0, 5000000)] - 指定数据将显示在与摄像机的多大距离
  * @param [options.translucent = false] - 当true时，将启用alpha混合。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -5960,7 +5960,7 @@ declare class FlatBillboard extends BaseCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6038,7 +6038,7 @@ declare class FrustumCombine extends BasePointCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6115,7 +6115,7 @@ declare class PlaneCombine extends BasePointCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6191,7 +6191,7 @@ declare class PolygonCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6268,7 +6268,7 @@ declare class PolylineCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6345,7 +6345,7 @@ declare class PolylineVolumeCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6422,7 +6422,7 @@ declare class RectangleCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6496,7 +6496,7 @@ declare class WallCombine extends BasePolyCombine {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -6571,7 +6571,7 @@ declare namespace ArcFrustum {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -6645,9 +6645,9 @@ declare namespace ConeVisibility {
  * @param [options.targetPosition] - 目标视点位置,可以替代style中的相机heading\pitch\roll方向和distance距离参数
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
+ * @param [options.depthBiasStep = 10] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  */
@@ -6746,7 +6746,7 @@ declare class ConeVisibility extends PointVisibility {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -6989,7 +6989,7 @@ declare namespace ParticleSystem {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -7068,7 +7068,7 @@ declare namespace PointLight {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  */
@@ -7128,9 +7128,9 @@ declare namespace PointVisibility {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.terrain = true] - 是否启用地形分析，会自动开启深度检测
- * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
+ * @param [options.depthBiasStep = 10] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  */
@@ -7293,7 +7293,7 @@ declare namespace Route {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -7583,7 +7583,7 @@ declare class Route extends BasePointPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -7659,7 +7659,7 @@ declare namespace SpotLight {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  */
@@ -7718,7 +7718,7 @@ declare namespace Tetrahedron {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -7806,7 +7806,7 @@ declare namespace Video3D {
  * @param [options.play = true] - 初始化后默认是播放还是停止状态
  * @param [options.synchronizer = true] - 是否内部加VideoSynchronizer同步时钟
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -7867,7 +7867,7 @@ declare namespace ViewDome {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性。
  * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -7947,7 +7947,7 @@ declare namespace ViewShed {
  * @param [options.terrain = true] - 是否启用地形的阴影效果，在平原地区或无地形时可以关闭
  * @param [options.depthBiasStep = 1] - 控制准确度和锯齿的参数，如需更精确可以传0.1、如需更平滑传100优化锯齿感（牺牲了一点精度）
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
@@ -8077,7 +8077,7 @@ declare namespace VolumeCloud {
  * @param [options.yCut = -0.5] - Y轴裁剪,取值范围：-0.5至0.5
  * @param [options.zCut = 0.5] - Z轴裁剪,取值范围：-0.5至0.5
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  */
@@ -8179,7 +8179,7 @@ declare namespace DivBoderLabel {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -8288,7 +8288,7 @@ declare namespace DivGif {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -8409,7 +8409,7 @@ declare namespace DivGraphic {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -8726,7 +8726,7 @@ declare namespace DivLightPoint {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -8834,7 +8834,7 @@ declare namespace DivPlane {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -8954,7 +8954,7 @@ declare namespace DivUpLabel {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -9121,7 +9121,7 @@ declare namespace Popup {
  * @param [options.depthTest = false] - 是否打开深度判断（true时判断是否在球背面）
  * @param [options.hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  */
@@ -9227,7 +9227,7 @@ declare namespace Tooltip {
  * @param [options.depthTest = false] - 是否打开深度判断（true时判断是否在球背面）
  * @param [options.hasCache = true] - 是否启用缓存机制，如为true，在视角未变化时不重新渲染。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  */
@@ -9267,7 +9267,7 @@ declare class Tooltip extends Popup {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -9442,7 +9442,7 @@ declare class BaseEntity extends BaseGraphic {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -9661,7 +9661,7 @@ declare class BasePointEntity extends BaseEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -9917,7 +9917,7 @@ declare namespace BillboardEntity {
  * @param [options.circle] - 设置附加的 圆 和对应的样式
  * @param [options.path] - 设置附加的 轨迹路线 和对应的样式
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10088,7 +10088,7 @@ declare namespace BoxEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10162,7 +10162,7 @@ declare class BoxEntity extends BasePointEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10322,7 +10322,7 @@ declare namespace CanvasLabelEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10463,7 +10463,7 @@ declare namespace CircleEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10704,7 +10704,7 @@ declare namespace ConeTrack {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10881,7 +10881,7 @@ declare namespace CorridorEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -10961,7 +10961,7 @@ declare class CorridorEntity extends BasePolyEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -11090,7 +11090,7 @@ declare namespace CylinderEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -11250,7 +11250,7 @@ declare namespace DivBillboardEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -11386,6 +11386,12 @@ declare class EditEllipsoid extends EditBase {
  * Model对象 标绘处理对应的编辑类
  */
 declare class EditModel extends EditBase {
+}
+
+/**
+ * Parallelogram对象 标绘处理对应的编辑类
+ */
+declare class EditParallelogram extends EditPolygon {
 }
 
 /**
@@ -11556,7 +11562,7 @@ declare namespace EllipseEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -11728,7 +11734,7 @@ declare namespace EllipsoidEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -11915,7 +11921,7 @@ declare namespace FontBillboardEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -12079,7 +12085,7 @@ declare namespace LabelEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -12286,7 +12292,7 @@ declare namespace ModelEntity {
  * @param [options.circle] - 设置附加的 圆 和对应的样式
  * @param [options.path] - 设置附加的 轨迹路线 和对应的样式
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -12516,7 +12522,7 @@ declare namespace PathEntity {
  * @param [options.point] - 设置附加的 像素点 和对应的样式
  * @param [options.circle] - 设置附加的 圆 和对应的样式
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -12711,7 +12717,7 @@ declare namespace PitEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -12841,7 +12847,7 @@ declare namespace PlaneEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -12977,7 +12983,7 @@ declare namespace PointEntity {
  * @param [options.circle] - 设置附加的 圆 和对应的样式
  * @param [options.path] - 设置附加的 轨迹路线 和对应的样式
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -13155,7 +13161,7 @@ declare namespace PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -13368,7 +13374,7 @@ declare namespace PolylineEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -13527,7 +13533,7 @@ declare namespace PolylineVolumeEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -13685,7 +13691,7 @@ declare namespace RectangleEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -13945,7 +13951,7 @@ declare namespace RectangularSensor {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14066,7 +14072,7 @@ declare namespace Video2D {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14280,7 +14286,7 @@ declare namespace WallEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14349,7 +14355,7 @@ declare class WallEntity extends BasePolyEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14400,7 +14406,7 @@ declare class AttackArrow extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14458,7 +14464,7 @@ declare class AttackArrowPW extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14516,7 +14522,7 @@ declare class AttackArrowYW extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14574,7 +14580,7 @@ declare class CloseVurve extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14615,12 +14621,6 @@ declare class DoubleArrow extends PolygonEntity {
 }
 
 /**
- * Parallelogram对象 标绘处理对应的编辑类
- */
-declare class EditParallelogram extends EditPolygon {
-}
-
-/**
  * Regular对象 标绘处理对应的编辑类
  */
 declare class EditRegular extends EditPolygon {
@@ -14650,7 +14650,7 @@ declare class EditSector extends EditPolygon {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14708,7 +14708,7 @@ declare class FineArrow extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14766,7 +14766,7 @@ declare class FineArrowYW extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14824,7 +14824,7 @@ declare class GatheringPlace extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14882,7 +14882,7 @@ declare class IsosTriangle extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -14925,7 +14925,6 @@ declare class Lune extends PolygonEntity {
 /**
  * 平行四边形  Entity矢量数据
  * @param options - 参数对象，包括以下：
- * @param options.position - 中心点坐标位置
  * @param [options.positions] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
@@ -14941,16 +14940,15 @@ declare class Lune extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
  */
-declare class Parallelogram extends PolygonEntity {
+declare class ParallelogramEntity extends PolygonEntity {
     constructor(options: {
-        position: LngLatPoint | Cesium.Cartesian3 | any[];
         positions?: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: PolygonEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
@@ -14980,7 +14978,7 @@ declare class Parallelogram extends PolygonEntity {
     /**
      * 编辑处理类
      */
-    readonly EditClass: EditRegular;
+    readonly EditClass: EditParallelogram;
 }
 
 /**
@@ -15005,7 +15003,7 @@ declare class Parallelogram extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15088,7 +15086,7 @@ declare class Regular extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15184,7 +15182,7 @@ declare class Sector extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15229,7 +15227,7 @@ declare class StraightArrow extends PolygonEntity {
  * @param options - 参数对象，包括以下：
  * @param [options.graphics] - 子矢量对象数组，每个矢量对象的配置见按各类型API即可。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15353,7 +15351,7 @@ declare class GroupGraphic extends BaseGraphic {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15437,7 +15435,7 @@ declare class AngleMeasure extends PolylineEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15528,7 +15526,7 @@ declare class AreaMeasure extends PolygonEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15606,7 +15604,7 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15698,7 +15696,7 @@ declare class DistanceMeasure extends PolylineEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15777,7 +15775,7 @@ declare class DistanceSurfaceMeasure extends DistanceMeasure {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15860,7 +15858,7 @@ declare class HeightMeasure extends PolylineEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -15933,7 +15931,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
  * @param [options.popup] - 绑定的popup弹窗值的自定义回调方法
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -16013,7 +16011,7 @@ declare class PointMeasure extends PointEntity {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -16104,7 +16102,7 @@ declare class SectionMeasure extends DistanceMeasure {
  * @param [options.has3dtiles] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
  * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -16219,7 +16217,7 @@ declare class VolumeDepthMeasure extends AreaMeasure {
  * @param [options.maxHeight] - 可以指定最高高度（单位：米）
  * @param [options.height] - 可以指定基准面高度（单位：米），默认是绘制后的最低高度值
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -16325,7 +16323,7 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -16502,7 +16500,7 @@ declare class BasePointPrimitive extends BasePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -16635,7 +16633,7 @@ declare class BasePolyPrimitive extends BasePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -16941,7 +16939,7 @@ declare namespace BillboardIndicator {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -17010,7 +17008,7 @@ declare class BillboardIndicator extends BillboardPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -17168,7 +17166,7 @@ declare namespace BoxPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -17315,7 +17313,7 @@ declare namespace CirclePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -17478,7 +17476,7 @@ declare namespace CloudPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.stopPropagation = false] - 当前类中事件是否停止冒泡, false时：事件冒泡到layer中。
@@ -17698,7 +17696,7 @@ declare namespace ConeTrackPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -17857,7 +17855,7 @@ declare namespace CorridorPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -17989,7 +17987,7 @@ declare namespace CylinderPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18064,7 +18062,7 @@ declare namespace DiffuseWall {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18221,7 +18219,7 @@ declare namespace DivBillboardPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
@@ -18331,7 +18329,7 @@ declare namespace DoubleSidedPlane {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18404,7 +18402,7 @@ declare namespace DynamicRiver {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18591,7 +18589,7 @@ declare namespace EllipsoidPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18719,7 +18717,7 @@ declare namespace FrustumPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18819,7 +18817,7 @@ declare class FrustumPrimitive extends BasePointPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18912,7 +18910,7 @@ declare namespace LightCone {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -18981,7 +18979,7 @@ declare class LightCone extends BasePointPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -19216,7 +19214,7 @@ declare namespace ModelPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -19312,6 +19310,84 @@ declare class ModelPrimitive extends BasePointPrimitive {
     stopFlicker(): void;
 }
 
+/**
+ * 平行四边形  Primitive图元 矢量对象
+ * 提示：不支持贴地
+ * @param options - 参数对象，包括以下：
+ * @param options.positions - 坐标位置
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
+ * @param [options.attributes] - [cesium原生]每个实例的属性。
+ * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
+ * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
+ * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
+ * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
+ * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
+ * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
+ * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
+ * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
+ * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
+ * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class ParallelogramPrimitive extends BasePolyPrimitive {
+    constructor(options: {
+        positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
+        style: PolygonPrimitive.StyleOptions | any;
+        attr?: any | BaseGraphic.AjaxAttr;
+        appearance?: Cesium.Appearance;
+        attributes?: Cesium.Appearance;
+        depthFailAppearance?: Cesium.Appearance;
+        vertexCacheOptimize?: boolean;
+        interleave?: boolean;
+        compressVertices?: boolean;
+        releaseGeometryInstances?: boolean;
+        allowPicking?: boolean;
+        cull?: boolean;
+        asynchronous?: boolean;
+        debugShowBoundingVolume?: boolean;
+        debugShowShadowVolume?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 编辑处理类
+     */
+    readonly EditClass: EditParallelogram;
+    /**
+     * 中心点坐标 （笛卡尔坐标）
+     */
+    readonly center: Cesium.Cartesian3;
+    /**
+     * 围合面的内部中心点坐标
+     */
+    readonly centerOfMass: Cesium.Cartesian3;
+}
+
 declare namespace Pit {
     /**
      * 井  支持的样式信息，
@@ -19355,7 +19431,7 @@ declare namespace Pit {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -19493,7 +19569,7 @@ declare namespace PlanePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -19610,7 +19686,7 @@ declare namespace PointPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -19799,7 +19875,7 @@ declare namespace PolygonPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -19942,7 +20018,7 @@ declare namespace PolylinePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20071,7 +20147,7 @@ declare namespace PolylineVolumePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20217,7 +20293,7 @@ declare namespace RectanglePrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20362,7 +20438,7 @@ declare namespace ReflectionWater {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20428,7 +20504,7 @@ declare namespace Road {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20492,7 +20568,7 @@ declare namespace ScrollWall {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20592,7 +20668,7 @@ declare namespace ThickWall {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20661,6 +20737,7 @@ declare namespace VideoPrimitive {
 
 /**
  * 视频面  Primitive图元 矢量对象
+ * 提示：不支持贴地
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
@@ -20684,7 +20761,7 @@ declare namespace VideoPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20838,7 +20915,7 @@ declare namespace WallPrimitive {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -20995,7 +21072,7 @@ declare namespace Water {
  * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
  * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
@@ -21087,8 +21164,8 @@ declare namespace BaseGraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -21646,8 +21723,8 @@ declare namespace CzmGeoJsonLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -21838,8 +21915,8 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -21963,8 +22040,8 @@ declare class CzmlLayer extends CzmGeoJsonLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -22121,8 +22198,8 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -22271,8 +22348,8 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -22433,8 +22510,8 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -22568,8 +22645,8 @@ declare class BusineDataLayer extends GraphicLayer {
  * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
  * @param [options.cluster.style] - 聚合点的样式参数
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -22770,8 +22847,8 @@ declare namespace GeoJsonLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -22898,8 +22975,8 @@ declare class GeoJsonLayer extends GraphicLayer {
  * @param [options.isContinued = false] - 是否连续标绘
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -23198,8 +23275,8 @@ declare namespace GraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -23699,8 +23776,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
  * @param [options.lineStyle] - 线的样式
  * @param [options.labelStyle] - 文本的样式
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -23879,8 +23956,8 @@ declare namespace I3SLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -24097,8 +24174,8 @@ declare namespace LodGraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -24280,8 +24357,8 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -24415,8 +24492,8 @@ declare class ModelLayer extends GraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -24671,8 +24748,8 @@ declare namespace TilesetLayer {
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -25133,8 +25210,8 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -25255,8 +25332,8 @@ declare class WfsLayer extends LodGraphicLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.layers] - 子图层数组，每个子图层的配置见按各类型图层配置即可。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -25410,8 +25487,8 @@ declare class GroupLayer extends BaseGraphicLayer {
  * @param [options.requestWaterMask = false] - 是否应该向服务器请求每个瓦的水掩膜(如果有的话)。
  * @param [options.requestMetadata = true] - 是否应该从服务器请求每个块元数据(如果可用)。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示（多个地形服务时，请只设置一个TerrainLayer图层的show为tue）
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
@@ -25495,8 +25572,8 @@ declare class TerrainLayer extends BaseLayer {
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数设置，不支持EPSG:3857坐标系。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -25664,8 +25741,8 @@ declare namespace ArcGisLayer {
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -25855,8 +25932,8 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -25996,8 +26073,8 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -26173,8 +26250,8 @@ declare namespace BaseTileLayer {
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -26421,8 +26498,8 @@ declare class BaseTileLayer extends BaseLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -26535,8 +26612,8 @@ declare class BingLayer extends BaseTileLayer {
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -26650,8 +26727,8 @@ declare class EmptyTileLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -26783,8 +26860,8 @@ declare class GaodeLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -26922,8 +26999,8 @@ declare class GeeLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27051,8 +27128,8 @@ declare class GoogleLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27170,8 +27247,8 @@ declare class GridLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27313,8 +27390,8 @@ declare class ImageLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27446,8 +27523,8 @@ declare class MapboxLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27584,8 +27661,8 @@ declare class OsmLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27720,8 +27797,8 @@ declare class TdtLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27840,8 +27917,8 @@ declare class TencentLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -27958,8 +28035,8 @@ declare class TileInfoLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -28116,8 +28193,8 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -28314,8 +28391,8 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -28519,8 +28596,8 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -29001,10 +29078,11 @@ declare class Map extends BaseClass {
     readonly imageryLayersForClamp: Cesium.ImageryLayerCollection;
     /**
      * 设置Map所有参数构造参数 【测试中功能，可能部分参数无法更新,欢迎反馈问题 】
-     * @param newOptions - Map所有参数构造参数
+     * @param newOptions - 新的构造参数
+     * @param [isMerge = true] - 是否合并参数,如需完整覆盖，可以传入fasle
      * @returns 当前对象本身，可以链式调用
      */
-    setOptions(newOptions: any): Map;
+    setOptions(newOptions: any, isMerge?: boolean): Map;
     /**
      * 设置Scene场景参数
      * @param options - 参数
@@ -29187,8 +29265,8 @@ declare class Map extends BaseClass {
     /**
      * 获取所有图层
      * @param [options] - 参数对象，包括以下：
-     * @param [options.basemaps] - 默认不比较及处理，true:返回所有basemps中配置图层，false：排除所有所有basemps中配置图层[但已加到map的除外]
-     * @param [options.layers] - 默认不比较及处理，true:返回所有operationallayers中配置图层，false：排除所有operationallayers中配置图层[但已加到map的除外]
+     * @param [options.basemaps = false] - 默认不比较及处理，true:返回所有basemps中配置图层，false：排除所有所有basemps中配置图层[但已加到map的除外]
+     * @param [options.layers = false] - 默认不比较及处理，true:返回所有operationallayers中配置图层，false：排除所有operationallayers中配置图层[但已加到map的除外]
      * @param [options.childs = true] - 是否获取GroupLayer内的已经实例化的子图层[没有加到map的图层不会去读取内部子图层]
      * @param [options.filter] - 筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
      * @returns 图层数组
@@ -29199,6 +29277,21 @@ declare class Map extends BaseClass {
         childs?: boolean;
         filter?: (...params: any[]) => any;
     }): BaseLayer[] | any[];
+    /**
+     * 获取所有图层的配置信息，通常用于配置图层树
+     * @param [options] - 参数对象，包括以下：
+     * @param [options.filter] - 筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+     * @param [options.forEach] - 递归调用图层配置信息，可以对导出的图层数据进行格式化或转换键值操作
+     * @param [options.basemaps = false] - 默认不比较及处理，true:返回所有basemps中配置图层，false：排除所有所有basemps中配置图层[但已加到map的除外]
+     * @param [options.childs = true] - 是否获取GroupLayer内的已经实例化的子图层, 但没有加到map的图层不会去读取内部子图层
+     * @returns 返回值包括 { list: [id与pid关联的原始数组],  tree: [按children组织好的上下级树数组]}
+     */
+    getLayrsTree(options?: {
+        filter?: (...params: any[]) => any;
+        forEach?: (...params: any[]) => any;
+        basemaps?: boolean;
+        childs?: boolean;
+    }): any;
     /**
      * 获取所有basemps底图图层
      * @param [removeEmptyGroup = false] - 是否移除 空图层组
@@ -32388,8 +32481,8 @@ declare class TextMaterial extends Cesium.Material {
  * @param [options.clampToGround = false] - 点是否贴地
  * @param [options.pointerEvents = false] - 图层是否可以进行鼠标交互，为false时可以穿透操作及缩放地图
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -32518,8 +32611,8 @@ declare class EchartsLayer extends BaseLayer {
  * @param [options.redrawZoom] - 视角缩放时是否进行按新的raduis进行渲染。
  * @param [options.redrawRatio = 1.0] - redrawZoom时值变化的比例。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -32657,8 +32750,8 @@ declare class HeatLayer extends BaseLayer {
  * @param [options.pointerEvents = false] - 图层是否可以进行鼠标交互，为false时可以穿透操作及缩放地图
  * @param [options.多个参数] - 支持mapv本身所有drawOptions图层样式参数，具体查阅 [mapv库drawOptions文档]{@link https://github.com/huiyan-fe/mapv/wiki/%E7%B1%BB%E5%8F%82%E8%80%83} ，也可以 [在线编辑图层样式]{@link https://mapv.baidu.com/editor/}
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -33068,7 +33161,7 @@ declare namespace CamberRadar {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
  */
@@ -33192,7 +33285,7 @@ declare namespace ConicSensor {
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  */
 declare class ConicSensor extends BasePointPrimitive {
@@ -33402,7 +33495,7 @@ declare namespace FixedJammingRadar {
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.jammers] - 干扰机列表
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  */
 declare class FixedJammingRadar extends JammingRadar {
@@ -33474,7 +33567,7 @@ declare namespace JammingRadar {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  */
 declare class JammingRadar extends BasePointPrimitive {
@@ -33569,7 +33662,7 @@ declare namespace RectSensor {
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
  * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  */
 declare class RectSensor extends BasePointPrimitive {
@@ -33733,7 +33826,7 @@ declare namespace Satellite {
  * @param [options.highlight.path] - 设置是否显示 卫星轨迹路线 和对应的样式
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  */
 declare class Satellite extends Route {
@@ -33902,7 +33995,7 @@ declare namespace SatelliteSensor {
  * @param [options.fixedFrameTransform] - 参考系
  * @param [options.reverse = false] - 是否反转朝向
  * @param [options.id = createGuid()] - 矢量数据id标识
- * @param [options.name = ''] - 矢量数据名称
+ * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
  */
 declare class SatelliteSensor extends BasePointPrimitive {
@@ -34010,8 +34103,8 @@ declare class SatelliteSensor extends BasePointPrimitive {
  * @param [options.position] - 模型新的中心点位置（移动模型）
  * @param options.position.alt - 获取或设置底部高程。（单位：米）
  * @param [options.id = createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -34162,8 +34255,8 @@ declare class S3MLayer extends BaseLayer {
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
  * @param [options.id = createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -34261,8 +34354,8 @@ declare class SmImgLayer extends BaseTileLayer {
  * @param [options.mapboxStyle] - 使用的mapBox风格。
  * @param [options.多个参数] - 参考[supermap官方API]{@link http://support.supermap.com.cn:8090/webgl/docs/Documentation/Scene.html#addVectorTilesLayer}
  * @param [options.id = createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -34367,8 +34460,8 @@ declare class SmMvtLayer extends BaseLayer {
  * @param [options.serverFirstStyle = true] - 服务端样式优先
  * @param [options.boundBoxList] - GeoWTFS.initTDT方法参数
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -34474,8 +34567,8 @@ declare namespace CanvasWindLayer {
  * @param [options.reverseY = false] - 是否翻转纬度数组顺序，正常数据是从北往南的（纬度从大到小），如果反向时请传reverseY为true
  * @param [options.pointerEvents = false] - 图层是否可以进行鼠标交互，为false时可以穿透操作及缩放地图
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -34673,8 +34766,8 @@ declare namespace WindLayer {
  * @param [options.lineWidth = 2.0] - 线宽度
  * @param [options.colors = ["rgb(206,255,255)"]] - 颜色色带数组
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
- * @param [options.pid = -1] - 图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 图层名称
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
@@ -35219,8 +35312,8 @@ declare namespace QueryArcServer {
  *
  * //以下是GeoJsonLayer图层参数
  * @param [options.id = createGuid()] - 赋予给layer图层，图层id标识
- * @param [options.pid = -1] - 赋予给layer图层，图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 赋予给layer图层，图层名称
+ * @param [options.pid] - 赋予给layer图层，图层父级的id，一般图层管理中使用
+ * @param [options.name] - 赋予给layer图层，图层名称
  * @param [options.symbol] - 赋予给layer图层，图层矢量数据的style样式，参考{@link GeoJsonLayer}
  * @param [options.graphicOptions] - 赋予给layer图层，图层默认的graphic的构造参数，参考{@link GeoJsonLayer}
  * @param [options.popup] - 赋予给layer图层，图层绑定的popup弹窗值，参考{@link GeoJsonLayer}
@@ -35333,8 +35426,8 @@ declare class QueryArcServer extends BaseClass {
  *
  * //以下是GeoJsonLayer图层参数
  * @param [options.id = createGuid()] - 赋予给layer图层，图层id标识
- * @param [options.pid = -1] - 赋予给layer图层，图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 赋予给layer图层，图层名称
+ * @param [options.pid] - 赋予给layer图层，图层父级的id，一般图层管理中使用
+ * @param [options.name] - 赋予给layer图层，图层名称
  * @param [options.symbol] - 赋予给layer图层，图层矢量数据的style样式，参考{@link GeoJsonLayer}
  * @param [options.graphicOptions] - 赋予给layer图层，图层默认的graphic的构造参数，参考{@link GeoJsonLayer}
  * @param [options.popup] - 赋予给layer图层，图层绑定的popup弹窗值，参考{@link GeoJsonLayer}
@@ -35677,8 +35770,8 @@ declare namespace Measure {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
- * @param [options.pid = -1] - 量算对应的图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 量算对应的图层名称
+ * @param [options.pid] - 量算对应的图层父级的id，一般图层管理中使用
+ * @param [options.name] - 量算对应的图层名称
  */
 declare class Measure extends BaseThing {
     constructor(options?: {
@@ -36573,8 +36666,8 @@ declare class MatrixMove extends BaseThing {
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
- * @param [options.pid = -1] - 对应的图层父级的id，一般图层管理中使用
- * @param [options.name = ''] - 对应的图层名称
+ * @param [options.pid] - 对应的图层父级的id，一般图层管理中使用
+ * @param [options.name] - 对应的图层名称
  */
 declare class MatrixMove2 extends BaseThing {
     constructor(options?: {
@@ -39228,10 +39321,10 @@ declare namespace MeasureUtil {
      */
     function getSurfaceArea(positions: Cesium.Cartesian3[] | LngLatPoint[]): number;
     /**
-     * 计算2点的角度值，角度已正北为0度，顺时针为正方向
+     * 计算2点的角度值，角度已正东为0度，顺时针为正方向
      * @param startPosition - 需要计算的点
      * @param endPosition - 目标点，以该点为参考中心。
-     * @param [isNorthZero = false] - 是否正东为0时的角度（如方位角）
+     * @param [isNorthZero = false] - 是否正北为0度角度（如方位角）
      * @returns 返回角度值，0-360度
      */
     function getAngle(startPosition: Cesium.Cartesian3, endPosition: Cesium.Cartesian3, isNorthZero?: boolean): number;
@@ -41013,7 +41106,8 @@ declare namespace graphic {
   export { Regular }
   export { Sector }
   export { StraightArrow }
-  export { Parallelogram }
+  export { ParallelogramEntity }
+  export { ParallelogramPrimitive }
 
   //量算对象
   export { PointMeasure }

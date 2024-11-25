@@ -3,7 +3,6 @@
 //对应widget.js中MyWidget实例化后的对象
 let thisWidget
 let layers = []
-let layersObj = {}
 
 //当前页面业务
 function initWidgetView(_thisWidget) {
@@ -11,6 +10,20 @@ function initWidgetView(_thisWidget) {
 
   //右键
   bindRightMenuEvnet()
+
+  //获取map的树节点
+  const result = thisWidget.getLayrsTree({
+    basemaps: true, // 是否取config.json中的basempas
+    filter: function (layer) {
+      if (!layer.name) {
+        console.log("未命名图层不加入图层管理", layer)
+        return false // 未命名图层不在管理器展示
+      }
+      return true
+    },
+    forEach: _getNodeConfig
+  })
+  console.log("图层树信息", result)
 
   //初始化树
   let setting = {
@@ -28,58 +41,27 @@ function initWidgetView(_thisWidget) {
       onDblClick: treeOverlays_onDblClick,
       onClick: treeOverlays_onClick
     },
-
     view: {
       addDiyDom: addOpacityRangeDom
     }
   }
-
-  let zNodes = []
-  layers = thisWidget.getLayers()
-  for (let i = layers.length - 1; i >= 0; i--) {
-    let node = _getNodeConfig(layers[i])
-    if (node) {
-      zNodes.push(node)
-    }
-  }
-  $.fn.zTree.init($("#treeOverlays"), setting, zNodes)
+  $.fn.zTree.init($("#treeOverlays"), setting, result.list)
 }
 
-function _getNodeConfig(layer) {
-  if (layer == null || !layer.options || layer.isPrivate || layer.parent) {
-    return
-  }
-
-  let item = layer.options
-
-  if (!item.name || item.name == "未命名") {
-    console.log("未命名图层不加入图层管理", layer)
-    return
-  }
-
+function _getNodeConfig(item) {
   let node = {
-    id: layer.id,
-    pId: layer.pid,
-    name: layer.name,
-    checked: layer.isAdded && layer.show
+    id: item.id,
+    pId: item.pid ?? -1,
+    name: item.name,
+    checked: item.show
   }
 
-  if (layer.hasEmptyGroup) {
-    //空数组
-    node.icon = "img/folder.png"
-    node.open = item.open == null ? true : item.open
-  } else if (layer.hasChildLayer) {
-    //有子节点的数组
-    node.icon = "img/layerGroup.png"
-    node.open = item.open == null ? true : item.open
+  if (item.type === "group") {
+    node.icon = item.layers?.length > 0 ? "img/layerGroup.png" : "img/folder.png"
+    node.open = item.open !== false
   } else {
     node.icon = "img/layer.png"
-    if (layer.parent) {
-      node._parentId = layer.parent.id
-    }
   }
-  //记录图层
-  layersObj[node.id] = layer
   return node
 }
 
@@ -151,7 +133,7 @@ function treeOverlays_onDblClick(event, treeId, treeNode) {
   if (treeNode == null || treeNode.id == null) {
     return
   }
-  let layer = layersObj[treeNode.id]
+  let layer = thisWidget.getLayerById(treeNode.id)
   if (layer && layer.show) {
     layer.flyTo()
   }
@@ -185,7 +167,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
       continue
     }
 
-    var layer = layersObj[treeNode.id]
+    var layer = thisWidget.getLayerById(treeNode.id)
     if (layer == null) {
       continue
     }
@@ -201,7 +183,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
     if (layer.options.radio && treeNode.checked) {
       let nodes = treeObj.getNodesByFilter(
         function (node) {
-          let item = layersObj[node.id]
+          let item = thisWidget.getLayerById(node.id)
           return item.options.radio && item.pid == layer.pid && node.id != treeNode.id
         },
         false,
@@ -213,7 +195,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
 
         $("#" + nodes[nidx].tId + "_range").hide()
 
-        let layertmp = layersObj[nodes[nidx].id]
+        let layertmp = thisWidget.getLayerById(nodes[nidx].id)
         layertmp.show = false
       }
     }
@@ -222,7 +204,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
     thisWidget.updateLayerShow(layer, treeNode.checked)
   }
 
-  let layerThis = layersObj[chktreeNode.id]
+  let layerThis = thisWidget.getLayerById(chktreeNode.id)
   if (layerThis) {
     thisWidget.checkClickLayer(layerThis, chktreeNode.checked)
   }
@@ -234,7 +216,7 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
 function addOpacityRangeDom(treeId, tNode) {
   //if (tNode.icon == "images/folder.png") return;
 
-  let layer = layersObj[tNode.id]
+  let layer = thisWidget.getLayerById(tNode.id)
   if (!layer || (!layer.hasOpacity && !layer.options.hasOpacity)) {
     return
   }
@@ -246,7 +228,7 @@ function addOpacityRangeDom(treeId, tNode) {
     .slider({ id: "slider" + tNode.tId, min: 0, max: 100, step: 1, value: (layer.opacity || 1) * 100 })
     .on("change", (e) => {
       let opacity = e.value.newValue / 100
-      let layer = layersObj[tNode.id]
+      let layer = thisWidget.getLayerById(tNode.id)
       //设置图层的透明度
       // thisWidget.udpateLayerOpacity(layer, opacity)
       layer.opacity = opacity
@@ -266,7 +248,7 @@ function treeOverlays_OnRightClick(event, treeId, treeNode) {
     return
   }
 
-  let layer = layersObj[treeNode.id]
+  let layer = thisWidget.getLayerById(treeNode.id)
   if (!layer || !layer.hasZIndex) {
     return
   }
@@ -330,7 +312,7 @@ function moveNodeAndLayer(type) {
   }
 
   let thisNode = lastRightClickTreeNode
-  let thisLayer = layersObj[thisNode.id]
+  let thisLayer = thisWidget.getLayerById(thisNode.id)
 
   switch (type) {
     default:
@@ -340,7 +322,7 @@ function moveNodeAndLayer(type) {
         let moveNode = thisNode.getPreNode()
         if (moveNode) {
           treeObj.moveNode(moveNode, thisNode, "prev")
-          let moveLayer = layersObj[moveNode.id]
+          let moveLayer = thisWidget.getLayerById(moveNode.id)
 
           exchangeLayer(thisLayer, moveLayer)
         }
@@ -358,7 +340,7 @@ function moveNodeAndLayer(type) {
           if (moveNode) {
             treeObj.moveNode(moveNode, thisNode, "prev")
 
-            let moveLayer = layersObj[moveNode.id]
+            let moveLayer = thisWidget.getLayerById(moveNode.id)
             exchangeLayer(thisLayer, moveLayer)
           }
         }
@@ -371,7 +353,7 @@ function moveNodeAndLayer(type) {
         if (moveNode) {
           treeObj.moveNode(moveNode, thisNode, "next")
 
-          let moveLayer = layersObj[moveNode.id]
+          let moveLayer = thisWidget.getLayerById(moveNode.id)
           exchangeLayer(thisLayer, moveLayer)
         }
       }
@@ -388,7 +370,7 @@ function moveNodeAndLayer(type) {
           if (moveNode) {
             treeObj.moveNode(moveNode, thisNode, "next")
 
-            let moveLayer = layersObj[moveNode.id]
+            let moveLayer = thisWidget.getLayerById(moveNode.id)
             exchangeLayer(thisLayer, moveLayer)
           }
         }

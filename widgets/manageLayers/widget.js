@@ -60,21 +60,18 @@
 
       this.viewWindow.removeNode(e.layer)
     }
-
-    getLayers() {
-      return this.map.getLayers({
-        basemaps: true, //是否取config.json中的basempas  ，因为有底图控制了，具体项目中可以按需改为false
-        layers: true //是否取config.json中的layers
-      })
+    getLayrsTree(params) {
+      return map.getLayrsTree(params)
+    }
+    getLayerById(id) {
+      return this.map.getLayerById(id)
     }
     //对单击的图层做处理（单个）
     checkClickLayer(layer, show) {
       if (show) {
         if (this.config.autoCenter && !layer.options.noCenter) {
           //在对应config.json图层节点配置 noCenter:true 可以不定位
-          layer.readyPromise.then(function (layer) {
-            layer.flyTo()
-          })
+          layer.flyTo()
         }
 
         //存在关联widget时
@@ -112,16 +109,10 @@
     updateLayerShow(layer, show) {
       layer.show = show
 
-      if (show) {
-        if (!layer.isAdded) {
-          this.map.off(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
-          this.map.addLayer(layer)
-          this.map.on(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
-        }
-      } else {
-        // if (layer.isAdded) {
-        //   this.map.removeLayer(layer)
-        // }
+      if (show && !layer.isAdded) {
+        this.map.off(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
+        this.map.addLayer(layer)
+        this.map.on(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
       }
     }
   }
