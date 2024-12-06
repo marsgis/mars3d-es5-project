@@ -18,7 +18,7 @@ function initWidgetView(_thisWidget) {
       vhtml = 'class="hover"'
     }
 
-    let imgsrc = layer.options.icon || "//data.mars3d.cn/img/control/basemap/bingAerial.png"
+    let imgsrc = layer.options.icon || "//data.mars3d.cn/img/thumbnail/basemap/bingAerial.png"
 
     inhtml += `<li ${vhtml} onclick="changeBaseMaps(this,'${layer.id}')">
       <div><img src="../../${imgsrc}" /></div><div>${layer.name}</div>
