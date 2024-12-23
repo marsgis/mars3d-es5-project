@@ -77,7 +77,7 @@
         this.graphic = new mars3d.graphic.BillboardEntity({
           position: position,
           style: {
-            image: this.path + "img/marker.png",
+            image: this.path + "//data.mars3d.cn/img/marker.png",
             horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM, // default: CENTER
             scale: 0.6
