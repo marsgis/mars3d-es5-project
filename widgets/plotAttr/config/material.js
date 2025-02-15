@@ -24,7 +24,7 @@ const materialConfig = {
     { name: "taperPower", label: "渐变效果", type: "number", min: 0, max: 20, step: 0.1, defval: 1.0 }
   ],
   LineFlow: [
-    { name: "image", label: "图片", type: "label", defval: "//data.mars3d.cn/img/textures/fence.png" },
+    { name: "image", label: "图片", type: "label", defval: "https://data.mars3d.cn/img/textures/fence.png" },
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "speed", label: "速度", type: "number", step: 1, defval: 10 },
 
@@ -35,7 +35,7 @@ const materialConfig = {
       step: 1,
       defval: 1,
       max: 1000000, // 数据过大会导致流动线看不见
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return !style.axisY
       }
     },
@@ -45,7 +45,7 @@ const materialConfig = {
       type: "number",
       step: 1,
       defval: 1,
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return style.axisY
       }
     },
@@ -91,7 +91,7 @@ const materialConfig = {
   ],
 
   WallScroll: [
-    { name: "image", label: "图片", type: "label", defval: "//data.mars3d.cn/img/textures/fence.png" },
+    { name: "image", label: "图片", type: "label", defval: "https://data.mars3d.cn/img/textures/fence.png" },
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "count", label: "数量", type: "number", min: 0, step: 1, defval: 1 },
     { name: "speed", label: "速度", type: "number", min: 0, step: 1, defval: 10 },
@@ -111,7 +111,7 @@ const materialConfig = {
       max: 1,
       step: 0.1,
       defval: 1,
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return style.transparent === true
       }
     },
@@ -167,7 +167,7 @@ const materialConfig = {
       label: "描边颜色",
       type: "color",
       defval: "#ffffff",
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return style.stroke
       }
     },
@@ -179,7 +179,7 @@ const materialConfig = {
       max: 5,
       step: 1,
       defval: 1,
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return style.stroke
       }
     },
@@ -195,7 +195,7 @@ const materialConfig = {
       label: "背景颜色",
       type: "color",
       defval: "#000000",
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return style.background
       }
     },
@@ -205,7 +205,7 @@ const materialConfig = {
       type: "number",
       step: 1,
       defval: 5,
-      show(style, allStyle, graphicType) {
+      show(style, graphicType) {
         return style.background
       }
     }
@@ -255,14 +255,14 @@ const materialConfig = {
   Water: [
     { name: "baseWaterColor", label: "基础颜色", type: "color", defval: "#123e59" },
     { name: "blendColor", label: "混合颜色", type: "color", defval: "#123e59" },
-    { name: "normalMap", label: "反射图片", type: "label", defval: "//data.mars3d.cn/img/textures/waterNormals.jpg" },
+    { name: "normalMap", label: "反射图片", type: "label", defval: "https://data.mars3d.cn/img/textures/waterNormals.jpg" },
     { name: "frequency", label: "波数", type: "number", min: 1, max: 100000, step: 1, defval: 9000 },
     { name: "amplitude", label: "水波振幅", type: "number", min: 0, max: 100, step: 1, defval: 5.0 },
     { name: "animationSpeed", label: "动画速度", type: "slider", min: 0, max: 1, step: 0.01, defval: 0.03 },
     { name: "specularIntensity", label: "反射强度", type: "slider", min: 0, max: 1, step: 0.1, defval: 0.5 }
   ],
   WaterLight: [
-    { name: "specularMap", label: "反射图片", type: "label", defval: "//data.mars3d.cn/img/textures/poly-stone.jpg" },
+    { name: "specularMap", label: "反射图片", type: "label", defval: "https://data.mars3d.cn/img/textures/poly-stone.jpg" },
     { name: "alpha", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 0.2 }
   ],
 
@@ -276,10 +276,6 @@ const materialConfig = {
   ScanLine: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "speed", label: "速度", type: "number", min: 0, step: 1, defval: 10 }
-  ],
-  CircleScan: [
-    { name: "image", label: "图片", type: "label", defval: "//data.mars3d.cn/img/textures/circle-scan.png" },
-    { name: "color", label: "颜色", type: "color", defval: "#3388ff" }
   ],
   CircleWave: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },

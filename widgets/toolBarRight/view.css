@@ -42,6 +42,10 @@
 
 .toolBarRight-dropdown-menu>li>a {
   color: #edffff;
+  width: 100%;
+  display: inline-block;
+  padding: 0 9px;
+  line-height: 27px;
 }
 
 .toolBarRight-dropdown-menu>li>a:hover, .toolBarRight-dropdown-menu>li>a:focus {

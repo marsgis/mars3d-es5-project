@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html class="no-js css-menubar" lang="zh-cn">
   <head>
-    <title>Mars3D基础项目系统</title>
+    <title>Mars3D通用三维地理信息系统</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <!-- 移动设备 viewport -->
@@ -25,11 +25,11 @@
     <!--第三方lib-->
     <script
       type="text/javascript"
-      src="lib/include-lib.js?time=20220120"
+      src="lib/include-lib.js?time=20250101"
       libpath="lib/"
-      include="jquery,bootstrap,bootstrap-checkbox,bootstrap-slider,font-awesome,web-icons,layer,haoutil,localforage,nprogress,toastr,admui,turf,mars3d,mars3d-space,es5-widget"
+      include="jquery,bootstrap,bootstrap-checkbox,bootstrap-slider,font-awesome,web-icons,layer,haoutil,localforage,nprogress,toastr,admui,turf,mars3d,es5-widget,mars3d-mapv,mars3d-echarts,mars3d-heatmap"
     ></script>
-    <link href="css/style.css?time=20220120" rel="stylesheet" />
+    <link href="css/map.css?time=20250101" rel="stylesheet" />
   </head>
 
   <body class="dark">
@@ -39,7 +39,6 @@
 
     <div id="mask" class="signmask"></div>
 
-    <!--业务代码-->
-    <script src="js/index.js?time=20220120"></script>
+    <script src="js/map.js?time=20250101"></script>
   </body>
 </html>

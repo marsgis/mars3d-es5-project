@@ -1,6 +1,6 @@
 {
   "name": "mars3d-es5-project",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "Mars3D平台基础项目",
   "main": "index.js",
   "private": true,
@@ -9,18 +9,17 @@
     "serve": "http-server",
     "serve:dist": "http-server ./dist",
     "build": "gulp build"
-
   },
   "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "@babel/plugin-transform-runtime": "^7.23.9",
-    "@babel/preset-env": "^7.23.9",
-    "@babel/runtime": "^7.23.9",
+    "@babel/core": "^7.26.0",
+    "@babel/plugin-transform-runtime": "^7.25.9",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/runtime": "^7.26.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-html": "^6.2.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^4.3.1",
@@ -37,11 +36,11 @@
     "gulp-util": "^3.0.8",
     "http-server": "^14.1.1",
     "javascript-obfuscator": "^0.28.5",
-    "mars3d": "~3.8.8",
+    "mars3d": "~3.9.0",
     "plugin-error": "^1.0.1",
     "prettier": "^2.8.8",
     "through2": "^2.0.5",
-    "uglify-js": "^3.17.4",
+    "uglify-js": "^3.19.3",
     "vinyl": "^2.2.1"
   },
   "repository": {

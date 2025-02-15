@@ -19,7 +19,7 @@ const styleConfig = {
           { label: "黑体", value: "黑体" }
         ]
       },
-      { name: "font_size", label: "字体大小", type: "number", min: 3, step: 1, defval: 30.0 },
+      { name: "font_size", label: "字体大小", type: "number", min: 3, step: 1, defval: 20.0 },
       {
         name: "font_weight",
         label: "是否加粗",
@@ -48,7 +48,7 @@ const styleConfig = {
         label: "衬色颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -59,8 +59,8 @@ const styleConfig = {
         min: 1,
         max: 5,
         step: 1,
-        defval: 3.0,
-        show(style, allStyle, graphicType) {
+        defval: 1.0,
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -76,7 +76,7 @@ const styleConfig = {
         label: "背景颜色",
         type: "color",
         defval: "#000000",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.background
         }
       },
@@ -86,7 +86,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 5,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.background
         }
       },
@@ -106,7 +106,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -116,7 +116,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -126,7 +126,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -136,7 +136,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -153,7 +153,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -163,7 +163,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -173,7 +173,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
@@ -189,7 +189,7 @@ const styleConfig = {
       //     { label: "仅贴地形", value: 3 },
       //     { label: "仅贴模型", value: 5 }
       //   ],
-      //   show(style, allStyle, graphicType) {
+      //   show(style,  graphicType) {
       //     return !style.diffHeight || style.diffHeight !== 0
       //   }
       // },
@@ -201,7 +201,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType !== "point" && graphicType !== "billboard" && graphicType !== "label"
         }
       }
@@ -254,7 +254,7 @@ const styleConfig = {
         label: "衬色颜色",
         type: "color",
         defval: "#000000",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.stroke
         }
       },
@@ -266,7 +266,7 @@ const styleConfig = {
         max: 5,
         step: 1,
         defval: 3.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.stroke
         }
       },
@@ -282,7 +282,7 @@ const styleConfig = {
         label: "背景颜色",
         type: "color",
         defval: "#000000",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.background
         }
       },
@@ -292,7 +292,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 5,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.background
         }
       },
@@ -303,7 +303,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -315,7 +315,7 @@ const styleConfig = {
         max: 10,
         step: 1,
         defval: 4.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -335,7 +335,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -345,7 +345,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -355,7 +355,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -365,7 +365,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -382,7 +382,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -392,7 +392,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -402,7 +402,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
@@ -414,15 +414,15 @@ const styleConfig = {
     primitive: true,
     style: [
       { name: "pixelSize", label: "像素大小", type: "number", step: 1, defval: 10.0 },
-      { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+      { name: "color", label: "颜色", type: "color", defval: "#FFFFFF" },
 
-      { name: "outline", label: "是否边框", type: "radio", defval: true },
+      { name: "outline", label: "是否边框", type: "radio", defval: false },
       {
         name: "outlineColor",
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -433,7 +433,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -450,7 +450,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -460,7 +460,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -470,7 +470,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -480,7 +480,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -497,7 +497,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -507,7 +507,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -517,7 +517,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
@@ -570,7 +570,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -580,7 +580,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -590,7 +590,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -600,7 +600,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -617,7 +617,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -627,7 +627,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -637,13 +637,37 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
       { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true },
 
-      { name: "image", label: "图标", type: "label", defval: "" }
+      {
+        name: "image",
+        label: "图标",
+        type: "label",
+        defval: "",
+        show(style, graphicType, parentType) {
+          return !parentType
+        }
+      },
+      {
+        name: "image",
+        label: "图标",
+        type: "combobox",
+        defval: "",
+        data: [
+          { label: "无", value: null },
+          { label: "红色扩散点", value: "https://data.mars3d.cn/img/marker/point-red.png" },
+          { label: "蓝色环绕", value: "https://data.mars3d.cn/img/marker/mark-blue.png" },
+          { label: "蓝色人员", value: "https://data.mars3d.cn/img/marker/lace-blue.png" },
+          { label: "黄色禁止", value: "https://data.mars3d.cn/img/marker/lace-yellow.png" }
+        ],
+        show(style, graphicType, parentType) {
+          return parentType
+        }
+      }
     ]
   },
   div: {
@@ -655,7 +679,7 @@ const styleConfig = {
         label: "颜色",
         type: "color",
         defval: "#00ffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType === "divLightPoint" || graphicType === "divBoderLabel" || graphicType === "divUpLabel"
         }
       },
@@ -664,7 +688,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#00ffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType === "divBoderLabel"
         }
       },
@@ -674,7 +698,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 10,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType === "divLightPoint"
         }
       },
@@ -716,7 +740,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -726,7 +750,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -736,7 +760,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -746,7 +770,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -763,7 +787,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -773,7 +797,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -782,7 +806,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
@@ -835,7 +859,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -845,7 +869,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -854,13 +878,32 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
 
       { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false },
       { name: "html", label: "Html文本", type: "label", defval: "" }
+    ]
+  },
+  divGif: {
+    name: "动态图标",
+    style: [
+      {
+        name: "image",
+        label: "图标",
+        type: "label"
+      },
+      {
+        name: "width",
+        label: "宽度",
+        type: "number",
+        min: 0,
+        step: 1,
+        defval: 0.0
+      },
+      { name: "height", label: "高度", type: "number", min: 0, step: 1, defval: 0.0 }
     ]
   },
   billboardIndicator: {
@@ -881,7 +924,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -891,7 +934,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -901,7 +944,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -911,7 +954,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -928,7 +971,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -938,7 +981,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -947,11 +990,11 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
-      { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true },
+      { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true }
     ]
   },
 
@@ -1002,7 +1045,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -1012,7 +1055,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -1022,7 +1065,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -1032,7 +1075,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.scaleByDistance
         }
       },
@@ -1049,7 +1092,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1059,7 +1102,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1068,7 +1111,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
@@ -1079,7 +1122,33 @@ const styleConfig = {
     name: "gltf模型",
     primitive: true,
     style: [
-      { name: "url", label: "路径", type: "label", defval: "" },
+      {
+        name: "url",
+        label: "路径",
+        type: "label",
+        defval: "",
+        show(style, graphicType, parentType) {
+          return !parentType
+        }
+      },
+      {
+        name: "url",
+        label: "漫游模型",
+        type: "combobox",
+        defval: "",
+        data: [
+          { label: "无", value: "" },
+          { label: "行人", value: "https://data.mars3d.cn/gltf/mars/man/walk.gltf" },
+          { label: "小汽车", value: "https://data.mars3d.cn/gltf/mars/qiche.gltf" },
+          { label: "民航飞机", value: "https://data.mars3d.cn/gltf/mars/feiji.glb" },
+          { label: "军用飞机", value: "https://data.mars3d.cn/gltf/mars/zhanji.glb" },
+          { label: "航天卫星", value: "https://data.mars3d.cn/gltf/mars/weixin.gltf" }
+        ],
+        show(style, graphicType, parentType) {
+          return parentType
+        }
+      },
+
       { name: "scale", label: "比例", type: "number", step: 1, defval: 1.0 },
       { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
@@ -1108,7 +1177,7 @@ const styleConfig = {
         label: "轮廓颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.silhouette
         }
       },
@@ -1117,8 +1186,8 @@ const styleConfig = {
         label: "轮廓宽度",
         type: "number",
         step: 1,
-        defval: 2.0,
-        show(style, allStyle, graphicType) {
+        defval: 1.0,
+        show(style, graphicType) {
           return style.silhouette
         }
       },
@@ -1135,7 +1204,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1145,7 +1214,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1158,7 +1227,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       }
@@ -1175,7 +1244,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1185,7 +1254,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1195,7 +1264,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1205,20 +1274,19 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "纯色", value: "Color", defval: { color: "#fafafa" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "放大扩散线", value: "ScanLine" },
-          { label: "半径扫描", value: "CircleScan" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "雷达线", value: "RadarLine" },
           { label: "波纹雷达扫描", value: "RadarWave" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
       {
@@ -1239,7 +1307,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.fill !== false
         }
       },
@@ -1252,8 +1320,8 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.outlineStyle
+        show(style) {
+          return style.outline && !style.diffHeight && typeof style.outlineStyle?.width !== "number"
         }
       },
       {
@@ -1261,8 +1329,8 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
-          return style.outline && (style.diffHeight || !style.outlineStyle)
+        show: (style) => {
+          return style.outline && !style.diffHeight && !style.outlineStyle?.color && !style.outlineStyle?.materialType
         }
       },
       {
@@ -1274,8 +1342,8 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         contant: "outlineWidth",
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineWidth && style.outlineStyle?.width
         }
       },
       {
@@ -1285,19 +1353,19 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
+          { label: "纯色", value: "Color", contant: "outlineColor", defval: { color: "#FFFFFF" } },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineColor && (style.outlineStyle?.color || style.outlineStyle?.materialType)
         }
       },
 
@@ -1313,7 +1381,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1323,7 +1391,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1333,7 +1401,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1342,7 +1410,7 @@ const styleConfig = {
         label: "不考虑光照",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType.endsWith("P")
         }
       },
@@ -1351,7 +1419,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false
-        // show(style, allStyle, graphicType) {
+        // show(style,  graphicType) {
         //   return false // 面无法切换
         // }
       },
@@ -1362,7 +1430,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -1379,7 +1447,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1389,7 +1457,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1400,19 +1468,18 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "放大扩散线", value: "ScanLine" },
-          { label: "半径扫描", value: "CircleScan" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "雷达线", value: "RadarLine" },
           { label: "波纹雷达扫描", value: "RadarWave" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
       {
@@ -1435,9 +1502,9 @@ const styleConfig = {
         type: "number",
         min: 0,
         step: 1,
-        defval: 1,
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.outlineStyle
+        defval: 1.0,
+        show(style) {
+          return style.outline && !style.diffHeight && typeof style.outlineStyle?.width !== "number"
         }
       },
       {
@@ -1445,8 +1512,8 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
-          return style.outline && (style.diffHeight || !style.outlineStyle)
+        show: (style) => {
+          return style.outline && !style.diffHeight && !style.outlineStyle?.color && !style.outlineStyle?.materialType
         }
       },
       {
@@ -1458,8 +1525,8 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         contant: "outlineWidth",
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineWidth && style.outlineStyle?.width
         }
       },
       {
@@ -1469,19 +1536,19 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
+          { label: "纯色", value: "Color", contant: "outlineColor", defval: { color: "#FFFFFF" } },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineColor && (style.outlineStyle?.color || style.outlineStyle?.materialType)
         }
       },
 
@@ -1499,7 +1566,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1509,7 +1576,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1519,7 +1586,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1528,7 +1595,7 @@ const styleConfig = {
         label: "不考虑光照",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType.endsWith("P")
         }
       },
@@ -1537,7 +1604,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return false // 面无法切换
         }
       },
@@ -1548,7 +1615,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -1559,9 +1626,19 @@ const styleConfig = {
     primitive: true,
     extends: ["coneTrack", "coneTrackP"],
     style: [
-      { name: "topRadius", label: "顶部半径", type: "number", step: 1, defval: 0.0 },
-      { name: "bottomRadius", label: "底部半径", type: "number", step: 1, defval: 100.0 },
-      { name: "length", label: "锥体高度", type: "number", step: 1, defval: 100.0 },
+      {
+        name: "angle",
+        label: "半场角度",
+        type: "number",
+        step: 0.01,
+        defval: 0.01,
+        min: 0.01,
+        max: 89.99,
+        show(style, graphicType) {
+          return graphicType === "coneTrack" || graphicType === "coneTrackP"
+        }
+      },
+      { name: "length", label: "锥体高度", type: "number", step: 1, defval: 0.0 },
 
       { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
@@ -1573,12 +1650,12 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color" },
+          { label: "纯色", value: "Color", defval: { color: "#FFFFFF" } },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "条纹扩散", value: "CylinderWave" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
       { name: "slices", label: "边线边数", type: "number", step: 1, defval: 128 },
@@ -1594,7 +1671,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1604,7 +1681,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1614,7 +1691,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       }
@@ -1637,7 +1714,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       }
@@ -1669,7 +1746,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1685,8 +1762,8 @@ const styleConfig = {
           { label: "波纹", value: "EllipsoidWave" },
           { label: "电弧", value: "EllipsoidElectric" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -1698,7 +1775,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -1707,7 +1784,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#000000",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -1724,7 +1801,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1734,7 +1811,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1744,7 +1821,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       }
@@ -1779,7 +1856,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1790,13 +1867,13 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -1808,7 +1885,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -1817,7 +1894,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -1834,7 +1911,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1844,7 +1921,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1854,7 +1931,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1863,7 +1940,7 @@ const styleConfig = {
         label: "不考虑光照",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType.endsWith("P")
         }
       }
@@ -1902,7 +1979,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -1913,13 +1990,13 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -1935,7 +2012,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1945,7 +2022,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -1954,7 +2031,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       }
@@ -2015,7 +2092,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 30.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.animation
         }
       },
@@ -2027,7 +2104,7 @@ const styleConfig = {
         max: 999999999,
         step: 1,
         defval: 2.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.animation
         }
       },
@@ -2037,7 +2114,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 1.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.animation
         }
       }
@@ -2062,7 +2139,7 @@ const styleConfig = {
         label: "扫描面颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.showScanPlane
         }
       },
@@ -2075,7 +2152,7 @@ const styleConfig = {
           { label: "垂直方向", value: "vertical" },
           { label: "水平方向", value: "horizontal" }
         ],
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.showScanPlane
         }
       },
@@ -2087,7 +2164,7 @@ const styleConfig = {
         max: 100,
         step: 0.1,
         defval: 3.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.showScanPlane
         }
       }
@@ -2133,7 +2210,7 @@ const styleConfig = {
         label: "颜色",
         type: "color",
         defval: "rgba(255,0,0,0.5)",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.autoColor
         }
       },
@@ -2148,7 +2225,7 @@ const styleConfig = {
         label: "边线颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.autoColor
         }
       }
@@ -2168,7 +2245,7 @@ const styleConfig = {
         label: "颜色",
         type: "color",
         defval: "rgba(255,0,0,0.5)",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.autoColor
         }
       },
@@ -2183,7 +2260,7 @@ const styleConfig = {
         label: "边线颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.autoColor
         }
       },
@@ -2201,175 +2278,27 @@ const styleConfig = {
     ]
   },
 
-  satellite: {
-    name: "卫星",
+  route: {
+    name: "动态轨迹路线",
     primitive: false,
+    extends: ["satellite", "fixedRoute"],
     style: [
-      { name: "tle1", label: "tle1", type: "label", defval: "" },
-      { name: "tle2", label: "tle2", type: "label", defval: "" },
       {
-        name: "path_show",
-        label: "是否显示路径",
-        type: "radio",
-        defval: false
-      },
-      {
-        name: "path_width",
-        label: "路径线宽",
-        type: "number",
-        step: 1,
-        defval: 4.0,
-        show(style, allStyle, graphicType) {
-          return style.path_show
-        }
-      },
-      {
-        name: "path_color",
-        label: "路径颜色",
-        type: "color",
-        defval: "#3388ff",
-        show(style, allStyle, graphicType) {
-          return style.path_show
-        }
-      },
-
-      {
-        name: "model_show",
-        label: "是否显示模型",
-        type: "radio",
-        defval: false
-      },
-      {
-        name: "model_url",
-        label: "模型路径",
+        name: "tle1",
+        label: "tle1",
         type: "label",
         defval: "",
-        show(style, allStyle, graphicType) {
-          return style.model_show
+        show(style, graphicType) {
+          return graphicType === "satellite"
         }
       },
       {
-        name: "model_heading",
-        label: "方向角",
-        type: "slider",
-        min: 0.0,
-        max: 360.0,
-        step: 0.01,
-        defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show
-        }
-      },
-      {
-        name: "model_pitch",
-        label: "俯仰角",
-        type: "slider",
-        min: 0.0,
-        max: 360.0,
-        step: 0.01,
-        defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show
-        }
-      },
-      {
-        name: "model_roll",
-        label: "翻滚角",
-        type: "slider",
-        min: 0.0,
-        max: 360.0,
-        step: 0.01,
-        defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show
-        }
-      },
-      {
-        name: "model_scale",
-        label: "比例",
-        type: "number",
-        step: 1,
-        defval: 1.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show
-        }
-      },
-      {
-        name: "model_minimumPixelSize",
-        label: "最小像素大小",
-        type: "number",
-        step: 1,
-        defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show
-        }
-      },
-      {
-        name: "model_distanceDisplayCondition",
-        label: "是否按视距显示",
-        type: "radio",
-        defval: false,
-        show(style, allStyle, graphicType) {
-          return style.model_show
-        }
-      },
-      {
-        name: "model_distanceDisplayCondition_far",
-        label: "最大距离",
-        type: "number",
-        step: 1,
-        defval: 100000.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show && style.model_distanceDisplayCondition
-        }
-      },
-      {
-        name: "model_distanceDisplayCondition_near",
-        label: "最小距离",
-        type: "number",
-        step: 1,
-        defval: 0.0,
-        show(style, allStyle, graphicType) {
-          return style.model_show && style.model_distanceDisplayCondition
-        }
-      },
-      {
-        name: "cone_show",
-        label: "是否显示视椎体",
-        type: "radio",
-        defval: false
-      },
-      {
-        name: "cone_angle1",
-        label: "视椎体半场角1",
-        type: "slider",
-        min: 0.1,
-        max: 80,
-        step: 0.01,
-        defval: 5,
-        show(style, allStyle, graphicType) {
-          return style.cone_show
-        }
-      },
-      {
-        name: "cone_angle2",
-        label: "视椎体半场角2",
-        type: "slider",
-        min: 0.1,
-        max: 80,
-        step: 0.01,
-        defval: 5,
-        show(style, allStyle, graphicType) {
-          return style.cone_show
-        }
-      },
-      {
-        name: "cone_color",
-        label: "视椎体颜色",
-        type: "color",
-        defval: "rgba(255,255,0,0.4)",
-        show(style, allStyle, graphicType) {
-          return style.cone_show
+        name: "tle2",
+        label: "tle2",
+        type: "label",
+        defval: "",
+        show(style, graphicType) {
+          return graphicType === "satellite"
         }
       }
     ]
@@ -2479,32 +2408,53 @@ const styleConfig = {
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动blue", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-blue.png", repeat_x: 10 } },
-          { label: "流动dovetail", value: "LineFlow-2", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-dovetail.png", repeat_x: 10 } },
-          { label: "流动arrow", value: "LineFlow-3", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-right.png", repeat_x: 10 } },
-          { label: "流动aqua", value: "LineFlow-4", defval: { image: "//data.mars3d.cn/img/textures/line-color-aqua.png", repeat_x: 10 } },
-          { label: "流动azure", value: "LineFlow-5", defval: { image: "//data.mars3d.cn/img/textures/line-color-azure.png", repeat_x: 10 } },
+          { label: "流动blue", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-blue.png", repeat_x: 10 } },
+          {
+            label: "流动dovetail",
+            value: "LineFlow-2",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-dovetail.png", repeat_x: 10 }
+          },
+          { label: "流动arrow", value: "LineFlow-3", defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-right.png", repeat_x: 10 } },
+          { label: "流动aqua", value: "LineFlow-4", defval: { image: "https://data.mars3d.cn/img/textures/line-color-aqua.png", repeat_x: 10 } },
+          { label: "流动azure", value: "LineFlow-5", defval: { image: "https://data.mars3d.cn/img/textures/line-color-azure.png", repeat_x: 10 } },
           {
             label: "流动red",
             value: "LineFlow-6",
-            defval: { image: "//data.mars3d.cn/img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 }
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 }
           },
-          { label: "流动yellow", value: "LineFlow-7", defval: { image: "//data.mars3d.cn/img/textures/line-color-yellow.png", color: "#ffff00", repeat_x: 10 } },
-          { label: "流动colour", value: "LineFlow-8", defval: { image: "//data.mars3d.cn/img/textures/line-colour.png", repeat_x: 10 } },
-          { label: "流动gradual", value: "LineFlow-9", defval: { image: "//data.mars3d.cn/img/textures/line-gradual.png", repeat_x: 10 } },
-          { label: "流动pulse", value: "LineFlow-10", defval: { image: "//data.mars3d.cn/img/textures/line-pulse.png" } },
-          { label: "流动sprite", value: "LineFlow-11", defval: { image: "//data.mars3d.cn/img/textures/line-sprite.png", repeat_x: 10 } },
-          { label: "流动tarans", value: "LineFlow-13", defval: { image: "//data.mars3d.cn/img/textures/line-tarans.png" } },
-          { label: "流动vertebral", value: "LineFlow-14", defval: { image: "//data.mars3d.cn/img/textures/line-vertebral.png", repeat_x: 10 } },
-          { label: "流动vertebral-blue", value: "LineFlow-15", defval: { image: "//data.mars3d.cn/img/textures/line-vertebral-blue.png", repeat_x: 10 } },
-          { label: "流动fence-line", value: "LineFlow-16", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动transarrow", value: "LineFlow-17", defval: { image: "//data.mars3d.cn/img/textures/line-arrow-trans.png", repeat_x: 10 } },
-          { label: "流动天青", value: "LineFlow-18", defval: { image: "//data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", repeat_x: 1 } },
-          { label: "天青pulse", value: "LineFlow-19", defval: { image: "//data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", width: 8 } }
-        ],
-        show(style, allStyle, graphicType) {
-          return this.data.some((item) => item.value === style.materialType)
-        }
+          {
+            label: "流动yellow",
+            value: "LineFlow-7",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#ffff00", repeat_x: 10 }
+          },
+          { label: "流动colour", value: "LineFlow-8", defval: { image: "https://data.mars3d.cn/img/textures/line-colour.png", repeat_x: 10 } },
+          { label: "流动gradual", value: "LineFlow-9", defval: { image: "https://data.mars3d.cn/img/textures/line-gradual.png", repeat_x: 10 } },
+          { label: "流动pulse", value: "LineFlow-10", defval: { image: "https://data.mars3d.cn/img/textures/line-pulse.png" } },
+          { label: "流动sprite", value: "LineFlow-11", defval: { image: "https://data.mars3d.cn/img/textures/line-sprite.png", repeat_x: 10 } },
+          { label: "流动tarans", value: "LineFlow-13", defval: { image: "https://data.mars3d.cn/img/textures/line-tarans.png" } },
+          { label: "流动vertebral", value: "LineFlow-14", defval: { image: "https://data.mars3d.cn/img/textures/line-vertebral.png", repeat_x: 10 } },
+          {
+            label: "流动vertebral-blue",
+            value: "LineFlow-15",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-vertebral-blue.png", repeat_x: 10 }
+          },
+          { label: "流动fence-line", value: "LineFlow-16", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          {
+            label: "流动transarrow",
+            value: "LineFlow-17",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-trans.png", repeat_x: 10 }
+          },
+          {
+            label: "流动天青",
+            value: "LineFlow-18",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", repeat_x: 1 }
+          },
+          {
+            label: "天青pulse",
+            value: "LineFlow-19",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", width: 8 }
+          }
+        ]
       },
       { name: "closure", label: "是否闭合", type: "radio", defval: false },
       {
@@ -2512,7 +2462,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.diffHeight || style.diffHeight !== 0
         }
       },
@@ -2529,7 +2479,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2539,10 +2489,22 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
+      // {
+      //   name: "arcType",
+      //   label: "球面弧线规则",
+      //   type: "combobox",
+      //   valType: "number",
+      //   defval: 0,
+      //   data: [
+      //     { label: "空间直线", value: 0 },
+      //     { label: "大地弧线", value: 1 },
+      //     { label: "方位线", value: 2 }
+      //   ]
+      // },
 
       {
         name: "zIndex",
@@ -2551,8 +2513,32 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
+        }
+      },
+
+      {
+        name: "showAll",
+        label: "展示所有坐标",
+        type: "radio",
+        defval: false,
+        show(style, graphicType, parentType) {
+          // graphicType - 矢量对象类型，有可能作为参数传递；
+          // parentType - 父类型，当矢量对象作为参数时才会有该参数
+          return parentType && style.show !== false && (parentType === "route" || parentType === "fixedRoute")
+        }
+      },
+      {
+        name: "maxDistance",
+        label: "保留轨迹长度",
+        type: "number",
+        step: 1,
+        defval: 9999,
+        show(style, graphicType, parentType) {
+          // graphicType - 矢量对象类型，有可能作为参数传递；
+          // parentType - 父类型，当矢量对象作为参数时才会有该参数
+          return parentType && style.show !== false && (parentType === "route" || parentType === "fixedRoute")
         }
       }
     ]
@@ -2560,8 +2546,8 @@ const styleConfig = {
   path: {
     name: "路径",
     style: [
-      { name: "width", label: "线宽", type: "number", step: 1, defval: 4.0 },
-      { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+      { name: "width", label: "线宽", type: "number", step: 1, defval: 1.0 },
+      { name: "color", label: "颜色", type: "color", defval: "#FFFFFF" },
       { name: "leadTime", label: "轨迹前", type: "number", step: 1, defval: 0.0 },
       { name: "trailTime", label: "轨迹保留", type: "number", step: 1, defval: 9999 }
     ]
@@ -2588,7 +2574,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 3.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.shape === "pipeline"
         }
       },
@@ -2623,12 +2609,9 @@ const styleConfig = {
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
-        ],
-        show(style, allStyle, graphicType) {
-          return this.data.some((item) => item.value === style.materialType)
-        }
+          { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
+        ]
       },
 
       { name: "outline", label: "是否边框", type: "radio", defval: false },
@@ -2639,7 +2622,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -2648,7 +2631,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#000000",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -2665,7 +2648,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2675,7 +2658,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2685,7 +2668,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       }
@@ -2704,8 +2687,8 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "纯色", value: "Color", defval: { color: "#fafafa" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -2713,18 +2696,18 @@ const styleConfig = {
 
           { label: "走马灯", value: "WallScroll" },
 
-          { label: "流动arrow", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/arrow.png", repeat_x: 10 } },
-          { label: "流动arrowh", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/arrow-h.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-2", defval: { image: "//data.mars3d.cn/img/textures/fence.png", axisY: true } },
-          { label: "流动line", value: "LineFlow-3", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", axisY: true } },
+          { label: "流动arrow", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/arrow.png", repeat_x: 10 } },
+          { label: "流动arrowh", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/arrow-h.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-2", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", axisY: true } },
+          { label: "流动line", value: "LineFlow-3", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", axisY: true } },
           {
             label: "图片fence",
             value: "LineFlow-4",
             defval: {
-              image: "//data.mars3d.cn/img/textures/fence.png",
+              image: "https://data.mars3d.cn/img/textures/fence.png",
               axisY: true,
               color: "#ff0000",
-              image2: "//data.mars3d.cn/img/textures/tanhao.png",
+              image2: "https://data.mars3d.cn/img/textures/tanhao.png",
               color2: "#FFFF00",
               outline: false,
               diffHeight: 1000,
@@ -2732,8 +2715,8 @@ const styleConfig = {
             }
           }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -2770,7 +2753,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2780,7 +2763,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2842,7 +2825,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -2852,7 +2835,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -2879,10 +2862,7 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color" },
           { label: "网格", value: "Grid" }
-        ],
-        show(style, allStyle, graphicType) {
-          return this.data.some((item) => item.value === style.materialType)
-        }
+        ]
       },
 
       {
@@ -2890,7 +2870,7 @@ const styleConfig = {
         label: "是否边框",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -2901,7 +2881,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -2910,7 +2890,7 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.outline
         }
       },
@@ -2927,7 +2907,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2937,7 +2917,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -2947,7 +2927,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -2956,7 +2936,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           // return !style.diffHeight || style.diffHeight !== 0
           return false // 无法切换
         }
@@ -2968,7 +2948,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -2994,7 +2974,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3004,7 +2984,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3014,7 +2994,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3025,15 +3005,15 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "文本", value: "Text" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -3044,9 +3024,9 @@ const styleConfig = {
         type: "number",
         min: 0,
         step: 1,
-        defval: 1,
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.outlineStyle
+        defval: 1.0,
+        show(style) {
+          return style.outline && !style.diffHeight && typeof style.outlineStyle?.width !== "number"
         }
       },
       {
@@ -3054,8 +3034,8 @@ const styleConfig = {
         label: "边框颜色",
         type: "color",
         defval: "#ffffff",
-        show(style, allStyle, graphicType) {
-          return style.outline && (style.diffHeight || !style.outlineStyle)
+        show: (style) => {
+          return style.outline && !style.diffHeight && !style.outlineStyle?.color && !style.outlineStyle?.materialType
         }
       },
       {
@@ -3067,8 +3047,8 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         contant: "outlineWidth",
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineWidth && style.outlineStyle?.width
         }
       },
       {
@@ -3078,19 +3058,19 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
+          { label: "纯色", value: "Color", contant: "outlineColor", defval: { color: "#FFFFFF" } },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineColor && (style.outlineStyle?.color || style.outlineStyle?.materialType)
         }
       },
 
@@ -3117,7 +3097,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3127,7 +3107,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3137,7 +3117,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false
-        // show(style, allStyle, graphicType) {
+        // show(style,  graphicType) {
         //   return false // 面无法切换
         // }
       },
@@ -3146,7 +3126,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3155,7 +3135,7 @@ const styleConfig = {
         label: "不考虑光照",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType.endsWith("P")
         }
       },
@@ -3166,7 +3146,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -3189,7 +3169,8 @@ const styleConfig = {
       "gatheringPlace",
       "isosTriangle",
       "lune",
-      "regular"
+      "regular",
+      "parallelogram"
     ],
     style: [
       {
@@ -3199,7 +3180,7 @@ const styleConfig = {
         step: 1,
         defval: 0.0,
         max: 10000000,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3209,7 +3190,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3220,7 +3201,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -3230,8 +3211,8 @@ const styleConfig = {
           { label: "水面", value: "Water" },
           { label: "蓝光水面", value: "WaterLight" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -3256,8 +3237,8 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1.0,
-        show: (style) => {
-          return style.outline && !style.outlineStyle
+        show(style) {
+          return style.outline && !style.diffHeight && typeof style.outlineStyle?.width !== "number"
         }
       },
       {
@@ -3266,7 +3247,7 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show: (style) => {
-          return style.outline && (style.diffHeight || !style.outlineStyle)
+          return style.outline && !style.outlineStyle?.color && !style.outlineStyle?.materialType
         }
       },
       {
@@ -3278,8 +3259,8 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         contant: "outlineWidth",
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineWidth && style.outlineStyle?.width
         }
       },
       {
@@ -3289,19 +3270,19 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
+          { label: "纯色", value: "Color", contant: "outlineColor", defval: { color: "#FFFFFF" } },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineColor && (style.outlineStyle?.color || style.outlineStyle?.materialType)
         }
       },
 
@@ -3317,7 +3298,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3327,7 +3308,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3337,7 +3318,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3346,17 +3327,29 @@ const styleConfig = {
         label: "不考虑光照",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType.endsWith("P")
         }
       },
+      // {
+      //   name: "arcType",
+      //   label: "球面弧线规则",
+      //   type: "combobox",
+      //   valType: "number",
+      //   defval: 0,
+      //   data: [
+      //     { label: "空间直线", value: 0 },
+      //     { label: "大地弧线", value: 1 },
+      //     { label: "方位线", value: 2 }
+      //   ]
+      // },
 
       {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
         defval: false
-        // show(style, allStyle, graphicType) {
+        // show(style,  graphicType) {
         //   return false // 面无法切换
         // }
       },
@@ -3367,7 +3360,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -3415,7 +3408,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3425,7 +3418,7 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3436,7 +3429,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
@@ -3446,8 +3439,8 @@ const styleConfig = {
           { label: "水面", value: "Water" },
           { label: "蓝光水面", value: "WaterLight" }
         ],
-        show(style, allStyle, graphicType) {
-          return style.fill !== false && this.data.some((item) => item.value === style.materialType)
+        show(style, graphicType) {
+          return style.fill !== false
         }
       },
 
@@ -3472,8 +3465,8 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 1.0,
-        show: (style) => {
-          return style.outline && !style.outlineStyle
+        show(style) {
+          return style.outline && !style.diffHeight && typeof style.outlineStyle?.width !== "number"
         }
       },
       {
@@ -3482,7 +3475,7 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show: (style) => {
-          return style.outline && (style.diffHeight || !style.outlineStyle)
+          return style.outline && !style.diffHeight && !style.outlineStyle?.color && !style.outlineStyle?.materialType
         }
       },
       {
@@ -3494,8 +3487,8 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         contant: "outlineWidth",
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineWidth && style.outlineStyle?.width
         }
       },
       {
@@ -3505,19 +3498,19 @@ const styleConfig = {
         type: "combobox",
         defval: "Color",
         data: [
-          { label: "纯色", value: "Color", contant: "outlineColor", defval: "#fff" },
+          { label: "纯色", value: "Color", contant: "outlineColor", defval: { color: "#FFFFFF" } },
           { label: "十字间隔", value: "LineCross" },
-          { label: "图片", value: "Image", defval: { image: "//data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "光晕", value: "PolylineGlow" },
           { label: "泛光线", value: "LineBloom" },
           { label: "流动颜色", value: "LineFlowColor" },
 
-          { label: "流动line", value: "LineFlow", defval: { image: "//data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
-          { label: "流动fence", value: "LineFlow-1", defval: { image: "//data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
+          { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
         ],
-        show(style, allStyle, graphicType) {
-          return style.outline && !style.diffHeight
+        show(style) {
+          return style.outline && !style.diffHeight && !style.outlineColor && (style.outlineStyle?.color || style.outlineStyle?.materialType)
         }
       },
 
@@ -3533,7 +3526,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3543,7 +3536,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3553,7 +3546,7 @@ const styleConfig = {
         label: "是否阴影",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3562,7 +3555,7 @@ const styleConfig = {
         label: "不考虑光照",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType.endsWith("P")
         }
       },
@@ -3572,7 +3565,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return false // 面无法切换
         }
       },
@@ -3583,7 +3576,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -3605,7 +3598,7 @@ const styleConfig = {
 
       { name: "baseWaterColor", label: "基础颜色", type: "color", defval: "#123e59" },
       { name: "blendColor", label: "混合颜色", type: "color", defval: "#123e59" },
-      { name: "normalMap", label: "反射图片", type: "label", defval: "//data.mars3d.cn/img/textures/waterNormals.jpg" },
+      { name: "normalMap", label: "反射图片", type: "label", defval: "https://data.mars3d.cn/img/textures/waterNormals.jpg" },
       { name: "frequency", label: "波数", type: "number", min: 1, max: 100000, step: 1, defval: 9000 },
       { name: "amplitude", label: "水波振幅", type: "number", min: 0, max: 100, step: 1, defval: 5.0 },
       { name: "animationSpeed", label: "动画速度", type: "slider", min: 0, max: 1, step: 0.01, defval: 0.03 },
@@ -3630,7 +3623,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3641,7 +3634,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return !style.clampToGround
         }
       },
@@ -3651,7 +3644,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return false // 面无法切换
         }
       },
@@ -3662,7 +3655,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -3677,7 +3670,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return graphicType === "wall"
         }
       },
@@ -3689,7 +3682,7 @@ const styleConfig = {
         max: 360.0,
         step: 0.01,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.fill !== false && !style.diffHeight
         }
       },
@@ -3705,7 +3698,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 100000.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3715,7 +3708,7 @@ const styleConfig = {
         type: "number",
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.distanceDisplayCondition
         }
       },
@@ -3724,7 +3717,7 @@ const styleConfig = {
         label: "是否贴地",
         type: "radio",
         defval: false,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return false // 面无法切换
         }
       },
@@ -3735,7 +3728,7 @@ const styleConfig = {
         min: 0,
         step: 1,
         defval: 0.0,
-        show(style, allStyle, graphicType) {
+        show(style, graphicType) {
           return style.clampToGround
         }
       }
@@ -3746,7 +3739,7 @@ const styleConfig = {
     style: [
       { name: "color", label: "水面颜色", type: "color", defval: "#7badd0" },
       { name: "opacity", label: "透明度", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.9 },
-      { name: "normalMap", label: "水扰动的法线图", type: "label", defval: "//data.mars3d.cn/img/textures/waterNormals.jpg" },
+      { name: "normalMap", label: "水扰动的法线图", type: "label", defval: "https://data.mars3d.cn/img/textures/waterNormals.jpg" },
       { name: "reflectivity", label: "反射率", type: "slider", min: 0.0, max: 1.0, step: 0.1, defval: 0.5 },
       { name: "ripple", label: "波纹大小", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 50.0 },
       { name: "shiny", label: "光照强度", type: "number", min: 1.0, max: 1000.0, step: 1.0, defval: 100.0 },

@@ -138,7 +138,7 @@ var plotEdit = {
 
     function getViewShow(cfg, styleOptions) {
       if (typeof cfg.show === "function") {
-        return cfg.show(styleOptions, attr.style, attr.type)
+        return cfg.show(styleOptions, attr.type)
       }
       return true
     }

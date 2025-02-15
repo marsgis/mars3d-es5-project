@@ -1,10 +1,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.8.10
- * 编译日期：2024-12-11 21:53
+ * 版本信息：v3.9.0
+ * 编译日期：2025-02-15 12:30
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：免费公开版 ，2024-08-01
+ * 使用单位：火星科技免费公开版 ，2025-02-01
  */
 
 /**地球容器div*/
@@ -41,13 +41,15 @@
 .mars3d-contextmenu-ul {
   background: rgba(43, 44, 47, 0.8);
   border: 1px solid #2b2c2f;
-  min-width: 110px;
+  border-radius: 2px;
+  border-width: 1px;
+  min-width: 80px;
   position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.mars3d-contextmenu-ul .contextmenu-icon {
+.mars3d-contextmenu-ul .mars3d-contextmenu-icon {
   position: absolute;
   left: 5px;
   width: 20px;
@@ -55,7 +57,7 @@
   text-align: center;
   overflow: hidden;
 }
-.mars3d-contextmenu-ul .contextmenu-arrow {
+.mars3d-contextmenu-ul .mars3d-contextmenu-arrow {
   position: absolute;
   right: 0;
   width: 20px;
@@ -78,17 +80,14 @@
   top: 0;
   left: 0;
 }
-.mars3d-contextmenu-ul .line {
-  display: block;
-  content: "";
-  height: 1px;
-  width: 96%;
+.mars3d-contextmenu-ul .mars3d-contextmenu-line {
   position: absolute;
   left: 2%;
-  background: #dddddd;
-  width: 100%;
-  height: 20px;
-  border: 1px;
+  height: 1px;
+  width: 96%;
+  background: #597086;
+  border-radius: 2px;
+  border-width: 1px;
 }
 .mars3d-contextmenu-ul > li > a {
   padding: 6px 10px 6px 30px;
@@ -114,25 +113,25 @@
 .mars3d-contextmenu-ul > .active > a:hover,
 .mars3d-contextmenu-ul > .active > a:focus {
   color: #fff;
-  background-color: #444d59;
+  background-color: var(--mars-hover-color, #3ea6ff);
   text-decoration: none;
 }
 .mars3d-sub-menu {
   position: absolute;
-  background: rgba(43, 44, 47, 0.8);
-  min-width: 160px;
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  min-width: 100px;
   display: none;
 }
 .mars3d-sub-menu li {
   width: 100%;
   box-sizing: border-box;
   font-size: 14px;
-  color: #ffffff;
+  color: var(--mars-text-color, #ffffff);
   margin: 0;
   padding: 0;
 }
 .mars3d-sub-menu li:hover {
-  background-color: #444d59;
+  background-color: var(--mars-hover-color, #3ea6ff);
 }
 .mars3d-smallTooltip {
   display: block;
@@ -183,11 +182,11 @@
   border-right: 5px solid #000000;
 }
 .mars3d-clockAnimate {
+  z-index: 12;
   position: absolute;
   bottom: 0;
   left: 0;
   height: 27px;
-  z-index: 999;
   background: linear-gradient(to bottom, rgba(116, 117, 119, 0.8) 0%, rgba(58, 68, 82, 0.8) 11%, rgba(46, 50, 56, 0.8) 46%, rgba(53, 53, 53, 0.8) 81%, rgba(53, 53, 53, 0.8) 100%);
 }
 .mars3d-clockAnimate .time {
@@ -203,7 +202,7 @@
   vertical-align: middle;
   padding: 1px 8px;
   border: solid 1px #888;
-  color: #ffffff;
+  color: var(--mars-text-color, #ffffff);
   background-color: rgba(63, 72, 84, 0.7);
   border: none;
   cursor: pointer;
@@ -218,7 +217,7 @@
   border: solid 1px rgba(136, 136, 136, 0.6);
   padding: 0 3px;
   margin: 0;
-  color: #ffffff;
+  color: var(--mars-text-color, #ffffff);
   background-color: rgba(63, 72, 84, 0.7);
 }
 .mars3d-clockAnimate .mars3d-clockAnimate-speed ::-webkit-outer-spin-button,
@@ -234,10 +233,6 @@
   width: 55px;
   height: 55px;
 }
-.mars3d-compass:hover .mars3d-compass-outer svg {
-  transform: scale(1.1);
-  transition: transform 0.3s;
-}
 .mars3d-compass .mars3d-compass-outer {
   position: absolute;
   top: 0;
@@ -246,7 +241,7 @@
   width: 55px;
   background-repeat: no-repeat;
   background-size: contain;
-  fill: #3f4854;
+  fill: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
   border-radius: 50%;
 }
 .mars3d-compass .mars3d-compass-outer svg {
@@ -264,8 +259,11 @@
   margin: 0 auto;
   padding: 4px;
   box-sizing: border-box;
-  background: #ffffff;
-  fill: #68adfe;
+  background: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  fill: var(--mars-text-color, #ffffff);
+}
+.mars3d-compass .mars3d-compass-inner:hover {
+  background: #3385ff;
 }
 .mars3d-compass .mars3d-compass-rotation-arc {
   position: absolute;
@@ -301,9 +299,13 @@
   width: 100%;
   height: 100%;
   user-select: none;
-  color: rgba(0, 0, 0, 0.6);
-  background-color: #e0e1e2;
-  border: 1px solid rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  color: var(--mars-text-color, #ffffff);
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  border: 1px solid var(--mars-text-color, #ffffff);
+}
+.mars3d-cubeview-cube > div:hover {
+  background: #3385ff;
 }
 .mars3d-cubeview-side-t {
   transform: rotatex(90deg) translateZ(25px);
@@ -330,6 +332,7 @@
   border-left: 2px solid green !important;
 }
 .mars3d-distance-legend {
+  z-index: 11;
   position: absolute;
   width: 125px;
   height: 25px;
@@ -352,8 +355,8 @@
 }
 /**左下角，鼠标经纬度提示*/
 .mars3d-locationbar {
+  z-index: 10;
   position: absolute;
-  z-index: 991;
   padding: 3px 10px;
   font-size: 13px;
   color: #e9e9e9;
@@ -426,7 +429,6 @@
 }
 .mars3d-mapCompare {
   position: absolute;
-  left: auto;
   right: 0px;
   top: 0px;
   bottom: 0px;
@@ -474,19 +476,6 @@
   border: 1px solid orange;
   box-shadow: 2px 2px 3px #2b2b2b;
 }
-.mar3d-toolButton {
-  cursor: pointer;
-  margin: 0 3px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-}
-.mar3d-toolButton img,
-.mar3d-toolButton svg,
-.mar3d-toolButton div {
-  height: 100%;
-  text-align: center;
-}
 .mars3d-subtitles {
   position: absolute;
   user-select: none;
@@ -498,10 +487,19 @@
   text-align: center;
   z-index: 999;
 }
+.mar3d-toolButton img,
+.mar3d-toolButton svg,
+.mar3d-toolButton div {
+  height: 100%;
+  text-align: center;
+}
 .mars3d-divGraphic {
   position: absolute;
   left: 0;
   top: 0;
+}
+.mars3d-divGraphic:hover {
+  z-index: 9999 !important;
 }
 .mars3d-divGraphic-edit {
   background-color: rgba(254, 87, 161, 0.1);
@@ -875,8 +873,6 @@
   }
 }
 /*****popup弹出框样式******/
-/*白色字体,如果黑色改为：#2b2929;*/
-/*黑色背景,如果白色改为：rgba(255,255,255,0.85);*/
 .mars3d-popup {
   -webkit-user-select: auto;
   -moz-user-select: auto;
@@ -939,10 +935,10 @@
   border-top: 1px solid #ddd;
 }
 .mars3d-popup-color {
-  color: #ffffff;
+  color: var(--mars-text-color, #ffffff);
 }
 .mars3d-popup-background {
-  background: rgba(63, 72, 84, 0.9);
+  background: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
 .mars3d-popup-animation {
   animation-duration: 0.3s;
@@ -973,18 +969,23 @@
 }
 /* all 中的html样式 */
 .mars3d-template-title {
-  border-radius: 3px 0 0 3px;
-  padding: 0 80px 0 10px;
-  height: 40px;
-  line-height: 40px;
+  height: 33px;
+  line-height: 33px;
+  padding: 0 10px 0 10px;
   font-size: 16px;
-  color: #ffffff;
-  border-bottom: 1px solid #616161;
+  color: var(--mars-text-color, #ffffff);
+  border-bottom: 1px solid var(--mars-hover-color, #3ea6ff);
   overflow: hidden;
+}
+.mars3d-template-title a {
+  color: var(--mars-msg-title-color, #479be0);
+  text-decoration: none;
 }
 .mars3d-template-content {
   min-width: 150px;
-  margin-top: 12px;
+  margin-top: 0px;
+  padding: 10px;
+  color: var(--mars-text-color, #ffffff);
   font-size: 14px;
   max-height: 490px;
   overflow-y: auto;
@@ -994,18 +995,22 @@
 }
 .mars3d-template-content label {
   margin: 0 10px;
+  padding-right: 6px;
   min-width: 55px;
   float: left;
 }
 .mars3d-template-content input {
-  color: #ffffff;
+  color: var(--mars-text-color, #ffffff);
   background-color: transparent;
   padding: 4px 5px;
   border-width: 1px;
   border-style: solid;
 }
+.mars3d-template-content input::placeholder {
+  color: #cdcdcd;
+}
 .mars3d-template-content textarea {
-  color: #ffffff;
+  color: var(--mars-text-color, #ffffff);
   background-color: transparent;
   padding: 4px 5px;
   border-width: 1px;
@@ -1013,15 +1018,12 @@
   height: 60px;
   resize: none;
 }
+.mars3d-template-content textarea::placeholder {
+  color: #cdcdcd;
+}
 /*****tooltip弹出框样式******/
-/*白色字体,如果黑色改为：#2b2929;*/
-/*黑色背景,如果白色改为：rgba(255,255,255,0.85);*/
 .mars3d-tooltip {
   padding: 6px;
-  background: rgba(63, 72, 84, 0.9);
-  border: 1px solid rgba(63, 72, 84, 0.9);
-  border-radius: 3px;
-  color: #ffffff;
   white-space: nowrap;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -1031,6 +1033,9 @@
   max-width: 700px;
   min-width: 50px;
   max-height: 550px;
+  color: var(--mars-text-color, #ffffff);
+  background: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  border: 1px solid var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
 .mars3d-tooltip-top:before,
 .mars3d-tooltip-bottom:before,
@@ -1041,6 +1046,18 @@
   border: 6px solid transparent;
   background: transparent;
   content: "";
+}
+.mars3d-tooltip-top:before {
+  border-top-color: var(--mars-base-bg, rgba(23, 49, 71, 0.8));
+}
+.mars3d-tooltip-bottom:before {
+  border-bottom-color: var(--mars-base-bg, rgba(23, 49, 71, 0.8));
+}
+.mars3d-tooltip-left:before {
+  border-left-color: var(--mars-base-bg, rgba(23, 49, 71, 0.8));
+}
+.mars3d-tooltip-right:before {
+  border-right-color: var(--mars-base-bg, rgba(23, 49, 71, 0.8));
 }
 /* Directions */
 .mars3d-tooltip-bottom {
@@ -1057,13 +1074,13 @@
 .mars3d-tooltip-top:before {
   bottom: 0;
   margin-bottom: -12px;
-  border-top-color: rgba(63, 72, 84, 0.9);
+  border-top-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
 .mars3d-tooltip-bottom:before {
   top: 0;
   margin-top: -6px;
   margin-left: -6px;
-  border-bottom-color: rgba(63, 72, 84, 0.9);
+  border-bottom-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
 .mars3d-tooltip-left {
   margin-left: -6px;
@@ -1079,13 +1096,286 @@
 .mars3d-tooltip-left:before {
   right: 0;
   margin-right: -12px;
-  border-left-color: rgba(63, 72, 84, 0.9);
+  border-left-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
 .mars3d-tooltip-right:before {
   left: 0;
   margin-left: -6px;
-  border-right-color: rgba(63, 72, 84, 0.9);
+  border-right-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
 }
 .mars3d-divlayer-camera {
   backface-visibility: hidden;
+}
+/** 覆盖cesium 控件相关样式 */
+/**cesium info信息框*/
+.cesium-infoBox {
+  background: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+}
+.cesium-infoBox-title {
+  background-color: rgba(23, 49, 71, 0.8);
+}
+/**cesium 任务栏的FPS信息*/
+.cesium-performanceDisplay-defaultContainer .cesium-performanceDisplay-ms,
+.cesium-performanceDisplay-defaultContainer .cesium-performanceDisplay-fps {
+  color: #fff;
+}
+/**cesium tileset调试信息面板*/
+.cesium-cesiumInspector {
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+}
+/**animation时间面板*/
+.cesium-viewer-animationContainer {
+  z-index: 12;
+}
+/** 按钮工具栏 */
+.cesium-viewer-toolbar {
+  /** 按钮统一样式 */
+  /**底图切换 弹出面板*/
+  /**帮助 弹出面板*/
+  /**POI查询输入框*/
+}
+.cesium-viewer-toolbar .cesium-button {
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  border-radius: 2px;
+  border-width: 1px;
+  color: var(--mars-text-color, #ffffff);
+  fill: #e6e6e6;
+  line-height: 32px;
+  text-align: center;
+  cursor: pointer;
+}
+.cesium-viewer-toolbar .cesium-button:hover {
+  background-color: #3385ff;
+  box-shadow: none;
+  border: none;
+}
+.cesium-viewer-toolbar .cesium-button img,
+.cesium-viewer-toolbar .cesium-button svg,
+.cesium-viewer-toolbar .cesium-button div,
+.cesium-viewer-toolbar .cesium-button .cesium-svgPath-svg {
+  scale: 0.8;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  text-align: center;
+}
+.cesium-viewer-toolbar .cesium-button img:hover,
+.cesium-viewer-toolbar .cesium-button svg:hover,
+.cesium-viewer-toolbar .cesium-button div:hover,
+.cesium-viewer-toolbar .cesium-button .cesium-svgPath-svg:hover {
+  scale: 0.9;
+}
+.cesium-viewer-toolbar .cesium-baseLayerPicker-dropDown {
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  max-height: 700px;
+  z-index: 99;
+}
+.cesium-viewer-toolbar .cesium-navigationHelpButton-wrapper .cesium-navigation-help-instructions,
+.cesium-viewer-toolbar .cesium-navigationHelpButton-wrapper .cesium-navigation-button {
+  background: none;
+}
+.cesium-viewer-toolbar .cesium-navigationHelpButton-wrapper .cesium-navigation-help,
+.cesium-viewer-toolbar .cesium-navigationHelpButton-wrapper .cesium-navigation-button-selected {
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+}
+.cesium-viewer-toolbar .cesium-navigationHelpButton-wrapper .cesium-navigation-button-unselected {
+  background-color: rgba(105, 105, 105, 0.75);
+}
+.cesium-viewer-toolbar .cesium-navigationHelpButton-wrapper .cesium-navigation-button-unselected:hover {
+  background-color: var(--mars-base-bg, rgba(76, 76, 76, 0.75));
+}
+.cesium-viewer-toolbar .cesium-viewer-geocoderContainer .cesium-geocoder-input {
+  background-color: rgba(63, 72, 84, 0.7);
+  border-width: 1px;
+}
+.cesium-viewer-toolbar .cesium-viewer-geocoderContainer .cesium-geocoder-input:focus {
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+}
+.cesium-viewer-toolbar .cesium-viewer-geocoderContainer .search-results {
+  z-index: 99;
+  background-color: rgba(23, 49, 71, 0.8);
+}
+.cesium-viewer-toolbar .cesium-viewer-geocoderContainer .cesium-geocoder-searchButton {
+  background-color: var(--mars-base-bg, rgba(63, 72, 84, 0.9));
+  border-radius: 2px;
+  border-width: 1px;
+  fill: #e6e6e6;
+}
+/** 修改定位："top-right"上侧靠右 */
+/** 按钮工具栏修改定位："top-left"上侧靠左 */
+.cesium-viewer-toolbar-top-left {
+  top: 10px;
+  bottom: auto;
+  left: 10px;
+  right: auto;
+  /**帮助 弹出面板*/
+  /**底图切换 弹出面板*/
+}
+.cesium-viewer-toolbar-top-left .cesium-navigationHelpButton-wrapper .cesium-navigation-help {
+  left: 40px;
+  transform-origin: left top;
+}
+.cesium-viewer-toolbar-top-left .cesium-baseLayerPicker-dropDown {
+  left: 10px;
+}
+/** 修改定位："left-top"左侧靠上 */
+.cesium-viewer-toolbar-left-top {
+  top: 10px;
+  bottom: auto;
+  left: 10px;
+  right: auto;
+  /**底图切换 弹出面板*/
+  /**帮助 弹出面板*/
+  /**二维三维切换*/
+  /**POI查询输入框*/
+}
+.cesium-viewer-toolbar-left-top > .cesium-toolbar-button,
+.cesium-viewer-toolbar-left-top .cesium-navigationHelpButton-wrapper,
+.cesium-viewer-toolbar-left-top .cesium-viewer-geocoderContainer {
+  float: left;
+  clear: both;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-left-top .cesium-baseLayerPicker-dropDown {
+  left: 40px;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-left-top .cesium-navigationHelpButton-wrapper .cesium-navigation-help {
+  top: 0px;
+  left: 40px;
+  transform-origin: left top;
+}
+.cesium-viewer-toolbar-left-top .cesium-sceneModePicker-wrapper {
+  width: auto;
+}
+.cesium-viewer-toolbar-left-top .cesium-sceneModePicker-wrapper .cesium-sceneModePicker-dropDown-icon {
+  float: right;
+  margin: 0 3px;
+}
+.cesium-viewer-toolbar-left-top .cesium-viewer-geocoderContainer .search-results {
+  left: 0;
+  right: 40px;
+  width: auto;
+}
+/** 修改定位："left-bottom"左侧靠下 */
+.cesium-viewer-toolbar-left-bottom {
+  top: auto;
+  bottom: 60px;
+  left: 10px;
+  right: auto;
+  /**底图切换 弹出面板*/
+  /**帮助 弹出面板*/
+  /**二维三维切换*/
+  /**POI查询输入框*/
+}
+.cesium-viewer-toolbar-left-bottom > .cesium-toolbar-button,
+.cesium-viewer-toolbar-left-bottom .cesium-navigationHelpButton-wrapper,
+.cesium-viewer-toolbar-left-bottom .cesium-viewer-geocoderContainer {
+  float: left;
+  clear: both;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-left-bottom .cesium-baseLayerPicker-dropDown {
+  bottom: 0;
+  left: 40px;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-left-bottom .cesium-navigationHelpButton-wrapper .cesium-navigation-help {
+  top: auto;
+  bottom: 0;
+  left: 40px;
+  transform-origin: left bottom;
+}
+.cesium-viewer-toolbar-left-bottom .cesium-sceneModePicker-wrapper {
+  width: auto;
+}
+.cesium-viewer-toolbar-left-bottom .cesium-sceneModePicker-wrapper .cesium-sceneModePicker-dropDown-icon {
+  float: right;
+  margin: 0 3px;
+}
+.cesium-viewer-toolbar-left-bottom .cesium-viewer-geocoderContainer .search-results {
+  left: 0;
+  right: 40px;
+  width: auto;
+}
+/** 修改定位："right-top"右侧靠上 */
+.cesium-viewer-toolbar-right-top {
+  top: 10px;
+  bottom: auto;
+  right: 10px;
+  left: auto;
+  /**底图切换 弹出面板*/
+  /**帮助 弹出面板*/
+  /**二维三维切换*/
+  /**POI查询输入框*/
+}
+.cesium-viewer-toolbar-right-top > .cesium-toolbar-button,
+.cesium-viewer-toolbar-right-top .cesium-navigationHelpButton-wrapper,
+.cesium-viewer-toolbar-right-top .cesium-viewer-geocoderContainer {
+  float: right;
+  clear: both;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-right-top .cesium-baseLayerPicker-dropDown {
+  right: 40px;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-right-top .cesium-navigationHelpButton-wrapper .cesium-navigation-help {
+  top: 0;
+  bottom: auto;
+  right: 40px;
+  transform-origin: right top;
+}
+.cesium-viewer-toolbar-right-top .cesium-sceneModePicker-wrapper {
+  width: auto;
+}
+.cesium-viewer-toolbar-right-top .cesium-sceneModePicker-wrapper .cesium-sceneModePicker-dropDown-icon {
+  float: left;
+  margin: 0 3px;
+}
+.cesium-viewer-toolbar-right-top .cesium-viewer-geocoderContainer .search-results {
+  right: 0;
+  left: 40px;
+  width: auto;
+}
+/** 修改定位："right-bottom"右侧靠下 */
+.cesium-viewer-toolbar-right-bottom {
+  top: auto;
+  bottom: 60px;
+  right: 10px;
+  left: auto;
+  /**底图切换 弹出面板*/
+  /**帮助 弹出面板*/
+  /**二维三维切换*/
+  /**POI查询输入框*/
+}
+.cesium-viewer-toolbar-right-bottom > .cesium-toolbar-button,
+.cesium-viewer-toolbar-right-bottom .cesium-navigationHelpButton-wrapper,
+.cesium-viewer-toolbar-right-bottom .cesium-viewer-geocoderContainer {
+  float: right;
+  clear: both;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-right-bottom .cesium-baseLayerPicker-dropDown {
+  bottom: 0;
+  right: 40px;
+  margin-bottom: 5px;
+}
+.cesium-viewer-toolbar-right-bottom .cesium-navigationHelpButton-wrapper .cesium-navigation-help {
+  top: auto;
+  bottom: 0;
+  right: 40px;
+  transform-origin: right bottom;
+}
+.cesium-viewer-toolbar-right-bottom .cesium-sceneModePicker-wrapper {
+  width: auto;
+}
+.cesium-viewer-toolbar-right-bottom .cesium-sceneModePicker-wrapper .cesium-sceneModePicker-dropDown-icon {
+  float: left;
+  margin: 0 3px;
+}
+.cesium-viewer-toolbar-right-bottom .cesium-viewer-geocoderContainer .search-results {
+  right: 0;
+  left: 40px;
+  width: auto;
 }

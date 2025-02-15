@@ -17,7 +17,7 @@
 
     //初始化[仅执行1次]
     create() {
-      this.data = window.toolBarMenuData || [
+      this.data = [
         { name: "底图", icon: "fa fa-map", widget: "widgets/manageBasemaps/widget.js" },
         { name: "图层", icon: "fa fa-tasks", widget: "widgets/manageLayers/widget.js" },
         {

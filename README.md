@@ -312,7 +312,7 @@ widget激活后页面执行流程:
 
 ## 4.4 向widget传值示例
  
-在qyPoint模块中(widgetsTS\qyPoint\widget.js)单击地图上的点后，激活弹出详情窗口qyDetailsView模块
+在qyPoint模块中(widgetsTS\qyList\widget.js)单击地图上的点后，激活弹出详情窗口qyDetailsView模块
 
   ```js  
 showDetails(item) { 
