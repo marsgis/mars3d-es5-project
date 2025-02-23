@@ -68,13 +68,7 @@
       let graphic = this.config.graphic
       return graphic?._layer?.name || ""
     }
-    getAvailability() {
-      let graphic = this.config.graphic
-
-      return mars3d.Util.getAvailabilityJson(graphic.availability)
-    }
-
-    startEditing(graphic, lonlats) {
+    startEditing(graphic, lonlats, appendHtml) {
       if (graphic) {
         this.config.graphic = graphic
       }
@@ -89,10 +83,59 @@
       graphic = this.config.graphic
       lonlats = this.config.lonlats
 
-      let config = { ...graphic.options, type: graphic.type, style: graphic.style }
-      console.log("开始编辑属性", config)
+      const graphicOptions = graphic.toJSON()
 
-      this.viewWindow.plotEdit.startEditing(config, lonlats)
+      const aloneTypeStyle = {
+        fixedRoute: ["label", "billboard", "point", "model", "circle", "coneTrack", "path", "polyline", "wall"],
+        route: ["label", "billboard", "point", "model", "circle", "coneTrack", "path", "polyline", "wall"],
+        satellite: [["tle1", "tle2"], "model", "label", "billboard", "point", "path"]
+      }
+
+      // 原始样式
+      if (appendHtml && graphicOptions.style) {
+        appendHtml({ ...graphicOptions }, false)
+      }
+
+      this.viewWindow.plotEdit.startEditing({ ...graphicOptions, style: graphicOptions.style ?? {} }, lonlats)
+
+      // 多参数样式
+      let isParentStyle = false
+      const paraArr = aloneTypeStyle[graphicOptions.type]
+
+      if (paraArr && paraArr.length) {
+        paraArr.forEach((typeItem) => {
+          const typeData = graphicOptions[typeItem]
+
+          if (typeof typeItem !== "string" && !isParentStyle && typeItem.length) {
+            isParentStyle = true
+
+            if (appendHtml) {
+              appendHtml({ ...typeData, type: typeItem }, false)
+            }
+
+            setTimeout(() => {
+              this.viewWindow.plotEdit.startEditing(graphicOptions)
+            }, 500)
+          } else {
+            if (appendHtml) {
+              appendHtml({ ...typeData, type: typeItem }, true)
+            }
+
+            setTimeout(() => {
+              this.viewWindow.plotEdit.startEditing({
+                style: { ...(typeData ?? {}), show: !!typeData },
+                type: typeItem,
+                parentType: graphicOptions.type
+              })
+            }, 500)
+          }
+        })
+      } else {
+        if (appendHtml) {
+          appendHtml({ ...graphicOptions }, false)
+        }
+        this.viewWindow.plotEdit.startEditing(graphicOptions, lonlats)
+      }
     }
 
     //更新样式
@@ -113,20 +156,15 @@
       let graphic = this.config.graphic
       graphic.attr = attr
     }
+    //更新options
+    updateOptions2map(options) {
+      console.log("更新矢量options", options)
+      let graphic = this.config.graphic
+      graphic.setOptions(options)
+    }
     centerCurrentEntity() {
       let graphic = this.config.graphic
       graphic.flyTo()
-    }
-    getAndSetMapTime(date) {
-      if (!date) {
-        const start = map.clock.currentTime.clone()
-        const stop = Cesium.JulianDate.addSeconds(start, 10, new Cesium.JulianDate())
-        return { start: this.formatDate(Cesium.JulianDate.toDate(start)), stop: this.formatDate(Cesium.JulianDate.toDate(stop)) }
-      } else {
-        const toJulian = Cesium.JulianDate.fromDate(new Date(date))
-        const stop = Cesium.JulianDate.addSeconds(toJulian, 5, new Cesium.JulianDate())
-        return this.formatDate(Cesium.JulianDate.toDate(stop))
-      }
     }
 
     formatDate(time) {
@@ -150,17 +188,6 @@
       geojson.properties._layer = graphic._layer.name //记录分组信息
 
       return geojson
-    }
-    //时序
-    availabilityChange(availability) {
-      // console.log("availability", availability)
-      let graphic = this.config.graphic
-
-      if (availability && availability.length) {
-        graphic.availability = availability
-      } else {
-        graphic.availability = null
-      }
     }
   }
 

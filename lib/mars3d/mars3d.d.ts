@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.0
- * 编译日期：2025-02-15 12:30
+ * 版本信息：v3.9.1
+ * 编译日期：2025-02-23 11:21
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -26298,7 +26298,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
  * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
- * @param [options.chinaCRS = mars3d.ChinaCRS.BAIDU] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
+ * @param [options.chinaCRS = mars3d.ChinaCRS.BAIDU] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系，如果加载不纠偏的原始瓦片，可以传入map相同的chinaCRS即可，比如 chinaCRS:mars3d.ChinaCRS.WGS84
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
  * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' },
@@ -39662,13 +39662,15 @@ declare namespace PointUtil {
      * @param [options = {}] - 参数对象:
      * @param [options.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND] - 高度参考，决定是否仅贴模型、仅贴地形、全部都考虑
      * @param [options.original = false] - 计算失败时是否返回原始高度值
-     * @param [options.min = -999] - 限定最小数,屏蔽异常数
+     * @param [options.min] - 限定最小数,屏蔽异常数
+     * @param [options.max] - 限定最大数,屏蔽异常数
      * @returns 贴地高度
      */
     function getHeight(scene: Cesium.Scene, position: Cesium.Cartesian3 | LngLatPoint, options?: {
         heightReference?: Cesium.HeightReference;
         original?: boolean;
         min?: number;
+        max?: number;
     }): number;
     /**
      * 异步精确计算坐标的 贴地(或贴模型)高度

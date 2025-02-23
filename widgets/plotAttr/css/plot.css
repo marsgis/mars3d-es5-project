@@ -315,12 +315,12 @@ textarea {
   display: none;
 }
 
-.mp_tab_con>li,
-.mp_tab_con>div {
+.mp_tab_con > li,
+.mp_tab_con > div {
   display: none
 }
 
-.mp_tab_con>.cur {
+.mp_tab_con > .cur {
   display: block
 }
 
@@ -689,17 +689,6 @@ textarea {
   display: block;
 }
 
-.tools-btn {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.ava-title {
-  display: flex;
-  justify-content: space-between;
-  margin-left: 16px;
-  margin-top: 10px;
-}
 
 .mars-table {
   margin-left: 16px;
@@ -712,20 +701,6 @@ textarea {
   border: 1px solid #cde1de;
   max-width: 150px;
   word-wrap: break-word;
-}
-
-.table-box {
-  margin-top: 10px;
-}
-
-.ava-tools {
-  margin-right: 10px;
-}
-
-.ava-btn {
-  display: inline-block;
-  margin-right: 10px;
-  cursor: pointer;
 }
 
 .timepane {

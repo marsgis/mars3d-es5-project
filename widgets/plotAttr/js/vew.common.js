@@ -18,33 +18,22 @@ $(function () {
   })
 
   $("#tab_attr").click(function () {
-    $(".mp_tab_ava").hide()
+    $(".mp_tab_baseinfo").hide()
     $(".mp_tab_con").show()
   })
 
-  $("#tab_availability").click(function () {
-    $(".mp_tab_con").show() // 隐藏则整个ul列表隐藏
-    $(".mp_tab_ava").hide()
+  $("#tab_baseinfo").click(function () {
+    $(".mp_tab_con").hide()
+    $(".mp_tab_baseinfo").show()
   })
 
   // mp_tree
   $(".open").click(changeOpenShowHide)
 })
 
-// function tab2plot() {
-//     $("#tab_attr").addClass('disabled');
-//     $("#tab_latlng").addClass('disabled');
-//     $("#tab_plot").click();
-// }
-
 var storageName = "mars3d_plotAttr"
 
 function tab2attr() {
-  // $("#tab_attr").removeClass('disabled');
-  // $("#tab_latlng").removeClass('disabled');
-
-  // if ($("#tab_plot").hasClass('cur'))
-
   //读取localStorage值
   localforage.getItem(storageName).then(function (last_attr_tab) {
     if (last_attr_tab != null) {
@@ -56,9 +45,10 @@ function tab2attr() {
 }
 
 function changeOpenShowHide() {
-  let openlis = $(this).siblings()
-  let opent = $(this).children(".tree_icon")
+  let openlis = $(this).next()
   openlis.toggle()
+
+  let opent = $(this).children(".tree_icon")
   if (openlis.is(":hidden")) {
     opent.html("+")
   } else {
