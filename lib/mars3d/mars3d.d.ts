@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.1
- * 编译日期：2025-02-23 11:21
+ * 版本信息：v3.9.2
+ * 编译日期：2025-03-02 20:20
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -29004,7 +29004,7 @@ declare namespace Map {
      * @property [showSun] - 是否显示太阳，如修改对象可以用 [map.scene.sun]{@link http://mars3d.cn/api/cesium/Sun.html}
      * @property [showMoon] - 是否显示月亮，如修改对象可以用 [map.scene.moon]{@link http://mars3d.cn/api/cesium/Moon.html}
      * @property [showSkyAtmosphere] - 是否显示地球大气层外光圈，如修改对象可以用 [map.scene.skyAtmosphere]{@link http://mars3d.cn/api/cesium/SkyAtmosphere.html}
-     * @property [fog] - 是否启用雾化效果，如修改对象可以用 [map.scene.fog]{@link http://mars3d.cn/api/cesium/fog.html}
+     * @property [fog] - 是否启用雾化效果，如修改对象可以用 [map.scene.fog]{@link http://mars3d.cn/api/cesium/Fog.html}
      * @property [atmosphere] - 3D贴图和模型用于渲染天空大气、地面大气和雾的常见大气设置。
      * @property [atmosphere.lightIntensity = 10.0] - 用于计算地面大气颜色的光的强度。
      * @property [atmosphere.rayleighScaleHeight = 10000.0] - 地面大气散射方程中使用的瑞利尺度高度，单位为米。
@@ -39876,6 +39876,13 @@ declare namespace PolyUtil {
      * @returns 缓冲后的新坐标数组
      */
     function bufferPoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[], width: number, steps?: number): LngLatPoint[];
+    /**
+     * 坐标数组整体移动到新的中心点位置
+     * @param points - 坐标数组
+     * @param centerNew - 新的中心点坐标
+     * @returns 移动后的坐标点数组
+     */
+    function movePoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[], centerNew: Cesium.Cartesian3): Cesium.Cartesian3[];
     /**
      * 求坐标数组的矩形范围内 按 splitNum网格数插值的 granularity值
      * @param positions - 坐标数组

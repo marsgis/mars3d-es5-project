@@ -442,7 +442,7 @@ const styleConfig = {
         name: "outlineColor",
         label: "边框颜色",
         type: "color",
-        defval: "#ffffff",
+        defval: "#000000",
         show({ allStyle }) {
           return allStyle?.outline
         }
@@ -679,7 +679,6 @@ const styleConfig = {
         type: "combobox",
         defval: "",
         data: [
-          { label: "无", value: null },
           { label: "红色扩散点", value: "https://data.mars3d.cn/img/marker/point-red.png" },
           { label: "蓝色环绕", value: "https://data.mars3d.cn/img/marker/mark-blue.png" },
           { label: "蓝色人员", value: "https://data.mars3d.cn/img/marker/lace-blue.png" },
@@ -1158,7 +1157,6 @@ const styleConfig = {
         type: "combobox",
         defval: "",
         data: [
-          { label: "无", value: "" },
           { label: "行人", value: "https://data.mars3d.cn/gltf/mars/man/walk.gltf" },
           { label: "小汽车", value: "https://data.mars3d.cn/gltf/mars/qiche.gltf" },
           { label: "民航飞机", value: "https://data.mars3d.cn/gltf/mars/feiji.glb" },
@@ -1297,7 +1295,7 @@ const styleConfig = {
         data: [
           { label: "纯色", value: "Color", defval: { color: "#fafafa" } },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
-          { label: "图片2", value: "Image2" },
+          { label: "图片2", value: "Image2", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
