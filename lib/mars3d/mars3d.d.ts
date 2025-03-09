@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.9.2
- * 编译日期：2025-03-02 20:20
+ * 编译日期：2025-03-09 12:41
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -3154,6 +3154,10 @@ declare class Subtitles extends BaseControl {
      */
     removeItem(id: number | string): boolean;
     /**
+     * 释放所有子任务
+     */
+    disableAll(): void;
+    /**
      * 对象添加到地图前创建一些对象的钩子方法，
      * 只会调用一次
      * @returns 无
@@ -4820,6 +4824,7 @@ declare namespace BaseGraphic {
      * @property [headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' }
      * @property [dataColumn] - 接口返回数据中，对应的属性数据所在的读取字段名称，支持多级(用.分割)；如果数据直接返回时可以不配置。
      * @property [cacheTime = 1] - 在time秒内再次访问读取时，直接使用上一次历史值，避免高频访问后端。
+     * @property [merge] - 是否合并原有静态属性
      */
     type AjaxAttr = {
         type: string;
@@ -4828,6 +4833,7 @@ declare namespace BaseGraphic {
         headers?: any;
         dataColumn?: string;
         cacheTime?: number;
+        merge?: boolean;
     };
     /**
      * 当前类支持的{@link EventType}事件类型
@@ -4942,7 +4948,7 @@ declare class BaseGraphic extends BaseClass {
         position: LngLatPoint | Cesium.Cartesian3 | number[];
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         style: any;
-        attr?: any;
+        attr?: any | BaseGraphic.AjaxAttr;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -5068,7 +5074,7 @@ declare class BaseGraphic extends BaseClass {
     /**
      * 属性信息
      */
-    attr: any;
+    attr: any | BaseGraphic.AjaxAttr;
     /**
      * 样式信息
      */
@@ -11026,10 +11032,6 @@ declare class ConeTrack extends CylinderEntity {
      * 夹角，半场角度，取值范围 0.01-89.99
      */
     angle: number;
-    /**
-     * 编辑处理类
-     */
-    readonly EditClass: EditCylinder;
 }
 
 /**
@@ -15643,6 +15645,13 @@ declare class GroupGraphic extends BaseGraphic {
         merge?: boolean;
     }): BaseGraphic | any;
     /**
+     * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
+     * 对象本身透明度请用 graphic.setStyle({ opacity: value })
+     * @param value - 透明度
+     * @returns 无
+     */
+    setOpacity(value: number): void;
+    /**
      * 将矢量数据导出为GeoJSON格式规范对象。
      * @param [options] - 参数对象:
      * @param [options.noAlt] - 不导出高度值
@@ -16958,6 +16967,22 @@ declare class BasePolyPrimitive extends BasePrimitive {
         exact?: boolean;
         offset?: number;
     }): Promise<any>;
+    /**
+     * 是否 ajax后端动态坐标
+     */
+    readonly hasAjaxPostions: boolean;
+    /**
+     * 是否 time时序动态坐标
+     */
+    readonly hasTimePostions: boolean;
+    /**
+     * 获取当前时序坐标的开始时间和结束时间,返回的是Cesium.JulianDate格式
+     */
+    readonly timeRange: any;
+    /**
+     * 获取当前时序坐标的开始时间和结束时间,返回的是时间字符串
+     */
+    readonly timeRangeStr: any;
 }
 
 /**
@@ -18100,10 +18125,6 @@ declare class ConeTrackPrimitive extends CylinderPrimitive {
      * 夹角，半场角度，取值范围 0.01-89.99
      */
     angle: number;
-    /**
-     * 是否判断内部是否允许编辑（可外部传入禁用编辑,但不允许编辑的对象传入是无效的）
-     */
-    hasEdit: boolean;
 }
 
 declare namespace CorridorPrimitive {
@@ -23363,6 +23384,7 @@ declare namespace GraphicLayer {
  * @param [options.tooltipOptions.noTitle] - 不显示标题
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.attr] - 图层级对所有矢量数据的 属性信息做统一配置，常用于动态属性
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid] - 图层父级的id，一般图层管理中使用
  * @param [options.name] - 图层名称
@@ -23432,6 +23454,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
             showNull?: string;
         };
         contextmenuItems?: any;
+        attr?: any | BaseGraphic.AjaxAttr;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -23538,6 +23561,10 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * 卷帘对比时，设置所在的屏幕，NONE时不分屏[仅对Model小模型矢量数据有效]
      */
     splitDirection: Cesium.SplitDirection;
+    /**
+     * 属性信息 【用于对矢量数据统一绑定动态属性】
+     */
+    attr: any | BaseGraphic.AjaxAttr;
     /**
      * 手动刷新聚合
      * @returns 无
@@ -36877,6 +36904,10 @@ declare class Task extends BaseThing {
      */
     removeItem(id: number | string): boolean;
     /**
+     * 释放所有子任务
+     */
+    disableAll(): void;
+    /**
      * 根据配置数组获取实例化后的对象数组
      * @param list - 配置数组
      * @param [that] - 控制器对象
@@ -40891,6 +40922,13 @@ declare namespace Util {
      * @returns 无
      */
     function webglerror(): void;
+    /**
+     * 处理URL地址中参数，解析传入的 URL 和参数对象，然后将新的参数合并到 URL 中。如果 URL 中已经存在某些参数，则用新的参数覆盖它们。
+     * @param url - 原始URL，其中可能已有参数
+     * @param params - 需要新增的参数，如果url中已有进行覆盖
+     * @returns 新的带参数的URL地址
+     */
+    function buildUrl(url: string, params: any): string;
     /**
      * 获取当前页面的url中的?传入参数对象集合
      * @returns 参数名与参数值的键值对
