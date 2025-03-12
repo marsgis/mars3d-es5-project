@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.9.2
- * 编译日期：2025-03-09 12:41
+ * 编译日期：2025-03-12 14:56
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -17,7 +17,7 @@ declare const name: string
 
 declare const proj4: any
 declare const provider: any
-
+declare const turf: any
 
 /**
  * 国内偏移坐标系 枚举
@@ -4714,7 +4714,7 @@ declare namespace BaseGraphic {
      */
     type TimePosition = {
         type: string;
-        list: any[][] | LngLatPoint[];
+        list: any | LngLatPoint[];
         timeField?: string;
         speed?: any[][] | number;
         startTime?: string | Date | Cesium.JulianDate;
@@ -4768,7 +4768,7 @@ declare namespace BaseGraphic {
      */
     type TimePolyPositions = {
         type: string;
-        list: BaseGraphic.TimePolyPositionsItem[];
+        list: BaseGraphic.TimePolyPositionsItem[] | any;
         timeField?: string;
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
@@ -5455,9 +5455,15 @@ declare class BaseGraphic extends BaseClass {
     readonly hasAjaxAttr: boolean;
     /**
      * 获取后端动态属性，当存在attr是动态属性配置时可用【attr.type === "ajax"】
+     * @param [funOptions] - 参数
+     * @param [funOptions.merge] - 是否合并已有静态属性，优先级高于attr.merge
+     * @param [funOptions.formatData] - 可以对加载的数据进行格式化或转换操作
      * @returns 实时获取当前的动态属性值
      */
-    getAjaxAttr(): any;
+    getAjaxAttr(funOptions?: {
+        merge?: boolean;
+        formatData?: (...params: any[]) => any;
+    }): any;
     /**
      * 当前类的构造参数
      */
@@ -19768,6 +19774,10 @@ declare namespace Pit {
      * @property imageBottom - 井底面贴图URL
      * @property diffHeight - 井下深度（单位：米）
      * @property [splitNum = 50] - 井墙面每两点之间插值个数(概略值，有经纬网网格来插值)
+     * @property [repeat] - 四周墙横纵方向重复次数
+     * @property [repeatX = 50] - 四周墙横方向重复次数，同repeat
+     * @property [repeatY = 1] - 四周墙纵方向重复次数，同repeat
+     * @property [repeatBottom = new Cesium.Cartesian2(1.0, 1.0)] - 底部横纵方向重复次数
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -19775,6 +19785,10 @@ declare namespace Pit {
         imageBottom: string;
         diffHeight: number;
         splitNum?: number;
+        repeat?: Cesium.Cartesian2;
+        repeatX?: number;
+        repeatY?: number;
+        repeatBottom?: Cesium.Cartesian2;
         label?: LabelEntity.StyleOptions | any;
     };
 }
@@ -37384,6 +37398,10 @@ declare type getSlope_endItem = (event: {
  * @param [options.imageBottom] - 当显示开挖区域的井时，井底面贴图URL
  * @param [options.diffHeight] - 当显示开挖区域的井时，设置所有区域的挖掘深度（单位：米）
  * @param [options.splitNum = 30] - 当显示开挖区域的井时，井墙面每两点之间插值个数(概略值，有经纬网网格来插值)
+ * @param [options.repeat] - 当显示开挖区域的井时，井四周墙横纵方向重复次数
+ * @param [options.repeatX = 50] - 当显示开挖区域的井时，井四周墙横方向重复次数，同repeat
+ * @param [options.repeatY = 1] - 当显示开挖区域的井时，井四周墙纵方向重复次数，同repeat
+ * @param [options.repeatBottom = new Cesium.Cartesian2(1.0, 1.0)] - 当显示开挖区域的井时，井底部横纵方向重复次数
  * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
  * @param [options.id = createGuid()] - 对象的id标识
@@ -37398,6 +37416,10 @@ declare class TerrainClip extends TerrainEditBase {
         imageBottom?: string;
         diffHeight?: number;
         splitNum?: number;
+        repeat?: Cesium.Cartesian2;
+        repeatX?: number;
+        repeatY?: number;
+        repeatBottom?: Cesium.Cartesian2;
         exact?: boolean;
         czm?: boolean;
         id?: string | number;

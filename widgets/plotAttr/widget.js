@@ -56,34 +56,35 @@
     }
     get defaultAttrList() {
       return [
-        { name: "id", label: "主键", type: "label", defval: "" },
-        { name: "name", label: "名称", type: "text", defval: "" },
-        { name: "remark", label: "备注", type: "textarea", defval: "" }
+        { name: "my_name", label: "业务名称", type: "text", defval: "", placeholder: "请输入名称" },
+        { name: "my_remark", label: "业务备注", type: "textarea", defval: "", placeholder: "请输入备注" }
       ]
     }
-    getAttrList() {
-      return this.config.attrList || this.defaultAttrList
-    }
-    getLayerName() {
-      let graphic = this.config.graphic
-      return graphic?._layer?.name || ""
-    }
-    startEditing(graphic, lonlats, appendHtml) {
+    startEditing(graphic, appendHtml) {
       if (graphic) {
         this.config.graphic = graphic
       }
-      if (lonlats) {
-        this.config.lonlats = lonlats
-      }
-
       if (this.viewWindow == null) {
         return
       }
-
       graphic = this.config.graphic
-      lonlats = this.config.lonlats
+
+      if (!graphic) {
+        return
+      }
+      const getPositionType = (options) => {
+        let val = "static"
+        if (options.position?.type) {
+          val = options.position.type
+        } else if (options.positions?.type) {
+          val = options.positions.type
+        }
+        return val
+      }
 
       const graphicOptions = graphic.toJSON()
+      graphicOptions.isPoint = graphic.isPoint // 判断是否是点对象
+      graphicOptions.positionType = getPositionType(graphicOptions)
 
       const aloneTypeStyle = {
         fixedRoute: ["label", "billboard", "point", "model", "circle", "coneTrack", "path", "polyline", "wall"],
@@ -91,39 +92,39 @@
         satellite: [["tle1", "tle2"], "model", "label", "billboard", "point", "path"]
       }
 
-      // 原始样式
-      if (appendHtml && graphicOptions.style) {
-        appendHtml({ ...graphicOptions }, false)
-      }
-
-      this.viewWindow.plotEdit.startEditing({ ...graphicOptions, style: graphicOptions.style ?? {} }, lonlats)
-
       // 多参数样式
-      let isParentStyle = false
       const paraArr = aloneTypeStyle[graphicOptions.type]
 
       if (paraArr && paraArr.length) {
+        const parentStyle = {}
+
+        const parentItem = paraArr.find((item) => typeof item !== "string" && item.length)
+        if (parentItem) {
+          parentItem.forEach((item) => {
+            parentStyle[item] = graphicOptions[item]
+          })
+        }
+
+        // 初始化基础信息
+        if ($.isFunction(appendHtml)) {
+          appendHtml({ ...graphicOptions }, false)
+        }
+
+        setTimeout(() => {
+          this.viewWindow.plotEdit.startEditing({ ...graphicOptions, style: { ...(graphicOptions.style ?? {}), ...parentStyle } })
+        }, 500)
+
         paraArr.forEach((typeItem) => {
           const typeData = graphicOptions[typeItem]
 
-          if (typeof typeItem !== "string" && !isParentStyle && typeItem.length) {
-            isParentStyle = true
-
-            if (appendHtml) {
-              appendHtml({ ...typeData, type: typeItem }, false)
-            }
-
-            setTimeout(() => {
-              this.viewWindow.plotEdit.startEditing(graphicOptions)
-            }, 500)
-          } else {
-            if (appendHtml) {
+          if (typeof typeItem === "string") {
+            if ($.isFunction(appendHtml)) {
               appendHtml({ ...typeData, type: typeItem }, true)
             }
 
             setTimeout(() => {
               this.viewWindow.plotEdit.startEditing({
-                style: { ...(typeData ?? {}), show: !!typeData },
+                style: { show: !!typeData, ...(typeData ?? {}) },
                 type: typeItem,
                 parentType: graphicOptions.type
               })
@@ -131,10 +132,10 @@
           }
         })
       } else {
-        if (appendHtml) {
+        if ($.isFunction(appendHtml)) {
           appendHtml({ ...graphicOptions }, false)
         }
-        this.viewWindow.plotEdit.startEditing(graphicOptions, lonlats)
+        this.viewWindow.plotEdit.startEditing({ ...graphicOptions, style: graphicOptions.style ?? {} })
       }
     }
 
@@ -142,14 +143,18 @@
     updateStyle2map(style) {
       console.log("更新style样式", style)
       let graphic = this.config.graphic
-      graphic.style = style
+      graphic.setStyle({ ...style })
     }
     //更新坐标
     updatePoints2map(points) {
       console.log("更新坐标", points)
-
       let graphic = this.config.graphic
-      graphic.positions = points
+
+      if (graphic.isPoint) {
+        graphic.setOptions({ position: points[0] })
+      } else {
+        graphic.setOptions({ positions: points })
+      }
     }
     //更新属性
     updateAttr2map(attr) {

@@ -193,7 +193,9 @@
         success: (result) => {
           // console.log("地址", result);
           this.address = result
-          this.queryAddressDOM.innerHTML = "地址：" + result.address
+          if (result?.address) {
+            this.queryAddressDOM.innerHTML = "地址：" + result.address
+          }
         }
       })
     }
@@ -280,23 +282,25 @@
       // this.query_location = this.map.getCenter()
       // this.query_radius = this.map.camera.positionCartographic.height //单位：米
 
-      this.queryTextByServer()
+      this.queryTextByServer().then((result) => {
+        if (!this.isActivate) {
+          return
+        }
+        const counts = result.allcount
+        this.allpage = Math.ceil(counts / this.pageSize)
+
+        this.showPOIPage(result.list, counts)
+      })
     }
     queryTextByServer() {
       //查询获取数据
-      this._queryPoi.queryText({
+      return this._queryPoi.queryText({
         text: this.queryText,
         count: this.pageSize,
         page: this.thispage - 1,
-        city: this.query_city,
+        city: this.query_city
         // location: this.query_location,
         // radius: this.query_radius,
-        success: (result) => {
-          if (!this.isActivate) {
-            return
-          }
-          this.showPOIPage(result.list, result.allcount)
-        }
       })
     }
 
@@ -307,7 +311,6 @@
       if (counts < data.length) {
         counts = data.length
       }
-      this.allpage = Math.ceil(counts / this.pageSize)
 
       let inhtml = ""
       if (counts == 0) {
@@ -320,11 +323,11 @@
           item.index = startIdx + (index + 1)
 
           let _id = index
-
+          const url = "//www.amap.com/detail/"
           inhtml += `<div class="querybar-site" onclick="queryPoiBarWidget.showDetail('${_id}')">
             <div class="querybar-sitejj">
               <h3>${item.index}、${item.name}
-              <a id="btnShowDetail" href="${item.detailUrl}" target="_blank" class="querybar-more">更多&gt;</a> </h3>
+              <a id="btnShowDetail" href="${url + item.id}"  rel="noreferrer" target="_blank" class="querybar-more" >更多&gt;</a> </h3>
               <p> ${item.address || ""}</p>
             </div>
           </div> `
@@ -358,7 +361,14 @@
     }
     showFirstPage() {
       this.thispage = 1
-      this.queryTextByServer()
+
+      this.queryTextByServer().then((result) => {
+        if (!this.isActivate) {
+          return
+        }
+
+        this.showPOIPage(result.list, result.allcount)
+      })
     }
     showNextPage() {
       this.thispage = this.thispage + 1
@@ -367,7 +377,14 @@
         toastr.warning("当前已是最后一页了")
         return
       }
-      this.queryTextByServer()
+      this.queryTextByServer().then((result) => {
+        if (!this.isActivate) {
+          return
+        }
+        console.log("查询结果", result)
+
+        this.showPOIPage(result.list, result.allcount)
+      })
     }
 
     showPretPage() {
@@ -377,7 +394,15 @@
         toastr.warning("当前已是第一页了")
         return
       }
-      this.queryTextByServer()
+
+      this.queryTextByServer().then((result) => {
+        if (!this.isActivate) {
+          return
+        }
+        console.log("查询结果", result)
+
+        this.showPOIPage(result.list, result.allcount)
+      })
     }
     //点击单个结果,显示详细
     showDetail(id) {

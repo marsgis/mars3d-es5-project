@@ -45,7 +45,62 @@
     <div class="clear"></div>
 
     <div class="mp_tab_card">
-      <ul class="mp_tab_con">
+      <ul class="mp_tab_attr">
+        <li class="cur">
+          <div class="mp_tree">
+            <div class="bdt">
+              <div class="open"><i class="tree_icon">-</i>属性信息</div>
+              <div class="mp_attr">
+                <table id="talbe_attr">
+                </table>
+              </div>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+      <ul class="mp_tab_point">
+        <li>
+          <div id="position_static" class="mp_tree">
+            <div id="view_updateheight">
+              <div class="open"><i class="tree_icon">-</i>批量修改高程（辅助功能）</div>
+              <div class="mp_attr" style="margin-top: 10px">
+                <table>
+                  <tr>
+                    <td class="nametd">在原值上增加</td>
+                    <td><input id="plot_latlngs_addheight" type="number" class="mp_input" value="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="nametd">全部修改为</td>
+                    <td><input id="plot_latlngs_allheight" type="number" class="mp_input" value="" /></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            <div>
+              <div class="open"><i class="tree_icon">-</i>坐标列表</div>
+              <div id="view_latlngs" class="local">
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <div id="position_time" class="position_notsupport" style="display: none;">
+          <p>当前项目不支持该类型的坐标展示修改;</p>
+          <p>
+            <span class="mars-ordernum"></span>
+            可购买<a class="hyperlink" href="https://mall.marsgis.cn/#/product/mars3d-vue-project">该项目</a>后自行修改
+          </p>
+          <p>
+            <span class="mars-ordernum"></span>
+            可前往<a class="hyperlink" href="http://mars3d.cn/studio.html">Mars3D场景发布低代码平台</a>体验
+          </p>
+        </div>
+      </ul>
+
+      <ul class="mp_tab_style">
         <li>
           <div class="mp_tree">
             <div id="attr_style_view">
@@ -74,7 +129,9 @@
         </li>
       </ul>
       <ul class="mp_tab_tit">
-        <li id="tab_attr">样式</li>
+        <li id="tab_attr" class="cur">属性</li>
+        <li id="tab_latlng">坐标</li>
+        <li id="tab_style">样式</li>
         <li id="tab_baseinfo">基础</li>
       </ul>
     </div>

@@ -35,8 +35,8 @@ const materialConfig = {
       step: 1,
       defval: 1,
       max: 1000000, // 数据过大会导致流动线看不见
-      show(style, graphicType) {
-        return !style.axisY
+      show({ style, graphicType }) {
+        return !style.materialOptions?.axisY
       }
     },
     {
@@ -45,8 +45,8 @@ const materialConfig = {
       type: "number",
       step: 1,
       defval: 1,
-      show(style, graphicType) {
-        return style.axisY
+      show({ style, graphicType }) {
+        return style.materialOptions?.axisY
       }
     },
 
@@ -111,8 +111,8 @@ const materialConfig = {
       max: 1,
       step: 0.1,
       defval: 1,
-      show(style, graphicType) {
-        return style.transparent === true
+      show({ style, graphicType }) {
+        return style.materialOptions?.transparent
       }
     },
     { name: "repeat_x", label: "X重复次数", type: "number", step: 1, defval: 1 },
@@ -167,8 +167,8 @@ const materialConfig = {
       label: "描边颜色",
       type: "color",
       defval: "#ffffff",
-      show(style, graphicType) {
-        return style.stroke
+      show({ style, graphicType }) {
+        return style.materialOptions?.stroke
       }
     },
     {
@@ -179,8 +179,8 @@ const materialConfig = {
       max: 5,
       step: 1,
       defval: 1,
-      show(style, graphicType) {
-        return style.stroke
+      show({ style, graphicType }) {
+        return style.materialOptions?.stroke
       }
     },
 
@@ -195,8 +195,8 @@ const materialConfig = {
       label: "背景颜色",
       type: "color",
       defval: "#000000",
-      show(style, graphicType) {
-        return style.background
+      show({ style, graphicType }) {
+        return style.materialOptions?.background
       }
     },
     {
@@ -205,8 +205,8 @@ const materialConfig = {
       type: "number",
       step: 1,
       defval: 5,
-      show(style, graphicType) {
-        return style.background
+      show({ style, graphicType }) {
+        return style.materialOptions?.background
       }
     }
   ],

@@ -201,7 +201,9 @@ function treeOverlays_onCheck(e, treeId, chktreeNode) {
     }
 
     //处理图层显示隐藏
-    thisWidget.updateLayerShow(layer, treeNode.checked)
+    if (layer.type !== "group") {
+      thisWidget.updateLayerShow(layer, treeNode.checked)
+    }
   }
 
   let layerThis = thisWidget.getLayerById(chktreeNode.id)
