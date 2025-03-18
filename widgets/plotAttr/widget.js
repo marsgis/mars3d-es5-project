@@ -147,10 +147,13 @@
     }
     //更新坐标
     updatePoints2map(points) {
-      console.log("更新坐标", points)
       let graphic = this.config.graphic
+      console.log("更新坐标", points, graphic)
 
-      if (graphic.isPoint) {
+      if (graphic.options?.position?.type === "time") {
+        const position = graphic.options.position
+        graphic.setOptions({ position: { ...position, list: points } })
+      } else if (graphic.isPoint) {
         graphic.setOptions({ position: points[0] })
       } else {
         graphic.setOptions({ positions: points })

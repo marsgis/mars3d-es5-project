@@ -122,12 +122,14 @@ var plotEdit = {
 
     let arrFun = []
     //==============坐标==================
-    let lonlats = attr.isPoint ? [attr.position] : attr.positions
-    if (attr.positionType !== "static") {
-      $("#position_static").hide()
-      $("#position_time").show()
-      lonlats = []
-    } else if (lonlats?.length) {
+    let lonlats = []
+    if (attr.positionType === "static") {
+      lonlats = attr.isPoint ? [attr.position] : attr.positions
+    } else if (attr.positionType === "time" && attr.type === "fixedRoute") {
+      lonlats = attr.position?.list ?? []
+    }
+
+    if (lonlats?.length) {
       this._hasHeight = true
 
       if (attr.style.clampToGround) {
@@ -887,7 +889,7 @@ var plotEdit = {
   updateAttr: function (parname, attrName, attrVal, edit) {
     attrName = attrName.split("-")[0]
 
-    // console.log("parname, attrName, attrVal, edit", parname, attrName, attrVal, edit)
+    console.log("parname, attrName, attrVal, edit", parname, attrName, attrVal, edit)
 
     switch (parname) {
       default:

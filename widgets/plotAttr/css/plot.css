@@ -710,34 +710,3 @@ textarea {
 .timepane {
   height: 247px;
 }
-
-/* 时序坐标 */
-.position_notsupport {
-  margin-top: 25px;
-  height: 100%;
-  line-height: 40px;
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  color: #9aa5ae;
-
-}
-
-.position_notsupport .hyperlink {
-  color: #9aa5ae;
-  text-decoration: underline;
-  margin: 0 5px;
-}
-
-.position_notsupport .mars-ordernum {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: #173147;
-  border: 2px solid #0dd1f5;
-  border-radius: 50%;
-  margin-right: 7px;
-}

@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.2
- * 编译日期：2025-03-12 14:56
+ * 版本信息：v3.9.3
+ * 编译日期：2025-03-18 22:06
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -159,12 +159,14 @@ declare enum EffectType {
     brightness,
     depthOfField,
     fog,
+    highFog,
     mosaic,
     nightVision,
     outline,
     rain,
     snow,
     snowCover,
+    lightning,
     colorCorrection
 }
 
@@ -1431,7 +1433,7 @@ declare enum LayerType {
  *     width: 5,
  *     material: mars3d.MaterialUtil.createMaterialProperty(mars3d.MaterialType.LineFlow, {
  *       color: '#00ff00',
- *       image: '//data.mars3d.cn/img/textures/line-pulse.png',
+ *       image: 'https://data.mars3d.cn/img/textures/line-pulse.png',
  *       speed: 5,
  *     }),
  *   },
@@ -1448,7 +1450,7 @@ declare enum LayerType {
  *     width: 5,
  *     material: mars3d.MaterialUtil.createMaterial(mars3d.MaterialType.LineFlow, {
  *       color: '#1a9850',
- *       image: '//data.mars3d.cn/img/textures/line-arrow.png',
+ *       image: 'https://data.mars3d.cn/img/textures/line-arrow.png',
  *       speed: 10,
  *     }),
  *   },
@@ -4194,13 +4196,13 @@ declare class BaseEffect extends BaseThing {
 /**
  * 黑白效果
  * @param [options] - 参数对象，包括以下：
- * @param [options.enabled = true] - 对象的启用状态
  * @param [options.gradations = 4.0] - 渐变
+ * @param [options.enabled = true] - 对象的启用状态
  */
-declare class BlackAndWhiteEffect extends BaseEffect {
+declare class BlackAndWhite extends BaseEffect {
     constructor(options?: {
-        enabled?: boolean;
         gradations?: number;
+        enabled?: boolean;
     });
     /**
      * 渐变
@@ -4211,21 +4213,21 @@ declare class BlackAndWhiteEffect extends BaseEffect {
 /**
  * 泛光效果, 使明亮的区域更亮，黑暗的区域更暗。
  * @param [options] - 参数对象，包括以下：
- * @param [options.enabled = true] - 对象的启用状态
  * @param [options.contrast = 128] - 对比度,取值范围[-255.0,255.0]
  * @param [options.brightness = -0.3] - 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中。
  * @param [options.delta = 1.0] - 增量权值
  * @param [options.sigma = 3.78] - 滤波权值，delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
  * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
+ * @param [options.enabled = true] - 对象的启用状态
  */
-declare class BloomEffect extends BaseEffect {
+declare class Bloom extends BaseEffect {
     constructor(options?: {
-        enabled?: boolean;
         contrast?: number;
         brightness?: number;
         delta?: number;
         sigma?: number;
         stepSize?: number;
+        enabled?: boolean;
     });
     /**
      * 对比度,取值范围[-255.0,255.0]
@@ -4266,7 +4268,7 @@ declare class BloomEffect extends BaseEffect {
  * @param [options.objectsToExclude] - 排除不拾取的对象,支持TilesetLayer或Graphic对象
  * @param [options.enabled = true] - 对象的启用状态
  */
-declare class BloomTargetEffect extends BaseEffect {
+declare class BloomTarget extends BaseEffect {
     constructor(options?: {
         eventType?: EventType | boolean;
         color?: Cesium.Color;
@@ -4335,13 +4337,13 @@ declare class BloomTargetEffect extends BaseEffect {
 /**
  * 高亮特效
  * @param [options] - 参数对象，包括以下：
- * @param [options.enabled = true] - 对象的启用状态
  * @param [options.brightness = 2.0] - 亮度值
+ * @param [options.enabled = true] - 对象的启用状态
  */
-declare class BrightnessEffect extends BaseEffect {
+declare class Brightness extends BaseEffect {
     constructor(options?: {
-        enabled?: boolean;
         brightness?: number;
+        enabled?: boolean;
     });
     /**
      * 亮度, 将输入纹理的RGB值转换为色相、饱和度和亮度(HSB)，然后将该值添加到亮度中
@@ -4358,7 +4360,7 @@ declare class BrightnessEffect extends BaseEffect {
  * @param [options.hue = 0.0] - 色调
  * @param [options.saturation = 1.0] - 饱和度
  */
-declare class ColorCorrectionEffect extends BaseEffect {
+declare class ColorCorrection extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         brightness?: number;
@@ -4393,7 +4395,7 @@ declare class ColorCorrectionEffect extends BaseEffect {
  * @param [options.sigma = 3.78] - delta和sigma用于计算高斯滤波器的权值。方程是 <code>exp((-0.5 * delta * delta) / (sigma * sigma))</code>。
  * @param [options.stepSize = 5.0] - 步长,是下一个texel的距离
  */
-declare class DepthOfFieldEffect extends BaseEffect {
+declare class DepthOfField extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         focalDistance?: number;
@@ -4431,7 +4433,7 @@ declare class DepthOfFieldEffect extends BaseEffect {
  * @param [options.color = Cesium.Color.WHITE] - 雾颜色
  * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示雾场景效果
  */
-declare class FogEffect extends BaseEffect {
+declare class Fog extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         fogByDistance?: Cesium.Cartesian4;
@@ -4457,11 +4459,69 @@ declare class FogEffect extends BaseEffect {
 }
 
 /**
+ * 高度雾 效果 (需要开启深度检测)
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.height = 300] - 雾顶部高度
+ * @param [options.density = 0.6] - 雾浓度 0-1
+ * @param [options.color = Cesium.Color.WHITE] - 雾颜色
+ * @param [options.enabled = true] - 对象的启用状态
+ */
+declare class HighFog extends BaseEffect {
+    constructor(options?: {
+        height?: number;
+        density?: number;
+        color?: Cesium.Color;
+        enabled?: boolean;
+    });
+    /**
+     * 雾颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 雾顶部高度
+     */
+    height: number;
+    /**
+     * 雾浓度
+     */
+    density: number;
+}
+
+/**
+ * 闪电 效果
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.opacity = 0.4] - 混合系数 0-1
+ * @param [options.interval = 0.8] - 闪电间隔 0-1
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示闪电
+ * @param [options.enabled = true] - 对象的启用状态
+ */
+declare class Lightning extends BaseEffect {
+    constructor(options?: {
+        opacity?: number;
+        interval?: number;
+        maxHeight?: number;
+        enabled?: boolean;
+    });
+    /**
+     * 混合系数0-1
+     */
+    opacity: number;
+    /**
+     * 闪电间隔 0-1
+     */
+    interval: number;
+    /**
+     * 最高限定高度，超出该高度不显示积雪效果
+     */
+    maxHeight: number;
+}
+
+/**
  * 马赛克效果
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  */
-declare class MosaicEffect extends BaseEffect {
+declare class Mosaic extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
     });
@@ -4472,13 +4532,13 @@ declare class MosaicEffect extends BaseEffect {
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
  */
-declare class NightVisionEffect extends BaseEffect {
+declare class NightVision extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
     });
 }
 
-declare namespace OutlineEffect {
+declare namespace Outline {
     /**
      * 对象轮廓描边效果 支持的参数信息
      * @property [width = 6] - 线宽，单位：像素px
@@ -4511,7 +4571,7 @@ declare namespace OutlineEffect {
  * @param [options.closeOnClick = true] - 是否在单击Map地图时，自动关闭当前弹窗
  * @param [options.enabled = true] - 对象的启用状态
  */
-declare class OutlineEffect extends BaseEffect {
+declare class Outline extends BaseEffect {
     constructor(options?: {
         eventType?: EventType | boolean;
         closeOnClick?: boolean;
@@ -4568,7 +4628,7 @@ declare class OutlineEffect extends BaseEffect {
  * @param [options.direction = -30] - 方向（度），0度垂直向下
  * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示雨天气效果, 传入-1时不限制
  */
-declare class RainEffect extends BaseEffect {
+declare class Rain extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         size?: number;
@@ -4595,31 +4655,6 @@ declare class RainEffect extends BaseEffect {
 }
 
 /**
- * 地面积雪 效果
- * @param [options] - 参数对象，包括以下：
- * @param [options.enabled = true] - 对象的启用状态
- * @param [options.alpha = 1.0] - 覆盖强度  0-1
- * @param [options.layer] - 如果传值3dtiles图层，只对该模型生效
- * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果, 传入-1时不限制
- */
-declare class SnowCoverEffect extends BaseEffect {
-    constructor(options?: {
-        enabled?: boolean;
-        alpha?: number;
-        layer?: TilesetLayer;
-        maxHeight?: number;
-    });
-    /**
-     * 覆盖强度  0-1
-     */
-    alpha: number;
-    /**
-     * 最高限定高度，超出该高度不显示积雪效果
-     */
-    maxHeight: number;
-}
-
-/**
  * 雪天气 效果
  * @param [options] - 参数对象，包括以下：
  * @param [options.enabled = true] - 对象的启用状态
@@ -4627,7 +4662,7 @@ declare class SnowCoverEffect extends BaseEffect {
  * @param [options.scale = 10.0] - 粒子大小
  * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示雪天气效果, 传入-1时不限制
  */
-declare class SnowEffect extends BaseEffect {
+declare class Snow extends BaseEffect {
     constructor(options?: {
         enabled?: boolean;
         speed?: number;
@@ -4646,6 +4681,31 @@ declare class SnowEffect extends BaseEffect {
      * 粒子大小
      */
     scale: number;
+}
+
+/**
+ * 地面积雪 效果
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.alpha = 1.0] - 覆盖强度  0-1
+ * @param [options.layer] - 如果传值3dtiles图层，只对该模型生效
+ * @param [options.maxHeight = 9000] - 最大高度，限定超出该高度不显示积雪效果, 传入-1时不限制
+ */
+declare class SnowCover extends BaseEffect {
+    constructor(options?: {
+        enabled?: boolean;
+        alpha?: number;
+        layer?: TilesetLayer;
+        maxHeight?: number;
+    });
+    /**
+     * 覆盖强度  0-1
+     */
+    alpha: number;
+    /**
+     * 最高限定高度，超出该高度不显示积雪效果
+     */
+    maxHeight: number;
 }
 
 /**
@@ -16655,7 +16715,7 @@ declare class VolumeMeasure extends AreaMeasure {
  * @param [options.modelMatrix] - 将图元(所有几何实例)从模型转换为世界坐标的4x4变换矩阵,可以替代position。
  * @param options.style - 矢量数据的 样式信息，具体见各类数据的说明
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
- * @param [options.frameRate = 10] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
@@ -19570,7 +19630,7 @@ declare namespace ModelPrimitive {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.colorCorrection] - 颜色校正 对象, 可传入{@link TilesetColorCorrection}构造参数
- * @param [options.frameRate = 10] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
  * @param [options.attributes] - [cesium原生]每个实例的属性。
  * @param [options.fixedFrameTransform = Cesium.Transforms.eastNorthUpToFixedFrame] - 参考系
@@ -20062,7 +20122,7 @@ declare namespace PointPrimitive {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
- * @param [options.frameRate = 10] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在第1个开始时间之前，NONE时不显示，HOLD时显示开始时间对应坐标位置
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在最后1个结束时间之后，NONE时不显示，HOLD时显示结束时间对应坐标位置
  * @param [options.clampToTileset] - 当使用addTimePosition设置为动画轨迹位置时，是否进行贴模型。
@@ -22673,7 +22733,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -22969,7 +23029,7 @@ declare class BusineDataLayer extends GraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -23215,7 +23275,7 @@ declare class GeoJsonLayer extends GraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -23443,7 +23503,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             includeType?: string | GraphicType;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
@@ -24392,7 +24452,7 @@ declare class LodGraphicLayer extends GraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -24577,7 +24637,7 @@ declare class ModelLayer extends GraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -24643,7 +24703,7 @@ declare class ModelLayer extends GraphicLayer {
  * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.highlight.all] - 是否整体高亮， true:模型整体全部高亮，false:单个构件高亮
  * @param [options.highlight.color = '#FFFF00'] - 颜色，支持rgba字符串
- * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link OutlineEffect}方式高亮。
+ * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link Outline}方式高亮。
  * @param [options.highlight.filter] - 可以设置筛选排除一些构件, 排除的构件在filter方法内返回false
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
@@ -24822,7 +24882,7 @@ declare class PoiLayer extends LodGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -24938,7 +24998,7 @@ declare namespace TilesetLayer {
  * @param [options.highlight.type] - 鼠标移入高亮 或 单击高亮(type:'click')
  * @param [options.highlight.enabled = true] - 是否启用
  * @param [options.highlight.color = '#FFFF00'] - 颜色，支持rgba字符串
- * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link OutlineEffect}方式高亮。
+ * @param [options.highlight.outlineEffect = false] - 默认为修改矢量对象本身的style高亮，true时采用{@link Outline}方式高亮。
  * @param [options.highlight.filter] - 可以设置筛选排除一些构件, 排除的构件在filter方法内返回false
  * @param [options.highlight.all] - 是否按整体高亮， true:模型整体全部高亮，false:单个构件高亮
  * @param [options.highlight.uniqueKey] - 按指定字段进行对应相关构件的整体高亮，对outlineEffect时无效
@@ -25580,7 +25640,7 @@ declare class WfsLayer extends LodGraphicLayer {
             enabled?: boolean;
             pixelRange?: number;
             minimumClusterSize?: number;
-            includePoly?: number;
+            includePoly?: boolean;
             image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
             style?: BillboardEntity.StyleOptions | any | any;
         };
@@ -27917,6 +27977,7 @@ declare class OsmLayer extends BaseTileLayer {
  * @param [options.tileWidth = 256] - 图像图块的像素宽度。
  * @param [options.tileHeight = 256] - 图像图块的像素高度。
  * @param [options.customTags] - 允许替换网址模板中的自定义关键字。该对象必须具有字符串作为键，并且必须具有值。
+ * @param [options.clampToTileset] - 是否进行贴模型，tip:目前不支持亮度等参数，不支持EPSG:3857坐标系,会贴在模型和矢量对象最上面。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid] - 图层父级的id，一般图层管理中使用
  * @param [options.name] - 图层名称
@@ -27974,6 +28035,7 @@ declare class TdtLayer extends BaseTileLayer {
         tileWidth?: number;
         tileHeight?: number;
         customTags?: any;
+        clampToTileset?: boolean;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -29066,7 +29128,7 @@ declare namespace Map {
      * @property [sceneMode = Cesium.SceneMode.SCENE3D] - 初始场景模式。可以设置进入场景后初始是2D、2.5D、3D 模式。
      * @property [sceneModeMorphDuration = 0] - 切换sceneMode的动画时长，单位：秒
      * @property [scene3DOnly = false] - 为 true 时，每个几何实例将仅以3D渲染以节省GPU内存。
-     * @property [mapProjection = mars3d.CRS.EPSG4326] - 在二维模式下时，地图的呈现坐标系，默认为EPSG:4326坐标系，如需墨卡托坐标系展示，传'EPSG:3857'即可
+     * @property [mapProjection = 'EPSG:3857'] - 在二维模式下时，地图的呈现地理坐标还是墨卡托投影坐标系，可选值：'EPSG:4326'、'EPSG:3857'
      * @property [mapMode2D = Cesium.MapMode2D.INFINITE_SCROLL] - 在二维模式下时，地图是可旋转的还是可以在水平方向无限滚动。
      * @property [shouldAnimate = true] - 是否开启时钟动画
      * @property [shadows = false] - 是否启用日照阴影
@@ -29432,19 +29494,19 @@ declare namespace Map {
     };
     /**
      * 添加到地图的特效 参数
-     * @property [bloom] - 泛光,对应{@link BloomEffect }构造参数
-     * @property [brightness] - 亮度,对应{@link BrightnessEffect }构造参数
-     * @property [rain] - 雨天气,对应{@link RainEffect }构造参数
-     * @property [snow] - 雪天气 ,对应{@link SnowEffect }构造参数
-     * @property [snowCover] - 地面积雪,对应{@link SnowCoverEffect }构造参数
-     * @property [fog] - 雾天气,对应{@link FogEffect }构造参数
-     * @property [depthOfField] - 景深,对应{@link DepthOfFieldEffect }构造参数
-     * @property [mosaic] - 马赛克,对应{@link MosaicEffect }构造参数
-     * @property [nightVision] - 夜视,对应{@link NightVisionEffect }构造参数
-     * @property [blackAndWhite] - 黑白,对应{@link BlackAndWhiteEffect }构造参数
-     * @property [outline] - 对象轮廓描边,对应{@link OutlineEffect }构造参数
-     * @property [bloomTarget] - 对象泛光,对应{@link BloomTargetEffect }构造参数
-     * @property [colorCorrection] - 颜色校正 特效,对应类为：{@link ColorCorrectionEffect }构造参数
+     * @property [bloom] - 泛光,对应{@link Bloom }构造参数
+     * @property [brightness] - 亮度,对应{@link Brightness }构造参数
+     * @property [rain] - 雨天气,对应{@link Rain }构造参数
+     * @property [snow] - 雪天气 ,对应{@link Snow }构造参数
+     * @property [snowCover] - 地面积雪,对应{@link SnowCover }构造参数
+     * @property [fog] - 雾天气,对应{@link Fog }构造参数
+     * @property [depthOfField] - 景深,对应{@link DepthOfField }构造参数
+     * @property [mosaic] - 马赛克,对应{@link Mosaic }构造参数
+     * @property [nightVision] - 夜视,对应{@link NightVision }构造参数
+     * @property [blackAndWhite] - 黑白,对应{@link BlackAndWhite }构造参数
+     * @property [outline] - 对象轮廓描边,对应{@link Outline }构造参数
+     * @property [bloomTarget] - 对象泛光,对应{@link BloomTarget }构造参数
+     * @property [colorCorrection] - 颜色校正 特效,对应类为：{@link ColorCorrection }构造参数
      */
     type effectOptions = {
         bloom?: any;
@@ -38991,7 +39053,7 @@ declare namespace DrawUtil {
      * @example
      * mars3d.DrawUtil.setEditPointStyle(mars3d.EditPointType.Control, {
      *   type: mars3d.GraphicType.billboardP, // 支持设置type指定编辑点类型
-     *   image: "//data.mars3d.cn/img/marker/move.png",
+     *   image: "https://data.mars3d.cn/img/marker/move.png",
      *   horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
      *   verticalOrigin: Cesium.VerticalOrigin.CENTER
      * })
@@ -41115,20 +41177,21 @@ declare namespace control {
  */
 declare namespace effect {
   export { BaseEffect }
-  export { FogEffect }
-  export { RainEffect }
-  export { SnowEffect }
-  export { SnowCoverEffect }
+  export { Fog}
+  export { HighFog }
+  export { Rain }
+  export { Snow }
+  export { SnowCover }
+  export { Brightness }
 
-  export { NightVisionEffect }
-  export { BloomEffect }
-  export { BrightnessEffect }
-  export { BlackAndWhiteEffect }
-  export { MosaicEffect }
-  export { DepthOfFieldEffect }
-  export { OutlineEffect }
-  export { BloomTargetEffect }
-  export { ColorCorrectionEffect }
+  export { NightVision }
+  export { Bloom }
+  export { BlackAndWhite }
+  export { Mosaic }
+  export { DepthOfField }
+  export { Outline }
+  export { BloomTarget }
+  export { ColorCorrection }
 }
 
 
