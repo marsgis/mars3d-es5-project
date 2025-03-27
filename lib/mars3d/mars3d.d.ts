@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.3
- * 编译日期：2025-03-18 22:06
+ * 版本信息：v3.9.4
+ * 编译日期：2025-03-23 21:03
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -37885,6 +37885,7 @@ declare class TilesetBoxClip extends BaseThing {
  * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重（模型面积越大越严重）
  * @param [options.maxCanvasSize = 4096] - 掩膜模式下最大分辨率半径（单位：像素）,值过大时会WebGL报错: INVALID_VALUE: texImage2D: no canvas
  * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
+ * @param [options.brightness = 1.0] - 亮度, czm: false时可以同时设置亮度 （因为与多个TilesetColorCorrection的shader有冲突）
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -37897,6 +37898,7 @@ declare class TilesetClip extends TilesetEditBase {
         precise?: boolean;
         maxCanvasSize?: number;
         czm?: boolean;
+        brightness?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -37905,6 +37907,11 @@ declare class TilesetClip extends TilesetEditBase {
      * 是否外裁剪
      */
     clipOutSide: boolean;
+    /**
+     * 亮度,
+     * czm: false时可以同时设置亮度 （因为与多个TilesetColorCorrection的shader有冲突）
+     */
+    brightness: number;
     /**
      * 清除分析
      * @returns 无
@@ -38134,6 +38141,7 @@ declare namespace TilesetFlood {
  * @param [options.limitMin = false] - 显示效果中是否不显示最低高度以下的部分颜色
  * @param [options.precise = true] - true:精确模式, 直接存储范围,但传入的范围顶点数量多时，就会造成一定程度的卡顿； false: 掩膜模式，栅格化范围,效率与范围顶点数量无关,但放大后锯齿化严重（模型面积越大越严重）
  * @param [options.maxCanvasSize = 4096] - 掩膜模式下最大分辨率半径（单位：像素）
+ * @param [options.brightness = 1.0] - 亮度, czm: false时可以同时设置亮度 （因为与多个TilesetColorCorrection的shader有冲突）
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -38150,6 +38158,7 @@ declare class TilesetFlood extends TilesetEditBase {
         limitMin?: boolean;
         precise?: boolean;
         maxCanvasSize?: number;
+        brightness?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -38170,6 +38179,11 @@ declare class TilesetFlood extends TilesetEditBase {
      * 淹没颜色
      */
     color: Cesium.Color;
+    /**
+     * 亮度,
+     * czm: false时可以同时设置亮度 （因为与多个TilesetColorCorrection的shader有冲突）
+     */
+    brightness: number;
     /**
      * 开始播放淹没动画效果
      * @returns 无
