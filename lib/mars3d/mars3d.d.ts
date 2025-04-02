@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.4
- * 编译日期：2025-03-23 21:03
+ * 版本信息：v3.9.5
+ * 编译日期：2025-03-31 21:15
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -29439,6 +29439,7 @@ declare namespace Map {
      * @property [setPitchRange] - 设置鼠标操作限定的Pitch范围, 同{@link Map#setPitchRange }
      * @property setPitchRange.max - 最大值（角度值）
      * @property [setPitchRange.min = -90] - 最小值（角度值）
+     * @property [setPitchRange.enabled = true] - 开启或开关控制，默认是开启的
      * @property [setCameraViewList] - 定位到多个相机视角位置，按数组顺序播放, 同{@link Map#setCameraViewList }
      * @property setCameraViewList.list - arr 视角参数数组, 内部参数见{@link Map#setCameraViewList }
      * @property [setCameraViewList.maximumHeight] - 飞行高峰时的最大高度。
@@ -29446,14 +29447,17 @@ declare namespace Map {
      * @property [setCameraViewList.flyOverLongitude] - 地球上的两点之间总有两条路。这个选项迫使相机选择战斗方向飞过那个经度。
      * @property [setCameraViewList.flyOverLongitudeWeight] - 仅在通过flyOverLongitude指定的lon上空飞行，只要该方式的时间不超过flyOverLongitudeWeight的短途时间。
      * @property [setCameraViewList.convert = true] - 是否将目的地从世界坐标转换为场景坐标（仅在不使用3D时相关）。
+     * @property [setCameraViewList.enabled = true] - 开启或开关控制，默认是开启的
      * @property [openFlyAnimation] - 执行开场动画，动画播放地球飞行定位到指定区域（1.旋转地球+2.降低高度+3.指定视角）, 同{@link Map#openFlyAnimation }
      * @property [openFlyAnimation.center = getCameraView()] - 飞行到的指定区域视角参数
      * @property [openFlyAnimation.duration1 = 2] - 第一步旋转地球时长，单位：秒
      * @property [openFlyAnimation.duration2 = 2] - 第二步降低高度时长，单位：秒
      * @property [openFlyAnimation.duration3 = 2] - 第三步指定视角飞行时长，单位：秒
+     * @property [openFlyAnimation.enabled = true] - 开启或开关控制，默认是开启的
      * @property [rotateAnimation] - 执行旋转地球动画, 同{@link Map#rotateAnimation }
      * @property [rotateAnimation.duration = 10] - 动画时长（单位：秒）
      * @property [rotateAnimation.center = getCameraView()] - 飞行到的指定区域视角参数
+     * @property [rotateAnimation.enabled = true] - 开启或开关控制，默认是开启的
      */
     type methodOptions = {
         chinaCRS?: ChinaCRS | string;
@@ -29472,6 +29476,7 @@ declare namespace Map {
         setPitchRange?: {
             max: number;
             min?: number;
+            enabled?: boolean;
         };
         setCameraViewList?: {
             list: any;
@@ -29480,16 +29485,19 @@ declare namespace Map {
             flyOverLongitude?: number;
             flyOverLongitudeWeight?: number;
             convert?: boolean;
+            enabled?: boolean;
         };
         openFlyAnimation?: {
             center?: any;
             duration1?: number;
             duration2?: number;
             duration3?: number;
+            enabled?: boolean;
         };
         rotateAnimation?: {
             duration?: number;
             center?: any;
+            enabled?: boolean;
         };
     };
     /**

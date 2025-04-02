@@ -291,7 +291,7 @@
       "name": "单张图片",
       "icon": "./img/thumbnail/basemap/offline.png",
       "type": "image",
-      "url": "./img/map/world/world.jpg"
+      "url": "https://data.mars3d.cn/img/map/world/world.jpg"
     },
     {
       "id": 2023,

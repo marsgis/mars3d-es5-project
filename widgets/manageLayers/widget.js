@@ -106,10 +106,12 @@
 
     //更新图层:显示隐藏状态（勾选后的图层及其子级图层，多个）
     updateLayerShow(layer, show) {
+      const that = this
       if (show && !layer.isAdded) {
         this.map.off(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
-        this.map.addLayer(layer)
-        this.map.on(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
+        this.map.addLayer(layer).then(() => {
+          that.map.on(mars3d.EventType.addLayer, this._onAddLayerHandler, this)
+        })
       }
       layer.show = show
     }
