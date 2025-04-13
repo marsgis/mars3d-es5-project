@@ -677,12 +677,12 @@ const styleConfig = {
         name: "image",
         label: "图标",
         type: "combobox",
-        defval: " ",
+        defval: "",
         data: [
-          { label: "红色扩散点", value: "//data.mars3d.cn/img/marker/point-red.png" },
-          { label: "蓝色环绕", value: "//data.mars3d.cn/img/marker/mark-blue.png" },
-          { label: "蓝色人员", value: "//data.mars3d.cn/img/marker/lace-blue.png" },
-          { label: "黄色禁止", value: "//data.mars3d.cn/img/marker/lace-yellow.png" }
+          { label: "红色扩散点", value: "https://data.mars3d.cn/img/marker/point-red.png" },
+          { label: "蓝色环绕", value: "https://data.mars3d.cn/img/marker/mark-blue.png" },
+          { label: "蓝色人员", value: "https://data.mars3d.cn/img/marker/lace-blue.png" },
+          { label: "黄色禁止", value: "https://data.mars3d.cn/img/marker/lace-yellow.png" }
         ],
         show({ parentType }) {
           return parentType
@@ -1157,11 +1157,11 @@ const styleConfig = {
         type: "combobox",
         defval: "",
         data: [
-          { label: "行人", value: "//data.mars3d.cn/gltf/mars/man/walk.gltf" },
-          { label: "小汽车", value: "//data.mars3d.cn/gltf/mars/qiche.gltf" },
-          { label: "民航飞机", value: "//data.mars3d.cn/gltf/mars/feiji.glb" },
-          { label: "军用飞机", value: "//data.mars3d.cn/gltf/mars/zhanji.glb" },
-          { label: "航天卫星", value: "//data.mars3d.cn/gltf/mars/weixin.gltf" }
+          { label: "行人", value: "https://data.mars3d.cn/gltf/mars/man/walk.gltf" },
+          { label: "小汽车", value: "https://data.mars3d.cn/gltf/mars/qiche.gltf" },
+          { label: "民航飞机", value: "https://data.mars3d.cn/gltf/mars/feiji.glb" },
+          { label: "军用飞机", value: "https://data.mars3d.cn/gltf/mars/zhanji.glb" },
+          { label: "航天卫星", value: "https://data.mars3d.cn/gltf/mars/weixin.gltf" }
         ],
         show({ parentType }) {
           return parentType
@@ -2457,6 +2457,7 @@ const styleConfig = {
           { label: "实线", value: "Color" },
           { label: "虚线", value: "PolylineDash" },
           { label: "虚线箭头", value: "LineDashArrow" },
+          { label: "虚线箭头2", value: "LineFlow-dashArrow", defval: { image: "https://data.mars3d.cn/img/textures/line-dashArrow.png",speed:0, repeat_x: 10 } },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "箭头", value: "PolylineArrow" },
           { label: "光晕", value: "PolylineGlow" },

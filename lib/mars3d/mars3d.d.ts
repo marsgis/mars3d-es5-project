@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.5
- * 编译日期：2025-04-02 18:36
+ * 版本信息：v3.9.6
+ * 编译日期：2025-04-13 21:17
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -1765,7 +1765,8 @@ declare namespace MaterialType {
      * @property [color = new Cesium.Color(1.0, 1.0, 0.0, 1.0)] - 颜色
      * @property [speed = 10] - 速度，值越大越快
      * @property [count = 1] - 圆圈个数
-     * @property [gradient = 0.1] - 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
+     * @property [gradient = 0.1] - count>1时，透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
+     * @property [diffusePower = 1.6] - 漫射系数
      */
     const CircleWave: string;
     /**
@@ -4814,7 +4815,7 @@ declare namespace BaseGraphic {
         altColumn?: string;
     };
     /**
-     * 【时序的动态线面坐标】
+     * 【时序的动态线面坐标】，说明：仅部分Entity对象有效
      * @property type - 固定传入："time", 用于内部区分类型
      * @property list - 时序列表
      * @property [timeField = "time"] - list数组中已有时间值的对应字段名称
@@ -13580,7 +13581,7 @@ declare namespace PolygonEntity {
  */
 declare class PolygonEntity extends BasePolyEntity {
     constructor(options: {
-        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
+        positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[] | BaseGraphic.TimePolyPositions;
         style: PolygonEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
@@ -13693,7 +13694,7 @@ declare namespace PolylineEntity {
      * @property [depthFail] - 是否显示遮挡
      * @property [depthFailColor] - 遮挡处颜色
      * @property [depthFailOpacity] - 遮挡处透明度
-     * @property [snakeAnimationDelay = 1] - 延迟多少秒执行执行流动生长(贪吃蛇)动画
+     * @property [snakeAnimationDelay = 1] - 延迟多少秒执行执行流动生长(贪吃蛇)动画, 延迟期间不显示
      * @property [snakeAnimationDuration] - 执行流动生长(贪吃蛇)动画的时长（内部执行startSnakeAnimation方法）,单位：秒
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
@@ -13789,7 +13790,7 @@ declare namespace PolylineEntity {
  */
 declare class PolylineEntity extends BasePolyEntity {
     constructor(options: {
-        positions: LngLatPoint[] | Cesium.Cartesian3[] | any[] | Cesium.PositionProperty | any;
+        positions: LngLatPoint[] | Cesium.Cartesian3[] | any[] | Cesium.PositionProperty | BaseGraphic.TimePolyPositions | any;
         style: PolylineEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
@@ -13830,14 +13831,16 @@ declare class PolylineEntity extends BasePolyEntity {
     /**
      * 开始播放 流动生长(贪吃蛇)动画
      * @param options - 参数
-     * @param [options.delay = 0.5] - 延迟多少秒后执行(秒)
+     * @param [options.delay = 0] - 延迟多少秒后执行(秒) , 延迟期间不显示
      * @param [options.duration = 8] - 总时长(秒)
-     * @param [options.callback] - 完成后动画
+     * @param [options.autoStop] - 完成后自动调用
+     * @param [options.callback] - 完成后回调stopSnakeAnimation
      * @returns 无
      */
     startSnakeAnimation(options: {
         delay?: number;
         duration?: number;
+        autoStop?: boolean;
         callback?: (...params: any[]) => any;
     }): void;
     /**
@@ -17120,10 +17123,6 @@ declare class BasePrimitive extends BaseGraphic {
      * 当加载primitive数据的内部Cesium容器
      */
     readonly primitiveCollection: Cesium.PrimitiveCollection | Cesium.LabelCollection | Cesium.BillboardCollection | Cesium.PointPrimitiveCollection | Cesium.CloudCollection;
-    /**
-     * 当加载贴地primitive数据的内部Cesium容器
-     */
-    readonly groundPrimitiveCollection: Cesium.PrimitiveCollection;
     /**
      * 矢量数据对应的 Cesium内部对象
      */
@@ -23573,10 +23572,6 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     primitiveCollection: Cesium.PrimitiveCollection;
     /**
-     * 当加载普通 贴地的 primitive类型数据的内部Cesium容器 {@link BasePrimitive}
-     */
-    groundPrimitiveCollection: Cesium.PrimitiveCollection;
-    /**
      * 当加载 DivGraphic 数据的内部DOM容器 {@link DivGraphic}
      */
     readonly container: HTMLDivElement;
@@ -25843,6 +25838,10 @@ declare class GroupLayer extends BaseGraphicLayer {
  * @param [options.requestVertexNormals = true] - 是否应该从服务器请求额外的光照信息，如果可用，以每个顶点法线的形式。
  * @param [options.requestWaterMask = false] - 是否应该向服务器请求每个瓦的水掩膜(如果有的话)。
  * @param [options.requestMetadata = true] - 是否应该从服务器请求每个块元数据(如果可用)。
+ * @param [options.proxy] - 加载资源时要使用的代理服务url。
+ * @param [options.templateValues] - url模版，用于替换Url中的模板值的键/值对
+ * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'}
+ * @param [options.headers] - 一个对象，将发送的其他HTTP标头。比如：headers: { 'X-My-Header': 'valueOfHeader' }
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid] - 图层父级的id，一般图层管理中使用
  * @param [options.name] - 图层名称
@@ -25857,6 +25856,10 @@ declare class TerrainLayer extends BaseLayer {
         requestVertexNormals?: boolean;
         requestWaterMask?: boolean;
         requestMetadata?: boolean;
+        proxy?: string;
+        templateValues?: any;
+        queryParameters?: any;
+        headers?: any;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -30937,7 +30940,8 @@ declare class BaseMaterialProperty {
  * @param [options.speed = 10] - 速度
  * @param [options.duration] - 播放总时长，单位：秒 （会覆盖speed参数）
  * @param [options.count = 1] - 圆圈个数
- * @param [options.gradient = 0.1] - 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
+ * @param [options.gradient = 0.1] - count>1时，透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
+ * @param [options.diffusePower = 1.6] - 漫射系数
  */
 declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
     constructor(options?: {
@@ -30946,6 +30950,7 @@ declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
         duration?: number;
         count?: number;
         gradient?: number;
+        diffusePower?: number;
     });
     /**
      * 颜色
@@ -30967,6 +30972,10 @@ declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
      * 透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
      */
     gradient: number;
+    /**
+     * 漫射系数
+     */
+    diffusePower: number;
     /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
@@ -40014,12 +40023,17 @@ declare namespace PolyUtil {
      */
     function bufferPoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[], width: number, steps?: number): LngLatPoint[];
     /**
-     * 坐标数组整体移动到新的中心点位置
+     * 整体平移 坐标数组
      * @param points - 坐标数组
-     * @param centerNew - 新的中心点坐标
+     * @param options - 参数:
+     * @param [options.center] - [方式1] 移动到新的中心点坐标
+     * @param [options.offset] - [方式2] 按移动的变量
      * @returns 移动后的坐标点数组
      */
-    function movePoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[], centerNew: Cesium.Cartesian3): Cesium.Cartesian3[];
+    function movePoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[], options: {
+        center?: Cesium.Cartesian3;
+        offset?: Cesium.Cartesian3;
+    }): Cesium.Cartesian3[];
     /**
      * 求坐标数组的矩形范围内 按 splitNum网格数插值的 granularity值
      * @param positions - 坐标数组
