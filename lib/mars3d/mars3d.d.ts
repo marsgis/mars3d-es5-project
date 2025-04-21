@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.6
- * 编译日期：2025-04-13 21:17
+ * 版本信息：v3.9.7
+ * 编译日期：2025-04-21 19:53
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -732,6 +732,10 @@ declare enum GraphicType {
  */
 declare enum Icon {
     /**
+     * 粘贴
+     */
+    Paste = "fa fa-paste",
+    /**
      * 删除
      */
     Delete = "fa fa-trash-o",
@@ -1364,6 +1368,7 @@ declare enum Lang {
     "_修改缩放比例" = "\u4FEE\u6539\u7F29\u653E\u6BD4\u4F8B",
     "_无法删除不能少于最小点数" = "\u65E0\u6CD5\u5220\u9664\uFF0C\u70B9\u6570\u91CF\u4E0D\u80FD\u5C11\u4E8E",
     "_删除" = "\u5220\u9664",
+    "_粘贴" = "\u7C98\u8D34",
     "_半径" = "\u534A\u5F84",
     /**
      * ModelEntity 标绘时的tooltip加载中提示
@@ -5251,11 +5256,13 @@ declare class BaseGraphic extends BaseClass {
      * 示例： [113.123456,31.123456,30.1] 或 [ [123.123456,32.654321,198.7], [111.123456,22.654321,50.7] ]
      * @param [options] - 参数
      * @param [options.expType] - 是否导出ajax、time等type类型的坐标
+     * @param [options.toNum] - 坐标是time时序坐标时，time值是否转为数字秒数
      * @param [options.noAlt] - true时不导出高度值
      * @returns 位置坐标(经纬度数组形式)
      */
     getCoord(options?: {
         expType?: boolean;
+        toNum?: boolean;
         noAlt?: boolean;
     }): any | any[][];
     /**
@@ -5275,10 +5282,12 @@ declare class BaseGraphic extends BaseClass {
      * 将矢量数据的坐标、样式及属性等信息导出为对象，可以用于存储。
      * @param [options] - 参数对象:
      * @param [options.noAlt] - 不导出高度值
+     * @param [options.toNum] - 坐标是time时序坐标时，time值是否转为数字秒数
      * @returns 导出的坐标、样式及属性等信息
      */
     toJSON(options?: {
         noAlt?: boolean;
+        toNum?: boolean;
     }): any;
     /**
      * 获取数据的矩形边界
@@ -15737,10 +15746,12 @@ declare class GroupGraphic extends BaseGraphic {
      * 将矢量数据的坐标、样式及属性等信息导出为对象，可以用于存储。
      * @param [options] - 参数对象:
      * @param [options.noAlt] - 不导出高度值
+     * @param [options.toNum] - 坐标是time时序坐标时，time值是否转为数字秒数
      * @returns 导出的坐标、样式及属性等信息
      */
     toJSON(options?: {
         noAlt?: boolean;
+        toNum?: boolean;
     }): any;
 }
 
@@ -17371,6 +17382,7 @@ declare namespace BillboardIndicator {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在第1个开始时间之前，NONE时不显示，HOLD时显示开始时间对应坐标位置
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在最后1个结束时间之后，NONE时不显示，HOLD时显示结束时间对应坐标位置
  * @param [options.clampToTileset] - 当使用addTimePosition设置为动画轨迹位置时，是否进行贴模型。
@@ -17394,6 +17406,7 @@ declare class BillboardIndicator extends BillboardPrimitive {
         position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | BaseGraphic.AjaxPosition | BaseGraphic.TimePosition | number[] | string;
         style: BillboardIndicator.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        frameRate?: number;
         backwardExtrapolationType?: Cesium.ExtrapolationType | number;
         forwardExtrapolationType?: Cesium.ExtrapolationType | number;
         clampToTileset?: boolean;
@@ -17440,6 +17453,7 @@ declare class BillboardIndicator extends BillboardPrimitive {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在第1个开始时间之前，NONE时不显示，HOLD时显示开始时间对应坐标位置
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在最后1个结束时间之后，NONE时不显示，HOLD时显示结束时间对应坐标位置
  * @param [options.clampToTileset] - 当使用addTimePosition设置为动画轨迹位置时，是否进行贴模型。
@@ -17463,6 +17477,7 @@ declare class BillboardPrimitive extends BasePointPrimitive {
         position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | BaseGraphic.AjaxPosition | BaseGraphic.TimePosition | number[] | string;
         style: BillboardEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        frameRate?: number;
         backwardExtrapolationType?: Cesium.ExtrapolationType | number;
         forwardExtrapolationType?: Cesium.ExtrapolationType | number;
         clampToTileset?: boolean;
@@ -18649,6 +18664,7 @@ declare namespace DivBillboardPrimitive {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.clampToTileset] - 当使用addTimePosition设置为动画轨迹位置时，是否进行贴模型。
  * @param [options.frameRateHeight = 30] - 当使用addTimePosition设置为动画轨迹位置时，并clampToTileset：true时，多少帧计算一次贴模型高度
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -18669,6 +18685,7 @@ declare class DivBillboardPrimitive extends BillboardPrimitive {
         position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | BaseGraphic.AjaxPosition | BaseGraphic.TimePosition | number[] | string;
         style: DivBillboardPrimitive.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        frameRate?: number;
         clampToTileset?: boolean;
         frameRateHeight?: number;
         popup?: string | any[] | ((...params: any[]) => any);
@@ -18695,16 +18712,17 @@ declare namespace DoubleSidedPlane {
      * 双面渲染图片平面 支持的样式信息
      * @property [dimensions_x = 100] - 长度
      * @property [dimensions_y = 100] - 宽度
-     * @property [image] - 填充的图片
-     * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
-     * @property [color = Cesium.Color.WHITE] - 颜色
-     * @property [speed = 0] - 不为0时呈现图片滚动效果，数字代表滚动速度
-     * @property [flipx = false] - 是否X方向翻转图片
-     * @property [flipy = false] - 是否Y方向翻转图片
-     * @property [noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
      * @property [heading = 0] - 方向角 （度数值，0-360度）
      * @property [pitch = 0] - 俯仰角（度数值，0-360度）
      * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
+     * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
+     * @property [image] - 默认支持直接设置图片，对应的填充的图片
+     * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
+     * @property [flipx = false] - 是否X方向翻转图片
+     * @property [flipy = false] - 是否Y方向翻转图片
+     * @property [noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
+     * @property [speed = 0] - 不为0时呈现图片滚动效果，数字代表滚动速度
      *
      * //以下是 这是MaterialAppearance的参数
      * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
@@ -18719,16 +18737,17 @@ declare namespace DoubleSidedPlane {
     type StyleOptions = any | {
         dimensions_x?: number;
         dimensions_y?: number;
-        image?: string;
-        opacity?: number;
-        color?: string | Cesium.Color;
-        speed?: number;
-        flipx?: boolean;
-        flipy?: boolean;
-        noWhite?: boolean;
         heading?: number;
         pitch?: number;
         roll?: number;
+        materialType?: string;
+        materialOptions?: any;
+        image?: string;
+        opacity?: number;
+        flipx?: boolean;
+        flipy?: boolean;
+        noWhite?: boolean;
+        speed?: number;
         flat?: boolean;
         faceForward?: boolean;
         translucent?: boolean;
@@ -19243,6 +19262,7 @@ declare class FrustumPrimitive extends BasePointPrimitive {
  * @param [options.position] - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.frameRate = 5] - 当postion为时序坐标时，多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.backwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在第1个开始时间之前，NONE时不显示，HOLD时显示开始时间对应坐标位置
  * @param [options.forwardExtrapolationType = Cesium.ExtrapolationType.HOLD] - 当使用addTimePosition时，在最后1个结束时间之后，NONE时不显示，HOLD时显示结束时间对应坐标位置
  * @param [options.clampToTileset] - 当使用addTimePosition设置为动画轨迹位置时，是否进行贴模型。
@@ -19266,6 +19286,7 @@ declare class LabelPrimitive extends BasePointPrimitive {
         position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | BaseGraphic.AjaxPosition | BaseGraphic.TimePosition | number[] | string;
         style: LabelEntity.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        frameRate?: number;
         backwardExtrapolationType?: Cesium.ExtrapolationType | number;
         forwardExtrapolationType?: Cesium.ExtrapolationType | number;
         clampToTileset?: boolean;
@@ -21146,6 +21167,7 @@ declare namespace VideoPrimitive {
      * @property [url] - 视频对应url地址
      * @property [container] - 视频对应的video标签,与url二选一
      * @property [opacity = 1.0] - 透明度
+     * @property [maskImage] - 遮盖融合的图片url地址，可用于视频等场景下的四周羽化效果。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
      *
@@ -21162,6 +21184,7 @@ declare namespace VideoPrimitive {
         url?: string;
         container?: HTMLVideoElement;
         opacity?: number;
+        maskImage?: string;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
         flat?: boolean;
@@ -22167,7 +22190,7 @@ declare namespace CzmGeoJsonLayer {
  * @param [options.symbol] - 矢量数据的style样式
  * @param options.symbol.styleOptions - 数据的Style样式
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, entity, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
@@ -22302,7 +22325,7 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
      * @param symbol - 设置新的symbol 矢量数据样式.  {@link GraphicType}
      * @param symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
      * @param [symbol.styleField] - 按 styleField 属性设置不同样式。
-     * @param [symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
+     * @param [symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
      * @returns 当前对象本身，可以链式调用
      */
     updateStyle(symbol: {
@@ -22635,7 +22658,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
@@ -22784,7 +22807,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param [options.where] - 用于筛选数据的where查询条件
  * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
  * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
- * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+ * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(feature){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000'
  * @param [options.mask] - 标识是否绘制区域边界的反选遮罩层，也可以传入object配置范围： { xmin: 73.0, xmax: 136.0, ymin: 3.0, ymax: 59.0 }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.toPrimitive] - 是否将entity类型转为primivate类型渲染（比如数据的point改为pointP展示）
@@ -22794,7 +22817,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
@@ -22847,7 +22870,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
         where?: string;
         format?: (...params: any[]) => any;
         onCreateGraphic?: (...params: any[]) => any;
-        filter?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
         mask?: boolean | any;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         toPrimitive?: boolean;
@@ -22939,6 +22962,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.url] - geojson文件或服务url地址
  * @param [options.data] - geojson格式规范数据对象，与url二选一即可。
+ * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(attr){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000'
  * @param [options.dataColumn] - 接口返回数据中，对应的业务数据数组所在的读取字段名称，支持多级(用.分割)；如果数据直接返回数组时可以不配置。
  * @param [options.formatData] - 可以对加载的数据进行格式化或转换操作
  * @param [options.formatPosition] - 可以对加载的坐标进行格式化或转换操作 (优先级：formatPosition方法>position字段>latColumn和lngColumn字段)
@@ -22953,7 +22977,7 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
@@ -23005,6 +23029,7 @@ declare class BusineDataLayer extends GraphicLayer {
     constructor(options?: {
         url?: string;
         data?: any;
+        filter?: ((...params: any[]) => any) | string;
         dataColumn?: string;
         formatData?: (...params: any[]) => any;
         formatPosition?: (...params: any[]) => any;
@@ -23166,7 +23191,7 @@ declare namespace GeoJsonLayer {
  * @param [options.chinaCRS] - 标识数据的国内坐标系（用于自动纠偏或加偏）
  * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
  * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
- * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+ * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(feature){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000'
  * @param [options.mask] - 标识是否绘制区域边界的反选遮罩层，也可以传入object配置范围： { xmin: 73.0, xmax: 136.0, ymin: 3.0, ymax: 59.0 }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.toPrimitive] - 是否将entity类型转为primivate类型渲染（比如数据的point改为pointP展示）
@@ -23176,7 +23201,7 @@ declare namespace GeoJsonLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
@@ -23241,7 +23266,7 @@ declare class GeoJsonLayer extends GraphicLayer {
         chinaCRS?: ChinaCRS;
         format?: (...params: any[]) => any;
         onCreateGraphic?: (...params: any[]) => any;
-        filter?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
         mask?: boolean | any;
         allowDrillPick?: boolean | ((...params: any[]) => any);
         toPrimitive?: boolean;
@@ -23429,7 +23454,7 @@ declare namespace GraphicLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.cluster] - 聚合参数(Tip:不参与聚合的类型：合并渲染对象、处于标绘或编辑状态的对象)：
@@ -23678,6 +23703,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.flyTo = false] - 是否加载完成后进行飞行到数据区域
      * @param [options.toPrimitive] - 是否将entity类型转为primivate类型渲染（比如数据的point改为pointP展示，同类型大于10条时自动改为合并渲染类型展示）
      * @param [options.onEachFeature] - 创建每个Graphic前的回调
+     * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(item,attr){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000' 。
      * @returns 绘制创建完成的Promise 添加后的Graphic对象
      */
     loadJSON(json: any | any | string, options?: {
@@ -23685,6 +23711,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         flyTo?: boolean;
         toPrimitive?: boolean;
         onEachFeature?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
     }): Promise<BaseGraphic[] | any>;
     /**
      * 加载转换GeoJSON格式规范数据为Graphic后加载到图层中。
@@ -23703,7 +23730,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.hasGroup = true] - MultiLineString、MultiPolygon时是否使用GroupGraphic对象包一层。
      * @param [options.onEachFeature] - 创建每个Graphic前的回调
-     * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+     * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(feature){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000' 。
      * @returns 转换后的Graphic对象数组
      */
     loadGeoJSON(geojson: string | any, options?: {
@@ -23720,7 +23747,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         };
         hasGroup?: boolean;
         onEachFeature?: (...params: any[]) => any;
-        filter?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
     }): BaseGraphic[];
     /**
      * 获取当前图层聚合点列表
@@ -24373,7 +24400,7 @@ declare namespace LodGraphicLayer {
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
  * @param options.symbol.styleOptions - 数据的Style样式
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.cluster] - 聚合参数(Tip:不参与聚合的类型：合并渲染对象、处于标绘或编辑状态的对象)：
@@ -24556,7 +24583,7 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
  * @param [options.cluster] - 聚合参数(Tip:不参与聚合的类型：合并渲染对象、处于标绘或编辑状态的对象)：
@@ -24815,7 +24842,7 @@ declare class OsmBuildingsLayer extends TilesetLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
@@ -25527,7 +25554,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param [options.symbol.styleOptions] - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
  * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
- * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。默认与styleOptions合并，可以设置merge:false不合并
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
  * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
  * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
  * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
@@ -29133,7 +29160,6 @@ declare namespace Map {
      * @property [scene3DOnly = false] - 为 true 时，每个几何实例将仅以3D渲染以节省GPU内存。
      * @property [mapProjection = 'EPSG:3857'] - 在二维模式下时，地图的呈现地理坐标还是墨卡托投影坐标系，可选值：'EPSG:4326'、'EPSG:3857'
      * @property [mapMode2D = Cesium.MapMode2D.INFINITE_SCROLL] - 在二维模式下时，地图是可旋转的还是可以在水平方向无限滚动。
-     * @property [shouldAnimate = true] - 是否开启时钟动画
      * @property [shadows = false] - 是否启用日照阴影
      * @property [useDefaultRenderLoop = true] - 如果此小部件应控制渲染循环，则为true，否则为false。
      * @property [targetFrameRate] - 使用默认渲染循环时的目标帧速率。
@@ -29201,8 +29227,12 @@ declare namespace Map {
      *
      * 以下是Cesium.Clock时钟相关参数
      * @property [clock] - 时钟相关参数
-     * @property [clock.currentTime] - 当前的时间
+     * @property [clock.shouldAnimate = true] - 是否开启时钟动画
      * @property [clock.multiplier = 1.0] - 当前的速度
+     * @property [clock.currentTime] - 当前的时间
+     * @property [clock.startTime] - 当前的时间
+     * @property [clock.stopTime] - 当前的时间
+     * @property [clock.clockRange] - 设定全局时钟播放的模式，可以设置到达终点后停止或循环播放
      */
     type sceneOptions = {
         center?: {
@@ -29254,7 +29284,6 @@ declare namespace Map {
         scene3DOnly?: boolean;
         mapProjection?: Cesium.MapProjection | CRS;
         mapMode2D?: Cesium.MapMode2D;
-        shouldAnimate?: boolean;
         shadows?: boolean;
         useDefaultRenderLoop?: boolean;
         targetFrameRate?: number;
@@ -29319,8 +29348,12 @@ declare namespace Map {
             maximumTiltAngle?: number;
         };
         clock?: {
-            currentTime?: string | Cesium.JulianDate;
+            shouldAnimate?: boolean;
             multiplier?: number;
+            currentTime?: string | Cesium.JulianDate;
+            startTime?: string | Cesium.JulianDate;
+            stopTime?: string | Cesium.JulianDate;
+            clockRange?: number | Cesium.ClockRange;
         };
     };
     /**
@@ -40809,7 +40842,7 @@ declare namespace Util {
      * @param symbol - symbol配置
      * @param symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
      * @param [symbol.styleField] - 按 styleField 属性设置不同样式。
-     * @param [symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。
+     * @param [symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
      * @param [symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
      * @param [attr] - 数据属性对象
      * @param [callbackResult] - callback时的第3个回调参数
@@ -40864,7 +40897,7 @@ declare namespace Util {
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.hasGroup = false] - MultiLineString、MultiPolygon时是否使用GroupGraphic对象包一层。
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理,比如坐标纠偏 onPointTrans: mars3d.PointUtil.getTransFun(mars3d.ChinaCRS.GCJ02, map.chinaCRS)
-     * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+     * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(feature){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000' 。
      * @returns Graphic构造参数数组（用于创建{@link BaseGraphic}），其中多面的最大一个面会有isMultiMax为true的属性
      */
     function geoJsonToGraphics(geojson: any, options?: {
@@ -40886,7 +40919,7 @@ declare namespace Util {
         };
         hasGroup?: boolean;
         onPointTrans?: (...params: any[]) => any;
-        filter?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
     }): any;
     /**
      * GeoJSON格式的Feature单个对象转为 Graphic构造参数（用于创建{@link BaseGraphic}）
@@ -40902,7 +40935,7 @@ declare namespace Util {
      * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
      * @param [options.hasGroup = false] - MultiLineString、MultiPolygon时是否使用GroupGraphic对象包一层。
      * @param [options.onPointTrans] - 坐标转换方法，可用于对每个坐标做额外转换处理
-     * @param [options.filter] - 数据筛选方法，方法体内返回false时排除数据 filter:function(feature){return true}
+     * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(feature){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000' 。
      * @returns Graphic构造参数（用于创建{@link BaseGraphic}），其中多面的最大一个面会有isMultiMax为true的属性
      */
     function featureToGraphic(feature: any, options?: {
@@ -40916,7 +40949,7 @@ declare namespace Util {
         };
         hasGroup?: boolean;
         onPointTrans?: (...params: any[]) => any;
-        filter?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
     }): any;
     /**
      * 根据当前高度获取地图层级
