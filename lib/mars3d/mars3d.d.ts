@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.7
- * 编译日期：2025-04-21 19:53
+ * 版本信息：v3.9.9
+ * 编译日期：2025-05-05 21:46
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -506,6 +506,10 @@ declare enum EventType {
      * 标绘事件
      */
     move = "move",
+    /**
+     * availability 时序状态发生变化 事件
+     */
+    availabilityChange = "availabilityChange",
     /**
      * 3dtiles模型，模型瓦片初始化完成
      * 该回调只执行一次
@@ -13703,7 +13707,7 @@ declare namespace PolylineEntity {
      * @property [depthFail] - 是否显示遮挡
      * @property [depthFailColor] - 遮挡处颜色
      * @property [depthFailOpacity] - 遮挡处透明度
-     * @property [snakeAnimationDelay = 1] - 延迟多少秒执行执行流动生长(贪吃蛇)动画, 延迟期间不显示
+     * @property [snakeAnimationDelay = 0] - 延迟多少秒执行执行流动生长(贪吃蛇)动画, 延迟期间不显示
      * @property [snakeAnimationDuration] - 执行流动生长(贪吃蛇)动画的时长（内部执行startSnakeAnimation方法）,单位：秒
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
@@ -14561,6 +14565,10 @@ declare class Video2D extends PointPolygonEntity {
      * 是否X方向翻转视频
      */
     flipx: boolean;
+    /**
+     * 是否Y方向翻转视频
+     */
+    flipy: boolean;
     /**
      * 是否显示视椎体框线
      */
@@ -23511,9 +23519,9 @@ declare class GraphicLayer extends BaseGraphicLayer {
         isAutoEditing?: boolean;
         isContinued?: boolean;
         isRestorePositions?: boolean;
-        drawAddEventType?: boolean;
-        drawEndEventType?: boolean;
-        drawDelEventType?: boolean;
+        drawAddEventType?: string | EventType;
+        drawEndEventType?: string | EventType;
+        drawDelEventType?: string | EventType;
         zIndex?: number;
         symbol?: {
             type?: GraphicType | string;
@@ -24643,9 +24651,9 @@ declare class ModelLayer extends GraphicLayer {
         isAutoEditing?: boolean;
         isContinued?: boolean;
         isRestorePositions?: boolean;
-        drawAddEventType?: boolean;
-        drawEndEventType?: boolean;
-        drawDelEventType?: boolean;
+        drawAddEventType?: string | EventType;
+        drawEndEventType?: string | EventType;
+        drawDelEventType?: string | EventType;
         zIndex?: number;
         symbol?: {
             type?: GraphicType | string;
@@ -35840,9 +35848,9 @@ declare class Measure extends BaseThing {
         isAutoEditing?: boolean;
         isContinued?: boolean;
         isRestorePositions?: boolean;
-        drawAddEventType?: boolean;
-        drawEndEventType?: boolean;
-        drawDelEventType?: boolean;
+        drawAddEventType?: string | EventType;
+        drawEndEventType?: string | EventType;
+        drawDelEventType?: string | EventType;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
