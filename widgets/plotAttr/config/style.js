@@ -687,7 +687,8 @@ const styleConfig = {
         show({ parentType }) {
           return parentType
         }
-      }
+      },
+      { name: "color", label: "叠加颜色", type: "color", defval: "#ffffff" }
     ]
   },
   div: {
@@ -2005,16 +2006,35 @@ const styleConfig = {
     name: "双面渲染图片平面",
     primitive: true,
     style: [
-      { name: "image", label: "填充的图片", type: "label" },
-      { name: "opacity", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 1 },
-      { name: "noWhite", label: "不显示白色", type: "radio", defval: true },
-
       { name: "dimensions_x", label: "长度", type: "number", step: 1, defval: 100.0 },
       { name: "dimensions_y", label: "宽度", type: "number", step: 1, defval: 100.0 },
 
       { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 }
+      { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+
+      {
+        name: "materialType",
+        label: "填充材质",
+        type: "combobox",
+        defval: "Image2",
+        data: [
+          { label: "图片", value: "Image2", defval: { image: "https://data.mars3d.cn/img/textures/wzplane.png" } },
+          { label: "文本", value: "Text" },
+          { label: "纯色", value: "Color" },
+          { label: "网格", value: "Grid" },
+          // { label: "条纹", value: "Stripe" },
+          { label: "棋盘", value: "Checkerboard" },
+
+          { label: "渐变面", value: "PolyGradient" },
+          { label: "双色渐变面", value: "PolyGradient2" },
+          { label: "水面", value: "Water" },
+          { label: "蓝光水面", value: "WaterLight" }
+        ],
+        show({ style, graphicType }) {
+          return style?.fill !== false && graphicType !== "video2D"
+        }
+      }
     ]
   },
   box: {
@@ -2457,7 +2477,11 @@ const styleConfig = {
           { label: "实线", value: "Color" },
           { label: "虚线", value: "PolylineDash" },
           { label: "虚线箭头", value: "LineDashArrow" },
-          { label: "虚线箭头2", value: "LineFlow-dashArrow", defval: { image: "https://data.mars3d.cn/img/textures/line-dashArrow.png",speed:0, repeat_x: 10 } },
+          {
+            label: "虚线箭头2",
+            value: "LineFlow-dashArrow",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-dashArrow.png", speed: 0, repeat_x: 10 }
+          },
           { label: "衬色线", value: "PolylineOutline" },
           { label: "箭头", value: "PolylineArrow" },
           { label: "光晕", value: "PolylineGlow" },
@@ -2935,7 +2959,60 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
-          { label: "网格", value: "Grid" }
+          { label: "条纹", value: "Stripe" },
+
+          { label: "OD线", value: "ODLine" },
+          { label: "闪烁线", value: "LineFlicker" },
+          { label: "轨迹线", value: "LineTrail" },
+          { label: "泛光线", value: "LineBloom" },
+          { label: "流动颜色", value: "LineFlowColor" },
+
+          { label: "流动blue", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-blue.png", repeat_x: 10 } },
+          {
+            label: "流动dovetail",
+            value: "LineFlow-2",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-dovetail.png", repeat_x: 10 }
+          },
+          { label: "流动arrow", value: "LineFlow-3", defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-right.png", repeat_x: 10 } },
+          { label: "流动aqua", value: "LineFlow-4", defval: { image: "https://data.mars3d.cn/img/textures/line-color-aqua.png", repeat_x: 10 } },
+          { label: "流动azure", value: "LineFlow-5", defval: { image: "https://data.mars3d.cn/img/textures/line-color-azure.png", repeat_x: 10 } },
+          {
+            label: "流动red",
+            value: "LineFlow-6",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-red.png", color: "#ff0000", repeat_x: 10 }
+          },
+          {
+            label: "流动yellow",
+            value: "LineFlow-7",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#ffff00", repeat_x: 10 }
+          },
+          { label: "流动colour", value: "LineFlow-8", defval: { image: "https://data.mars3d.cn/img/textures/line-colour.png", repeat_x: 10 } },
+          { label: "流动gradual", value: "LineFlow-9", defval: { image: "https://data.mars3d.cn/img/textures/line-gradual.png", repeat_x: 10 } },
+          { label: "流动pulse", value: "LineFlow-10", defval: { image: "https://data.mars3d.cn/img/textures/line-pulse.png" } },
+          { label: "流动sprite", value: "LineFlow-11", defval: { image: "https://data.mars3d.cn/img/textures/line-sprite.png", repeat_x: 10 } },
+          { label: "流动tarans", value: "LineFlow-13", defval: { image: "https://data.mars3d.cn/img/textures/line-tarans.png" } },
+          { label: "流动vertebral", value: "LineFlow-14", defval: { image: "https://data.mars3d.cn/img/textures/line-vertebral.png", repeat_x: 10 } },
+          {
+            label: "流动vertebral-blue",
+            value: "LineFlow-15",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-vertebral-blue.png", repeat_x: 10 }
+          },
+          { label: "流动fence-line", value: "LineFlow-16", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
+          {
+            label: "流动transarrow",
+            value: "LineFlow-17",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-arrow-trans.png", repeat_x: 10 }
+          },
+          {
+            label: "流动天青",
+            value: "LineFlow-18",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", repeat_x: 1 }
+          },
+          {
+            label: "天青pulse",
+            value: "LineFlow-19",
+            defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", width: 8 }
+          }
         ]
       },
 
@@ -3291,6 +3368,7 @@ const styleConfig = {
           { label: "文本", value: "Text" },
 
           { label: "渐变面", value: "PolyGradient" },
+          { label: "双色渐变面", value: "PolyGradient2" },
           { label: "水面", value: "Water" },
           { label: "蓝光水面", value: "WaterLight" }
         ],
@@ -3535,6 +3613,7 @@ const styleConfig = {
           { label: "文本", value: "Text" },
 
           { label: "渐变面", value: "PolyGradient" },
+          { label: "双色渐变面", value: "PolyGradient2" },
           { label: "水面", value: "Water" },
           { label: "蓝光水面", value: "WaterLight" }
         ],
@@ -3855,6 +3934,240 @@ const styleConfig = {
 
       { name: "farDistance", label: "远距离", type: "number", step: 1, defval: 10000 },
       { name: "farColor", label: "远距离颜色", type: "color", defval: "#91B3FF" }
+    ]
+  },
+
+  pointPlot: {
+    name: "点状军标",
+    style: [
+      { name: "color", label: "颜色", type: "color", defval: "#ff0000" },
+
+      { name: "width", label: "宽度", type: "number", min: 1, max: 200, step: 1, defval: 30 },
+      { name: "lockRatio", label: "等比高度", type: "radio", defval: true },
+      {
+        name: "height",
+        label: "高度",
+        type: "number",
+        min: 1,
+        max: 200,
+        step: 1,
+        defval: 30,
+        show({ style }) {
+          return !style?.lockRatio
+        }
+      },
+      { name: "scale", label: "大小比例", type: "number", min: 0.1, max: 1000, step: 0.1, defval: 1.0 },
+
+      { name: "angle", label: "角度", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      {
+        name: "mirror",
+        label: "镜像",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "不镜像", value: 0 },
+          { label: "水平镜像", value: 1 },
+          { label: "垂直镜像", value: 2 },
+          { label: "水平+垂直镜像", value: 3 }
+        ]
+      },
+
+      {
+        name: "intext",
+        label: "内联文本",
+        type: "textarea",
+        defval: "",
+        show({ style, graphicType }) {
+          return style?.hasIntext
+        }
+      },
+      {
+        name: "intext_color",
+        label: "内联文本颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.intext
+        }
+      },
+
+      { name: "lineWidth", label: "线宽", type: "number", min: 0.1, max: 50.0, step: 0.1, defval: 0.5 },
+      {
+        name: "lineType",
+        label: "线型",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "实线", value: 0 },
+          { label: "虚线", value: 1 }
+        ]
+      },
+      {
+        name: "dashLength",
+        label: "虚线间长",
+        type: "number",
+        min: 1,
+        step: 1,
+        defval: 10,
+        show({ style }) {
+          return style.lineType === 1
+        }
+      },
+
+      {
+        name: "fill",
+        label: "是否填充",
+        type: "radio",
+        defval: false,
+        show({ style, graphicType }) {
+          return style?.hasFill
+        }
+      },
+      {
+        name: "fillColor",
+        label: "填充颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.fill
+        }
+      },
+      { name: "lockZoom", label: "是否随图缩放", type: "radio", defval: true },
+
+      { name: "flat", label: "是否平放", type: "radio", defval: false },
+      { name: "rotate", label: "竖直旋转角度", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      { name: "diffHeight", label: "拉伸厚度", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 0.0 }
+    ]
+  },
+
+  polyPlot: {
+    name: "线面军标",
+    style: [
+      { name: "color", label: "颜色", type: "color", defval: "#ff0000" },
+      { name: "lineWidth", label: "边线线宽", type: "number", min: 0.1, max: 50.0, step: 0.1, defval: 0.5 },
+      {
+        name: "lineType",
+        label: "边线线型",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "实线", value: 0 },
+          { label: "虚线", value: 1 }
+        ]
+      },
+      {
+        name: "dashLength",
+        label: "虚线间长",
+        type: "number",
+        min: 1,
+        step: 1,
+        defval: 10,
+        show({ style }) {
+          return style.lineType === 1
+        }
+      },
+
+      { name: "serif", label: "是否衬线", type: "radio", defval: false },
+      {
+        name: "serifDirect",
+        label: "衬线类型",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "无衬线", value: -1 },
+          { label: "内衬", value: 0 },
+          { label: "外衬", value: 1 },
+          { label: "双衬", value: 2 }
+        ],
+        show({ style }) {
+          return style?.serif
+        }
+      },
+      {
+        name: "serifColor",
+        label: "衬线颜色",
+        type: "color",
+        defval: "#ffff00",
+        show({ style }) {
+          return style?.serif
+        }
+      },
+      {
+        name: "serifWidth",
+        label: "衬线线宽",
+        type: "number",
+        min: 1.0,
+        max: 50.0,
+        step: 0.1,
+        defval: 1.0,
+        show({ style }) {
+          return style?.serif
+        }
+      },
+
+      {
+        name: "fill",
+        label: "是否填充",
+        type: "radio",
+        defval: false,
+        show({ style, graphicType }) {
+          return style?.hasFill
+        }
+      },
+      {
+        name: "materialType",
+        label: "填充材质",
+        type: "combobox",
+        defval: "Color",
+        data: [
+          { label: "纯色", value: "Color" },
+          { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
+          { label: "网格", value: "Grid" },
+          { label: "条纹", value: "Stripe" },
+          { label: "棋盘", value: "Checkerboard" },
+          { label: "文本", value: "Text" },
+
+          { label: "渐变面", value: "PolyGradient" },
+          { label: "双色渐变面", value: "PolyGradient2" },
+          { label: "水面", value: "Water" },
+          { label: "蓝光水面", value: "WaterLight" }
+        ],
+        show({ style, graphicType }) {
+          return style?.fill
+        }
+      },
+
+      {
+        name: "fillColor",
+        label: "填充颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.fill && (!style?.materialType || style?.materialType === "Color")
+        }
+      },
+
+      { name: "clampToGround", label: "是否贴地", type: "radio", defval: false },
+      { name: "height", label: "高度", type: "number", step: 1, defval: 0.0 },
+      { name: "diffHeight", label: "立体高度", type: "number", step: 1, defval: 0.0 },
+
+      { name: "wall", label: "是否显示墙", type: "radio", defval: false },
+      {
+        name: "wallOpacity",
+        label: "墙透明度",
+        type: "slider",
+        min: 0.0,
+        max: 1.0,
+        step: 0.1,
+        defval: 0.4,
+        show({ style }) {
+          return style?.wall
+        }
+      }
     ]
   }
 }
