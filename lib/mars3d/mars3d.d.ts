@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.9.11
- * 编译日期：2025-06-03 23:26
+ * 编译日期：2025-06-04 08:12
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -29990,6 +29990,11 @@ declare class Map extends BaseClass {
      * 获取当前地图层级（概略），一般为0-21层
      */
     readonly level: number;
+    /**
+     * 获取当前 resolution分辨率，单位：米 （根据屏幕左侧到右侧的距离概略测算）
+     * @returns resolution分辨率
+     */
+    getResolution(): number;
     /**
      * 是否固定光照，
      *  true：可避免gltf、3dtiles模型随时间存在亮度不一致。
