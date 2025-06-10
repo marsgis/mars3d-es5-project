@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.9.11
- * 编译日期：2025-06-04 08:12
+ * 编译日期：2025-06-10 18:10
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-02-01
  */
@@ -1411,6 +1411,7 @@ declare enum LayerType {
     busineData,
     lodGraphic,
     wfs,
+    wfs_single,
     arcgis_wfs,
     arcgis_wfs_single,
     tileset,
@@ -7060,7 +7061,7 @@ declare class ConeVisibility extends PointVisibility {
  * @param [options.path] - 使用 path轨迹 对象，及其对应的样式
  * @param [options.polyline] - 使用 polyline路线 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.polyline.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹
- * //  * @param {boolean} [options.polyline.showAll] 是否一直显示展示所有坐标
+ * //  * @param {boolean} [options.polyline.showAll] 在播放时,是否一直显示所有坐标
  * @param [options.wall] - 使用 墙体 对象，及其对应的样式 <br/>
  * //  * @param {number} [options.wall.maxDistance] 设置保留的轨迹长度值（单位：米），不设置时保留所有的轨迹<br/>
  * //  * @param {number} [options.wall.surface] 设置墙底部高度是否贴地
@@ -22841,8 +22842,8 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
 }
 
 /**
- * ArcGIS WFS服务图层，
- * 一次性请求加载，适合少量数据时使用。
+ * 简单ArcGIS WFS服务图层，
+ * 一次性请求加载，适合少量数据时使用（小于1000条）。
  * @param [options] - 参数对象，包括以下：
  * @param options.url - ArcGIS服务地址, 示例：'http://server.mars3d.cn/arcgis/rest/services/mars/hefei/MapServer/37',
  * @param [options.token] - 用于通过ArcGIS MapServer服务进行身份验证的ArcGIS令牌。
@@ -25746,6 +25747,173 @@ declare class WfsLayer extends LodGraphicLayer {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+}
+
+/**
+ * 简单WFS服务图层，
+ * 一次性请求加载，适合少量数据时使用（小于1000条）。
+ * @param [options] - 参数对象，包括以下：
+ * @param options.url - WFS服务地址
+ * @param [options.parameters] - 要在URL中 传递给WFS服务GetFeature请求的其他参数。
+ * @param [options.parameters.maxFeatures] - 返回结果最大数量
+ * @param [options.parameters.cql_filter] - 筛选服务数据的SQL语句
+ * @param [options.parameters.sortBy] - 排序的属性名称，默认升序，降序时+D
+ * @param [options.parameters.service = 'WFS'] - 服务类型
+ * @param [options.parameters.version = '1.0.0'] - 服务版本
+ * @param [options.geometryName = 'the_geom'] - geometry字段名称, 比如：geom 或 the_geom
+ * @param [options.headers] - 将被添加到HTTP请求头。
+ * @param [options.proxy] - 加载资源时使用的代理。
+ * @param options.layer - 图层名称（命名空间:图层名称），多个图层名称用逗号隔开
+ * @param [options.format] - 可以对加载的geojson数据进行格式化或转换操作
+ * @param [options.onCreateGraphic] - 解析geojson后，外部自定义方法来创建Graphic对象
+ * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(feature){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000'
+ * @param [options.mask] - 标识是否绘制区域边界的反选遮罩层，也可以传入object配置范围： { xmin: 73.0, xmax: 136.0, ymin: 3.0, ymax: 59.0 }
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.toPrimitive] - 是否将entity类型转为primivate类型渲染（比如数据的point改为pointP展示）
+ * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
+ * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
+ * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
+ * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
+ * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
+ * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
+ * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
+ * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
+ * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+ * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+ * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+ * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
+ * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
+ * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
+ * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
+ * @param [options.buildings.height = 3.5] - 层高的  固定层高数值（如:10） 或 属性字段名称（如:{height}）
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
+ * @param [options.popupOptions.title] - 固定的标题名称
+ * @param [options.popupOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.popupOptions.noTitle] - 不显示标题
+ * @param [options.popupOptions.showNull = false] - 是否显示空值
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑定，参数与popup属性完全相同。
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数,还包括：
+ * @param [options.tooltipOptions.title] - 固定的标题名称
+ * @param [options.tooltipOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.tooltipOptions.noTitle] - 不显示标题
+ * @param [options.tooltipOptions.showNull = false] - 是否显示空值
+ * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
+ * @param [options.show = true] - 图层是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
+ * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
+ * @param options.center.lng - 经度值, 180 - 180
+ * @param options.center.lat - 纬度值, -90 - 90
+ * @param [options.center.alt] - 高度值
+ * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
+ * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
+ * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+ * @param [options.extent] - 图层自定义定位的矩形区域，与center二选一即可。 {@link Map#flyToExtent}
+ * @param options.extent.xmin - 最小经度值, -180 至 180
+ * @param options.extent.xmax - 最大经度值, -180 至 180
+ * @param options.extent.ymin - 最小纬度值, -90 至 90
+ * @param options.extent.ymax - 最大纬度值, -90 至 90
+ * @param [options.extent.height = 0] - 矩形高度值
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
+ */
+declare class WfsSingleLayer extends GeoJsonLayer {
+    constructor(options?: {
+        url: string;
+        parameters?: {
+            maxFeatures?: number;
+            cql_filter?: string;
+            sortBy?: string;
+            service?: string;
+            version?: string;
+        };
+        geometryName?: string;
+        headers?: any;
+        proxy?: string | Cesium.DefaultProxy;
+        layer: string;
+        format?: (...params: any[]) => any;
+        onCreateGraphic?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
+        mask?: boolean | any;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        toPrimitive?: boolean;
+        opacity?: number;
+        zIndex?: number;
+        symbol?: {
+            type?: GraphicType | string;
+            styleOptions: any;
+            styleField?: string;
+            styleFieldOptions?: any;
+            merge?: boolean;
+            callback?: (...params: any[]) => any;
+        };
+        graphicOptions?: any;
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
+        buildings?: {
+            bottomHeight?: string;
+            cloumn?: string;
+            height?: string | number;
+        };
+        popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
+        popupOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+            showNull?: string;
+        };
+        tooltip?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any) | any;
+        tooltipOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+            showNull?: string;
+        };
+        contextmenuItems?: any;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        center?: {
+            lng: number;
+            lat: number;
+            alt?: number;
+            heading?: number;
+            pitch?: number;
+            roll?: number;
+        };
+        extent?: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+            height?: number;
+        };
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 加载新数据 或 刷新数据
+     * @param [newOptions] - 新设定的参数，会与类的构造参数合并。
+     * @param [newOptions.url] - geojson文件或服务url地址
+     * @param [newOptions.data] - geojson格式规范数据对象，与url二选一即可。
+     * @param [newOptions.类参数] - 包含当前类支持的所有参数
+     * @returns 当前对象本身，可以链式调用
+     */
+    load(newOptions?: {
+        url?: string;
+        data?: any;
+        类参数?: any;
+    }): GeoJsonLayer;
 }
 
 /**
@@ -33275,8 +33443,8 @@ declare namespace PointPlot {
      * @property [angle = 0] - 角度，0-360
      * @property [mirror = 0] - 是否镜像，可选值：0不镜像、1水平镜像、2垂直镜像、3水平+垂直同时镜像
      * @property [intext] - 内联文本,比如在旗子内写上文字
-     * @property [intext_color] - 内联文本颜色
-     * @property [lineWidth = 1] - 线宽
+     * @property [intext_color = "#ff0000"] - 内联文本颜色
+     * @property [lineWidth = 0.5] - 线宽
      * @property [lineType = 0] - 线型，可选值：0实线、1虚线
      * @property [dashLength = 10] - 虚线间长，仅在lineType是虚线时有效
      * @property [fill = false] - 是否填充，仅在标号存在填充区域时有效
@@ -33383,7 +33551,7 @@ declare class PointPlot extends BasePointEntity {
     /**
      * 编辑处理类
      */
-    readonly EditClass: EditPointPlot;
+    readonly EditClass: EditPoint;
     /**
      * 获取当前实时渲染的所有样式信息
      */
@@ -33394,21 +33562,21 @@ declare namespace PolyPlot {
     /**
      * 线面JB标号 支持的样式信息
      * @property [color = "#ff0000"] - 颜色
-     * @property [lineWidth = 1] - 边线线宽
+     * @property [lineWidth = 0.5] - 边线线宽
      * @property [lineType = 0] - 线型，可选值：0实线、1虚线
      * @property [dashLength = 10] - 虚线间长，仅在lineType是虚线时有效
      * @property [serif = false] - 是否衬线
      * @property [serifDirect = -1] - 衬线类型，可选值：-1无衬线、0内衬、1外衬、2双衬
-     * @property [serifColor = "#ff0000"] - 衬线颜色
+     * @property [serifColor = "#ffff00"] - 衬线颜色
      * @property [serifWidth = 1] - 衬线线宽
      * @property [fill = false] - 是否填充
-     * @property [fillColor] - 默认的纯色填充时，对应的填充颜色
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
+     * @property [fillColor = "#ff0000"] - 默认的纯色填充时，对应的填充颜色是对 materialOptions:{color:"#ff0000"} 的简化写法
      * @property [clampToGround = false] - 是否贴地
      * @property [height = 0] - 高度
      * @property [diffHeight = 0] - 立体高度
-     * @property [fill = false] - 是否显示墙（在线的下面展示）
+     * @property [wall = false] - 是否显示墙（在线的下面展示）
      * @property [wallOpacity = 0.4] - 墙的透明度，可选项：0.0-1.0
      */
     type StyleOptions = any | {
@@ -33421,13 +33589,13 @@ declare namespace PolyPlot {
         serifColor?: string | Cesium.Color;
         serifWidth?: number;
         fill?: boolean;
-        fillColor?: string | Cesium.Color;
         materialType?: string;
         materialOptions?: any;
+        fillColor?: string | Cesium.Color;
         clampToGround?: boolean;
         height?: number;
         diffHeight?: number;
-        fill?: boolean;
+        wall?: boolean;
         wallOpacity?: number;
     };
 }
@@ -33511,7 +33679,7 @@ declare class PolyPlot extends BasePolyEntity {
     /**
      * 编辑处理类
      */
-    readonly EditClass: EditPolyPlot;
+    readonly EditClass: EditPoly;
     /**
      * 获取当前实时渲染的所有样式信息
      */
@@ -41953,6 +42121,7 @@ declare namespace layer {
   export { LodGraphicLayer }
   export { PoiLayer }
   export { WfsLayer }
+  export { WfsSingleLayer }
   export { ArcGisWfsLayer }
   export { ArcGisWfsSingleLayer }
 

@@ -1,6 +1,6 @@
 {
 	"name": "mars3d",
-	"version": "3.9.10",
+	"version": "3.9.11",
 	"description": "Mars3D三维可视化平台",
 	"main": "./mars3d.js",
 	"types": "./mars3d.d.ts",
