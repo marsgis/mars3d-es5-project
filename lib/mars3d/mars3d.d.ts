@@ -2,10 +2,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.9.12
- * 编译日期：2025-06-19 09:55
+ * 版本信息：v3.10.0
+ * 编译日期：2025-07-06 20:27
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：火星科技免费公开版 ，2025-02-01
+ * 使用单位：火星科技免费公开版 ，2025-07-01
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -1633,7 +1633,7 @@ declare namespace MaterialType {
      * @property [flipy = false] - 是否Y方向翻转图片
      * @property [repeat = new Cesium.Cartesian2(1.0, 1.0)] - 指定图像在每个方向上重复的次数
      * @property [noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
-     * @property [rotation = 0] - 旋转角度，0-360
+     * @property [rotation = 0] - 旋转角度，0至360
      * @property [hasMask = false] - 是否存在遮盖图片。
      * @property [maskImage] - 遮盖融合的图片url地址，可用于视频等场景下的四周羽化效果。
      */
@@ -2989,6 +2989,7 @@ declare class MouseDownView extends BaseControl {
  * @param [options.control] - 鹰眼地图控件参数
  * @param [options.rectangle] - 视域区域矩形框样式信息，不配置时不叠加矩形(概略效果，有误差)。
  * @param [options.polygon] - 视域区域多边形框样式信息，不配置时不叠加面(概略效果，有误差)。
+ * @param [options.sync = true] - 是否同步视角
  * @param [options.className] - 样式名称，可以外部自定义样式
  * @param [options.style] - 可以传任意CSS样式值，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
@@ -3014,6 +3015,7 @@ declare class OverviewMap extends BaseControl {
         control?: Map.controlOptions;
         rectangle?: RectangleEntity.StyleOptions | any;
         polygon?: PolygonEntity.StyleOptions | any;
+        sync?: boolean;
         className?: string;
         style?: any | {
             top?: string;
@@ -3041,6 +3043,10 @@ declare class OverviewMap extends BaseControl {
      * 中心点坐标 （笛卡尔坐标）
      */
     readonly center: Cesium.Cartesian3;
+    /**
+     * 是否同步视角
+     */
+    sync: boolean;
     /**
      * 对象添加到地图前创建一些对象的钩子方法，
      * 只会调用一次
@@ -6222,7 +6228,7 @@ declare namespace FlatBillboard {
     /**
      * 平放的图标 单个数据对象的样式
      * @property image - 图标URL
-     * @property [angle = 0] - 图标的角度（角度值，0-360）
+     * @property [angle = 0] - 图标的角度（角度值，0至360）
      * @property [width = 50] - 图标宽度
      * @property [height] - 图标高度，默认值等于宽度
      */
@@ -6914,9 +6920,9 @@ declare namespace ArcFrustum {
      * @property [angle] - 四棱锥体张角（角度值，取值范围 0.01-89.99）
      * @property [angle2 = angle] - 四棱锥体张角2，（角度值，取值范围 0.01-89.99）
      * @property distance - 投射距离，单位：米
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [color = Cesium.Color.WHITE] - 颜色
      */
     type StyleOptions = any | {
@@ -6982,9 +6988,9 @@ declare namespace ConeVisibility {
      * @property [radius = 1] - 扇形区域半径
      * @property [angle = 60] - 水平张角，半场角度
      * @property [angle2 = 45] - 垂直张角，半场角度
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [addHeight] - 在坐标点增加的高度值，规避遮挡，效果更友好
      * @property [showFrustum = false] - 是否显示视椎体框线
      * @property [visibleAreaColor = new Cesium.Color(0, 1, 0)] - 可视区域颜色，提示：因是合并渲染，多个时仅支持使用第1个对象的颜色
@@ -7243,9 +7249,9 @@ declare namespace ParticleSystem {
      * @property [image] - 粒子的图片URL
      * @property [emitter = new Cesium.CircleEmitter(1.0)] - 粒子发射器
      * @property [emissionRate = 100] - 发射速率 （单位：次/秒）
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [gravity] - 重力因子，会修改速度矢量以改变方向或速度（基于物理的效果）
      * @property [transX = 0] - 粒子在X轴方向上的偏离距离（单位：米）
      * @property [transY = 0] - 粒子在Y轴方向上的偏离距离（单位：米）
@@ -7978,9 +7984,9 @@ declare namespace SpotLight {
      * @property [color = Cesium.Color.WHITE] - 光颜色
      * @property [intensity = 10] - 光强度
      * @property [radius = 1000] - 聚光灯半径
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [innerCone = 10.0] - 聚光灯的内圆锥角度，半场角度，取值范围：0-45
      * @property [outerCone = 45.0] - 聚光灯的外圆锥角度，半场角度，取值范围：0-45
      * @property [addHeight] - 偏移高度，在现有坐标基础上增加的高度值,也支持字符串模版配置
@@ -8110,9 +8116,9 @@ declare namespace Video3D {
      * @property angle - 水平张角(度数)，半场角度
      * @property angle2 - 垂直张角(度数)，半场角度
      * @property [distance] - 投射最远距离，单位：米
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [opacity = 1.0] - 透明度 0.0 - 1.0
      * @property [flipx = false] - 是否X方向翻转图片
      * @property [flipy = false] - 是否Y方向翻转图片
@@ -8260,9 +8266,9 @@ declare namespace ViewShed {
      * @property [angle = 60] - 水平张角(度数)，半场角度，取值范围 0-60
      * @property [angle2 = 45] - 垂直张角(度数)，半场角度，取值范围 0-45
      * @property [distance] - 投射最远距离，单位：米
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [opacity = 0.6] - 透明度 0.0 - 1.0
      * @property [visibleAreaColor = new Cesium.Color(0, 1, 0)] - 可视区域颜色
      * @property [hiddenAreaColor = new Cesium.Color(1, 0, 0)] - 不可视区域颜色
@@ -8387,10 +8393,10 @@ declare namespace VolumeCloud {
      * @property cols - 列网格数,Y
      * @property heights - 高网格数,Z
      * @property values - 3D 数据集数组, 数组长度应该是 rows*cols*heights
-     * @property xmin - 最小经度（度数，-180-180）
-     * @property xmax - 最大经度（度数，-180-180）
-     * @property ymin - 最小纬度（度数，-90-90）
-     * @property ymax - 最大纬度（度数，-90-90）
+     * @property xmin - 最小经度（度数，-180至180）
+     * @property xmax - 最大经度（度数，-180至180）
+     * @property ymin - 最小纬度（度数，-90至90）
+     * @property ymax - 最大纬度（度数，-90至90）
      * @property zmin - 最小高度
      * @property zmax - 最大高度
      */
@@ -9133,9 +9139,9 @@ declare namespace DivPlane {
      * 三维DIV面板 支持的样式信息
      * @property html - Html文本
      * @property [scale = 1.0] - 缩放比例
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [mergeOrientation = false] - 当存在orientation时（如addTimePosition等），设置为true时，可以在orientation基础的方式值上叠加设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的处理
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
@@ -9884,15 +9890,15 @@ declare class BasePointEntity extends BaseEntity {
      */
     readonly orientation: Cesium.Quaternion;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      */
     roll: number;
     /**
@@ -10183,7 +10189,7 @@ declare namespace BillboardEntity {
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
      * @property [width] - 指定billboard的宽度(以像素为单位)，覆盖图片本身大小。
@@ -10384,9 +10390,9 @@ declare namespace BoxEntity {
      * @property [dimensions_x = 100] - 盒子长度
      * @property [dimensions_y = 100] - 盒子宽度
      * @property [dimensions_z = 100] - 盒子高度
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
@@ -10762,9 +10768,9 @@ declare namespace CircleEntity {
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
@@ -11001,9 +11007,9 @@ declare namespace ConeTrack {
      * @property [bottomRadius = 100] - 不指定angle时，也可以直接指定圆锥底部半径（单位：米）
      * @property [topRadius = 0] - 圆锥顶部半径（单位：米）
      * @property [length = 100] - 圆锥追踪体长度值（单位：米），没有指定targetPosition时有效
-     * @property [heading = 0] - 方向角 （度数值，0-360度），没有指定targetPosition时有效
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度），没有指定targetPosition时有效
-     * @property [roll = 0] - 翻滚角（度数值，0-360度），没有指定targetPosition时有效
+     * @property [heading = 0] - 方向角 （度数值，0至360度），没有指定targetPosition时有效
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度），没有指定targetPosition时有效
+     * @property [roll = 0] - 翻滚角（度数值，0至360度），没有指定targetPosition时有效
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
@@ -11382,9 +11388,9 @@ declare namespace CylinderEntity {
      * @property [topRadius = 0] - 顶部半径，指定圆柱体顶部的半径，当为0时即为圆锥。
      * @property [bottomRadius = 100] - 底部半径，指定圆柱体底部半径。
      * @property [length = 100] - 高度，柱面长度。
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
@@ -11512,7 +11518,7 @@ declare namespace DivBillboardEntity {
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
      * @property [width] - 指定billboard的宽度(以像素为单位)，覆盖图片本身大小。
@@ -11889,9 +11895,9 @@ declare namespace EllipseEntity {
      * @property [outlineOpacity = 0.6] - 边框透明度
      * @property [outlineStyle] - 边框的完整自定义样式，会覆盖outlineWidth、outlineColor等参数。
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
@@ -12020,16 +12026,16 @@ declare namespace EllipsoidEntity {
      * @property [innerRadii_y = 0] - 内部Y半径
      * @property [innerRadii_z = 0] - 内部Z半径
      * @property [minimumClock = 0] - 最小时钟角度（弧度值）
-     * @property [minimumClockDegree = 0] - 最小时钟角度（度数值，0-360度），与minimumClock二选一
+     * @property [minimumClockDegree = 0] - 最小时钟角度（度数值，0至360度），与minimumClock二选一
      * @property [maximumClock = 360] - 最大时钟角度（弧度值）
-     * @property [maximumClockDegree = 360] - 最大时钟角度（度数值，0-360度），与maximumClock二选一
+     * @property [maximumClockDegree = 360] - 最大时钟角度（度数值，0至360度），与maximumClock二选一
      * @property [minimumCone = 0] - 最小锥角（弧度值）
-     * @property [minimumConeDegree = 0] - 最小锥角（度数值，0-360度），与minimumCone二选一
+     * @property [minimumConeDegree = 0] - 最小锥角（度数值，0至360度），与minimumCone二选一
      * @property [maximumCone = 180] - 最大圆锥角（弧度值）
-     * @property [maximumConeDegree = 180] - 最大圆锥角（度数值，0-360度），与maximumCone二选一
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [maximumConeDegree = 180] - 最大圆锥角（度数值，0至360度），与maximumCone二选一
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
@@ -12216,7 +12222,7 @@ declare namespace FontBillboardEntity {
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
      * @property [width] - 指定billboard的宽度(以像素为单位)，覆盖图片本身大小。
@@ -12568,9 +12574,9 @@ declare namespace ModelEntity {
      * @property [scale = 1.0] - 缩放比例
      * @property [minimumPixelSize = 0.0] - 指定模型的近似最小像素大小，而不考虑scale缩放，内部会计算像素对应的实际scale值。
      * @property [maximumScale] - 内部计算minimumPixelSize对应的实际scale值时，限定的最大的scale缩放比例。
-     * @property [heading = 0] - 方向角 （度数值，0-360度），优先级高于orientation
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度），优先级高于orientation
-     * @property [roll = 0] - 翻滚角（度数值，0-360度），优先级高于orientation
+     * @property [heading = 0] - 方向角 （度数值，0至360度），优先级高于orientation
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度），优先级高于orientation
+     * @property [roll = 0] - 翻滚角（度数值，0至360度），优先级高于orientation
      * @property [mergeOrientation = false] - 当存在orientation时（如addTimePosition等），设置为true时，是在orientation基础的方式值上加上设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的纠偏处理
      * @property [radius] - 编辑时，半径圆圈的半径，默认自动
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
@@ -12785,7 +12791,7 @@ declare class ModelEntity extends BasePointEntity {
      * @param [options = {}] - 参数包括：
      * @param [options.direction = false] - 旋转方向, true逆时针，false顺时针
      * @param [options.time = 60] - 飞行一周所需时间(单位 秒)，控制速度
-     * @param [options.autoStopAngle] - 自动停止的角度值（0-360度），未设置时不自动停止
+     * @param [options.autoStopAngle] - 自动停止的角度值（0至360度），未设置时不自动停止
      * @returns 无
      */
     rotateStart(options?: {
@@ -12825,7 +12831,7 @@ declare class ModelEntity extends BasePointEntity {
      */
     setOpacity(value: number): void;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      */
     heading: number;
 }
@@ -12941,11 +12947,11 @@ declare class PathEntity extends BasePointEntity {
      */
     readonly hpr: Cesium.HeadingPitchRoll;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      */
     roll: number;
     /**
@@ -13062,11 +13068,11 @@ declare namespace PitEntity {
      * @property imageBottom - 井底面贴图URL
      * @property [repeatBottom = new Cesium.Cartesian2(1.0, 1.0)] - 井底面 在每个方向上重复的次数
      * @property [stRotation = 0] - 井底贴图纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 井底贴图纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 井底贴图纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [opacity = 1] - 透明度
      * @property [flipx = false] - 是否X方向翻转图片
      * @property [flipy = false] - 是否Y方向翻转图片
-     * @property [rotation = 0] - 旋转角度，0-360
+     * @property [rotation = 0] - 旋转角度，0至360
      * @property [noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
      * @property [label] - 支持附带文字的显示
      */
@@ -13152,9 +13158,9 @@ declare namespace PlaneEntity {
      * @property [plane] - 指定平面的法线和距离。
      * @property [plane_normal = "z"] - 方向 ,可选项：x (解释：X轴),y (解释：Y轴),z (解释：Z轴),
      * @property [plane_distance = 0] - 偏移距离
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
@@ -13504,7 +13510,7 @@ declare namespace PolygonEntity {
      * @property [randomColor = false] - 是否随机颜色
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -13899,8 +13905,8 @@ declare namespace PolylineVolumeEntity {
      * @property [radius = 10] - 半径(单位：米)
      * @property [thicknes = radius/3] - 厚度(单位：米)，空心管/星状管 的外层厚度
      * @property [slices] - 边数，比如为4时是矩形管；星状管代表角的个数；
-     * @property [startAngle = 0] - 开始角度，取值范围0-360
-     * @property [endAngle = 360] - 结束角度，取值范围0-360，比如endAngle=180的空心管是拱形半圆管道
+     * @property [startAngle = 0] - 开始角度，取值范围0至360
+     * @property [endAngle = 360] - 结束角度，取值范围0至360，比如endAngle=180的空心管是拱形半圆管道
      * @property [vscale = 1] - 垂直缩放比例
      * @property [hscale = 1] - 水平缩放比例
      * @property [fill = true] - 是否填充
@@ -14056,9 +14062,9 @@ declare namespace RectangleEntity {
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [extrudedHeightReference = Cesium.HeightReference.NONE] - 指定挤压高度相对于什么的属性。
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [stRotation = 0] - 矩形纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 矩形纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 矩形纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
@@ -14315,17 +14321,17 @@ declare namespace RectangularSensor {
      * 相控阵雷达 支持的样式信息
      * @property radius - 半径
      * @property [xHalfAngle = 0] - 传感器水平半角（弧度值）
-     * @property [xHalfAngleDegree = 0] - 传感器水平半角（度数值，0-360度），与xHalfAngle二选一
+     * @property [xHalfAngleDegree = 0] - 传感器水平半角（度数值，0至360度），与xHalfAngle二选一
      * @property [yHalfAngle = 0] - 传感器垂直半角（弧度值）
-     * @property [yHalfAngleDegree = 0] - 传感器垂直半角（度数值，0-360度），与yHalfAngle二选一
+     * @property [yHalfAngleDegree = 0] - 传感器垂直半角（度数值，0至360度），与yHalfAngle二选一
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 0.4] - 透明度
      * @property [material = new Cesium.Color(0.0, 1.0, 1.0, 0.4)] - 指定用于填充的材质，指定material后color属性将被覆盖。
      * @property [lineColor = "#ffffff"] - 边线颜色
      * @property [lineOpacity = 0.6] - 边线透明度
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [showScanPlane = true] - 是否显示扫描面
      * @property [scanPlaneColor = new Cesium.Color(0.0, 1.0, 1.0, 1.0)] - 扫描面颜色
      * @property [scanPlaneOpacity = 0.9] - 扫描面透明度
@@ -14458,14 +14464,14 @@ declare namespace Video2D {
      * @property angle - 水平张角(度数)
      * @property angle2 - 垂直张角(度数)
      * @property distance - 投射距离
-     * @property [heading = 0] - 方向角 （度数值，0-360度），正东方向为0,顺时针到360度
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度），正东方向为0,顺时针到360度
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [opacity = 1.0] - 透明度
      * @property [flipx = false] - 是否X方向翻转视频
      * @property [flipy = false] - 是否Y方向翻转视频
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [outline = false] - 是否边框
      * @property [outlineWidth = 1] - 边框宽度，outlineWidth只适用于非Windows系统，如Android、iOS、Linux和OS X。这是由于WebGL是如何在Windows上的所有三个主要浏览器引擎中实现所限制的，目前只能显示1px。
      * @property [outlineColor = "#ffffff"] - 边框颜色
@@ -14560,17 +14566,17 @@ declare class Video2D extends PointPolygonEntity {
      */
     targetPosition: Cesium.Cartesian3 | LngLatPoint;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     roll: number;
@@ -16882,17 +16888,17 @@ declare class BasePointPrimitive extends BasePrimitive {
      */
     readonly modelMatrix: Cesium.Matrix4;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     roll: number;
@@ -17321,7 +17327,7 @@ declare namespace BillboardIndicator {
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
      * @property [hasPixelOffset = false] - 是否存在偏移量
@@ -17570,9 +17576,9 @@ declare namespace BoxPrimitive {
      * @property [dimensions_x = 100] - 盒子长度
      * @property [dimensions_y = 100] - 盒子宽度
      * @property [dimensions_z = 100] - 盒子高度
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [material] - 指定用于填充的材质，指定material后`materialType`和`materialOptions`将被覆盖。
@@ -17710,7 +17716,7 @@ declare namespace CirclePrimitive {
      * @property [diffHeight = 100] - 高度差（圆柱本身的高度），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定圆的挤压面相对于椭球面的高度。
      * @property [stRotation = 0] - 椭圆纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 椭圆纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定椭圆上各点之间的角距离,可以控制圆的平滑度(值越小越平滑)。
      * @property [fill = true] - 是否填充
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
@@ -18110,9 +18116,9 @@ declare namespace ConeTrackPrimitive {
      * @property [bottomRadius = 100] - 不指定angle时，也可以直接指定圆锥底部半径（单位：米）
      * @property [length = 100] - 圆锥追踪体长度值（单位：米），没有指定targetPosition时有效
      * @property [slices = 128] - 圆柱体周长周围的边数。
-     * @property [heading = 0] - 方向角 （度数值，0-360度），没有指定targetPosition时有效
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度），没有指定targetPosition时有效
-     * @property [roll = 0] - 翻滚角（度数值，0-360度），没有指定targetPosition时有效
+     * @property [heading = 0] - 方向角 （度数值，0至360度），没有指定targetPosition时有效
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度），没有指定targetPosition时有效
+     * @property [roll = 0] - 翻滚角（度数值，0至360度），没有指定targetPosition时有效
      * @property [fill = true] - 是否填充
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
@@ -18393,9 +18399,9 @@ declare namespace CylinderPrimitive {
      * @property [bottomRadius = 100] - 底部半径，指定圆柱体底部半径。
      * @property [length = 100] - 高度，柱面长度。
      * @property [slices = 128] - 圆柱体周长周围的边数。
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
@@ -18609,7 +18615,7 @@ declare namespace DivBillboardPrimitive {
      * @property [opacity = 1.0] - 透明度，取值范围：0.0-1.0
      * @property [scale = 1] - 图像大小的比例
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [horizontalOrigin] - 横向方向的定位
      * @property [verticalOrigin] - 垂直方向的定位
      * @property [width] - 指定billboard的宽度(以像素为单位)，覆盖图片本身大小。
@@ -18749,9 +18755,9 @@ declare namespace DoubleSidedPlane {
      * 双面渲染图片平面 支持的样式信息
      * @property [dimensions_x = 100] - 长度
      * @property [dimensions_y = 100] - 宽度
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
      * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
      * @property [image] - 默认支持直接设置图片，对应的填充的图片
@@ -18980,13 +18986,13 @@ declare namespace EllipsoidPrimitive {
      * @property [innerRadii_y = 0] - 内部Y半径
      * @property [innerRadii_z = 0] - 内部Z半径
      * @property [minimumClock = 0] - 最小时钟角度（弧度值）
-     * @property [minimumClockDegree = 0] - 最小时钟角度（度数值，0-360度），与minimumClock二选一
+     * @property [minimumClockDegree = 0] - 最小时钟角度（度数值，0至360度），与minimumClock二选一
      * @property [maximumClock = 360] - 最大时钟角度（弧度值）
-     * @property [maximumClockDegree = 360] - 最大时钟角度（度数值，0-360度），与maximumClock二选一
+     * @property [maximumClockDegree = 360] - 最大时钟角度（度数值，0至360度），与maximumClock二选一
      * @property [minimumCone = 0] - 最小锥角（弧度值）
-     * @property [minimumConeDegree = 0] - 最小锥角（度数值，0-360度），与minimumCone二选一
+     * @property [minimumConeDegree = 0] - 最小锥角（度数值，0至360度），与minimumCone二选一
      * @property [maximumCone = 180] - 最大圆锥角（弧度值）
-     * @property [maximumConeDegree = 180] - 最大圆锥角（度数值，0-360度），与maximumCone二选一
+     * @property [maximumConeDegree = 180] - 最大圆锥角（度数值，0至360度），与maximumCone二选一
      * @property [stackPartitions = 64] - 指定竖向划分数量
      * @property [slicePartitions = 64] - 指定横向划分数量
      * @property [color = "#00FF00"] - 颜色
@@ -19128,9 +19134,9 @@ declare namespace FrustumPrimitive {
      * 四棱锥体 支持的样式信息
      * @property [angle] - 四棱锥体张角（角度值，取值范围 0.01-89.99）
      * @property [angle2 = angle] - 四棱锥体张角2，（角度值，取值范围 0.01-89.99）
-     * @property [heading = 0] - 方向角 （度数值，0-360度），没有指定targetPosition时有效
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度），没有指定targetPosition时有效
-     * @property [roll = 0] - 翻滚角（度数值，0-360度），没有指定targetPosition时有效
+     * @property [heading = 0] - 方向角 （度数值，0至360度），没有指定targetPosition时有效
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度），没有指定targetPosition时有效
+     * @property [roll = 0] - 翻滚角（度数值，0至360度），没有指定targetPosition时有效
      * @property [length = 100] - 长度值（单位：米），对应far值，没有指定targetPosition时有效
      * @property [near = 0.01] - 近面距视点的距离（单位：米）
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
@@ -19277,17 +19283,17 @@ declare class FrustumPrimitive extends BasePointPrimitive {
      */
     getRayEarthPositions(time?: Cesium.JulianDate): Cesium.Cartesian3[];
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      * <br/>提示：父类属性，非所有子类都具备
      */
     roll: number;
@@ -19524,9 +19530,9 @@ declare namespace ModelPrimitive {
      * @property [scaleX = 1] - X轴方向缩放比例
      * @property [scaleY = 1] - Y轴方向缩放比例
      * @property [scaleZ = 1] - Z轴方向缩放比例
-     * @property [heading = 0] - 方向角 （度数值，0-360度），优先级高于orientation
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度），优先级高于orientation
-     * @property [roll = 0] - 翻滚角（度数值，0-360度），优先级高于orientation
+     * @property [heading = 0] - 方向角 （度数值，0至360度），优先级高于orientation
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度），优先级高于orientation
+     * @property [roll = 0] - 翻滚角（度数值，0至360度），优先级高于orientation
      * @property [mergeOrientation = false] - 当存在orientation时（如addTimePosition等），设置为true时，可以在orientation基础的方式值上叠加设置是heading、pitch、roll值，比如用于设置模型不是标准的方向时的处理
      * @property [fill = false] - 是否填充，指定与模型渲染颜色混合
      * @property [color = "#ffffff"] - 颜色
@@ -19896,7 +19902,7 @@ declare namespace Pit {
      * @property imageBottom - 井底面贴图URL
      * @property [repeatBottom = new Cesium.Cartesian2(1.0, 1.0)] - 井底面 横纵方向重复次数
      * @property [stRotation = 0] - 井底面 贴图纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 井底面 贴图纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 井底面 贴图纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [label] - 支持附带文字的显示
      */
     type StyleOptions = any | {
@@ -19995,9 +20001,9 @@ declare namespace PlanePrimitive {
      * @property [dimensions_x = 100] - 长度
      * @property [dimensions_y = 100] - 宽度
      * @property [plane_normal = "z"] - 方向 ,可选项：x (解释：X轴),y (解释：Y轴),z (解释：Z轴),
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [color = "#00FF00"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
@@ -20263,7 +20269,7 @@ declare namespace PolygonPrimitive {
      * @property [randomColor = false] - 是否随机颜色
      * @property [image] - 图片材质时，贴图的url，等价于 materialType:'Image'
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
@@ -20567,8 +20573,8 @@ declare namespace PolylineVolumePrimitive {
      * @property [radius = 10] - 半径(单位：米)
      * @property [thicknes = radius/3] - 厚度(单位：米)，空心管/星状管 的外层厚度
      * @property [slices] - 边数，比如为4时是矩形管；星状管代表角的个数；
-     * @property [startAngle = 0] - 开始角度，取值范围0-360
-     * @property [endAngle = 360] - 结束角度，取值范围0-360，比如endAngle=180的空心管是拱形半圆管道
+     * @property [startAngle = 0] - 开始角度，取值范围0至360
+     * @property [endAngle = 360] - 结束角度，取值范围0至360，比如endAngle=180的空心管是拱形半圆管道
      * @property [vscale = 1] - 垂直缩放比例
      * @property [hscale = 1] - 水平缩放比例
      * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
@@ -20706,9 +20712,9 @@ declare namespace RectanglePrimitive {
      * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
      * @property [rotation = 0] - 旋转角度（弧度值），正北为0，逆时针旋转
-     * @property [rotationDegree = 0] - 旋转角度（度数值，0-360度），与rotation二选一
+     * @property [rotationDegree = 0] - 旋转角度（度数值，0至360度），与rotation二选一
      * @property [stRotation = 0] - 矩形纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 矩形纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 矩形纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定对象是投射还是接收来自光源的阴影。
      * @property [clampToGround = false] - 是否贴地
@@ -20883,7 +20889,7 @@ declare namespace ReflectionWater {
      * @property [farDistance = 10000] - 指定相机距离超过指定距离
      * @property [farColor = "#91B3FF"] - 相机距离超过farDistance时的水面的颜色
      * @property [stRotation = 0] - 水流方向的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 水流方向的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 水流方向的角度（度数值，0至360度），与stRotation二选一
      * @property [height = 0] - 高程，圆相对于椭球面的高度。
      * @property [diffHeight = 100] - 高度差（相对于本身的高度的差值），与extrudedHeight二选一。
      * @property [extrudedHeight] - 指定走廊挤压面相对于椭球面的高度。
@@ -21484,7 +21490,7 @@ declare namespace Water {
      * @property [opacity = 0.8] - 透明度，取值范围：0.0-1.0
      * @property [clampToGround = false] - 是否贴地
      * @property [stRotation = 0] - 多边形纹理的角度（弧度值），正北为0，逆时针旋转
-     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0-360度），与stRotation二选一
+     * @property [stRotationDegree = 0] - 多边形纹理的角度（度数值，0至360度），与stRotation二选一
      * @property [outline = false] - 是否边框
      * @property [outlineColor = "#ffffff"] - 边框颜色
      * @property [outlineOpacity = 0.6] - 边框透明度
@@ -21682,8 +21688,8 @@ declare namespace BaseGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -21922,8 +21928,8 @@ declare class BaseGraphicLayer extends BaseLayer {
  * @param [options.name] - 图层名称
  * @param [options.show = true] - 图层是否显示
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -22153,12 +22159,14 @@ declare class BaseLayer extends BaseClass {
      * @param [options] - 参数对象:
      * @param [options.full = false] - （tileset模型时）导出冗余的完整参数，包含完整position、transform等信息。
      * @param [options.noAlt] - (矢量图层中)不导出高度值
+     * @param [options.toNum] - (矢量图层中)坐标是time时序坐标时，time值是否转为数字秒数
      * @param [options.stopEdit = false] - (矢量图层中)是否停止绘制或编辑
      * @returns Json简单对象
      */
     toJSON(options?: {
         full?: boolean;
         noAlt?: boolean;
+        toNum?: boolean;
         stopEdit?: boolean;
     }): any;
     /**
@@ -22254,8 +22262,8 @@ declare namespace CzmGeoJsonLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -22460,8 +22468,8 @@ declare class CzmGeoJsonLayer extends BaseGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -22584,8 +22592,8 @@ declare class CzmlLayer extends CzmGeoJsonLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -22741,8 +22749,8 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -22891,8 +22899,8 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -23053,8 +23061,8 @@ declare class ArcGisWfsSingleLayer extends GeoJsonLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -23286,8 +23294,8 @@ declare namespace GeoJsonLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -23532,8 +23540,8 @@ declare namespace GraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -24074,8 +24082,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -24184,9 +24192,9 @@ declare namespace I3SLayer {
  * @param [options.position.alt] - 高度值（单位：米）
  * @param [options.position.alt_offset] - 相对于模型本身高度的偏移值（单位：米） ，如果有alt时已alt优先。
  * @param [options.rotation] - 自定义旋转方向（旋转模型）
- * @param options.rotation.x - X方向，角度值0-360
- * @param options.rotation.y - Y方向，角度值0-360
- * @param options.rotation.z - 四周方向，角度值0-360
+ * @param options.rotation.x - X方向，角度值0至360
+ * @param options.rotation.y - Y方向，角度值0至360
+ * @param options.rotation.z - 四周方向，角度值0至360
  * @param [options.scale = 1] - 自定义缩放比例，整体等比例缩放
  * @param [options.scaleX = 1] - 单独自定义缩放X轴方向比例
  * @param [options.scaleY = 1] - 单独自定义缩放Y轴方向比例
@@ -24254,8 +24262,8 @@ declare namespace I3SLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -24472,8 +24480,8 @@ declare namespace LodGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -24655,8 +24663,8 @@ declare class LodGraphicLayer extends GraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -24790,8 +24798,8 @@ declare class ModelLayer extends GraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -24902,8 +24910,8 @@ declare class OsmBuildingsLayer extends TilesetLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -25043,9 +25051,9 @@ declare namespace TilesetLayer {
  * @param [options.position.alt] - 高度值（单位：米）
  * @param [options.position.alt_offset] - 相对于模型本身高度的偏移值（单位：米） ，如果有alt时已alt优先。
  * @param [options.rotation] - 自定义旋转方向（旋转模型）
- * @param options.rotation.x - X方向，角度值0-360
- * @param options.rotation.y - Y方向，角度值0-360
- * @param options.rotation.z - 四周方向，角度值0-360
+ * @param options.rotation.x - X方向，角度值0至360
+ * @param options.rotation.y - Y方向，角度值0至360
+ * @param options.rotation.z - 四周方向，角度值0至360
  * @param [options.modelMatrix] - 模型的矩阵位置，内部无坐标位置的模型使用，此时position和rotation等参数均无效。
  * @param [options.updateMatrix] - 外部自定义修复模型矩阵位置
  * @param [options.scale = 1] - 自定义缩放比例，整体等比例缩放
@@ -25158,8 +25166,8 @@ declare namespace TilesetLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -25556,12 +25564,14 @@ declare class TilesetLayer extends BaseGraphicLayer {
      * @param [options] - 参数对象:
      * @param [options.full = false] - （tileset模型时）导出冗余的完整参数，包含完整position、transform等信息。
      * @param [options.noAlt] - (矢量图层中)不导出高度值
+     * @param [options.toNum] - (矢量图层中)坐标是time时序坐标时，time值是否转为数字秒数
      * @param [options.stopEdit = false] - (矢量图层中)是否停止绘制或编辑
      * @returns Json简单对象
      */
     toJSON(options?: {
         full?: boolean;
         noAlt?: boolean;
+        toNum?: boolean;
         stopEdit?: boolean;
     }): any;
 }
@@ -25637,8 +25647,8 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -25807,8 +25817,8 @@ declare class WfsLayer extends LodGraphicLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -25926,8 +25936,8 @@ declare class WfsSingleLayer extends GeoJsonLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -26173,8 +26183,8 @@ declare class TerrainLayer extends BaseLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -26340,8 +26350,8 @@ declare namespace ArcGisLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -26529,8 +26539,8 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -26668,8 +26678,8 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -26843,8 +26853,8 @@ declare namespace BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27086,8 +27096,8 @@ declare class BaseTileLayer extends BaseLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27199,8 +27209,8 @@ declare class BingLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27313,8 +27323,8 @@ declare class EmptyTileLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27444,8 +27454,8 @@ declare class GaodeLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27581,8 +27591,8 @@ declare class GeeLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27709,8 +27719,8 @@ declare class GoogleLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27821,8 +27831,8 @@ declare class GridLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -27956,8 +27966,8 @@ declare class ImageLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28087,8 +28097,8 @@ declare class MapboxLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28224,8 +28234,8 @@ declare class OsmLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28359,8 +28369,8 @@ declare class TdtLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28478,8 +28488,8 @@ declare class TencentLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28595,8 +28605,8 @@ declare class TileInfoLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28751,8 +28761,8 @@ declare class TmsLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -28947,8 +28957,8 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -29150,8 +29160,8 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -29321,8 +29331,8 @@ declare namespace Map {
     /**
      * 场景参数
      * @property [center] - 默认相机视角
-     * @property center.lng - 经度值, 180 - 180
-     * @property center.lat - 纬度值, -90 - 90
+     * @property center.lng - 经度值, -180至180
+     * @property center.lat - 纬度值, -90至90
      * @property center.alt - 高度值
      * @property [center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @property [center.pitch] - 俯仰角度值，绕纬度线旋转角度,-90至90
@@ -30595,7 +30605,7 @@ declare class Map extends BaseClass {
     }): Promise<boolean>;
     /**
      * 设置相机heading值，保持地图中心位置不变。
-     * @param heading - 方向角度值， 0-360
+     * @param heading - 方向角度值， 0至360
      * @param [options] - 具有以下属性的对象:
      * @param [options.pitch] - 俯仰角度值，绕垂直于地心的轴旋转角度, -90至90
      * @param [options.duration] - 飞行持续时间（秒）。如果省略，内部会根据飞行距离计算出理想的飞行时间。
@@ -30627,8 +30637,8 @@ declare class Map extends BaseClass {
     /**
      * 将相机本身定位至指定位置
      * @param cameraView - 飞行参数
-     * @param cameraView.lng - 经度值, 180 - 180
-     * @param cameraView.lat - 纬度值, -90 - 90
+     * @param cameraView.lng - 经度值, -180至180
+     * @param cameraView.lat - 纬度值, -90至90
      * @param [cameraView.alt] - 高度值
      * @param [cameraView.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
      * @param [cameraView.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -31444,7 +31454,7 @@ declare class EllipsoidWaveMaterialProperty extends BaseMaterialProperty {
  * @param [options.speed = 0] - 不为0时呈现图片滚动效果，数字代表滚动速度
  * @param [options.flipx = false] - 是否X方向翻转图片
  * @param [options.flipy = false] - 是否Y方向翻转图片
- * @param [options.rotation = 0] - 旋转角度，0-360
+ * @param [options.rotation = 0] - 旋转角度，0至360
  * @param [options.repeat = new Cesium.Cartesian2(1.0, 1.0)] - 指定图像在每个方向上重复的次数
  * @param [options.noWhite = true] - 是否不显示白色，true时没有加载完成前的白色闪烁，但也不支持纯白色的图片
  * @param [options.maskImage] - 遮盖融合的图片url地址，可用于视频等场景下的四周羽化效果。
@@ -33051,8 +33061,8 @@ declare class TextMaterial extends Cesium.Material {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -33183,8 +33193,8 @@ declare class EchartsLayer extends BaseLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -33324,8 +33334,8 @@ declare class HeatLayer extends BaseLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -33440,13 +33450,17 @@ declare namespace PointPlot {
      * @property [height = 20] - 高度
      * @property [lockRatio = true] - 是否等比计算高宽，比如只传widht时，height是自动计算的等比高度
      * @property [scale = 1] - 大小比例
-     * @property [angle = 0] - 角度，0-360
+     * @property [angle = 0] - 角度，0至360
      * @property [mirror = 0] - 是否镜像，可选值：0不镜像、1水平镜像、2垂直镜像、3水平+垂直同时镜像
      * @property [intext] - 内联文本,比如在旗子内写上文字
      * @property [intext_color = "#ff0000"] - 内联文本颜色
      * @property [lineWidth = 0.5] - 线宽
      * @property [lineType = 0] - 线型，可选值：0实线、1虚线
      * @property [dashLength = 10] - 虚线间长，仅在lineType是虚线时有效
+     * @property [serif = false] - 是否衬线
+     * @property [serifDirect = -1] - 衬线类型，可选值：-1无衬线、0内衬、1外衬、2双衬
+     * @property [serifColor = "#ffff00"] - 衬线颜色
+     * @property [serifWidth = 1] - 衬线线宽
      * @property [fill = false] - 是否填充，仅在标号存在填充区域时有效
      * @property [fillColor] - 填充颜色
      * @property [lockZoom = true] - 是否随图缩放
@@ -33467,7 +33481,7 @@ declare namespace PointPlot {
      * @property [text.backgroundColor] - 背景颜色
      * @property [text.borderColor] - 边线颜色
      * @property [text.borderWidth] - 边线宽度
-     * @property [text.borderColor] - 阴影颜色
+     * @property [text.shadowColor] - 阴影颜色
      * @property [text.shadowOffsetX] - 阴影的X偏离值
      * @property [text.shadowOffsetY] - 阴影的Y偏离值
      */
@@ -33484,6 +33498,10 @@ declare namespace PointPlot {
         lineWidth?: number;
         lineType?: number;
         dashLength?: number;
+        serif?: boolean;
+        serifDirect?: number;
+        serifColor?: string | Cesium.Color;
+        serifWidth?: number;
         fill?: boolean;
         fillColor?: string | Cesium.Color;
         lockZoom?: boolean;
@@ -33504,7 +33522,7 @@ declare namespace PointPlot {
             backgroundColor?: string | Cesium.Color;
             borderColor?: string | Cesium.Color;
             borderWidth?: number;
-            borderColor?: string | Cesium.Color;
+            shadowColor?: string | Cesium.Color;
             shadowOffsetX?: number;
             shadowOffsetY?: number;
         };
@@ -33607,7 +33625,7 @@ declare namespace PolyPlot {
      * @property [clampToGround = false] - 是否贴地
      * @property [height = 0] - 高度
      * @property [diffHeight = 0] - 立体高度
-     * @property [fill = false] - 是否显示墙（在线的下面展示）
+     * @property [wall = false] - 是否显示墙（在线的下面展示）
      * @property [wallOpacity = 0.4] - 墙的透明度，可选项：0.0-1.0
      * @property [text] - 文本注记. 也支持text_前缀方式，比如 text: "我是注记", text_color: "#0000ff"
      * @property [text.text] - 文字内容
@@ -33623,7 +33641,7 @@ declare namespace PolyPlot {
      * @property [text.backgroundColor] - 背景颜色
      * @property [text.borderColor] - 边线颜色
      * @property [text.borderWidth] - 边线宽度
-     * @property [text.borderColor] - 阴影颜色
+     * @property [text.shadowColor] - 阴影颜色
      * @property [text.shadowOffsetX] - 阴影的X偏离值
      * @property [text.shadowOffsetY] - 阴影的Y偏离值
      */
@@ -33643,7 +33661,7 @@ declare namespace PolyPlot {
         clampToGround?: boolean;
         height?: number;
         diffHeight?: number;
-        fill?: boolean;
+        wall?: boolean;
         wallOpacity?: number;
         text?: {
             text?: string;
@@ -33659,7 +33677,7 @@ declare namespace PolyPlot {
             backgroundColor?: string | Cesium.Color;
             borderColor?: string | Cesium.Color;
             borderWidth?: number;
-            borderColor?: string | Cesium.Color;
+            shadowColor?: string | Cesium.Color;
             shadowOffsetX?: number;
             shadowOffsetY?: number;
         };
@@ -33753,6 +33771,10 @@ declare class PolyPlot extends BasePolyEntity {
  * 【需要引入  mars3d-plot 插件库(非公开的)】
  */
 declare namespace PlotUtil {
+    /**
+     * 是否授权成功
+     */
+    const isSuccess: boolean;
     /**
      * 获取Plot标绘库依赖资源初始化完成的Promise承诺
      * @example
@@ -34027,9 +34049,9 @@ declare namespace CamberRadar {
      * @property [endFovV = 85] - 垂直结束角度（角度值）
      * @property [segmentH = 60] - 垂直方向(类似经度线)分割数
      * @property [segmentV = 20] - 水平方向(类似纬度线)分割数
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
      * @property [closed = true] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
      */
@@ -34134,9 +34156,9 @@ declare namespace ConicSensor {
      * 圆锥体（单目标雷达） 支持的样式信息
      * @property [angle = 85] - 夹角，半场角度，取值范围 0.1-89.9
      * @property [length = 100] - 半径长度（米）
-     * @property [heading = 0] - 方向角 （角度值 0-360），正东为0度
-     * @property [pitch = 0] - 俯仰角（角度值 0-360）
-     * @property [roll = 0] - 翻滚角（角度值 0-360）
+     * @property [heading = 0] - 方向角 （角度值 0至360），正东为0度
+     * @property [pitch = 0] - 俯仰角（角度值 0至360）
+     * @property [roll = 0] - 翻滚角（角度值 0至360）
      * @property [color = Cesium.Color.YELLOW] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [slices = 36] - 周围的边数,数值调小可以优化效率
@@ -34236,15 +34258,15 @@ declare class ConicSensor extends BasePointPrimitive {
      */
     length: number;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      */
     roll: number;
     /**
@@ -34303,7 +34325,7 @@ declare namespace FixedJammingRadar {
      * @property [kj] - 指定的压制系数
      * @property [theta05] - 雷达天线在水平方向的半功率波束宽度
      * @property [k] - 雷达天线的方向性系数
-     * @property [dAlpha] - 干扰机波束的方位角（0-360）(dAlpha) (波束方向实体指向时为零)
+     * @property [dAlpha] - 干扰机波束的方位角（0至360）(dAlpha) (波束方向实体指向时为零)
      * @property [dBeta] - 干扰机波束的俯仰角
      * @property [dAlphaMax] - 干扰机波束与干扰机与雷达连线的最大夹角（0-180）(dAlphaMax)
      * @property [azimuth] - 干扰相机相对雷达的方位角 自动计算
@@ -34344,9 +34366,9 @@ declare namespace FixedJammingRadar {
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = color] - 边线颜色，为空时是为渐变色
      * @property [scale = 1.0] - 缩放比例
-     * @property [heading = 0] - 方向角 （角度值 0-360）
-     * @property [pitch = 0] - 俯仰角（角度值 0-360）
-     * @property [roll = 0] - 翻滚角（角度值 0-360）
+     * @property [heading = 0] - 方向角 （角度值 0至360）
+     * @property [pitch = 0] - 俯仰角（角度值 0至360）
+     * @property [roll = 0] - 翻滚角（角度值 0至360）
      * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
      * @property [faceForward = false] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
      * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
@@ -34425,9 +34447,9 @@ declare namespace JammingRadar {
      * @property [outline = false] - 是否显示边线
      * @property [outlineColor = "#ffffff"] - 边线颜色，为空时是为渐变色
      * @property [scale = 1.0] - 缩放比例
-     * @property [heading = 0] - 方向角 （角度值 0-360）
-     * @property [pitch = 0] - 俯仰角（角度值 0-360）
-     * @property [roll = 0] - 翻滚角（角度值 0-360）
+     * @property [heading = 0] - 方向角 （角度值 0至360）
+     * @property [pitch = 0] - 俯仰角（角度值 0至360）
+     * @property [roll = 0] - 翻滚角（角度值 0至360）
      * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
      * @property [faceForward = false] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
      * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
@@ -34499,9 +34521,9 @@ declare namespace RectSensor {
      * @property [angle2 = 5] - 夹角2，半场角度，取值范围 0.1-89.9
      * @property [angle = 5] - 夹角1和夹角2相同时，可以传入angle一个属性
      * @property [length = 100] - 半径长度（米）
-     * @property [heading = 0] - 方向角 （角度值 0-360），正东为0度
-     * @property [pitch = 0] - 俯仰角（角度值 0-360）
-     * @property [roll = 0] - 翻滚角（角度值 0-360）
+     * @property [heading = 0] - 方向角 （角度值 0至360），正东为0度
+     * @property [pitch = 0] - 俯仰角（角度值 0至360）
+     * @property [roll = 0] - 翻滚角（角度值 0至360）
      * @property [cameraHpr = false] - heading、pitch、roll是否类似相机的方向的方向值。false朝向天空，true：朝向正北
      * @property [color = Cesium.Color.YELLOW] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
@@ -34611,15 +34633,15 @@ declare class RectSensor extends BasePointPrimitive {
      */
     length: number;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      */
     roll: number;
     /**
@@ -34829,9 +34851,9 @@ declare namespace SatelliteSensor {
      * @property [angle2 = 5] - 四棱锥的第二个角度，半场角度，取值范围 0.1-89.9
      * @property [angle = 5] - 夹角1和夹角2相同时，可以传入angle一个属性
      * @property [length] - 默认按与地球相交的距离展示，传值时按传入值的半径长度显示（米）
-     * @property [heading = 0] - 方向角 （角度值 0-360）
-     * @property [pitch = 0] - 俯仰角（角度值 0-360）
-     * @property [roll = 0] - 翻滚角（角度值 0-360）
+     * @property [heading = 0] - 方向角 （角度值 0至360）
+     * @property [pitch = 0] - 俯仰角（角度值 0至360）
+     * @property [roll = 0] - 翻滚角（角度值 0至360）
      * @property [color = "rgba(255,255,0,0.4)"] - 颜色
      * @property [opacity = 1.0] - 透明度, 取值范围：0.0-1.0
      * @property [slices = 4] - 周围的边数,数值调小可以优化效率,越大贴地边线越平滑
@@ -34929,15 +34951,15 @@ declare class SatelliteSensor extends BasePointPrimitive {
      */
     angle2: number;
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      */
     roll: number;
     /**
@@ -35001,8 +35023,8 @@ declare class SatelliteSensor extends BasePointPrimitive {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -35152,8 +35174,8 @@ declare class S3MLayer extends BaseLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -35250,8 +35272,8 @@ declare class SmImgLayer extends BaseTileLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -35356,8 +35378,8 @@ declare class SmMvtLayer extends BaseLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -35420,10 +35442,10 @@ declare namespace CanvasWindLayer {
      * Canvas风场图层， data数据结构
      * @property rows - 行总数
      * @property cols - 列总数
-     * @property xmin - 最小经度（度数，-180-180）
-     * @property xmax - 最大经度（度数，-180-180）
-     * @property ymin - 最小纬度（度数，-90-90）
-     * @property ymax - 最大纬度（度数，-90-90）
+     * @property xmin - 最小经度（度数，-180至180）
+     * @property xmax - 最大经度（度数，-180至180）
+     * @property ymin - 最小纬度（度数，-90至90）
+     * @property ymax - 最大纬度（度数，-90至90）
      * @property udata - U值一维数组, 数组长度应该是 rows*cols 。也支持按rows行cols列构建好的二维数组。
      * @property vdata - V值一维数组, 数组长度应该是 rows*cols 。也支持按rows行cols列构建好的二维数组。
      */
@@ -35463,8 +35485,8 @@ declare namespace CanvasWindLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -35617,10 +35639,10 @@ declare namespace WindLayer {
      * 风场图层， data数据结构
      * @property rows - 网格行总数
      * @property cols - 网格列总数
-     * @property xmin - 最小经度（度数，-180-180）
-     * @property xmax - 最大经度（度数，-180-180）
-     * @property ymin - 最小纬度（度数，-90-90）
-     * @property ymax - 最大纬度（度数，-90-90）
+     * @property xmin - 最小经度（度数，-180至180）
+     * @property xmax - 最大经度（度数，-180至180）
+     * @property ymin - 最小纬度（度数，-90至90）
+     * @property ymax - 最大纬度（度数，-90至90）
      * @property udata - U值一维数组, 数组长度应该是 rows*cols。
      * @property [umin] - 最小U值, 可选
      * @property [umax] - 最大U值, 可选
@@ -35676,8 +35698,8 @@ declare namespace WindLayer {
  * @param [options.show = true] - 图层是否显示
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
  * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
- * @param options.center.lng - 经度值, 180 - 180
- * @param options.center.lat - 纬度值, -90 - 90
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
  * @param [options.center.alt] - 高度值
  * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
  * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
@@ -36486,7 +36508,8 @@ declare class Measure extends BaseThing {
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
-     * @param [options.splitNum = 100] - 插值数，将线段分割的个数(概略值，有经纬网网格来插值)
+     * @param [options.splitNum = 200] - 插值数，将线段分割的个数(概略值，有经纬网网格来插值)
+     * @param [options.minDistance] - 插值最小间隔(单位：米)，提示：优先级高于splitNum，用于计算splitNum（非严格按这个值分割）
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.hasTerrain = true] - 是否不考虑地形，仅在模型上分析（比如完全地下的场景下，可以设置为false）
      * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
@@ -36501,6 +36524,7 @@ declare class Measure extends BaseThing {
         addHeight?: number;
         showAddText?: boolean;
         splitNum?: number;
+        minDistance?: number;
         has3dtiles?: boolean;
         hasTerrain?: boolean;
         exact?: boolean;
@@ -37245,7 +37269,7 @@ declare namespace RotateOut {
  * @param [options] - 参数对象，包括以下：
  * @param [options.direction = false] - 旋转方向, true逆时针，false顺时针
  * @param [options.time = 60] - 飞行一周所需时间(单位 秒)，控制速度
- * @param [options.autoStopAngle] - 自动停止的角度值（0-360度），未设置时不自动停止
+ * @param [options.autoStopAngle] - 自动停止的角度值（0至360度），未设置时不自动停止
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -37299,7 +37323,7 @@ declare namespace RotatePoint {
  * @param [options] - 参数对象，包括以下：
  * @param [options.direction = false] - 旋转方向, true逆时针，false顺时针
  * @param [options.time = 60] - 飞行一周所需时间(单位 秒)，控制速度
- * @param [options.autoStopAngle] - 自动停止的角度值（0-360度），未设置时不自动停止
+ * @param [options.autoStopAngle] - 自动停止的角度值（0至360度），未设置时不自动停止
  * @param [options.distance] - 可以指定旋转时相机到中心点的距离，默认不改变相对距离。
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
@@ -37472,9 +37496,9 @@ declare namespace MatrixRotate {
     /**
      * 按轴轴旋类 构造参数
      * @property [position] - 坐标位置
-     * @property [heading = 0] - 方向角 （度数值，0-360度）
-     * @property [pitch = 0] - 俯仰角（度数值，0-360度）
-     * @property [roll = 0] - 翻滚角（度数值，0-360度）
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
      * @property [radius = 200] - 半径
      * @property [onChange] - 旋转了方向后的回调方法
      * @property [id = createGuid()] - 对象的id标识
@@ -37505,15 +37529,15 @@ declare namespace MatrixRotate {
 declare class MatrixRotate extends MatrixMove {
     constructor(options?: MatrixRotate.Options);
     /**
-     * 四周方向角，0-360度角度值
+     * 四周方向角，0至360度角度值
      */
     heading: number;
     /**
-     * 俯仰角，上下摇摆的角度，0-360度角度值
+     * 俯仰角，上下摇摆的角度，0至360度角度值
      */
     pitch: number;
     /**
-     * 滚转角，左右摆动的角度，0-360度角度值
+     * 滚转角，左右摆动的角度，0至360度角度值
      */
     roll: number;
 }
@@ -38051,7 +38075,7 @@ declare class Slope extends BaseThing {
  * @param event.data.slope - 度数法值【 α(坡度)=arc tan (高程差/水平距离)】
  * @param event.data.slopeStr1 - 度数法值字符串
  * @param event.data.slopeStr2 - 百分比法值字符串【 坡度 = (高程差/水平距离)x100%】
- * @param event.data.direction - 坡向值（0-360度）
+ * @param event.data.direction - 坡向值（0至360度）
  */
 declare type getSlope_callback = (event: {
     data: {
@@ -38072,7 +38096,7 @@ declare type getSlope_callback = (event: {
  * @param event.data.slope - 度数法值【 α(坡度)=arc tan (高程差/水平距离)】
  * @param event.data.slopeStr1 - 度数法值字符串
  * @param event.data.slopeStr2 - 百分比法值字符串【 坡度 = (高程差/水平距离)x100%】
- * @param event.data.direction - 坡向值（0-360度）
+ * @param event.data.direction - 坡向值（0至360度）
  */
 declare type getSlope_endItem = (event: {
     index: number;
@@ -38094,10 +38118,6 @@ declare type getSlope_endItem = (event: {
  * @param [options.exact = false] - 是否进行精确计算，传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.czm = true] - true:使用cesium原生clippingPolygons接口来操作，false：使用mars3d自定义方式操作
  * @param [options.stylePit] - 开挖区域的井对应样式信息
- * @param [options.image] - 待删除参数，请用stylePit包一层，开挖区域的井墙面贴图URL。未传入该值时，不显示开挖区域的井。
- * @param [options.imageBottom] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，井底面贴图URL
- * @param [options.diffHeight] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，设置区域的挖掘深度（单位：米）
- * @param [options.splitNum] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，井墙面每两点之间插值个数
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -38109,10 +38129,6 @@ declare class TerrainClip extends TerrainEditBase {
         exact?: boolean;
         czm?: boolean;
         stylePit?: PitEntity.StyleOptions | any;
-        image?: string;
-        imageBottom?: string;
-        diffHeight?: number;
-        splitNum?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -38240,10 +38256,6 @@ declare class TerrainFlat extends TerrainEditBase {
  * @param [options.clipOutSide = false] - 是否外切开挖
  * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.stylePit] - 开挖区域的井对应样式信息
- * @param [options.image] - 待删除参数，请用stylePit包一层，开挖区域的井墙面贴图URL。未传入该值时，不显示开挖区域的井。
- * @param [options.imageBottom] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，井底面贴图URL
- * @param [options.diffHeight] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，设置区域的挖掘深度（单位：米）
- * @param [options.splitNum] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，井墙面每两点之间插值个数
  * @param [options.id = createGuid()] - 对象的4exxid标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -38254,10 +38266,6 @@ declare class TerrainPlanClip extends BaseThing {
         clipOutSide?: boolean;
         exact?: boolean;
         stylePit?: PitEntity.StyleOptions | any;
-        image?: string;
-        imageBottom?: string;
-        diffHeight?: number;
-        splitNum?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -38294,10 +38302,6 @@ declare class TerrainPlanClip extends BaseThing {
  * @param [options.upHeight] - 设置所有区域的抬升高度（单位：米）,目前不支持单个区域的高度自定义。
  * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
  * @param [options.stylePit] - 开挖区域的井对应样式信息
- * @param [options.image] - 待删除参数，请用stylePit包一层，开挖区域的井墙面贴图URL。未传入该值时，不显示开挖区域的井。
- * @param [options.imageBottom] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，井底面贴图URL
- * @param [options.diffHeight] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，设置区域的挖掘深度（单位：米）
- * @param [options.splitNum] - 待删除参数，请用stylePit包一层，当显示开挖区域的井时，井墙面每两点之间插值个数
  * @param [options.id = createGuid()] - 对象的id标识
  * @param [options.enabled = true] - 对象的启用状态
  * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
@@ -38308,10 +38312,6 @@ declare class TerrainUplift extends TerrainEditBase {
         upHeight?: number;
         exact?: boolean;
         stylePit?: PitEntity.StyleOptions | any;
-        image?: string;
-        imageBottom?: string;
-        diffHeight?: number;
-        splitNum?: number;
         id?: string | number;
         enabled?: boolean;
         eventParent?: BaseClass | boolean;
@@ -38901,7 +38901,7 @@ declare class TilesetPlanClip extends BaseThing {
      */
     distance: number;
     /**
-     * 裁剪的斜面角度 0-360度
+     * 裁剪的斜面角度 0至360度
      */
     angle1: number;
     /**
@@ -40083,6 +40083,7 @@ declare namespace MeasureUtil {
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.hasTerrain = true] - 是否不考虑地形，仅在模型上分析（比如完全地下的场景下，可以设置为false）
      * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
+     * @param [options.depth] - 是否使用{@link PolyUtil#interPolylineByDepth}离屏渲染深度图的方式加速计算贴地高度
      * @param options.endItem - 异步计算贴地距离中，每计算完成2个点之间的距离后 的回调方法
      * @param options.end - 异步计算完成的 回调方法
      * @returns 异步计算完成的Promise
@@ -40093,6 +40094,7 @@ declare namespace MeasureUtil {
         has3dtiles?: boolean;
         hasTerrain?: boolean;
         exact?: boolean;
+        depth?: boolean;
         endItem: getClampDistance_endItem;
         end: getClampDistance_endItem;
     }): Promise<any>;
@@ -40118,6 +40120,7 @@ declare namespace MeasureUtil {
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数(概略值，有经纬网网格来插值)
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.exact = true] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
+     * @param [options.depth] - 是否使用{@link PolyUtil#interPolygonByDepth}离屏渲染深度图的方式加速计算贴地高度
      * @returns 异步计算完成的Promise
      */
     function getClampArea(positions: Cesium.Cartesian3[] | LngLatPoint[], options: {
@@ -40125,6 +40128,7 @@ declare namespace MeasureUtil {
         splitNum?: number;
         has3dtiles?: boolean;
         exact?: boolean;
+        depth?: boolean;
     }): Promise<any>;
     /**
      * 计算坐标范围内 投影在椭球面平面的二维平面面积（基于turf.area计算）
@@ -40137,7 +40141,7 @@ declare namespace MeasureUtil {
      * @param startPosition - 需要计算的点
      * @param endPosition - 目标点，以该点为参考中心。
      * @param [isNorthZero = false] - 是否正北为0度角度（如方位角）
-     * @returns 返回角度值，0-360度
+     * @returns 返回角度值，0至360度
      */
     function getAngle(startPosition: Cesium.Cartesian3, endPosition: Cesium.Cartesian3, isNorthZero?: boolean): number;
     /**
@@ -40489,7 +40493,7 @@ declare namespace PointUtil {
      * @param mpt1 - 点1坐标
      * @param mpt2 - 点2坐标
      * @param [fraction = 0.5] - 起始点和终点之间距离的比例
-     * @returns 2个点是否为重复的点
+     * @returns 中间点
      */
     function getMidpoint(mpt1: Cesium.Cartesian3 | LngLatPoint, mpt2: Cesium.Cartesian3 | LngLatPoint, fraction?: number): Cesium.Cartesian3;
     /**
@@ -40503,7 +40507,7 @@ declare namespace PointUtil {
      * 获取 点point1 绕 点center 的地面法向量 旋转顺时针angle角度 后的 新坐标
      * @param center - 中心点坐标
      * @param point1 - 点坐标
-     * @param angle - 旋转角度,顺时针方向 0-360度
+     * @param angle - 旋转角度,顺时针方向 0至360度
      * @returns 计算得到的新坐标
      */
     function getRotateCenterPoint(center: Cesium.Cartesian3, point1: Cesium.Cartesian3, angle: number): Cesium.Cartesian3;
@@ -41027,6 +41031,7 @@ declare namespace PolyUtil {
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
+     * @param [options.depth] - 是否使用{@link interPolylineByDepth}离屏渲染深度图的方式加速计算贴地高度
      * @param options.endItem - 异步计算每2个点后之间坐标后 的回调方法
      * @param options.end - 异步计算高度完成后 的回调方法
      * @returns 异步计算完成的Promise,同callback
@@ -41041,6 +41046,7 @@ declare namespace PolyUtil {
         objectsToExclude?: any;
         exact?: boolean;
         offset?: number;
+        depth?: boolean;
         endItem: computeStepSurfaceLine_endItem;
         end: computeStepSurfaceLine_end;
     }): Promise<any>;

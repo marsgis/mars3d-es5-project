@@ -1,12 +1,12 @@
 {
 	"name": "mars3d",
-	"version": "3.9.11",
+	"version": "3.10.0",
 	"description": "Mars3D三维可视化平台",
 	"main": "./mars3d.js",
 	"types": "./mars3d.d.ts",
 	"peerDependencies": {
 		"@turf/turf": "^7.2.0",
-		"mars3d-cesium": "^1.119.0"
+		"mars3d-cesium": "^1.131.0"
 	},
 	"devDependencies": {},
 	"scripts": {},
