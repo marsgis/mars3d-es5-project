@@ -1,7 +1,14 @@
 // 材质对应的api文档: https://mars3d.cn/api/MaterialType.html
 const materialConfig = {
   Color: [{ name: "color", label: "颜色", type: "color", defval: "#3388ff" }],
-
+  RandomColor: [],
+  LineCross: [
+    { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
+    { name: "dashLength", label: "长度", type: "number", step: 1, defval: 64 },
+    { name: "maskLength", label: "间隔", type: "number", step: 1, defval: 9 },
+    { name: "centerPower", label: "中心百分比", type: "number", step: 0.1, defval: 0.1 },
+    { name: "dashPower", label: "虚线百分比", type: "number", step: 0.1, defval: 0.1 }
+  ],
   PolylineDash: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "gapColor", label: "间隔颜色", type: "color", defval: "rgba(255,255,255,0)" },
@@ -26,7 +33,7 @@ const materialConfig = {
   LineFlow: [
     { name: "image", label: "图片", type: "label", defval: "https://data.mars3d.cn/img/textures/fence.png" },
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 },
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 },
 
     {
       name: "repeat_x",
@@ -35,7 +42,7 @@ const materialConfig = {
       step: 1,
       defval: 1,
       max: 1000000, // 数据过大会导致流动线看不见
-      show({ style, graphicType }) {
+      show({ style }) {
         return !style.materialOptions?.axisY
       }
     },
@@ -56,13 +63,13 @@ const materialConfig = {
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "alpha", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 1 },
     { name: "percent", label: "比例", type: "number", min: 0, max: 1, step: 0.01, defval: 0.04 },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 },
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 },
     { name: "startTime", label: "开始时间", type: "number", step: 1, defval: 0 }
   ],
   ODLine: [
     { name: "color", label: "颜色", type: "color", defval: "#ff0000" },
     { name: "bgColor", label: "背景颜色", type: "color", defval: "#000000" },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 },
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 },
     { name: "startTime", label: "开始时间", type: "number", step: 1, defval: 0 },
     {
       name: "bidirectional",
@@ -78,16 +85,16 @@ const materialConfig = {
   ],
   LineFlicker: [
     { name: "color", label: "泛光颜色", type: "color", defval: "#3388ff" },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ],
   LineTrail: [
     { name: "color", label: "轨迹颜色", type: "color", defval: "#3388ff" },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ],
   LineBloom: [
     { name: "color", label: "泛光颜色", type: "color", defval: "#3388ff" },
     { name: "glow", label: "泛光强度", type: "number", step: 1, defval: 1 },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ],
 
   WallScroll: [
@@ -102,6 +109,7 @@ const materialConfig = {
 
   Image: [
     { name: "image", label: "图片", type: "label", defval: "" },
+    { name: "transparent", label: "是否透明", type: "radio", defval: false },
     {
       name: "opacity",
       label: "透明度",
@@ -109,7 +117,10 @@ const materialConfig = {
       min: 0,
       max: 1,
       step: 0.1,
-      defval: 1
+      defval: 1,
+      show({ style }) {
+        return style.transparent === true
+      }
     },
     { name: "repeat_x", label: "X重复次数", type: "number", step: 1, defval: 1 },
     { name: "repeat_y", label: "Y重复次数", type: "number", step: 1, defval: 1 }
@@ -118,7 +129,7 @@ const materialConfig = {
     { name: "image", label: "图片", type: "label", defval: "" },
     { name: "opacity", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 1 },
     { name: "noWhite", label: "不显示白色", type: "radio", defval: true },
-    { name: "rotation", label: "旋转角度", type: "slider", min: 0, max: 360, step: 1, defval: 0},
+    { name: "rotation", label: "旋转角度", type: "slider", min: 0, max: 360, step: 1, defval: 0 },
     { name: "flipx", label: "X方向翻转", type: "radio", defval: false },
     { name: "flipy", label: "Y方向翻转", type: "radio", defval: false },
     { name: "speed", label: "滚动速度", type: "number", step: 1, defval: 0 },
@@ -221,15 +232,46 @@ const materialConfig = {
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "cellAlpha", label: "填充透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 0.1 },
     { name: "lineCount", label: "网格数量", type: "number", step: 1, defval: 10 },
-    { name: "lineThickness", label: "网格宽度", type: "number", step: 1, defval: 2 }
+    { name: "lineThickness", label: "网格宽度", type: "number", step: 1, min: 0, defval: 2 }
   ],
   Checkerboard: [
-    { name: "evenColor", label: "主色", type: "color", defval: "#000000" }, //entity用，属性材质
-    { name: "oddColor", label: "衬色", type: "color", defval: "#ffffff" },
+    {
+      name: "evenColor",
+      label: "主色", // entity用，属性材质
+      type: "color",
+      defval: "#000000",
+      show({ graphicType }) {
+        return !graphicType.endsWith("P")
+      }
+    },
+    {
+      name: "oddColor",
+      label: "衬色",
+      type: "color",
+      defval: "#ffffff",
+      show({ graphicType }) {
+        return !graphicType.endsWith("P")
+      }
+    },
 
-    { name: "lightColor", label: "主色primitive", type: "color", defval: "#000000" }, //primitive用，材质 【Cesium本身问题，命名不一样】
-    { name: "darkColor", label: "衬色primitive", type: "color", defval: "#ffffff" },
-
+    {
+      name: "lightColor", // primitive用，材质 【Cesium本身问题，命名不一样】
+      label: "主色P",
+      type: "color",
+      defval: "#000000",
+      show({ graphicType }) {
+        return graphicType.endsWith("P")
+      }
+    },
+    {
+      name: "darkColor",
+      label: "衬色P",
+      type: "color",
+      defval: "#ffffff",
+      show({ graphicType }) {
+        return graphicType.endsWith("P")
+      }
+    },
     { name: "repeat_x", label: "横向数量", type: "number", step: 1, defval: 10 },
     { name: "repeat_y", label: "纵向数量", type: "number", step: 1, defval: 10 }
   ],
@@ -294,12 +336,26 @@ const materialConfig = {
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "speed", label: "速度", type: "number", min: 0, step: 1, defval: 10 }
   ],
+  CircleScan: [
+    {
+      name: "image",
+      label: "图片",
+      type: "dataSelect",
+      props: {
+        dataType: "img",
+        bizType: "matfile",
+        purpose: "texture"
+      },
+      defval: "https://data.mars3d.cn/img/textures/circle-scan.png"
+    },
+    { name: "color", label: "颜色", type: "color", defval: "#3388ff" }
+  ],
   CircleWave: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "count", label: "数量", type: "number", step: 1, defval: 1 },
     { name: "gradient", label: "圈间系数", type: "slider", min: 0, max: 1, step: 0.1, defval: 0.1 },
     { name: "diffusePower", label: "漫射系数", type: "number", min: 0, max: 50, step: 0.1, defval: 1.6 },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ],
   RadarLine: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
@@ -310,23 +366,16 @@ const materialConfig = {
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "repeat", label: "圈数量", type: "number", step: 1, defval: 30 },
     { name: "thickness", label: "圈宽度比例", type: "slider", min: 0.01, max: 0.99, step: 0.01, defval: 0.3 },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ],
 
   EllipsoidWave: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ],
   EllipsoidElectric: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
-    { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
-  ],
-  LineCross: [
-    { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
-    { name: "dashLength", label: "长度", type: "number", step: 1, defval: 64 },
-    { name: "maskLength", label: "间隔", type: "number", step: 1, defval: 9 },
-    { name: "centerPower", label: "中心百分比", type: "number", step: 0.1, defval: 0.1 },
-    { name: "dashPower", label: "虚线百分比", type: "number", step: 0.1, defval: 0.1 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
   ]
 }
 

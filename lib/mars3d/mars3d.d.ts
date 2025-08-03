@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.0
- * 编译日期：2025-07-06 20:27
+ * 版本信息：v3.10.1
+ * 编译日期：2025-08-03 16:20
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -1773,6 +1773,14 @@ declare namespace MaterialType {
      */
     const RectSlide: string;
     /**
+     * 圆形: 扇形 (限定开始及结束角度实现)
+     * @property [color = new Cesium.Color(1.0, 1.0, 0.0, 1.0)] - 颜色
+     * @property [startAngle = 0] - 扇形区域的开始角度(正东方向为0,顺时针到360度)
+     * @property [endAngle = 360] - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+     * @property [isDouble = false] - 是否对称双扇形
+     */
+    const Sector: string;
+    /**
      * 圆形: 放大扩散线
      * @property [color = new Cesium.Color(1.0, 1.0, 0.0, 1.0)] - 扫描线颜色
      * @property [speed = 10] - 扫描速度，值越大越快
@@ -1785,6 +1793,11 @@ declare namespace MaterialType {
      * @property [count = 1] - 圆圈个数
      * @property [gradient = 0.1] - count>1时，透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
      * @property [diffusePower = 1.6] - 漫射系数
+     * @property [square] - 是否正方形，默认圆形
+     * @property [center = new Cesium.Cartesian2(0.5, 0.5)] - 中心点
+     * @property [startAngle = 0] - 扇形区域的开始角度(正东方向为0,顺时针到360度)
+     * @property [endAngle = 360] - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+     * @property [isDouble = false] - 是否对称双扇形
      */
     const CircleWave: string;
     /**
@@ -4278,6 +4291,7 @@ declare class Bloom extends BaseEffect {
 
 /**
  * 选中对象的 泛光效果。
+ * 说明：不支持2D模式
  * @param [options] - 参数对象
  * @param [options.eventType = "click"] - 高亮触发的事件类型，默认为单击。可选值：单击、鼠标移入,false时不内部控制
  * @param [options.color = Cesium.Color.WHITE] - 泛光颜色
@@ -10958,6 +10972,12 @@ declare class CircleEntity extends BasePointEntity {
      */
     isInPoly(position: Cesium.Cartesian3 | LngLatPoint): boolean;
     /**
+     * 按Cesium.CallbackProperty的方式 更新坐标（更加平滑）
+     * @param [position] - 坐标
+     * @returns 当前坐标
+     */
+    setCallbackPosition(position?: string | any[] | any | Cesium.Cartesian3 | any): Cesium.Cartesian3;
+    /**
      * 飞行定位至 数据所在的视角
      * @param [options = {}] - 参数对象:
      * @param [options.radius] - 点状数据时，相机距离目标点的距离（单位：米）
@@ -11315,7 +11335,7 @@ declare class CorridorEntity extends BasePolyEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
- * //  * @param {number} [options.style.sharpness=0.85] 曲线的弯曲程度
+ * //  * @param {number} [options.style.sharpness=0.8] 曲线的弯曲程度
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.getShowPositions] - 自定义计算曲线点回调方法，可以在方法内自定义计算算法。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -13147,6 +13167,10 @@ declare class PitEntity extends BasePolyEntity {
      * 井下深度（单位：米）
      */
     diffHeight: number;
+    /**
+     * 中心点坐标 （笛卡尔坐标）
+     */
+    readonly center: Cesium.Cartesian3;
 }
 
 declare namespace PlaneEntity {
@@ -14784,7 +14808,12 @@ declare class WallEntity extends BasePolyEntity {
  * 攻击箭头  Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
+ * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
+ * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
+ * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
+ * @param [options.style.headTailFactor = 0.8] - headTailFactor
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -14808,7 +14837,13 @@ declare class WallEntity extends BasePolyEntity {
 declare class AttackArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            headHeightFactor?: number;
+            headWidthFactor?: number;
+            neckHeightFactor?: number;
+            neckWidthFactor?: number;
+            headTailFactor?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -14835,7 +14870,12 @@ declare class AttackArrow extends PolygonEntity {
  * 攻击箭头(平尾)  Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
+ * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
+ * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
+ * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
+ * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -14859,7 +14899,13 @@ declare class AttackArrow extends PolygonEntity {
 declare class AttackArrowPW extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            headHeightFactor?: number;
+            headWidthFactor?: number;
+            neckHeightFactor?: number;
+            neckWidthFactor?: number;
+            tailWidthFactor?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -14893,7 +14939,13 @@ declare class AttackArrowPW extends PolygonEntity {
  * 攻击箭头（燕尾）  Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
+ * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
+ * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
+ * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
+ * @param [options.style.headTailFactor = 0.8] - headTailFactor
+ * @param [options.style.swallowTailFactor = 1.0] - 尾部比例
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -14917,7 +14969,14 @@ declare class AttackArrowPW extends PolygonEntity {
 declare class AttackArrowYW extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            headHeightFactor?: number;
+            neckHeightFactor?: number;
+            neckWidthFactor?: number;
+            tailWidthFactor?: number;
+            headTailFactor?: number;
+            swallowTailFactor?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -15009,7 +15068,11 @@ declare class CloseVurve extends PolygonEntity {
  * 双箭头（钳击）  Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.headHeightFactor = 0.25] - headHeightFactor
+ * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
+ * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
+ * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15033,7 +15096,12 @@ declare class CloseVurve extends PolygonEntity {
 declare class DoubleArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            headHeightFactor?: number;
+            headWidthFactor?: number;
+            neckHeightFactor?: number;
+            neckWidthFactor?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -15079,7 +15147,13 @@ declare class EditSector extends EditPolygon {
  * 直箭头(2个点)   Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
+ * @param [options.style.neckWidthFactor = 0.2] - neckWidthFactor
+ * @param [options.style.headWidthFactor = 0.25] - headWidthFactor
+ * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
+ * @param [options.style.headAngle = Math.PI/8.5] - headAngle
+ * @param [options.style.neckAngle = Math.PI / 13] - neckAngle
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15103,7 +15177,14 @@ declare class EditSector extends EditPolygon {
 declare class FineArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            tailWidthFactor?: number;
+            neckWidthFactor?: number;
+            headWidthFactor?: number;
+            neckHeightFactor?: number;
+            headAngle?: number;
+            neckAngle?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -15137,7 +15218,13 @@ declare class FineArrow extends PolygonEntity {
  * 燕尾直箭头(2个点)   Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
+ * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
+ * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
+ * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
+ * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
+ * @param [options.style.swallowTailFactor = 1] - swallowTailFactor
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15161,7 +15248,14 @@ declare class FineArrow extends PolygonEntity {
 declare class FineArrowYW extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            headHeightFactor?: number;
+            headWidthFactor?: number;
+            neckHeightFactor?: number;
+            neckWidthFactor?: number;
+            tailWidthFactor?: number;
+            swallowTailFactor?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -15585,7 +15679,12 @@ declare class Sector extends PointPolygonEntity {
  * 直箭头(3个点)   Entity矢量数据
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
- * @param options.style - 样式信息
+ * @param options.style - 样式信息,也支持一些对箭头调整的参数
+ * @param [options.style.tailWidthFactor = 0.05] - tailWidthFactor
+ * @param [options.style.neckWidthFactor = 0.1] - neckWidthFactor
+ * @param [options.style.headWidthFactor = 0.15] - headWidthFactor
+ * @param [options.style.headAngle = Math.PI/4] - headAngle
+ * @param [options.style.neckAngle = Math.PI * 0.17741] - neckAngle
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15609,7 +15708,13 @@ declare class Sector extends PointPolygonEntity {
 declare class StraightArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
-        style: PolygonEntity.StyleOptions | any;
+        style: {
+            tailWidthFactor?: number;
+            neckWidthFactor?: number;
+            headWidthFactor?: number;
+            headAngle?: number;
+            neckAngle?: number;
+        };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
@@ -29474,7 +29579,7 @@ declare namespace Map {
         resolutionScale?: number;
         backgroundColor?: string;
         backgroundImage?: string;
-        backgroundType?: boolean;
+        backgroundType?: string;
         showSkyBox?: boolean;
         skyBox?: {
             type?: string;
@@ -31200,6 +31305,11 @@ declare class BaseMaterialProperty {
  * @param [options.count = 1] - 圆圈个数
  * @param [options.gradient = 0.1] - count>1时，透明度的幂方（0-1）,0表示无虚化效果，1表示虚化成均匀渐变
  * @param [options.diffusePower = 1.6] - 漫射系数
+ * @param [options.square] - 是否正方形，默认圆形
+ * @param [options.center = new Cesium.Cartesian2(0.5, 0.5)] - 中心点
+ * @param [options.startAngle = 0] - 扇形区域的开始角度(正东方向为0,顺时针到360度)
+ * @param [options.endAngle = 360] - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+ * @param [options.isDouble = false] - 是否对称双扇形
  */
 declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
     constructor(options?: {
@@ -31209,6 +31319,11 @@ declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
         count?: number;
         gradient?: number;
         diffusePower?: number;
+        square?: boolean;
+        center?: Cesium.Cartesian2;
+        startAngle?: number;
+        endAngle?: number;
+        isDouble?: boolean;
     });
     /**
      * 颜色
@@ -31234,6 +31349,26 @@ declare class CircleWaveMaterialProperty extends BaseMaterialProperty {
      * 漫射系数
      */
     diffusePower: number;
+    /**
+     * 是否正方形，默认圆形
+     */
+    square: boolean;
+    /**
+     * 中心点
+     */
+    center: Cesium.Cartesian2;
+    /**
+     * 扇形区域的开始角度(正东方向为0,顺时针到360度)
+     */
+    startAngle: number;
+    /**
+     * 扇形区域的结束角度(正东方向为0,顺时针到360度)
+     */
+    endAngle: number;
+    /**
+     * 是否对称双扇形
+     */
+    isDouble: boolean;
     /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
@@ -32664,6 +32799,58 @@ declare class ScanLineMaterialProperty extends BaseMaterialProperty {
      * 速度
      */
     speed: number;
+    /**
+     * 获取 材质名称
+     * @param [time] - 检索值的时间。
+     * @returns 材质名称
+     */
+    getType(time?: Cesium.JulianDate): string;
+    /**
+     * 获取所提供时间的属性值。
+     * @param [time] - 检索值的时间。
+     * @param [result] - 用于存储值的对象，如果省略，则创建并返回一个新的实例。
+     * @returns 修改的result参数或一个新的实例(如果没有提供result参数)。
+     */
+    getValue(time?: Cesium.JulianDate, result?: any): any;
+    /**
+     * 将此属性与提供的属性进行比较并返回, 如果两者相等返回true，否则为false
+     * @param [other] - 比较的对象
+     * @returns 两者是同一个对象
+     */
+    equals(other?: Cesium.Property): boolean;
+}
+
+/**
+ * 扇形 (限定开始及结束角度实现) 材质属性
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.color = Cesium.Color.YELLOW] - 颜色
+ * @param [options.startAngle = 0] - 扇形区域的开始角度(正东方向为0,顺时针到360度)
+ * @param [options.endAngle = 360] - 扇形区域的结束角度(正东方向为0,顺时针到360度)
+ * @param [options.isDouble = false] - 是否对称双扇形
+ */
+declare class SectorMaterialProperty extends BaseMaterialProperty {
+    constructor(options?: {
+        color?: string | Cesium.Color;
+        startAngle?: number;
+        endAngle?: number;
+        isDouble?: boolean;
+    });
+    /**
+     * 颜色
+     */
+    color: Cesium.Color;
+    /**
+     * 扇形区域的开始角度(正东方向为0,顺时针到360度)
+     */
+    startAngle: number;
+    /**
+     * 扇形区域的结束角度(正东方向为0,顺时针到360度)
+     */
+    endAngle: number;
+    /**
+     * 是否对称双扇形
+     */
+    isDouble: boolean;
     /**
      * 获取 材质名称
      * @param [time] - 检索值的时间。
@@ -34749,7 +34936,7 @@ declare class Satellite extends Route {
         referenceFrame?: Cesium.ReferenceFrame;
         numberOfDerivatives?: number;
         getCustomPosition?: (...params: any[]) => any;
-        position?: Cesium.SampledPositionProperty;
+        position?: Cesium.SampledPositionProperty | BaseGraphic.TimePosition | Cesium.Cartesian3;
         orientation?: Cesium.Property;
         attr?: any;
         model?: ModelEntity.StyleOptions | any;
@@ -40895,19 +41082,26 @@ declare namespace PolyUtil {
         originY?: number;
     }): Cesium.Cartesian3[];
     /**
-     * 判断点是否 多边形内
+     * 判断点是否 多边形内(算法1，使用turf库)
+     * @param position - 需要判断的点
+     * @param coordinates - 多边形的边界点
+     * @returns 是否在多边形内
+     */
+    function isInPoly(position: Cesium.Cartesian3 | LngLatPoint, coordinates: Cesium.Cartesian3[] | LngLatPoint[]): boolean;
+    /**
+     * 判断点是否 多边形内 (算法2，不使用turf)
      * @param position - 需要判断的点
      * @param positions - 多边形的边界点
      * @returns 是否在多边形内
      */
-    function isInPoly(position: Cesium.Cartesian3 | LngLatPoint, positions: Cesium.Cartesian3[] | LngLatPoint[]): boolean;
+    function isInPoly2(position: Cesium.Cartesian3 | LngLatPoint, positions: Cesium.Cartesian3[] | LngLatPoint[]): boolean;
     /**
      * 求贝塞尔曲线坐标
      * @param positions - 坐标数组
      * @param [options] - 控制参数
      * @param [options.closure = fasle] - 是否闭合曲线
-     * @param [options.sharpness = 0.85] - 曲线的弯曲程度
-     * @param [options.resolution = 10000] - 点之间的时间（以毫秒为单位）
+     * @param [options.sharpness = 0.8] - 曲线的弯曲程度
+     * @param [options.resolution = 20000] - 点之间的时间（以毫秒为单位）, 通过调整节点间的生成速度来控制曲线的弯曲程度。数值越高，节点生成越密集，曲线更平滑；数值较低则节点间距较大，曲线更接近原始线段。
      * @returns 坐标数组
      */
     function getBezierCurve(positions: LngLatPoint[] | Cesium.Cartesian3[] | any[], options?: {

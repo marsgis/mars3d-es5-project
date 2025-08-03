@@ -184,6 +184,16 @@ const styleConfig = {
           return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround && style?.type === "label"
+        }
+      },
       // {
       //   name: "heightReference",
       //   label: "贴地方式",
@@ -255,6 +265,10 @@ const styleConfig = {
       },
 
       { name: "color", label: "颜色", type: "color", defval: "#ffffff" },
+
+      { name: "spacing", label: "字间距", type: "number", min: 0, step: 1, defval: 0 },
+      { name: "spacingRow", label: "行间距", type: "number", min: 0, step: 1, defval: 2 },
+
       { name: "stroke", label: "是否衬色", type: "radio", defval: false },
       {
         name: "strokeColor",
@@ -420,12 +434,23 @@ const styleConfig = {
           return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true }
     ]
   },
   point: {
     name: "点标记",
     primitive: true,
+    extends: ["pointMeasure"],
     style: [
       { name: "pixelSize", label: "像素大小", type: "number", step: 1, defval: 10.0 },
       { name: "color", label: "颜色", type: "color", defval: "#FFFFFF" },
@@ -542,7 +567,17 @@ const styleConfig = {
           return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
-      { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true }
+      { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      }
     ]
   },
   billboard: {
@@ -550,6 +585,30 @@ const styleConfig = {
     primitive: true,
     extends: ["divBillboard", "divBillboardP", "canvasBillboard"],
     style: [
+      {
+        name: "image",
+        label: "图标",
+        type: "label",
+        defval: "",
+        show({ parentType }) {
+          return !parentType
+        }
+      },
+      {
+        name: "image",
+        label: "图标",
+        type: "combobox",
+        defval: "",
+        data: [
+          { label: "红色扩散点", value: "https://data.mars3d.cn/img/marker/point-red.png" },
+          { label: "蓝色环绕", value: "https://data.mars3d.cn/img/marker/mark-blue.png" },
+          { label: "蓝色人员", value: "https://data.mars3d.cn/img/marker/lace-blue.png" },
+          { label: "黄色禁止", value: "https://data.mars3d.cn/img/marker/lace-yellow.png" }
+        ],
+        show({ parentType }) {
+          return parentType
+        }
+      },
       { name: "opacity", label: "透明度", type: "slider", defval: 1.0, min: 0, max: 1, step: 0.01 },
       { name: "scale", label: "大小比例", type: "number", step: 1, defval: 1.0 },
       { name: "rotationDegree", label: "旋转角度", type: "number", step: 1, defval: 0.0 },
@@ -663,29 +722,14 @@ const styleConfig = {
         }
       },
       { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true },
-
       {
-        name: "image",
-        label: "图标",
-        type: "label",
-        defval: "",
-        show({ parentType }) {
-          return !parentType
-        }
-      },
-      {
-        name: "image",
-        label: "图标",
-        type: "combobox",
-        defval: "",
-        data: [
-          { label: "红色扩散点", value: "https://data.mars3d.cn/img/marker/point-red.png" },
-          { label: "蓝色环绕", value: "https://data.mars3d.cn/img/marker/mark-blue.png" },
-          { label: "蓝色人员", value: "https://data.mars3d.cn/img/marker/lace-blue.png" },
-          { label: "黄色禁止", value: "https://data.mars3d.cn/img/marker/lace-yellow.png" }
-        ],
-        show({ parentType }) {
-          return parentType
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
         }
       },
       { name: "color", label: "叠加颜色", type: "color", defval: "#ffffff" }
@@ -695,6 +739,24 @@ const styleConfig = {
     name: "DIV点标记",
     extends: ["divBoderLabel", "divLightPoint", "divUpLabel", "popup", "tooltip", "divIndicator"],
     style: [
+      {
+        name: "html",
+        label: "Html文本",
+        type: "label",
+        defval: "",
+        show({ graphicType }) {
+          return graphicType === "div"
+        }
+      },
+      {
+        name: "text",
+        label: "内容",
+        type: "input",
+        defval: "",
+        show({ graphicType }) {
+          return graphicType === "divUpLabel" || graphicType === "divBoderLabel"
+        }
+      },
       {
         name: "color",
         label: "颜色",
@@ -748,7 +810,21 @@ const styleConfig = {
           { label: "底部", value: 1 }
         ]
       },
-
+      {
+        name: "offsetX",
+        label: "横向偏移",
+        type: "number",
+        step: 1,
+        defval: 0
+      },
+      {
+        name: "offsetY",
+        label: "垂直偏移",
+        type: "number",
+        step: 1,
+        defval: 0
+      },
+      { name: "scale", label: "缩放比例", type: "number", step: 1, defval: 1.0 },
       {
         name: "scaleByDistance",
         label: "是否按视距缩放",
@@ -832,13 +908,23 @@ const styleConfig = {
         }
       },
       { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false },
-      { name: "html", label: "Html文本", type: "label", defval: "" }
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      }
     ]
   },
   divPlane: {
     name: "DIV三维平面",
     style: [
-      { name: "scale", label: "比例", type: "number", step: 1, defval: 1.0 },
+      { name: "html", label: "Html文本", type: "label", defval: "" },
+      { name: "scale", label: "缩放比例", type: "number", step: 1, defval: 1.0 },
       { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "roll", label: "翻滚角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 90.0 },
@@ -904,8 +990,7 @@ const styleConfig = {
         }
       },
 
-      { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false },
-      { name: "html", label: "Html文本", type: "label", defval: "" }
+      { name: "testPoint", label: "是否显示测试点", type: "radio", defval: false }
     ]
   },
   divGif: {
@@ -1136,6 +1221,16 @@ const styleConfig = {
           return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       { name: "visibleDepth", label: "是否被遮挡", type: "radio", defval: true }
     ]
   },
@@ -1243,6 +1338,15 @@ const styleConfig = {
 
       { name: "hasShadows", label: "是否阴影", type: "radio", defval: true },
       {
+        name: "flat",
+        label: "不考虑光照",
+        type: "radio",
+        defval: false,
+        show({ graphicType }) {
+          return graphicType.endsWith("P")
+        }
+      },
+      {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
@@ -1278,7 +1382,15 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
-
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       {
         name: "fill",
         label: "是否填充",
@@ -1295,6 +1407,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color", defval: { color: "#fafafa" } },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "图片2", value: "Image2", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
@@ -1302,12 +1415,13 @@ const styleConfig = {
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "放大扩散线", value: "ScanLine" },
+          { label: "半径扫描", value: "CircleScan" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "雷达线", value: "RadarLine" },
           { label: "波纹雷达扫描", value: "RadarWave" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
       {
@@ -1446,10 +1560,10 @@ const styleConfig = {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
-        defval: false
-        // show({style,  graphicType}) {
-        //   return false // 面无法切换
-        // }
+        defval: false,
+        show({ style }) {
+          return !style?.diffHeight || style?.diffHeight !== 0
+        }
       },
       {
         name: "zIndex",
@@ -1479,7 +1593,15 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
-
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       {
         name: "fill",
         label: "是否填充",
@@ -1496,18 +1618,20 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "放大扩散线", value: "ScanLine" },
+          { label: "半径扫描", value: "CircleScan" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "雷达线", value: "RadarLine" },
           { label: "波纹雷达扫描", value: "RadarWave" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
       {
@@ -1640,7 +1764,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style }) {
-          return false // 面无法切换
+          return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
       {
@@ -1661,6 +1785,10 @@ const styleConfig = {
     primitive: true,
     extends: ["coneTrack", "coneTrackP"],
     style: [
+      { name: "topRadius", label: "顶部半径", type: "number", step: 1, defval: 0.0 },
+      { name: "bottomRadius", label: "底部半径", type: "number", step: 1, defval: 100.0 },
+      { name: "length", label: "锥体高度", type: "number", step: 1, defval: 100.0 },
+
       {
         name: "angle",
         label: "半场角度",
@@ -1686,11 +1814,12 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color", defval: { color: "#FFFFFF" } },
+          { label: "随机色", value: "RandomColor" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "条纹扩散", value: "CylinderWave" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
       { name: "slices", label: "边线边数", type: "number", step: 1, defval: 128 },
@@ -1766,13 +1895,13 @@ const styleConfig = {
     name: "球体",
     primitive: true,
     style: [
-      { name: "radii_x", label: "X半径", type: "number", step: 1, defval: 100.0 },
-      { name: "radii_y", label: "Y半径", type: "number", step: 1, defval: 100.0 },
-      { name: "radii_z", label: "Z半径", type: "number", step: 1, defval: 100.0 },
+      { name: "radii_x", label: "X半径", type: "number", step: 1, min: 1, defval: 100.0 },
+      { name: "radii_y", label: "Y半径", type: "number", step: 1, min: 1, defval: 100.0 },
+      { name: "radii_z", label: "Z半径", type: "number", step: 1, min: 1, defval: 100 },
 
-      { name: "innerRadii_x", label: "内部X半径", type: "number", step: 1, defval: 0.0 },
-      { name: "innerRadii_y", label: "内部Y半径", type: "number", step: 1, defval: 0.0 },
-      { name: "innerRadii_z", label: "内部Z半径", type: "number", step: 1, defval: 0.0 },
+      { name: "innerRadii_x", label: "内部X半径", type: "number", step: 1, min: 1, defval: 0.0 },
+      { name: "innerRadii_y", label: "内部Y半径", type: "number", step: 1, min: 1, defval: 0.0 },
+      { name: "innerRadii_z", label: "内部Z半径", type: "number", step: 1, min: 1, defval: 0.0 },
 
       { name: "minimumClockDegree", label: "最小时钟角度", type: "number", defval: 0.0 },
       { name: "maximumClockDegree", label: "最大时钟角度", type: "number", defval: 360.0 },
@@ -1799,13 +1928,14 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "波纹", value: "EllipsoidWave" },
           { label: "电弧", value: "EllipsoidElectric" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
@@ -1916,13 +2046,14 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
@@ -2006,6 +2137,10 @@ const styleConfig = {
     name: "双面渲染图片平面",
     primitive: true,
     style: [
+      { name: "image", label: "填充的图片", type: "label" },
+      { name: "opacity", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 1 },
+      { name: "noWhite", label: "不显示白色", type: "radio", defval: true },
+
       { name: "dimensions_x", label: "长度", type: "number", step: 1, defval: 100.0 },
       { name: "dimensions_y", label: "宽度", type: "number", step: 1, defval: 100.0 },
 
@@ -2065,13 +2200,14 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
           { label: "棋盘", value: "Checkerboard" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
@@ -2465,7 +2601,17 @@ const styleConfig = {
   polyline: {
     name: "线",
     primitive: true,
-    extends: ["curve", "brushLine", "distanceMeasure", "heightMeasure"],
+    extends: [
+      "curve",
+      "brushLine",
+      "distanceMeasure",
+      "heightMeasure",
+      "distanceSurfaceMeasure",
+      "distanceSurfaceMeasure",
+      "heightTriangleMeasure",
+      "angleMeasure",
+      "sectionMeasure"
+    ],
     style: [
       { name: "width", label: "线宽", type: "number", step: 1, defval: 4.0 },
       {
@@ -2538,7 +2684,30 @@ const styleConfig = {
             value: "LineFlow-19",
             defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", width: 8 }
           }
-        ]
+        ],
+        show({ style }) {
+          return style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+        }
+      },
+      {
+        name: "snakeAnimationDuration",
+        label: "生长动画",
+        type: "number",
+        step: 1,
+        defval: 0,
+        show({ graphicType, parentType }) {
+          return graphicType !== "polylineP" && parentType
+        }
+      },
+      {
+        name: "snakeAnimationDelay",
+        label: "延迟执行动画",
+        type: "number",
+        step: 1,
+        defval: 0,
+        show({ graphicType, parentType }) {
+          return graphicType !== "polylineP" && parentType
+        }
       },
       { name: "closure", label: "是否闭合", type: "radio", defval: false },
       {
@@ -2601,7 +2770,6 @@ const styleConfig = {
           return style?.clampToGround
         }
       },
-
       {
         name: "showAll",
         label: "展示所有坐标",
@@ -2615,7 +2783,7 @@ const styleConfig = {
       },
       {
         name: "maxDistance",
-        label: "保留轨迹长度",
+        label: "保留的轨迹长",
         type: "number",
         step: 1,
         defval: 9999,
@@ -2695,7 +2863,10 @@ const styleConfig = {
 
           { label: "流动line", value: "LineFlow", defval: { image: "https://data.mars3d.cn/img/textures/fence-line.png", repeat_x: 10 } },
           { label: "流动fence", value: "LineFlow-1", defval: { image: "https://data.mars3d.cn/img/textures/fence.png", repeat_x: 10 } }
-        ]
+        ],
+        show({ style }) {
+          return style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+        }
       },
 
       {
@@ -2770,6 +2941,16 @@ const styleConfig = {
     primitive: true,
     style: [
       { name: "diffHeight", label: "墙高", type: "number", step: 1, defval: 100.0 },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
 
       { name: "fill", label: "是否填充", type: "radio", defval: true },
       {
@@ -2779,6 +2960,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color", defval: { color: "#fafafa" } },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
@@ -2807,7 +2989,7 @@ const styleConfig = {
           }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
@@ -2878,6 +3060,16 @@ const styleConfig = {
     name: "走马灯围墙",
     style: [
       { name: "diffHeight", label: "墙高", type: "number", step: 1, defval: 100.0 },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
       { name: "speed", label: "速度", type: "number", step: 1, defval: 10 },
       { name: "reverse", label: "方向", type: "radio", defval: true },
@@ -2899,7 +3091,7 @@ const styleConfig = {
       { name: "diffHeight", label: "墙高", type: "number", step: 100, defval: 9999.0 },
       { name: "width", label: "墙厚度", type: "number", step: 1, defval: 9999.0 },
       { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
-      { name: "opacity", label: "透明度", type: "number", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
+      { name: "opacity", label: "透明度", type: "slider", min: 0, max: 1, step: 0.1, defval: 1 },
       { name: "closure", label: "是否闭合", type: "radio", defval: false },
       { name: "hasShadows", label: "是否阴影", type: "radio", defval: false }
     ]
@@ -2908,8 +3100,18 @@ const styleConfig = {
     name: "扩散围墙",
     style: [
       { name: "diffHeight", label: "墙高", type: "number", step: 1, defval: 100.0 },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        desc: `在贴地状态下无效`,
+        defval: null, // 不能给值，会导致高度值无效
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
-      { name: "speed", label: "速度", type: "number", step: 1, defval: 10 }
+      { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
     ]
   },
 
@@ -2937,6 +3139,15 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
 
       { name: "width", label: "走廊宽度", type: "number", step: 1, defval: 100.0 },
       {
@@ -2959,6 +3170,8 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
+          { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
 
           { label: "OD线", value: "ODLine" },
@@ -3013,7 +3226,10 @@ const styleConfig = {
             value: "LineFlow-19",
             defval: { image: "https://data.mars3d.cn/img/textures/line-color-yellow.png", color: "#33e8df", width: 8 }
           }
-        ]
+        ],
+        show({ style }) {
+          return style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+        }
       },
 
       {
@@ -3090,8 +3306,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style }) {
-          // return !style?.diffHeight || style?.diffHeight !== 0
-          return false // 无法切换
+          return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
       {
@@ -3141,7 +3356,15 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
-
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       {
         name: "fill",
         label: "是否填充",
@@ -3158,6 +3381,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
@@ -3166,7 +3390,7 @@ const styleConfig = {
           { label: "文本", value: "Text" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
@@ -3276,10 +3500,10 @@ const styleConfig = {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
-        defval: false
-        // show({style,  graphicType}) {
-        //   return false // 面无法切换
-        // }
+        defval: false,
+        show({ style }) {
+          return !style?.diffHeight || style?.diffHeight !== 0
+        }
       },
       {
         name: "hasShadows",
@@ -3316,7 +3540,7 @@ const styleConfig = {
     name: "面",
     primitive: true,
     extends: [
-      "video2D",
+      // "video2D",
       "attackArrow",
       "attackArrowPW",
       "attackArrowYW",
@@ -3330,7 +3554,10 @@ const styleConfig = {
       "isosTriangle",
       "lune",
       "regular",
-      "parallelogram"
+      "parallelogram",
+      "areaSurfaceMeasure",
+      "volumeMeasure",
+      "volumeDepthMeasure"
     ],
     style: [
       {
@@ -3344,7 +3571,25 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
+      {
+        name: "radius",
+        label: "区域半径",
+        type: "number",
+        step: 1,
+        show({ graphicType }) {
+          return graphicType === "regular"
+        }
+      },
 
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       {
         name: "fill",
         label: "是否填充",
@@ -3361,6 +3606,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
@@ -3373,7 +3619,9 @@ const styleConfig = {
           { label: "蓝光水面", value: "WaterLight" }
         ],
         show({ style, graphicType }) {
-          return style?.fill !== false && graphicType !== "video2D"
+          return style?.fill !== false && graphicType !== "video2D" && style?.materialType
+            ? this.data?.some((item) => item.value === style?.materialType)
+            : true
         }
       },
       {
@@ -3415,6 +3663,8 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         show({ style }) {
+          console.log("style", style)
+
           return style?.outline && !style?.diffHeight && typeof style?.outlineStyle?.width !== "number"
         }
       },
@@ -3525,10 +3775,10 @@ const styleConfig = {
         name: "clampToGround",
         label: "是否贴地",
         type: "radio",
-        defval: false
-        // show({style,  graphicType}) {
-        //   return false // 面无法切换
-        // }
+        defval: false,
+        show({ style }) {
+          return !style?.diffHeight || style?.diffHeight !== 0
+        }
       },
       {
         name: "zIndex",
@@ -3589,6 +3839,15 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
 
       {
         name: "fill",
@@ -3606,6 +3865,7 @@ const styleConfig = {
         defval: "Color",
         data: [
           { label: "纯色", value: "Color" },
+          { label: "随机色", value: "RandomColor" },
           { label: "图片", value: "Image", defval: { image: "https://data.mars3d.cn/img/map/gugong.jpg" } },
           { label: "网格", value: "Grid" },
           { label: "条纹", value: "Stripe" },
@@ -3618,7 +3878,7 @@ const styleConfig = {
           { label: "蓝光水面", value: "WaterLight" }
         ],
         show({ style }) {
-          return style?.fill !== false
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
@@ -3751,7 +4011,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style }) {
-          return false // 面无法切换
+          return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
       {
@@ -3812,13 +4072,21 @@ const styleConfig = {
           return !style?.clampToGround
         }
       },
-
       {
         name: "diffHeight",
         label: "立体高度",
         type: "number",
         step: 1,
         defval: 0.0,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
         show({ style }) {
           return !style?.clampToGround
         }
@@ -3830,7 +4098,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style }) {
-          return false // 面无法切换
+          return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
       {
@@ -3857,6 +4125,15 @@ const styleConfig = {
         defval: 0.0,
         show({ graphicType }) {
           return graphicType === "wall"
+        }
+      },
+      {
+        name: "setHeight",
+        label: "指定坐标高度",
+        type: "number",
+        step: 1,
+        show({ style }) {
+          return !style?.clampToGround
         }
       },
       {
@@ -3903,7 +4180,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style }) {
-          return false // 面无法切换
+          return !style?.diffHeight || style?.diffHeight !== 0
         }
       },
       {
@@ -3936,11 +4213,329 @@ const styleConfig = {
       { name: "farColor", label: "远距离颜色", type: "color", defval: "#91B3FF" }
     ]
   },
+  dynamicRiver: {
+    name: "动态河流",
+    primitive: false,
+    style: [
+      {
+        name: "image",
+        label: "图片",
+        type: "label",
+        defval: ""
+      },
+
+      { name: "opacity", label: "透明度", type: "slider", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
+      {
+        name: "width",
+        label: "宽度",
+        type: "number",
+        min: 0,
+        step: 1,
+        defval: 20.0
+      },
+      { name: "height", label: "高度", type: "number", min: 0, step: 1, defval: 0.0 },
+      { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 },
+      { name: "axisY", label: "Y轴朝上", type: "radio", defval: false },
+      { name: "move", label: "开启流动", type: "radio", defval: false },
+      { name: "direction", label: "流动方向", type: "radio", defval: false }
+    ]
+  },
+  videoP: {
+    name: "视频面",
+    primitive: true,
+    style: [
+      {
+        name: "url",
+        label: "视频地址",
+        type: "dataSelect",
+        desc: "视频url",
+        props: {
+          dataType: "video",
+          bizType: "matfile"
+        }
+      },
+      { name: "opacity", label: "透明度", type: "slider", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
+      {
+        name: "distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show({ style }) {
+          return style?.distanceDisplayCondition
+        }
+      },
+      {
+        name: "distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show({ style }) {
+          return style?.distanceDisplayCondition
+        }
+      }
+    ]
+  },
+  video3D: {
+    name: "视频面",
+    primitive: false,
+    style: [
+      {
+        name: "url",
+        label: "视频地址",
+        type: "dataSelect",
+        desc: "视频url",
+        props: {
+          dataType: "video",
+          bizType: "matfile"
+        }
+      },
+      {
+        name: "maskImage",
+        label: "遮盖融合图片",
+        type: "dataSelect",
+        desc: "遮盖融合图片url",
+        props: {
+          dataType: "img",
+          bizType: "matfile",
+          // purpose: "none"
+          purpose: "texture"
+        }
+      },
+
+      {
+        name: "angle",
+        label: "夹角1",
+        type: "slider",
+        min: 0.1,
+        max: 89.0,
+        step: 0.01,
+        defval: 1.0
+      },
+      {
+        name: "angle2",
+        label: "夹角2",
+        type: "slider",
+        min: 0.1,
+        max: 89.0,
+        step: 0.01,
+        defval: 1.0
+      },
+      {
+        name: "distance",
+        label: "投射距离",
+        type: "text"
+      },
+
+      {
+        name: "heading",
+        label: "方向角",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0
+      },
+      {
+        name: "pitch",
+        label: "俯仰角",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0
+      },
+      {
+        name: "roll",
+        label: "翻滚角",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0
+      },
+      { name: "opacity", label: "透明度", type: "slider", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
+      {
+        name: "flipx",
+        label: "x方向旋转图片",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "flipy",
+        label: "y方向旋转图片",
+        type: "radio",
+        defval: false
+      },
+
+      { name: "hiddenAreaColor", label: "颜色", type: "color", defval: "" },
+      {
+        name: "showFrustum",
+        label: "视锥体框线",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show({ style }) {
+          return style?.distanceDisplayCondition
+        }
+      },
+      {
+        name: "distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show({ style }) {
+          return style?.distanceDisplayCondition
+        }
+      }
+    ]
+  },
+  video2D: {
+    name: "2D平面投射视频",
+    primitive: false,
+    style: [
+      {
+        name: "url",
+        label: "视频地址",
+        type: "dataSelect",
+        desc: "视频url",
+        props: {
+          dataType: "video",
+          bizType: "matfile"
+        }
+      },
+
+      {
+        name: "angle",
+        label: "夹角1",
+        type: "slider",
+        min: 0.1,
+        max: 89.0,
+        step: 0.01,
+        defval: 1.0
+      },
+      {
+        name: "angle2",
+        label: "夹角2",
+        type: "slider",
+        min: 0.1,
+        max: 89.0,
+        step: 0.01,
+        defval: 1.0
+      },
+      {
+        name: "distance",
+        label: "投射距离",
+        type: "text"
+      },
+
+      {
+        name: "heading",
+        label: "方向角",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0
+      },
+      {
+        name: "pitch",
+        label: "俯仰角",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0
+      },
+      {
+        name: "roll",
+        label: "翻滚角",
+        type: "slider",
+        min: 0.0,
+        max: 360.0,
+        step: 0.01,
+        defval: 0.0
+      },
+      { name: "opacity", label: "透明度", type: "slider", step: 0.1, min: 0.0, max: 1.0, defval: 1.0 },
+      {
+        name: "flipx",
+        label: "x方向旋转",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "flipy",
+        label: "y方向旋转",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "showFrustum",
+        label: "视锥体框线",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition",
+        label: "是否按视距显示",
+        type: "radio",
+        defval: false
+      },
+      {
+        name: "distanceDisplayCondition_far",
+        label: "最大距离",
+        type: "number",
+        step: 1,
+        defval: 100000.0,
+        show({ style }) {
+          return style?.distanceDisplayCondition
+        }
+      },
+      {
+        name: "distanceDisplayCondition_near",
+        label: "最小距离",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show({ style }) {
+          return style?.distanceDisplayCondition
+        }
+      }
+    ]
+  },
 
   pointPlot: {
     name: "点状军标",
     style: [
-      { name: "color", label: "颜色", type: "color", defval: "#ff0000" },
+      {
+        name: "color",
+        label: "颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.hasColor ?? true
+        }
+      },
 
       { name: "width", label: "宽度", type: "number", min: 1, max: 200, step: 1, defval: 30 },
       { name: "lockRatio", label: "等比高度", type: "radio", defval: true },
@@ -3986,7 +4581,7 @@ const styleConfig = {
         name: "intext_color",
         label: "内联文本颜色",
         type: "color",
-        defval: "#ff0000",
+        defval: "#000000",
         show({ style }) {
           return style?.intext
         }
@@ -4012,61 +4607,7 @@ const styleConfig = {
         step: 1,
         defval: 10,
         show({ style }) {
-          return style.lineType === 1
-        }
-      },
-
-      {
-        name: "fill",
-        label: "是否填充",
-        type: "radio",
-        defval: false,
-        show({ style, graphicType }) {
-          return style?.hasFill
-        }
-      },
-      {
-        name: "fillColor",
-        label: "填充颜色",
-        type: "color",
-        defval: "#ff0000",
-        show({ style }) {
-          return style?.fill
-        }
-      },
-      { name: "lockZoom", label: "是否随图缩放", type: "radio", defval: true },
-
-      { name: "flat", label: "是否平放", type: "radio", defval: false },
-      { name: "rotate", label: "竖直旋转角度", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
-      { name: "diffHeight", label: "拉伸厚度", type: "number", min: 0.0, max: 1000.0, step: 1, defval: 0.0 }
-    ]
-  },
-
-  polyPlot: {
-    name: "线面军标",
-    style: [
-      { name: "color", label: "颜色", type: "color", defval: "#ff0000" },
-      { name: "lineWidth", label: "边线线宽", type: "number", min: 0.1, max: 50.0, step: 0.1, defval: 0.5 },
-      {
-        name: "lineType",
-        label: "边线线型",
-        type: "combobox",
-        valType: "number",
-        defval: 0,
-        data: [
-          { label: "实线", value: 0 },
-          { label: "虚线", value: 1 }
-        ]
-      },
-      {
-        name: "dashLength",
-        label: "虚线间长",
-        type: "number",
-        min: 1,
-        step: 1,
-        defval: 10,
-        show({ style }) {
-          return style.lineType === 1
+          return style?.lineType === 1
         }
       },
 
@@ -4119,6 +4660,140 @@ const styleConfig = {
         }
       },
       {
+        name: "fillColor",
+        label: "填充颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.fill
+        }
+      },
+      { name: "lockZoom", label: "是否随图缩放", type: "radio", defval: true },
+
+      { name: "flat", label: "是否平放", type: "radio", defval: false },
+      { name: "rotate", label: "竖直旋转角度", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
+      {
+        name: "diffHeight",
+        label: "拉伸厚度",
+        type: "number",
+        min: 0,
+        max: 100000,
+        step: 1,
+        defval: 0,
+        show({ style }) {
+          return style?.rotate >0
+        }
+      },
+
+      { name: "text", label: "注记文本", type: "textarea", defval: "" },
+      { name: "text_color", label: "注记颜色", type: "color", defval: "#000000" },
+      { name: "text_font_size", label: "注记大小", type: "number", min: 1, max: 200, step: 1, defval: 30 },
+      {
+        name: "text_direction",
+        label: "注记位置",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "正下方", value: 0 },
+          { label: "正右方", value: 1 },
+          { label: "正上方", value: 2 },
+          { label: "正左方", value: 3 },
+          { label: "右上", value: 4 },
+          { label: "右下", value: 5 },
+          { label: "左上", value: 6 },
+          { label: "左下", value: 7 },
+          { label: "居中", value: 8 }
+        ]
+      }
+    ]
+  },
+
+  polyPlot: {
+    name: "线面军标",
+    style: [
+      {
+        name: "color",
+        label: "颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.hasColor ?? true
+        }
+      },
+      { name: "lineWidth", label: "边线线宽", type: "number", min: 0.1, max: 50.0, step: 0.1, defval: 0.5 },
+      {
+        name: "lineType",
+        label: "边线线型",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "实线", value: 0 },
+          { label: "虚线", value: 1 }
+        ]
+      },
+      {
+        name: "dashLength",
+        label: "虚线间长",
+        type: "number",
+        min: 1,
+        step: 1,
+        defval: 10,
+        show({ style }) {
+          return style?.lineType === 1
+        }
+      },
+
+      { name: "serif", label: "是否衬线", type: "radio", defval: false },
+      {
+        name: "serifDirect",
+        label: "衬线类型",
+        type: "combobox",
+        valType: "number",
+        defval: 0,
+        data: [
+          { label: "无衬线", value: -1 },
+          { label: "内衬", value: 0 },
+          { label: "外衬", value: 1 },
+          { label: "双衬", value: 2 }
+        ],
+        show({ style }) {
+          return style?.serif
+        }
+      },
+      {
+        name: "serifColor",
+        label: "衬线颜色",
+        type: "color",
+        defval: "#ffff00",
+        show({ style }) {
+          return style?.serif
+        }
+      },
+      {
+        name: "serifWidth",
+        label: "衬线线宽",
+        type: "number",
+        min: 1.0,
+        max: 50.0,
+        step: 0.1,
+        defval: 1.0,
+        show({ style }) {
+          return style?.serif
+        }
+      },
+
+      {
+        name: "fill",
+        label: "是否填充",
+        type: "radio",
+        defval: false,
+        show({ style }) {
+          return style?.hasFill
+        }
+      },
+      {
         name: "materialType",
         label: "填充材质",
         type: "combobox",
@@ -4136,26 +4811,42 @@ const styleConfig = {
           { label: "水面", value: "Water" },
           { label: "蓝光水面", value: "WaterLight" }
         ],
-        show({ style, graphicType }) {
-          return style?.fill
-        }
-      },
-
-      {
-        name: "fillColor",
-        label: "填充颜色",
-        type: "color",
-        defval: "#ff0000",
         show({ style }) {
-          return style?.fill && (!style?.materialType || style?.materialType === "Color")
+          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
         }
       },
 
       { name: "clampToGround", label: "是否贴地", type: "radio", defval: false },
-      { name: "height", label: "高度", type: "number", step: 1, defval: 0.0 },
-      { name: "diffHeight", label: "立体高度", type: "number", step: 1, defval: 0.0 },
+      {
+        name: "height",
+        label: "高度",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
+      {
+        name: "diffHeight",
+        label: "立体高度",
+        type: "number",
+        step: 1,
+        defval: 0.0,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
 
-      { name: "wall", label: "是否显示墙", type: "radio", defval: false },
+      {
+        name: "wall",
+        label: "是否显示墙",
+        type: "radio",
+        defval: false,
+        show({ style }) {
+          return !style?.clampToGround
+        }
+      },
       {
         name: "wallOpacity",
         label: "墙透明度",
@@ -4165,7 +4856,7 @@ const styleConfig = {
         step: 0.1,
         defval: 0.4,
         show({ style }) {
-          return style?.wall
+          return !style?.clampToGround && style?.wall
         }
       }
     ]
