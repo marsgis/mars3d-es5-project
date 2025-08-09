@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.1
- * 编译日期：2025-08-03 16:20
+ * 版本信息：v3.10.2
+ * 编译日期：2025-08-09 18:06
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -2609,9 +2609,10 @@ declare class SceneModePicker extends BaseCzmControl {
  * @param [options.zoom = true] - 是否可以鼠标滚轮进行缩放刻度面板
  * @param [options.maxSpan = 1] - 刻度放大的最大刻度跨度，单位：秒
  * @param [options.format = "simplify"] - 格式化时间文本方式，
- * 当 format: "simplify" 时自动根据差值格式化时间文本为普通格式 ，比如 yyyy-MM-dd 、HH:mm:ss
+ * 当 format: "simplify" 时自动根据差值格式化yyyy-MM-dd 、HH:mm:ss 的时间文本为普通格式
  * 当 format: "duration" 时显示已过时长（相对于map.clock.startTime）
- * 当 format: "none" 时为完整的时间文本
+ * 当 format: "none" 时为原始的Cesium时间文本
+ * 另外也支持直接传入 "yyyy-MM-dd HH:mm:ss.S" 的完整格式化文本
  * @param [options.style] - 可以传任意CSS样式值，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
  * @param [options.style.bottom = 0] - css定位bottom位置
@@ -5027,6 +5028,7 @@ declare namespace BaseGraphic {
  * @param options.positions - 【线面状（多点）】矢量数据时的坐标位置，具体看子类实现
  * @param options.style - 矢量数据的 样式信息，具体见各{@link GraphicType}子类矢量数据的style参数。
  * @param [options.attr] - 矢量数据的 属性信息，可以任意附加属性。
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -5048,6 +5050,7 @@ declare class BaseGraphic extends BaseClass {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         style: any;
         attr?: any | BaseGraphic.AjaxAttr;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -5547,7 +5550,7 @@ declare class BaseGraphic extends BaseClass {
      * @param [position] - 坐标
      * @param [options] - 参数
      * @param [options.inWindow = false] - 是否判断是否在屏幕内,默认不计算判断，可以按需开启
-     * @returns 是否后端动态坐标
+     * @returns 是否在球的背面 或当前视域屏幕内
      */
     isInView(position?: Cesium.Cartesian3, options?: {
         inWindow?: boolean;
@@ -10859,6 +10862,9 @@ declare namespace CircleEntity {
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasEditRevoke = true] - 编辑时，是否记录编辑步骤中坐标记录，用于还原或撤销编辑
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
+ * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
+ * @param [options.matrixMove] - 右键菜单中，按轴平移时，传入给{@link MatrixMove}对象的构造参数
+ * @param [options.matrixRotate] - 右键菜单中，按轴旋转时，传入给{@link MatrixRotate}对象的构造参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
  * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
@@ -10889,6 +10895,9 @@ declare class CircleEntity extends BasePointEntity {
         hasEditContextMenu?: boolean;
         hasEditRevoke?: boolean;
         hasMoveEdit?: boolean;
+        hasHeightEdit?: boolean;
+        matrixMove?: MatrixMove.Options;
+        matrixRotate?: MatrixRotate.Options;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
         tooltip?: string | any[] | ((...params: any[]) => any);
@@ -11984,10 +11993,14 @@ declare namespace EllipseEntity {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.drawShowMeasure = true] - 绘制时，是否显示圆的半径辅助测量结果。
  * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
+ * @param [options.hasDrawDelPoint = true] - 绘制时，是否可以右键删除点
  * @param [options.hasEdit = true] - 是否允许编辑
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasEditRevoke = true] - 编辑时，是否记录编辑步骤中坐标记录，用于还原或撤销编辑
+ * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
+ * @param [options.hasHeightEdit = true] - 编辑时，当有diffHeight时，是否可以编辑高度
  * @param [options.matrixMove] - 右键菜单中，按轴平移时，传入给{@link MatrixMove}对象的构造参数
  * @param [options.matrixRotate] - 右键菜单中，按轴旋转时，传入给{@link MatrixRotate}对象的构造参数
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
@@ -12013,10 +12026,14 @@ declare class EllipseEntity extends CircleEntity {
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
+        drawShowMeasure?: boolean;
         drawShow?: boolean;
+        hasDrawDelPoint?: boolean;
         hasEdit?: boolean;
         hasEditContextMenu?: boolean;
         hasEditRevoke?: boolean;
+        hasMoveEdit?: boolean;
+        hasHeightEdit?: boolean;
         matrixMove?: MatrixMove.Options;
         matrixRotate?: MatrixRotate.Options;
         popup?: string | any[] | ((...params: any[]) => any);
@@ -14809,10 +14826,10 @@ declare class WallEntity extends BasePolyEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
- * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
- * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
- * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
+ * @param [options.style.headHeightFactor = 0.18] - 头部高度系数
+ * @param [options.style.headWidthFactor = 0.3] - 头部宽度倍数
+ * @param [options.style.neckHeightFactor = 0.85] - 颈部高度系数
+ * @param [options.style.neckWidthFactor = 0.15] - 颈部宽度倍数
  * @param [options.style.headTailFactor = 0.8] - headTailFactor
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -14871,11 +14888,11 @@ declare class AttackArrow extends PolygonEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
- * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
- * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
- * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
- * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
+ * @param [options.style.headHeightFactor = 0.18] - 头部高度系数
+ * @param [options.style.headWidthFactor = 0.3] - 头部宽度倍数
+ * @param [options.style.neckHeightFactor = 0.85] - 颈部高度系数
+ * @param [options.style.neckWidthFactor = 0.15] - 颈部宽度倍数
+ * @param [options.style.tailWidthFactor = 0.1] - 尾部宽度倍数
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -14940,10 +14957,10 @@ declare class AttackArrowPW extends PolygonEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
- * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
- * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
- * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
+ * @param [options.style.headHeightFactor = 0.18] - 头部高度系数
+ * @param [options.style.neckHeightFactor = 0.85] - 颈部高度系数
+ * @param [options.style.neckWidthFactor = 0.15] - 颈部宽度倍数
+ * @param [options.style.tailWidthFactor = 0.1] - 尾部宽度倍数
  * @param [options.style.headTailFactor = 0.8] - headTailFactor
  * @param [options.style.swallowTailFactor = 1.0] - 尾部比例
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
@@ -15069,10 +15086,10 @@ declare class CloseVurve extends PolygonEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.headHeightFactor = 0.25] - headHeightFactor
- * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
- * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
- * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
+ * @param [options.style.headHeightFactor = 0.25] - 头部高度系数
+ * @param [options.style.headWidthFactor = 0.3] - 头部宽度倍数
+ * @param [options.style.neckHeightFactor = 0.85] - 颈部高度系数
+ * @param [options.style.neckWidthFactor = 0.15] - 颈部宽度倍数
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15148,12 +15165,12 @@ declare class EditSector extends EditPolygon {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
- * @param [options.style.neckWidthFactor = 0.2] - neckWidthFactor
- * @param [options.style.headWidthFactor = 0.25] - headWidthFactor
- * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
- * @param [options.style.headAngle = Math.PI/8.5] - headAngle
- * @param [options.style.neckAngle = Math.PI / 13] - neckAngle
+ * @param [options.style.tailWidthFactor = 0.1] - 尾部宽度倍数
+ * @param [options.style.neckWidthFactor = 0.2] - 颈部宽度倍数
+ * @param [options.style.headWidthFactor = 0.25] - 头部宽度倍数
+ * @param [options.style.neckHeightFactor = 0.85] - 颈部高度系数
+ * @param [options.style.headAngle = Math.PI/8.5] - 头部角度
+ * @param [options.style.neckAngle = Math.PI / 13] - 颈部角度
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15219,11 +15236,11 @@ declare class FineArrow extends PolygonEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.headHeightFactor = 0.18] - headHeightFactor
- * @param [options.style.headWidthFactor = 0.3] - headWidthFactor
- * @param [options.style.neckHeightFactor = 0.85] - neckHeightFactor
- * @param [options.style.neckWidthFactor = 0.15] - neckWidthFactor
- * @param [options.style.tailWidthFactor = 0.1] - tailWidthFactor
+ * @param [options.style.headHeightFactor = 0.18] - 头部高度系数
+ * @param [options.style.headWidthFactor = 0.3] - 头部宽度倍数
+ * @param [options.style.neckHeightFactor = 0.85] - 颈部高度系数
+ * @param [options.style.neckWidthFactor = 0.15] - 颈部宽度倍数
+ * @param [options.style.tailWidthFactor = 0.1] - 尾部宽度倍数
  * @param [options.style.swallowTailFactor = 1] - swallowTailFactor
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
@@ -15680,11 +15697,11 @@ declare class Sector extends PointPolygonEntity {
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息,也支持一些对箭头调整的参数
- * @param [options.style.tailWidthFactor = 0.05] - tailWidthFactor
- * @param [options.style.neckWidthFactor = 0.1] - neckWidthFactor
- * @param [options.style.headWidthFactor = 0.15] - headWidthFactor
- * @param [options.style.headAngle = Math.PI/4] - headAngle
- * @param [options.style.neckAngle = Math.PI * 0.17741] - neckAngle
+ * @param [options.style.headWidthFactor = 0.15] - 头部宽度倍数
+ * @param [options.style.headAngle = Math.PI/4] - 头部角度
+ * @param [options.style.neckWidthFactor = 0.1] - 颈部宽度倍数
+ * @param [options.style.neckAngle = Math.PI * 0.17741] - 颈部角度
+ * @param [options.style.tailWidthFactor = 0.05] - 尾部宽度倍数
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
@@ -15709,11 +15726,11 @@ declare class StraightArrow extends PolygonEntity {
     constructor(options: {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[];
         style: {
-            tailWidthFactor?: number;
-            neckWidthFactor?: number;
             headWidthFactor?: number;
             headAngle?: number;
+            neckWidthFactor?: number;
             neckAngle?: number;
+            tailWidthFactor?: number;
         };
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
@@ -22045,6 +22062,7 @@ declare class BaseGraphicLayer extends BaseLayer {
  * @param options.extent.ymin - 最小纬度值, -90 至 90
  * @param options.extent.ymax - 最大纬度值, -90 至 90
  * @param [options.extent.height] - 矩形高度值, 默认取地形高度值
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.script] - 用于矢量对象加载后执行的js脚本，提示：目前主要是Studio平台绑定自定义脚本使用
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
@@ -22071,6 +22089,7 @@ declare class BaseLayer extends BaseClass {
             ymax: number;
             height?: number;
         };
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         script?: string;
         flyTo?: boolean;
         flyToOptions?: any;
@@ -23639,6 +23658,7 @@ declare namespace GraphicLayer {
  * @param [options.tooltipOptions.showNull = false] - 是否显示空值
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.attr] - 图层级对所有矢量数据的 属性信息做统一配置，常用于动态属性
+ * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid] - 图层父级的id，一般图层管理中使用
  * @param [options.name] - 图层名称
@@ -23709,6 +23729,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         };
         contextmenuItems?: any;
         attr?: any | BaseGraphic.AjaxAttr;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -38987,6 +39008,10 @@ declare class TilesetFlood extends TilesetEditBase {
      * 淹没速度，米/秒（默认刷新频率为55Hz）
      */
     speed: number;
+    /**
+     * 显示效果中是否不显示最低高度以下的部分颜色
+     */
+    limitMin: boolean;
     /**
      * 是否对整个模型进行分析
      */
