@@ -917,9 +917,11 @@ var plotEdit = {
           attrVal === false &&
           (type == "plane" ||
             type == "circle" ||
+            type == "circleP" ||
             type == "ellipse" ||
             type == "cylinder" ||
             type == "ellipsoid" ||
+            type == "ellipsoidP" ||
             type == "box" ||
             type == "polylineVolume" ||
             type == "wall" ||

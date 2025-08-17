@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.2
- * 编译日期：2025-08-11 22:08
+ * 版本信息：v3.10.3
+ * 编译日期：2025-08-17 12:10
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -5502,6 +5502,7 @@ declare class BaseGraphic extends BaseClass {
      * @param [content.callback] - 菜单项单击后的回调方法
      * @param [content.children] - 当有二级子菜单时，配置数组。
      * @param [options = {}] - 控制参数
+     * @param [options.mergeMap] - 是否合并一起显示map默认右键菜单
      * @param [options.offsetX] - 用于非规则对象时，横向偏移的px像素值
      * @param [options.offsetY] - 用于非规则对象时，垂直方向偏移的px像素值
      * @returns 当前对象本身，可以链式调用
@@ -5513,6 +5514,7 @@ declare class BaseGraphic extends BaseClass {
         callback?: (...params: any[]) => any;
         children?: any;
     }[], options?: {
+        mergeMap?: boolean;
         offsetX?: number;
         offsetY?: number;
     }): BaseGraphic | any;
@@ -21997,6 +21999,7 @@ declare class BaseGraphicLayer extends BaseLayer {
      * @param [content.callback] - 菜单项单击后的回调方法
      * @param [content.children] - 当有二级子菜单时，配置数组。
      * @param [options = {}] - 控制参数
+     * @param [options.mergeMap] - 是否合并一起显示map默认右键菜单
      * @param [options.offsetX] - 用于非规则对象时，横向偏移的px像素值
      * @param [options.offsetY] - 用于非规则对象时，垂直方向偏移的px像素值
      * @returns 当前对象本身，可以链式调用
@@ -22008,6 +22011,7 @@ declare class BaseGraphicLayer extends BaseLayer {
         callback?: (...params: any[]) => any;
         children?: any;
     }[], options?: {
+        mergeMap?: boolean;
         offsetX?: number;
         offsetY?: number;
     }): BaseGraphicLayer;
@@ -33806,6 +33810,10 @@ declare class PointPlot extends BasePointEntity {
         flyToOptions?: any;
     });
     /**
+     * 标号编码
+     */
+    readonly code: string | number;
+    /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: any;
@@ -33965,6 +33973,10 @@ declare class PolyPlot extends BasePolyEntity {
         flyToOptions?: any;
     });
     /**
+     * 标号编码
+     */
+    readonly code: string | number;
+    /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: any;
@@ -33988,9 +34000,6 @@ declare namespace PlotUtil {
      * @example
      * mars3d.PlotUtil.readyPromise.then(() => {
      *     console.log("Plot库初始化完成")
-     *
-     *     console.log("支持的标号库（树结构）:", mars3d.PlotUtil.symbolTree)
-     *     console.log("支持的标号库（code键值对）:", mars3d.PlotUtil.symbolObj)
      *   })
      */
     const readyPromise: Promise<any>;
@@ -40886,7 +40895,7 @@ declare namespace PolyUtil {
      * @param [options.offset] - [方式2] 按移动的变量
      * @returns 移动后的坐标点数组
      */
-    function movePoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[], options: {
+    function movePoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[] | any, options: {
         center?: Cesium.Cartesian3;
         offset?: Cesium.Cartesian3;
     }): Cesium.Cartesian3[];
