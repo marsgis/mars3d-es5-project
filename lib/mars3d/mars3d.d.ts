@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.3
- * 编译日期：2025-08-17 12:10
+ * 版本信息：v3.10.4
+ * 编译日期：2025-09-03 20:31
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -2992,6 +2992,11 @@ declare class MouseDownView extends BaseControl {
         insertIndex?: number;
         insertBefore?: HTMLElement | string;
     });
+    /**
+     * 重新加载
+     * @returns 无
+     */
+    reload(): void;
 }
 
 /**
@@ -14702,6 +14707,8 @@ declare namespace WallEntity {
      * @property [distanceDisplayCondition = false] - 是否按视距显示 或 指定此框将显示在与摄像机的多大距离。
      * @property [distanceDisplayCondition_far = number.MAX_VALUE] - 最大距离
      * @property [distanceDisplayCondition_near = 0] - 最小距离
+     * @property [riseAnimationDelay = 0] - 延迟多少秒执行执行生长动画, 延迟期间不显示
+     * @property [riseAnimationDuration] - 执行生长动画的时长（内部执行startRiseAnimation方法）,单位：秒
      * @property [hasShadows = false] - 是否阴影
      * @property [shadows = Cesium.ShadowMode.DISABLED] - 指定墙壁是投射还是接收来自光源的阴影。
      * @property [granularity = Cesium.Math.RADIANS_PER_DEGREE] - 指定每个纬度点和经度点之间的角距离。
@@ -14734,6 +14741,8 @@ declare namespace WallEntity {
         distanceDisplayCondition?: boolean | Cesium.DistanceDisplayCondition;
         distanceDisplayCondition_far?: number;
         distanceDisplayCondition_near?: number;
+        riseAnimationDelay?: number;
+        riseAnimationDuration?: number;
         hasShadows?: boolean;
         shadows?: Cesium.ShadowMode;
         granularity?: number;
@@ -14821,6 +14830,26 @@ declare class WallEntity extends BasePolyEntity {
      * 编辑处理类
      */
     readonly EditClass: EditWall;
+    /**
+     * 开始播放 升高动画
+     * @param options - 参数
+     * @param [options.delay = 0] - 延迟多少秒后执行(秒) , 延迟期间不显示
+     * @param [options.duration = 8] - 总时长(秒)
+     * @param [options.autoStop] - 完成后自动调用
+     * @param [options.callback] - 完成后回调stopRiseAnimation
+     * @returns 无
+     */
+    startRiseAnimation(options: {
+        delay?: number;
+        duration?: number;
+        autoStop?: boolean;
+        callback?: (...params: any[]) => any;
+    }): void;
+    /**
+     * 停止 升高动画
+     * @returns 无
+     */
+    stopRiseAnimation(): void;
 }
 
 /**
@@ -19697,7 +19726,7 @@ declare namespace ModelPrimitive {
      * @property [enableDebugWireframe = false] - 仅供调试。是否可以通过debugWireframe来切换查看模型的三角网线框图。
      * @property [debugWireframe = false] - 仅供调试。是否打开模型的三角网线框图。
      * @property [cull = true] - Whether or not to cull the model using frustum/horizon culling. If the model is part of a 3D Tiles tileset, this property will always be false, since the 3D Tiles culling system is used.
-     * @property [opaquePass = Cesium.Pass.OPAQUE] - The pass to use in the {@link DrawCommand} for the opaque portions of the model.
+     * @property [opaquePass = Cesium.Pass.OPAQUE] - 设置渲染通道，在实际使用中，对于模型的不透明部分，应该将DrawCommand的pass属性设置为Cesium.Pass.OPAQUE，这样 Cesium 的渲染器就会在处理不透明物体的阶段渲染该部分，保证渲染顺序和深度检测等机制正常工作。
      * @property [upAxis = Cesium.Axis.Y] - The up-axis of the glTF model.
      * @property [forwardAxis = Cesium.Axis.Z] - The forward-axis of the glTF model.
      * @property [customShader] - A custom shader. This will add user-defined GLSL code to the vertex and fragment shaders. Using custom shaders with a {@link Cesium3DTileStyle} may lead to undefined behavior.
@@ -19781,7 +19810,7 @@ declare namespace ModelPrimitive {
         enableDebugWireframe?: boolean;
         debugWireframe?: boolean;
         cull?: boolean;
-        opaquePass?: boolean;
+        opaquePass?: any | number;
         upAxis?: Cesium.Axis;
         forwardAxis?: Cesium.Axis;
         customShader?: Cesium.CustomShader;
@@ -25248,6 +25277,8 @@ declare namespace TilesetLayer {
  * @param [options.environmentMapManager] - 使用PBR时更新了默认的3D瓷砖和模型照明，以创建更逼真的外观。Cesium.DynamicEnvironmentMapManager
  * @param [options.backFaceCulling = true] - 是否剔除面向背面的几何图形。当为真时，背面剔除由glTF材质的双面属性决定;当为false时，禁用背面剔除。
  * @param [options.enableCollision = false] - 是否启用picking碰撞拾取，贴模型时需要开启。如果<code> map.scene.screenSpaceCameraController.enableCollisionDetection</code>为true，则相机将被阻止低于模型表面。
+ * @param [options.opaquePass = Cesium.Pass.OPAQUE] - 设置渲染通道，在实际使用中，对于Model模型的不透明部分，应该将DrawCommand的pass属性设置为Cesium.Pass.OPAQUE，这样 Cesium 的渲染器就会在处理不透明物体的阶段渲染该部分，保证渲染顺序和深度检测等机制正常工作。
+ * @param [options.renderState] - 可选渲染状态，以覆盖Model模型内部默认渲染状态。
  * @param [options.enableShowOutline = true] - 是否启用模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 可以将其设置为false，以避免在加载时对几何图形进行额外处理。如果为false，则会忽略showOutlines和outlineColor选项。
  * @param [options.showOutline = true] - 是否显示模型的轮廓 {@link https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/CESIUM_primitive_outline|CESIUM_primitive_outline} 扩展. 当为true时，将显示轮廓。当为false时，不显示轮廓。
  * @param [options.outlineColor = Color.BLACK] - 渲染outline轮廓时要使用的颜色。
@@ -25392,6 +25423,8 @@ declare class TilesetLayer extends BaseGraphicLayer {
         environmentMapManager?: any;
         backFaceCulling?: boolean;
         enableCollision?: boolean;
+        opaquePass?: any | number;
+        renderState?: any;
         enableShowOutline?: boolean;
         showOutline?: boolean;
         outlineColor?: Cesium.Color;
@@ -29033,6 +29066,8 @@ declare class WmsLayer extends BaseTileLayer {
  * @param [options.tileMatrixSetID] - 同tileMatrixSet，Cesium原生参数
  * @param [options.tileMatrixLabels] - 瓦片矩阵中用于WMTS请求的标识符列表，每个瓦片矩阵级别一个。
  * @param [options.tileMatrixBefore] - 用于WMTS请求的tilematrix，当tileMatrixLabels是有规律的前缀+层级时，可以用tilematrixBefore配置前缀字符串即可。
+ * @param [options.parameters] - 要在URL中额外增加的请求参数
+ * @param [options.parameters.version = "1.0.0"] - 服务版本
  * @param [options.clock] - 一个时钟实例，用于确定时间维度的值。指定' times '时需要。
  * @param [options.times] - TimeIntervalCollection 的数据属性是一个包含时间动态维度及其值的对象。
  * @param [options.getCapabilities = true] - 是否通过服务本身的GetCapabilities来读取一些参数，减少options配置项
@@ -29107,6 +29142,9 @@ declare class WmtsLayer extends BaseTileLayer {
         tileMatrixSetID?: string;
         tileMatrixLabels?: string[];
         tileMatrixBefore?: string;
+        parameters?: {
+            version?: string;
+        };
         clock?: Cesium.Clock;
         times?: Cesium.TimeIntervalCollection;
         getCapabilities?: boolean;
@@ -30242,6 +30280,14 @@ declare class Map extends BaseClass {
      * 获取或设置当前的地形服务
      */
     terrainProvider: Cesium.TerrainProvider | any;
+    /**
+     * 地形加载是否完成的承诺
+     */
+    terrainPromise: Promise<any>;
+    /**
+     * 当前批次的瓦片加载完成的承诺
+     */
+    tilePromise: Promise<boolean>;
     /**
      * 是否开启地形
      */
@@ -34141,7 +34187,7 @@ declare class Tle {
      */
     readonly checksum2: number;
     /**
-     * 获取卫星指定时间所在的 ECI地固系坐标
+     * 获取卫星指定时间所在的 ECEF地心地固坐标系
      * @param datetime - 指定的时间
      * @returns ECEF(地心地固坐标系) 坐标
      */
@@ -34183,7 +34229,7 @@ declare class Tle {
      */
     static getPoint(tle1: string, tle2: string, datetime: Date | Cesium.JulianDate | number, isFixed?: boolean): LngLatPoint | undefined;
     /**
-     * 获取卫星指定时间所在的 ECI地固系坐标
+     * 获取卫星指定时间所在的 ECEF地心地固坐标系
      * @param tle1 - 卫星TLE的第一行
      * @param tle2 - 卫星TLE的第二行
      * @param datetime - 指定的时间
@@ -34212,7 +34258,7 @@ declare class Tle {
      */
     static eciToGeodetic(positionEci: Cesium.Cartesian3, datetime: Date | Cesium.JulianDate | number): LngLatPoint;
     /**
-     * ECI惯性系坐标 转换为 ECI地固系坐标
+     * ECI惯性系坐标 转换为 ECEF地心地固坐标系
      * @param positionEci - ECI(地心惯性坐标系)坐标
      * @param datetime - 指定时间, number时请传入格林尼治恒星时(GMST)时间
      * @param [positionEcf] - ECI(地心惯性坐标系)坐标
@@ -34220,7 +34266,7 @@ declare class Tle {
      */
     static eciToEcf(positionEci: Cesium.Cartesian3, datetime: Date | Cesium.JulianDate | number, positionEcf?: Cesium.Cartesian3): Cesium.Cartesian3;
     /**
-     * ECI地固系坐标 转换为 ECI惯性系坐标
+     * ECEF地心地固坐标系 转换为 ECI惯性系坐标
      * @param positionEcf - ECEF(地心地固坐标系) 坐标
      * @param datetime - 指定时间, number时请传入格林尼治恒星时(GMST)时间
      * @returns ECI(地心惯性坐标系)坐标
@@ -38446,6 +38492,11 @@ declare class TerrainEditBase extends BaseThing {
         };
         id?: number | string;
     }): any;
+    /**
+     * 重新加载数据（会重新按当前地形服务计算，如切换地形后可以调用）
+     * @returns 无
+     */
+    reload(): void;
 }
 
 /**

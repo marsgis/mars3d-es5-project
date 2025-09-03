@@ -56,7 +56,7 @@ const styleConfig = {
         type: "color",
         defval: "#ffffff",
         show({ style, allStyle }) {
-          return (!!style?.outlineWidth || !!style?.outlineColor || !!style?.outlineStyle) && allStyle.outline
+          return style?.outline
         }
       },
       {
@@ -68,7 +68,7 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         show({ style, allStyle }) {
-          return (!!style?.outlineWidth || !!style?.outlineColor || !!style?.outlineStyle) && allStyle.outline
+          return style?.outline
         }
       },
 
@@ -1396,9 +1396,6 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
       },
       {
         name: "materialType",
@@ -1421,7 +1418,7 @@ const styleConfig = {
           { label: "波纹雷达扫描", value: "RadarWave" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
       {
@@ -1607,9 +1604,6 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
       },
       {
         name: "materialType",
@@ -1631,7 +1625,7 @@ const styleConfig = {
           { label: "波纹雷达扫描", value: "RadarWave" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
       {
@@ -1819,7 +1813,7 @@ const styleConfig = {
           { label: "条纹扩散", value: "CylinderWave" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
       { name: "slices", label: "边线边数", type: "number", step: 1, defval: 128 },
@@ -1917,9 +1911,6 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
       },
       {
         name: "materialType",
@@ -1935,7 +1926,7 @@ const styleConfig = {
           { label: "电弧", value: "EllipsoidElectric" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 
@@ -2035,9 +2026,6 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
       },
       {
         name: "materialType",
@@ -2053,7 +2041,7 @@ const styleConfig = {
           { label: "棋盘", value: "Checkerboard" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 
@@ -2189,9 +2177,6 @@ const styleConfig = {
         label: "是否填充",
         type: "radio",
         defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
       },
       {
         name: "materialType",
@@ -2207,7 +2192,7 @@ const styleConfig = {
           { label: "棋盘", value: "Checkerboard" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 
@@ -2989,7 +2974,7 @@ const styleConfig = {
           }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 
@@ -3369,10 +3354,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
+        defval: true
       },
       {
         name: "materialType",
@@ -3390,7 +3372,7 @@ const styleConfig = {
           { label: "文本", value: "Text" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 
@@ -3594,10 +3576,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
+        defval: true
       },
       {
         name: "materialType",
@@ -3619,9 +3598,11 @@ const styleConfig = {
           { label: "蓝光水面", value: "WaterLight" }
         ],
         show({ style, graphicType }) {
-          return style?.fill !== false && graphicType !== "video2D" && style?.materialType
-            ? this.data?.some((item) => item.value === style?.materialType)
-            : true
+          return (
+            style?.fill !== false &&
+            graphicType !== "video2D" &&
+            (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
+          )
         }
       },
       {
@@ -3663,8 +3644,6 @@ const styleConfig = {
         step: 1,
         defval: 1.0,
         show({ style }) {
-          console.log("style", style)
-
           return style?.outline && !style?.diffHeight && typeof style?.outlineStyle?.width !== "number"
         }
       },
@@ -3853,10 +3832,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
-        show({ style }) {
-          return !style?.clampToGround
-        }
+        defval: true
       },
       {
         name: "materialType",
@@ -3878,7 +3854,7 @@ const styleConfig = {
           { label: "蓝光水面", value: "WaterLight" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 
@@ -4574,7 +4550,7 @@ const styleConfig = {
         type: "textarea",
         defval: "",
         show({ style, graphicType }) {
-          return style?.hasIntext
+          return style?.hasIntext ?? true
         }
       },
       {
@@ -4656,7 +4632,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style, graphicType }) {
-          return style?.hasFill
+          return style?.hasFill ?? true
         }
       },
       {
@@ -4681,7 +4657,7 @@ const styleConfig = {
         step: 1,
         defval: 0,
         show({ style }) {
-          return style?.rotate >0
+          return style?.rotate > 0
         }
       },
 
@@ -4790,7 +4766,7 @@ const styleConfig = {
         type: "radio",
         defval: false,
         show({ style }) {
-          return style?.hasFill
+          return style?.hasFill ?? true
         }
       },
       {
@@ -4812,7 +4788,7 @@ const styleConfig = {
           { label: "蓝光水面", value: "WaterLight" }
         ],
         show({ style }) {
-          return style?.fill !== false && style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true
+          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
 

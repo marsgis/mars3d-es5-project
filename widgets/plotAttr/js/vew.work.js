@@ -120,6 +120,8 @@ var plotEdit = {
 
     this._last_attr = attr.parentType ? { ...this._last_attr, [attr.type]: { ...attr } } : attr
 
+    this._materialType_selectd = attr.style.materialType // 这里是为了处理 修改第一个面的材质之后，不关闭属性框，这时绘制出来的第二个面的属性框中仍是第一个面的材质而不是默认材质
+
     let arrFun = []
     //==============坐标==================
     let lonlats = []
@@ -889,7 +891,7 @@ var plotEdit = {
   updateAttr: function (parname, attrName, attrVal, edit) {
     attrName = attrName.split("-")[0]
 
-    console.log("parname, attrName, attrVal, edit", parname, attrName, attrVal, edit)
+    // console.log("parname, attrName, attrVal, edit", { parname, attrName, attrVal, edit })
 
     switch (parname) {
       default:
@@ -1088,7 +1090,9 @@ var plotEdit = {
         break
       }
       case "plot_attr_attr_": {
-        this._last_attr.attr[attrName] = attrVal
+        if (this._last_attr.attr) {
+          this._last_attr.attr[attrName] = attrVal
+        }
         newAttr[attrName] = attrVal
         thisWidget.updateAttr2map(newAttr)
         break
