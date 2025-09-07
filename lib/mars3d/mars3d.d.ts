@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.10.4
- * 编译日期：2025-09-03 20:31
+ * 编译日期：2025-09-07 18:07
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -33954,6 +33954,7 @@ declare namespace PolyPlot {
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.scaleValues] - 参数比例点对应的参数值，用于计算“参数比例点”位置
  * @param [options.availability] - 指定时间范围内显示该对象
  * @param [options.description] - 指定此实体的HTML描述的字符串属性（infoBox中展示）。
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
@@ -33989,6 +33990,7 @@ declare class PolyPlot extends BasePolyEntity {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | Cesium.PositionProperty | any[] | BaseGraphic.TimePolyPositions;
         style: PolyPlot.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
+        scaleValues?: number[];
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
         description?: Cesium.Property | string;
         viewFrom?: Cesium.Property;
@@ -40155,6 +40157,12 @@ declare namespace LayerUtil {
      */
     function registerTerrainProvider(type: string, layerClass: any): void;
     /**
+     * 取当前subdomains配置的随机1个值，用于URL模板中用于 {s} 占位符的子域
+     * @param subdomains - 可选的子域
+     * @returns 随机取的一个子域
+     */
+    function getSubdomainItem(subdomains: any): string;
+    /**
      * 创建地形对象的工厂方法
      * @param options - 地形参数
      * @param [options.type] - 地形类型
@@ -40947,7 +40955,7 @@ declare namespace PolyUtil {
      * @returns 移动后的坐标点数组
      */
     function movePoints(points: LngLatPoint[] | Cesium.Cartesian3[] | any[] | any, options: {
-        center?: Cesium.Cartesian3;
+        center?: string | any[] | LngLatPoint | Cesium.Cartesian3 | any;
         offset?: Cesium.Cartesian3;
     }): Cesium.Cartesian3[];
     /**
@@ -42376,6 +42384,9 @@ declare namespace graphic {
   export { RectSensor }
   export { Satellite }
   export { SatelliteSensor }
+
+  export { PointPlot }
+  export { PolyPlot }
 }
 
 /**
@@ -42527,7 +42538,7 @@ declare namespace thing {
 }
 
 export {
-  name, update, version, proj4, Tle, WindUtil,
+  name, update, version, proj4, Tle, WindUtil, PlotUtil,
   BaseClass, BaseThing, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, TaskItem,
   MaterialType, GraphicType, LayerType, ControlType, EffectType, ThingType, Lang, MoveType, ClipType, Icon, EditPointType, QueryServiceType, QueryRouteType,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil, ThingUtil,
