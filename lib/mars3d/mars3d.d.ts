@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.4
- * 编译日期：2025-09-07 18:07
+ * 版本信息：v3.10.5
+ * 编译日期：2025-09-14 12:21
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -4861,7 +4861,7 @@ declare namespace BaseGraphic {
     /**
      * 【时序的动态线面坐标】，说明：仅部分Entity对象有效
      * @property type - 固定传入："time", 用于内部区分类型
-     * @property list - 时序列表
+     * @property list - 时序列表，定义每个time时间对应的positions坐标位置
      * @property [timeField = "time"] - list数组中已有时间值的对应字段名称
      * @property [referenceFrame = Cesium.ReferenceFrame.FIXED] - 被定义的参考系
      * @property [numberOfDerivatives = 0] - 每个位置的导数的数量;即速度、加速度等
@@ -4885,12 +4885,12 @@ declare namespace BaseGraphic {
     };
     /**
      * 【时序的动态线面坐标 单个时序对应值】
-     * @property time - 时间
+     * @property time - 时间, 数字时代表相对于开始时间的第几秒
      * @property positions - 坐标位置
      * @property [pauseTime = 0] - 当前时刻停留时长（单位：秒）
      */
     type TimePolyPositionsItem = {
-        time: Cesium.JulianDate | Date | string;
+        time: Cesium.JulianDate | Date | string | number;
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[] | any;
         pauseTime?: number | ((...params: any[]) => any);
     };
@@ -5410,7 +5410,7 @@ declare class BaseGraphic extends BaseClass {
     /**
      * 绑定鼠标单击对象后的弹窗。
      * @param content - 弹窗内容html字符串，或者回调方法。
-     * @param [options] - 控制参数
+     * @param [options] - 控制参数, 另外支持传入open:true自动打开
      * @returns 当前对象本身，可以链式调用
      */
     bindPopup(content: string | ((...params: any[]) => any), options?: Popup.StyleOptions | any): BaseGraphic | any;
@@ -7111,6 +7111,7 @@ declare class ConeVisibility extends PointVisibility {
  * @param [options.updateClock = true] - 是否自动更新时钟，多个FixedRoute时或外部手动控制时钟时建议关闭
  * @param [options.clockRange] - 设定全局时钟播放的模式，可以设置到达终点后停止或循环播放
  * @param [options.clockLoop] - 是否循环播放，与 clockRange: Cesium.ClockRange.LOOP_STOP 效果类似，但不改变全局时钟时间
+ * @param [options.autoStart] - 是否加入后就自动启动播放
  * @param [options.autoStop] - 是否自动停止
  * @param [options.frameRate = 1] - 多少帧获取一次数据。用于控制效率，如果卡顿就把该数值调大一些。
  * @param [options.maxCacheCount = 1000] - 保留的坐标点数量, 当为-1时保留所有
@@ -7174,6 +7175,7 @@ declare class FixedRoute extends Route {
         updateClock?: boolean;
         clockRange?: Cesium.ClockRange;
         clockLoop?: boolean;
+        autoStart?: boolean;
         autoStop?: boolean;
         frameRate?: number;
         maxCacheCount?: number;
@@ -22935,7 +22937,7 @@ declare class ArcGisWfsLayer extends LodGraphicLayer {
         };
         bbox?: number[];
         debuggerTileInfo?: boolean;
-        maxCacheCount?: boolean;
+        maxCacheCount?: number;
         opacity?: number;
         zIndex?: number;
         symbol?: {
@@ -23651,6 +23653,8 @@ declare namespace GraphicLayer {
  * @param [options] - 参数对象，包括以下：
  * @param [options.data] - 需要自动加载的数据，内部自动生成Graphic对象。{@link GraphicUtil#.create}, 内部自动调用loadJSON方法
  * @param [options.url] - 需要自动加载的数据对应存放的json路径，内部自动调用loadJSON方法
+ * @param [options.onEachFeature] - url或data加载时，创建每个Graphic前的回调
+ * @param [options.filter] - url或data加载时，数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(item,attr){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000' 。
  * @param [options.isAutoEditing = false] - 是否自动激活编辑,完成标绘时是否自动启动编辑,单击对象自动激活编辑
  * @param [options.isContinued = false] - 是否连续标绘,连续标绘状态下无法编辑已有对象,且不支持获取startDraw方法的返回值（是内部自动调用的，如果要获取请drawCreated事件中获取或外部手动进行startDraw）。
  * @param [options.isRestorePositions = false] - 在标绘和编辑结束时，是否将坐标还原为普通值，true: 停止编辑时会有闪烁，但效率要好些。
@@ -23717,6 +23721,8 @@ declare class GraphicLayer extends BaseGraphicLayer {
     constructor(options?: {
         data?: any | any;
         url?: string;
+        onEachFeature?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
         isAutoEditing?: boolean;
         isContinued?: boolean;
         isRestorePositions?: boolean;
@@ -24670,7 +24676,7 @@ declare class LodGraphicLayer extends GraphicLayer {
         };
         bbox?: number[];
         debuggerTileInfo?: boolean;
-        maxCacheCount?: boolean;
+        maxCacheCount?: number;
         opacity?: number;
         zIndex?: number;
         symbol?: {
@@ -25851,7 +25857,7 @@ declare class WfsLayer extends LodGraphicLayer {
         };
         bbox?: number[];
         debuggerTileInfo?: boolean;
-        maxCacheCount?: boolean;
+        maxCacheCount?: number;
         zIndex?: number;
         symbol?: {
             type?: GraphicType | string;
