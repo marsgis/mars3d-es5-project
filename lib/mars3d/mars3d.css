@@ -1,8 +1,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.5
- * 编译日期：2025-09-14 12:21
+ * 版本信息：v3.10.6
+ * 编译日期：2025-09-28 20:10
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -1212,9 +1212,9 @@
 /** 按钮工具栏修改定位："top-left"上侧靠左 */
 .cesium-viewer-toolbar-top-left {
   top: 10px;
-  bottom: auto;
+  bottom: auto !important;
   left: 10px;
-  right: auto;
+  right: auto !important;
   /**帮助 弹出面板*/
   /**底图切换 弹出面板*/
 }
@@ -1228,9 +1228,9 @@
 /** 修改定位："left-top"左侧靠上 */
 .cesium-viewer-toolbar-left-top {
   top: 10px;
-  bottom: auto;
+  bottom: auto !important;
   left: 10px;
-  right: auto;
+  right: auto !important;
   /**底图切换 弹出面板*/
   /**帮助 弹出面板*/
   /**二维三维切换*/
@@ -1266,10 +1266,10 @@
 }
 /** 修改定位："left-bottom"左侧靠下 */
 .cesium-viewer-toolbar-left-bottom {
-  top: auto;
+  top: auto !important;
   bottom: 60px;
   left: 10px;
-  right: auto;
+  right: auto !important;
   /**底图切换 弹出面板*/
   /**帮助 弹出面板*/
   /**二维三维切换*/
@@ -1308,9 +1308,9 @@
 /** 修改定位："right-top"右侧靠上 */
 .cesium-viewer-toolbar-right-top {
   top: 10px;
-  bottom: auto;
+  bottom: auto !important;
   right: 10px;
-  left: auto;
+  left: auto !important;
   /**底图切换 弹出面板*/
   /**帮助 弹出面板*/
   /**二维三维切换*/
@@ -1347,10 +1347,10 @@
 }
 /** 修改定位："right-bottom"右侧靠下 */
 .cesium-viewer-toolbar-right-bottom {
-  top: auto;
+  top: auto !important;
   bottom: 60px;
   right: 10px;
-  left: auto;
+  left: auto !important;
   /**底图切换 弹出面板*/
   /**帮助 弹出面板*/
   /**二维三维切换*/
