@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.6
- * 编译日期：2025-10-11 10:33
+ * 版本信息：v3.10.8
+ * 编译日期：2025-11-05 20:18
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -1327,6 +1327,7 @@ declare enum Lang {
     "_公里" = "\u516C\u91CC",
     "_万米" = "\u4E07\u7C73",
     "_海里" = "\u6D77\u91CC",
+    "_平方海里" = "\u5E73\u65B9\u6D77\u91CC",
     "_丈" = "\u4E08",
     "_平方米" = "\u5E73\u65B9\u7C73",
     "_平方公里" = "\u5E73\u65B9\u516C\u91CC",
@@ -3535,6 +3536,13 @@ declare class ColorRamp {
         steps: number[];
     });
     /**
+     * 获取色带图片
+     * @param [width = 10] - 图片宽度
+     * @param [height = 256] - 图片高度
+     * @returns base64字符串图片
+     */
+    getImage(width?: number, height?: number): string;
+    /**
      * 获取对应值的色带上的颜色值
      * @param val - 数值
      * @param [alphaDef = 0.8] - 颜色的透明度
@@ -4123,6 +4131,88 @@ declare class TaskItem extends BaseClass {
      */
     toJSON(): any;
 }
+
+/**
+ * 计算GeoJSON要素的面积
+ * @param geojson - 需要计算面积的GeoJSON要素
+ * @returns 面积值，如果计算出错则返回0
+ */
+declare function area(geojson: any): number;
+
+/**
+ * 计算GeoJSON要素的边界框(Bounding Box)
+ * @param geojson - 需要计算边界框的GeoJSON要素
+ * @returns 包含[minX, minY, maxX, maxY]的数组
+ */
+declare function bbox(geojson: any): any[];
+
+/**
+ * 创建贝塞尔曲线
+ * @param line - 输入的线要素
+ * @param options - 可选配置参数
+ * @returns 贝塞尔曲线要素，如果出错则返回原始线要素
+ */
+declare function bezierSpline(line: any, options: any): any;
+
+/**
+ * 对线要素进行偏移
+ * @param coordinates - 坐标数组
+ * @param distance - 偏移距离
+ * @param options - 可选配置参数
+ * @returns 偏移后的坐标数组，如果出错则返回原始坐标数组
+ */
+declare function lineOffset(coordinates: any[], distance: number, options: any): any[];
+
+/**
+ * 创建缓冲区
+ * @param feature - 输入要素
+ * @param radius - 缓冲区半径
+ * @param options - 可选配置参数
+ * @returns 带缓冲区的要素，如果出错则返回原始要素
+ */
+declare function buffer(feature: any, radius: number, options: any): any;
+
+/**
+ * 创建凸包
+ * @param geojson - 输入要素
+ * @param options - 可选配置参数
+ * @returns 凸包要素，如果出错则返回原始要素
+ */
+declare function convex(geojson: any, options: any): any;
+
+/**
+ * 在指定边界框内创建点网格
+ * @param bbox - 边界框 [minX, minY, maxX, maxY]
+ * @param cellSide - 网格单元边长
+ * @param options - 可选配置参数
+ * @returns 点网格要素集合，如果出错则返回空要素集合
+ */
+declare function pointGrid(bbox: any[], cellSide: number, options: any): any;
+
+/**
+ * 判断点是否在多边形内
+ * @param point - 点要素
+ * @param polygon - 多边形要素
+ * @param options - 可选配置参数
+ * @returns 点在多边形内返回true，否则返回false，出错时返回false
+ */
+declare function booleanPointInPolygon(point: any, polygon: any, options: any): boolean;
+
+/**
+ * 计算面要素的质心中心点
+ * @param coordinates - 面要素的坐标数组
+ * @param height - 可选的高度值，默认为0
+ * @returns 质心坐标[x, y, z]，如果出错或坐标数少于3则返回null
+ */
+declare function centerOfMass(coordinates: any[], height: number): any[] | null;
+
+/**
+ * 简化GeoJSON坐标
+ * @param coords - 坐标数组
+ * @param options - 简化选项，包括tolerance等参数
+ * @returns 简化后的坐标数组，如果出错则返回原始坐标数组
+ */
+declare function simplify(coords: any[], options: any): any[];
 
 /**
  * 特效（后处理） 基类
@@ -8410,7 +8500,7 @@ declare namespace VolumeCloud {
      * @property rows - 行网格数,X
      * @property cols - 列网格数,Y
      * @property heights - 高网格数,Z
-     * @property values - 3D 数据集数组, 数组长度应该是 rows*cols*heights
+     * @property values - 3D 数据集数组, 数组长度应该是 rows*cols*heights ，空值项传-1 ，有值项将请转为0-255之间的数字(可以参考示例)
      * @property xmin - 最小经度（度数，-180至180）
      * @property xmax - 最大经度（度数，-180至180）
      * @property ymin - 最小纬度（度数，-90至90）
@@ -8438,7 +8528,7 @@ declare namespace VolumeCloud {
  * @param options.data - 数据
  * @param [options.colors] - 色带颜色数组
  * @param [options.steps] - 色带对应的数值数组
- * @param [options.threshold = 65/255] - 筛选值
+ * @param [options.threshold = 100/255] - 筛选值，超出该数值的不展示
  * @param [options.detail = 1000] - 精细度
  * @param [options.xCut = -0.5] - X轴裁剪,取值范围：-0.5至0.5
  * @param [options.yCut = -0.5] - Y轴裁剪,取值范围：-0.5至0.5
@@ -16029,7 +16119,7 @@ declare class AngleMeasure extends PolylineEntity {
     readonly measured: any;
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位 {@link MeasureUtil#formatDistance} , 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @returns 无
      */
     updateText(unit: string): void;
@@ -16113,7 +16203,7 @@ declare class AreaMeasure extends PolygonEntity {
     readonly measured: any;
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatArea} 可选值：计量单位，可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用m或km
+     * @param unit - 计量单位,{@link MeasureUtil#formatArea}  计量单位，可选值：auto(根据面积值自动选用m或km)、m(平方米)、km(平方公里)、mile(平方海里)、mu(亩)、ha(公顷)
      * @returns 无
      */
     updateText(unit: string): void;
@@ -16215,7 +16305,7 @@ declare class AreaSurfaceMeasure extends AreaMeasure {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
- * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+ * @param [options.unit = 'auto'] - 计量单位 {@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
  * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
  * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
  * @param [options.minPointNum = 2] - 绘制时，至少需要点的个数
@@ -16285,7 +16375,7 @@ declare class DistanceMeasure extends PolylineEntity {
     readonly measured: any;
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位 {@link MeasureUtil#formatDistance} , 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @returns 无
      */
     updateText(unit: string): void;
@@ -16455,7 +16545,7 @@ declare class HeightMeasure extends PolylineEntity {
     readonly measured: any;
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位 {@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @returns 无
      */
     updateText(unit: string): void;
@@ -16533,7 +16623,7 @@ declare class HeightTriangleMeasure extends HeightMeasure {
     });
     /**
      * 更新测量结果的文本
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance} 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位 {@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @returns 无
      */
     updateText(unit: string): void;
@@ -22861,7 +22951,7 @@ declare class KmlLayer extends CzmGeoJsonLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.debuggerTileInfo] - 是否开启测试显示瓦片信息
  * @param [options.maxCacheCount = 1000] - 记录临时缓存数据的最大数据量(有缓存的瓦片不再二次请求), 0时不记录
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
@@ -24610,7 +24700,7 @@ declare namespace LodGraphicLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.debuggerTileInfo] - 是否开启测试显示瓦片信息
  * @param [options.maxCacheCount = 1000] - 记录临时缓存数据的最大数据量(有缓存的瓦片不再二次请求), 0时不记录
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
@@ -25052,7 +25142,7 @@ declare class OsmBuildingsLayer extends TilesetLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.debuggerTileInfo] - 是否开启测试显示瓦片信息
  * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
@@ -25770,7 +25860,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.debuggerTileInfo] - 是否开启测试显示瓦片信息
  * @param [options.maxCacheCount = 1000] - 记录临时缓存数据的最大数据量(有缓存的瓦片不再二次请求), 0时不记录
  * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
@@ -26318,7 +26408,7 @@ declare class TerrainLayer extends BaseLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -26478,7 +26568,7 @@ declare namespace ArcGisLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG4326] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -26674,7 +26764,7 @@ declare class ArcGisLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -26818,7 +26908,7 @@ declare class ArcGisTileLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS = mars3d.ChinaCRS.BAIDU] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系，如果加载不纠偏的原始瓦片，可以传入map相同的chinaCRS即可，比如 chinaCRS:mars3d.ChinaCRS.WGS84
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -26981,7 +27071,7 @@ declare namespace BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -27231,7 +27321,7 @@ declare class BaseTileLayer extends BaseLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -27373,7 +27463,7 @@ declare class BingLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid] - 图层父级的id，一般图层管理中使用
  * @param [options.name] - 图层名称
@@ -27460,7 +27550,7 @@ declare class EmptyTileLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS = mars3d.ChinaCRS.GCJ02] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -27590,7 +27680,7 @@ declare class GaodeLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -27727,7 +27817,7 @@ declare class GeeLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS = 'GCJ02'] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -27862,7 +27952,7 @@ declare class GoogleLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -27973,7 +28063,7 @@ declare class GridLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG4326] - 瓦片数据的坐标系信息
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -28101,7 +28191,7 @@ declare class ImageLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -28238,7 +28328,7 @@ declare class MapboxLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'},
@@ -28371,7 +28461,7 @@ declare class OsmLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG4490] - 瓦片数据的坐标系信息，默认为4490投影,也支持传入EPSG3857坐标系
  * @param [options.chinaCRS = mars3d.ChinaCRS.WGS84] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -28509,7 +28599,7 @@ declare class TdtLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS = mars3d.ChinaCRS.GCJ02] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
@@ -28633,7 +28723,7 @@ declare class TencentLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.opacity = 1.0] - 透明度，取值范围：0.0-1.0。
  * @param [options.alpha = 1.0] - 同opacity。
@@ -28741,7 +28831,7 @@ declare class TileInfoLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -28900,7 +28990,7 @@ declare class TmsLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
  * @param [options.opacity = 1.0] - 透明度，取值范围：0.0-1.0。
@@ -29095,7 +29185,7 @@ declare class WmsLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -29283,7 +29373,7 @@ declare class WmtsLayer extends BaseTileLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = mars3d.CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -35426,7 +35516,7 @@ declare class S3MLayer extends BaseLayer {
  * @param options.rectangle.xmax - 最大经度值, -180 至 180
  * @param options.rectangle.ymin - 最小纬度值, -90 至 90
  * @param options.rectangle.ymax - 最大纬度值, -90 至 90
- * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围,与rectangle二选一即可。
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
  * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效)。
  * @param [options.crs = CRS.EPSG3857] - 瓦片数据的坐标系信息，默认为墨卡托投影
  * @param [options.chinaCRS] - 标识瓦片的国内坐标系（用于自动纠偏或加偏），自动将瓦片转为map对应的chinaCRS类型坐标系。
@@ -36769,7 +36859,7 @@ declare class Measure extends BaseThing {
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式
      *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位{@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
@@ -36791,7 +36881,7 @@ declare class Measure extends BaseThing {
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式,
      *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位{@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.showAddText = true] - 是否显示每一段的增加部分距离，如（+10.1km）
@@ -36824,7 +36914,7 @@ declare class Measure extends BaseThing {
      * @param [options.label] - 测量结果文本的样式
      *   //  * @param {function} [options.label.updateText] 测量结果文本更新的回调方法
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位{@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @param [options.maxPointNum = 9999] - 绘制时，最多允许点的个数
      * @param [options.addHeight] - 在绘制时，在绘制点的基础上增加的高度值
      * @param [options.splitNum = 200] - 插值数，等比分割的个数(概略值，有经纬网网格来插值)
@@ -36854,7 +36944,7 @@ declare class Measure extends BaseThing {
      * @param [options] - 控制参数
      * @param [options.style] - 面的样式
      * @param [options.label] - 测量结果文本的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}，可选值：auto(根据面积值自动选用m或km)、m(平方米)、km(平方公里)、mile(平方海里)、mu(亩)、ha(公顷)
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 面积测量控制类 对象
      */
@@ -36869,7 +36959,7 @@ declare class Measure extends BaseThing {
      * @param [options] - 控制参数
      * @param [options.style] - 面的样式
      * @param [options.label] - 测量结果文本的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatArea}，可选值：auto(根据面积值自动选用m或km)、m(平方米)、km(平方公里)、mile(平方海里)、mu(亩)、ha(公顷)
      * @param [options.splitNum = 10] - 插值数，将面分割的网格数(概略值，有经纬网网格来插值)
      * @param [options.has3dtiles = auto] - 是否在3dtiles模型上分析（模型分析较慢，按需开启）,默认内部根据点的位置自动判断（但可能不准）
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
@@ -36939,7 +37029,7 @@ declare class Measure extends BaseThing {
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位{@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @param [options.hasAbs] - 显示的 高度值 是否取绝对值，默认时:高度下降为负数、上升是正数。
      * @returns 绘制创建完成的Promise，返回 高度测量 对象
@@ -36957,7 +37047,7 @@ declare class Measure extends BaseThing {
      * @param [options] - 控制参数
      * @param [options.style] - 路线的样式
      * @param [options.label] - 测量结果文本的样式
-     * @param [options.unit = 'auto'] - 计量单位,{@link MeasureUtil#formatDistance}可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位{@link MeasureUtil#formatDistance}, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @param [options.decimal = 2] - 显示的文本中保留的小数位
      * @returns 绘制创建完成的Promise，返回 三角高度测量控制类 对象
      */
@@ -37018,7 +37108,7 @@ declare class Measure extends BaseThing {
     clear(): void;
     /**
      * 更新量测结果的单位
-     * @param unit - 计量单位,{@link MeasureUtil#formatDistance}{@link MeasureUtil#formatArea} 可选值：auto、m、km、wm、mile、zhang 等等。auto时根据距离值自动选用k或km
+     * @param unit - 计量单位,参考{@link MeasureUtil#formatDistance}距离和{@link MeasureUtil#formatArea}面积的本身可选值说明
      * @returns 无
      */
     updateUnit(unit: string): void;
@@ -38260,6 +38350,72 @@ declare class FloodByMaterial extends TerrainEditBase {
      * @returns 无
      */
     clear(): void;
+}
+
+declare namespace ShortestPath {
+    /**
+     * 当前类支持的{@link EventType}事件类型
+     * @example
+     * //绑定监听事件
+     * thing.on(mars3d.EventType.change, function (event) {
+     *   console.log('发送了变化', event)
+     * })
+     * @property endItem - 多个数据异步分析时，完成其中一个时的回调事件
+     * @property end - 多个数据异步分析时，完成所有的回调事件
+     */
+    type EventType = {
+        endItem: string;
+        end: string;
+    };
+}
+
+/**
+ * 根据地形和最大坡度限制，进行最短路径分析
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.tooltip] - 可以指定绑定tooltip
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.popup] - 可以指定绑定popup
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.id = createGuid()] - 对象的id标识
+ * @param [options.enabled = true] - 对象的启用状态
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的map对象，false时不冒泡事件
+ */
+declare class ShortestPath extends BaseThing {
+    constructor(options?: {
+        tooltip?: (...params: any[]) => any;
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        popup?: (...params: any[]) => any;
+        popupOptions?: Popup.StyleOptions | any;
+        id?: string | number;
+        enabled?: boolean;
+        eventParent?: BaseClass | boolean;
+    });
+    /**
+     * 添加计算的 位置
+     * @param startPoint - 起点坐标
+     * @param endPoint - 终点坐标
+     * @param [options = {}] - 控制参数，包括：
+     * @param [options.splitNum = 100] - 插值数，横纵等比分割的网格个数(概略值，有经纬网网格来插值)
+     * @param [options.maxSlope = 20] - 最大坡度, 路线走低于该坡度值的地方
+     * @param [options.scale = 1.1] - 包围圆圈范围扩大搜寻范围倍数
+     * @returns 异步计算完成的 最短路径坐标集合
+     */
+    analyze(startPoint: LngLatPoint | Cesium.Cartesian3 | any[], endPoint: LngLatPoint | Cesium.Cartesian3 | any[], options?: {
+        splitNum?: number;
+        maxSlope?: number;
+        scale?: number;
+    }): Promise<LngLatPoint[]>;
+    /**
+     * 异步计算最短路径
+     * @param options - 参数对象，具有以下属性:
+     * @param options.map - Map地图对象
+     * @param [options.splitNum = 8] - 插值数，横纵等比分割的网格个数(概略值，有经纬网网格来插值)
+     * @returns 异步计算完成的 最短路径坐标集合
+     */
+    static getShortestPath(options: {
+        map: Map;
+        splitNum?: number;
+    }): Promise<LngLatPoint[]>;
 }
 
 declare namespace Slope {
@@ -40485,7 +40641,7 @@ declare namespace MeasureUtil {
      * 格式化显示距离值, 可指定单位
      * @param val - 距离值，米
      * @param [options] - 参数：
-     * @param [options.unit = 'auto'] - 计量单位, 可选值：auto、m、km、wm、mile、zhang 等。auto时根据距离值自动选用k或km
+     * @param [options.unit = 'auto'] - 计量单位, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
      * @param [options.getLangText] - 获取文本的对应方法
      * @param [options.decimal = 2] - 保留的小数位
      * @returns 带单位的格式化距离值字符串，如：20.17 米
@@ -40499,7 +40655,7 @@ declare namespace MeasureUtil {
      * 格式化显示面积值, 可指定单位
      * @param val - 面积值，平方米
      * @param [options] - 参数：
-     * @param [options.unit = 'auto'] - 计量单位，可选值：auto、m、km、mu、ha 。auto时根据面积值自动选用m或km
+     * @param [options.unit = 'auto'] - 计量单位，可选值：auto(根据面积值自动选用m或km)、m(平方米)、km(平方公里)、mile(平方海里)、mu(亩)、ha(公顷)
      * @param [options.getLangText] - 获取文本的对应方法
      * @param [options.decimal = 2] - 保留的小数位
      * @returns 带单位的格式化面积值字符串，如：20.21 平方公里
@@ -41317,6 +41473,7 @@ declare namespace PolyUtil {
      * @param [options.objectsToExclude] - 贴模型分析时，排除的不进行贴模型计算的模型对象，可以是： primitives, entities, 或 3D Tiles features
      * @param [options.exact = false] - 是否进行精确计算， 传false时是否快速概略计算方式，该方式计算精度较低，但计算速度快，仅能计算在当前视域内坐标的高度
      * @param [options.offset = 0] - 可以按需增加偏移高度（单位：米），便于可视
+     * @param [options.depth] - 是否使用{@link interPolylineByDepth}离屏渲染深度图的方式加速计算贴地高度
      * @returns 异步计算完成的Promise, 等价于callback
      */
     function computeSurfaceLine(options?: {
@@ -41329,6 +41486,7 @@ declare namespace PolyUtil {
         objectsToExclude?: any;
         exact?: boolean;
         offset?: number;
+        depth?: boolean;
     }): Promise<any>;
     /**
      * 求 多个点 的的贴地新坐标（不插值）
@@ -41473,6 +41631,7 @@ declare namespace PolyUtil {
      * @param options.positions - 坐标数组
      * @param [options.splitNum = 512] - 网格个数，横纵等比分割的网格个数，理论上：外接矩形的点个数 = splitNum * splitNum
      * @param [options.cameraHeight = scene.camera.positionCartographic.height] - 相机高度
+     * @param [options.isInPoly = true] - false返回坐标外接矩形内的splitNum*splitNum的全量结果，true只返回坐标点范围内的结果
      * @returns 计算完成的相关数据
      */
     function interPolygonByDepth(options?: {
@@ -41480,6 +41639,7 @@ declare namespace PolyUtil {
         positions: LngLatPoint[] | Cesium.Cartesian3[] | any[];
         splitNum?: number;
         cameraHeight?: number;
+        isInPoly?: boolean;
     }): Promise<any>;
     /**
      * 对路线内进行插值，并 使用离屏渲染深度图的方式加速计算范围内的任何可见的物体的高度 <br />
@@ -41577,6 +41737,12 @@ declare namespace Util {
      * @returns 是否为简单类型（包括：String\Boolean\number\Array）
      */
     function isSimpleType(value: any): boolean;
+    /**
+     * 延迟承诺函数，同setTimeout
+     * @param ms - 毫秒数
+     * @returns 返回承诺对象
+     */
+    function sleep(ms: number): Promise;
     /**
      * 判断当前Cesium库 是否mars3d修改后的版本(mars3d-cesium库)
      */
@@ -41994,9 +42160,26 @@ declare namespace Util {
      * 获取用于聚合的圆形图标对象
      * @param count - 数字
      * @param [options = {}] - 参数对象:
+     * @param [options.radius = 26] - 圆形图标半径。
+     * @param [options.color] - 圆形图标填充颜色。
+     * @param [options.opacity = 0.6] - 圆形图标透明度。
+     * @param [options.borderWidth = 5] - 圆形图标的边框宽度。
+     * @param [options.borderColor] - 圆形图标边框颜色。
+     * @param [options.borderOpacity] - 圆形图标边框透明度。
+     * @param [options.font] - 字体
+     * @param [options.fontColor] - 字体颜色
      * @returns base64图片对象，包含 data URI 的DOMString。
      */
-    function getCircleImage(count: number, options?: any): string;
+    function getCircleImage(count: number, options?: {
+        radius?: number;
+        color?: string;
+        opacity?: number;
+        borderWidth?: number;
+        borderColor?: string;
+        borderOpacity?: number;
+        font?: string;
+        fontColor?: string;
+    }): string;
     /**
      * 导出下载图片文件
      * @param name - 图片文件名称， 后缀名默认为.png
@@ -42561,6 +42744,7 @@ declare namespace thing {
 
   export { FloodByGraphic }
   export { Slope }
+  export { ShortestPath }
   export { TerrainPlanClip }
 
   export { FloodByMaterial }
