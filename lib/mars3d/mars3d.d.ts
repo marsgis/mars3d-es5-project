@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.8
- * 编译日期：2025-11-05 20:18
+ * 版本信息：v3.10.9
+ * 编译日期：2025-11-23 20:56
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -8530,9 +8530,13 @@ declare namespace VolumeCloud {
  * @param [options.steps] - 色带对应的数值数组
  * @param [options.threshold = 100/255] - 筛选值，超出该数值的不展示
  * @param [options.detail = 1000] - 精细度
- * @param [options.xCut = -0.5] - X轴裁剪,取值范围：-0.5至0.5
- * @param [options.yCut = -0.5] - Y轴裁剪,取值范围：-0.5至0.5
- * @param [options.zCut = 0.5] - Z轴裁剪,取值范围：-0.5至0.5
+ * @param [options.clip] - 裁剪区
+ * @param [options.clip.xmin = -0.5] - 裁掉X轴方向小于该比例的值，取值范围：-0.5至0.5
+ * @param [options.clip.xmax = 0.5] - 裁掉X轴方向大于该比例的值，取值范围：-0.5至0.5
+ * @param [options.clip.ymin = -0.5] - 裁掉Y轴方向小于该比例的值，取值范围：-0.5至0.5
+ * @param [options.clip.ymax = 0.5] - 裁掉Y轴方向大于该比例的值，取值范围：-0.5至0.5
+ * @param [options.clip.zmin = -0.5] - 裁掉Z轴方向小于该比例的值，取值范围：-0.5至0.5
+ * @param [options.clip.zmax = 0.5] - 裁掉Z轴方向大于该比例的值，取值范围：-0.5至0.5
  * @param [options.id = createGuid()] - 矢量数据id标识
  * @param [options.name] - 矢量数据名称
  * @param [options.show = true] - 矢量数据是否显示
@@ -8545,14 +8549,23 @@ declare class VolumeCloud extends BasePrimitive {
         steps?: number[];
         threshold?: number;
         detail?: number;
-        xCut?: number;
-        yCut?: number;
-        zCut?: number;
+        clip?: {
+            xmin?: number;
+            xmax?: number;
+            ymin?: number;
+            ymax?: number;
+            zmin?: number;
+            zmax?: number;
+        };
         id?: string | number;
         name?: string;
         show?: boolean;
         eventParent?: BaseClass | boolean;
     });
+    /**
+     * 裁剪区
+     */
+    clip: any;
 }
 
 declare namespace DivBoderLabel {
@@ -12330,6 +12343,10 @@ declare class EllipsoidEntity extends BasePointEntity {
      * @returns 矢量对象
      */
     addScanPlane(planeOptions: EllipsoidEntity.ScanPlaneOptions): Cesium.Entity;
+    /**
+     * 扫描面Entity对象数组
+     */
+    readonly scanPlane: Cesium.Entity[];
     /**
      * 移除单个指定的扫描面
      * @param entity - addScanPlane返回的矢量对象
@@ -23788,6 +23805,7 @@ declare namespace GraphicLayer {
  * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
  * @param [options.attr] - 图层级对所有矢量数据的 属性信息做统一配置，常用于动态属性
  * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.plotScale] - 设置JB基准比例尺，决定了标号的在这个比例尺下显示为基准进行缩放 （依赖 mars3d-plot 插件）
  * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
  * @param [options.pid] - 图层父级的id，一般图层管理中使用
  * @param [options.name] - 图层名称
@@ -23861,6 +23879,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
         contextmenuItems?: any;
         attr?: any | BaseGraphic.AjaxAttr;
         availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        plotScale?: number;
         id?: string | number;
         pid?: string | number;
         name?: string;
@@ -23884,6 +23903,17 @@ declare class GraphicLayer extends BaseGraphicLayer {
         flyTo?: boolean;
         flyToOptions?: any;
     });
+    /**
+     * 设置JB基准比例尺（依赖 mars3d-plot 插件）
+     * @param scale - 基准比例尺值
+     * @param [redraw = true] - 是否按新基准比例尺重绘所有标号
+     */
+    setPlotScale(scale: number, redraw?: number): void;
+    /**
+     * 获取当前图层的JB基准比例尺
+     * @returns 比例尺值
+     */
+    getPlotScale(): number;
     /**
      * 是否连续标绘
      */
@@ -25635,6 +25665,11 @@ declare class TilesetLayer extends BaseGraphicLayer {
     readonly position: Cesium.Cartesian3;
     /**
      * 模型当前中心点坐标
+     * @example
+     * tiles3dLayer.readyPromise.then(() => {
+     *   console.log("模型加载完成", tiles3dLayer)
+     *   const center = tiles3dLayer.center
+     * })
      */
     center: LngLatPoint;
     /**
@@ -33836,7 +33871,7 @@ declare namespace PointPlot {
      * @property [text.color = "#ff0000"] - 颜色
      * @property [text.font_size] - 文字大小
      * @property [text.font_family] - 字体
-     * @property [text.direction] - 注记位置
+     * @property [text.direction] - 注记位置, 可选值： 正下方: 0、 正右方: 1、 正上方: 2、 正左方: 3、 右上: 4、右下: 5、 左上: 6、 左下: 7、 居中: 8
      * @property [text.offset] - 注记与符号距离
      * @property [text.bold] - 是否粗体
      * @property [text.underline] - 是否带有下划线
@@ -34157,6 +34192,22 @@ declare namespace PlotUtil {
      *   })
      */
     const readyPromise: Promise<any>;
+    /**
+     * 标号列表清单
+     * @example
+     * mars3d.PlotUtil.readyPromise.then(() => {
+     *   console.log("标号列表", mars3d.PlotUtil.symbolTree)
+     *
+     *   mars3d.Util.downloadFile("标号列表.json", JSON.stringify(mars3d.PlotUtil.symbolTree))
+     * })
+     */
+    const symbolTree: any;
+    /**
+     * 获取当前地图所在视域的比例尺值（可以用于设置JB基准比例尺）
+     * @param scene - 地图场景对象
+     * @returns 比例尺
+     */
+    function getMapScale(scene: Cesium.Scene): number;
 }
 
 /**
@@ -41742,7 +41793,7 @@ declare namespace Util {
      * @param ms - 毫秒数
      * @returns 返回承诺对象
      */
-    function sleep(ms: number): Promise;
+    function sleep(ms: number): Promise<void>;
     /**
      * 判断当前Cesium库 是否mars3d修改后的版本(mars3d-cesium库)
      */
