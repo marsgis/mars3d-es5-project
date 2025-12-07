@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.9
- * 编译日期：2025-11-23 20:56
+ * 版本信息：v3.10.10
+ * 编译日期：2025-12-07 17:42
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -33870,7 +33870,6 @@ declare namespace PointPlot {
      * @property [text.text] - 文字内容
      * @property [text.color = "#ff0000"] - 颜色
      * @property [text.font_size] - 文字大小
-     * @property [text.font_family] - 字体
      * @property [text.direction] - 注记位置, 可选值： 正下方: 0、 正右方: 1、 正上方: 2、 正左方: 3、 右上: 4、右下: 5、 左上: 6、 左下: 7、 居中: 8
      * @property [text.offset] - 注记与符号距离
      * @property [text.bold] - 是否粗体
@@ -33911,7 +33910,6 @@ declare namespace PointPlot {
             text?: string;
             color?: string | Cesium.Color;
             font_size?: number;
-            font_family?: string;
             direction?: number;
             offset?: number;
             bold?: boolean;
@@ -34030,23 +34028,6 @@ declare namespace PolyPlot {
      * @property [diffHeight = 0] - 立体高度
      * @property [wall = false] - 是否显示墙（在线的下面展示）
      * @property [wallOpacity = 0.4] - 墙的透明度，可选项：0.0-1.0
-     * @property [text] - 文本注记. 也支持text_前缀方式，比如 text: "我是注记", text_color: "#0000ff"
-     * @property [text.text] - 文字内容
-     * @property [text.color = "#ff0000"] - 颜色
-     * @property [text.font_size] - 文字大小
-     * @property [text.font_family] - 字体
-     * @property [text.direction] - 注记位置
-     * @property [text.offset] - 注记与符号距离
-     * @property [text.bold] - 是否粗体
-     * @property [text.underline] - 是否带有下划线
-     * @property [text.strikeOut] - 是否带有删除线
-     * @property [text.italic] - 是否斜体
-     * @property [text.backgroundColor] - 背景颜色
-     * @property [text.borderColor] - 边线颜色
-     * @property [text.borderWidth] - 边线宽度
-     * @property [text.shadowColor] - 阴影颜色
-     * @property [text.shadowOffsetX] - 阴影的X偏离值
-     * @property [text.shadowOffsetY] - 阴影的Y偏离值
      */
     type StyleOptions = any | {
         color?: string | Cesium.Color;
@@ -34066,24 +34047,6 @@ declare namespace PolyPlot {
         diffHeight?: number;
         wall?: boolean;
         wallOpacity?: number;
-        text?: {
-            text?: string;
-            color?: string | Cesium.Color;
-            font_size?: number;
-            font_family?: string;
-            direction?: number;
-            offset?: number;
-            bold?: boolean;
-            underline?: boolean;
-            strikeOut?: boolean;
-            italic?: boolean;
-            backgroundColor?: string | Cesium.Color;
-            borderColor?: string | Cesium.Color;
-            borderWidth?: number;
-            shadowColor?: string | Cesium.Color;
-            shadowOffsetX?: number;
-            shadowOffsetY?: number;
-        };
     };
 }
 
@@ -41167,11 +41130,11 @@ declare namespace PointUtil {
      */
     function getCameraHeadingPitchRollForLine(scene: Cesium.Scene, localStart: Cesium.Cartesian3 | LngLatPoint, localEnd: Cesium.Cartesian3 | LngLatPoint, reverse?: boolean): Cesium.HeadingPitchRoll;
     /**
-     * 普通hpr方向 转为 用于Camera相机的hpr方向
+     * Camera相机的hpr方向 转为 普通hpr方向
      * @param scene - 三维地图场景对象，一般用map.scene或viewer.scene
      * @param position - 坐标
-     * @param hpr - 普通hpr方向
-     * @returns 相机朝向的Heading Pitch Roll方向
+     * @param hpr - 相机朝向的Heading Pitch Roll方向
+     * @returns 普通hpr方向
      */
     function locHpr2CameraHpr(scene: Cesium.Scene, position: Cesium.Cartesian3 | LngLatPoint, hpr: Cesium.HeadingPitchRoll): Cesium.HeadingPitchRoll;
 }
