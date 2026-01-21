@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.10
- * 编译日期：2025-12-07 17:42
+ * 版本信息：v3.10.12
+ * 编译日期：2026-01-21 12:22
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2025-07-01
  */
@@ -2706,6 +2706,9 @@ declare namespace DistanceLegend {
 /**
  * 比例尺 控件
  * @param [options] - 参数对象，包括以下：
+ * @param [options.unit = 'auto'] - 计量单位, 可选值：auto(根据距离值自动选用k或km)、m(米)、km(公里)、wm(万米)、mile(海里)、zhang(丈)
+ * @param [options.getLangText] - 获取单位文本的对应方法, 或者调用 map.setLangText("_公里", "km") 统一修改
+ * @param [options.decimal = 0] - 保留的小数位
  * @param [options.className] - 样式名称，可以外部自定义样式
  * @param [options.style] - 可以传任意CSS样式值，如:
  * @param [options.style.top] - css定位top位置, 如 top: '10px'
@@ -2720,6 +2723,9 @@ declare namespace DistanceLegend {
  */
 declare class DistanceLegend extends BaseControl {
     constructor(options?: {
+        unit?: string;
+        getLangText?: (...params: any[]) => any;
+        decimal?: number;
         className?: string;
         style?: any | {
             top?: string;
@@ -15626,6 +15632,7 @@ declare class Lune extends PolygonEntity {
  * @param [options.viewFrom] - 观察这个物体时建议的初始偏移量。
  * @param [options.parent] - 要与此实体关联的父实体。
  * @param [options.onBeforeCreate] - 在 new Cesium.Entity(addattr) 前的回调方法，可以对addattr做额外个性化处理。
+ * @param [options.isRect = false] - 是否限定角度为90度的矩形
  * @param [options.hasMoveEdit = true] - 编辑时，是否可以整体平移
  * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
  * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
@@ -15650,6 +15657,7 @@ declare class ParallelogramEntity extends PolygonEntity {
         viewFrom?: Cesium.Property;
         parent?: Cesium.Entity;
         onBeforeCreate?: (...params: any[]) => any;
+        isRect?: boolean;
         hasMoveEdit?: boolean;
         popup?: string | any[] | ((...params: any[]) => any);
         popupOptions?: Popup.StyleOptions | any;
@@ -21187,6 +21195,7 @@ declare namespace ReflectionWater {
 
 /**
  * 反射水面(显示模型倒影) Primitive图元 矢量对象, 目前仅支持少量数据（多了就卡）
+ * 依赖：需要map.scene.highDynamicRange需要是false
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
@@ -23770,7 +23779,7 @@ declare namespace GraphicLayer {
  * @param [options.drawAddEventType = EventType.click] - 绘制时增加点的事件，默认单击
  * @param [options.drawEndEventType = EventType.dblClick] - 绘制时结束的事件，默认双击
  * @param [options.drawDelEventType = EventType.rightClick] - 绘制时删除点的事件，默认右键
- * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型图层间有效，且只有贴地对象有效)。
+ * @param [options.zIndex] - 控制图层的叠加层次，默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面(只对同类型线面图层间有效，且只有贴地对象有效)。
  * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
  * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
  * @param options.symbol.styleOptions - Style样式，每种不同类型数据都有不同的样式，具体见各{@link GraphicType}矢量数据的style参数。
@@ -23910,10 +23919,33 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     setPlotScale(scale: number, redraw?: number): void;
     /**
-     * 获取当前图层的JB基准比例尺
+     * 获取当前图层的JB基准比例尺（依赖 mars3d-plot 插件）
      * @returns 比例尺值
      */
     getPlotScale(): number;
+    /**
+     * 转为可以保存SML格式文件字符串（依赖 mars3d-plot 插件）
+     * @returns SML文件规范的内容字符串
+     */
+    toSML(): string;
+    /**
+     * 加载SML格式文件（依赖 mars3d-plot 插件）
+     * @param strSml - SML文件规范的内容字符串
+     * @param [options] - 加载控制参数,包含：
+     * @param [options.clear = false] - 是否清除图层已有数据
+     * @param [options.flyTo = false] - 是否加载完成后进行飞行到数据区域
+     * @param [options.toPrimitive] - 是否将entity类型转为primivate类型渲染（比如数据的point改为pointP展示，同类型大于10条时自动改为合并渲染类型展示）
+     * @param [options.onEachFeature] - 创建每个Graphic前的回调
+     * @param [options.filter] - 数据筛选方法，方法时，方法体内返回false时排除数据 filter:function(item,attr){return true}；支持字符串基于attr属性进行筛选的JS语句字符串，比如： attr.name=='安徽省' || attr.code=='340000' 。
+     * @returns 绘制创建完成的Promise 添加后的Graphic对象
+     */
+    loadSML(strSml: string | ArrayBuffer, options?: {
+        clear?: boolean;
+        flyTo?: boolean;
+        toPrimitive?: boolean;
+        onEachFeature?: (...params: any[]) => any;
+        filter?: ((...params: any[]) => any) | string;
+    }): Promise<BaseGraphic[] | any>;
     /**
      * 是否连续标绘
      */
@@ -25872,8 +25904,198 @@ declare class TilesetLayer extends BaseGraphicLayer {
     }): any;
 }
 
+declare namespace Lod2GraphicLayer {
+    /**
+     * 当前类支持的{@link EventType}事件类型
+     * @example
+     * //绑定监听事件
+     * layer.on(mars3d.EventType.addGraphic, function (event) {
+     *   console.log('添加了矢量数据', event)
+     * })
+     * @property add - 添加对象
+     * @property remove - 移除对象
+     * @property show - 显示了对象
+     * @property hide - 隐藏了对象
+     * @property click - 左键单击 鼠标事件
+     * @property rightClick - 右键单击 鼠标事件
+     * @property mouseOver - 鼠标移入 鼠标事件
+     * @property mouseOut - 鼠标移出 鼠标事件
+     * @property popupOpen - popup弹窗打开后
+     * @property popupClose - popup弹窗关闭
+     * @property tooltipOpen - tooltip弹窗打开后
+     * @property tooltipClose - tooltip弹窗关闭
+     * @property addGraphic - 添加矢量数据时
+     * @property removeGraphic - 移除矢量数据时
+     */
+    type EventType = {
+        add: string;
+        remove: string;
+        show: string;
+        hide: string;
+        click: string;
+        rightClick: string;
+        mouseOver: string;
+        mouseOut: string;
+        popupOpen: string;
+        popupClose: string;
+        tooltipOpen: string;
+        tooltipClose: string;
+        addGraphic: string;
+        removeGraphic: string;
+    };
+}
+
 /**
- * WFS图层
+ * LOD矢量数据 按视域一次性加载 加载类 (每次视域变化，按视域请求一次数据更新，不适合视域内数据量超过1000条数据的情况下使用)
+ * @param [options] - 参数对象，包括以下：
+ * @param [options.IdField = 'id'] - 数据中唯一标识的属性字段名称
+ * @param options.queryGridData - 获取网格内对应数据的的外部处理回调方法
+ * @param [options.minimumLevel = 0] - 图层所支持的最低层级，当地图小于该级别时，平台不去请求服务数据。【影响效率的重要参数】
+ * @param [options.maximumLevel] - 图层所支持的最大层级,当地图大于该级别时，平台不去请求服务数据。
+ * @param options.rectangle - 瓦片数据的矩形区域范围
+ * @param options.rectangle.xmin - 最小经度值, -180 至 180
+ * @param options.rectangle.xmax - 最大经度值, -180 至 180
+ * @param options.rectangle.ymin - 最小纬度值, -90 至 90
+ * @param options.rectangle.ymax - 最大纬度值, -90 至 90
+ * @param [options.rangeScale = 0.6] - 请求的视域放大的范围，越大效率越低，但越精确
+ * @param [options.opacity = 1.0] - 透明度（部分图层），取值范围：0.0-1.0
+ * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
+ * @param options.symbol.styleOptions - 数据的Style样式
+ * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" }  或 "floors>10 && floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
+ * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
+ * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
+ * @param [options.cluster] - 聚合参数(Tip:不参与聚合的类型：合并渲染对象、处于标绘或编辑状态的对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly = true] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
+ * @param [options.popupOptions.title] - 固定的标题名称
+ * @param [options.popupOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.popupOptions.noTitle] - 不显示标题
+ * @param [options.popupOptions.showNull = false] - 是否显示空值
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑定，参数与popup属性完全相同。
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数,还包括：
+ * @param [options.tooltipOptions.title] - 固定的标题名称
+ * @param [options.tooltipOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.tooltipOptions.noTitle] - 不显示标题
+ * @param [options.tooltipOptions.showNull = false] - 是否显示空值
+ * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
+ * @param [options.show = true] - 图层是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
+ * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
+ * @param [options.center.alt] - 高度值
+ * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
+ * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
+ * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+ * @param [options.extent] - 图层自定义定位的矩形区域，与center二选一即可。 {@link Map#flyToExtent}
+ * @param options.extent.xmin - 最小经度值, -180 至 180
+ * @param options.extent.xmax - 最大经度值, -180 至 180
+ * @param options.extent.ymin - 最小纬度值, -90 至 90
+ * @param options.extent.ymax - 最大纬度值, -90 至 90
+ * @param [options.extent.height = 0] - 矩形高度值
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
+ */
+declare class Lod2GraphicLayer extends GraphicLayer {
+    constructor(options?: {
+        IdField?: string;
+        queryGridData: (...params: any[]) => any;
+        minimumLevel?: number;
+        maximumLevel?: number;
+        rectangle: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+        };
+        rangeScale?: number;
+        opacity?: number;
+        zIndex?: number;
+        symbol?: {
+            styleOptions: BillboardEntity.StyleOptions | any | PolylineEntity.StyleOptions | any | PolygonEntity.StyleOptions | any | any;
+            styleField?: string;
+            styleFieldOptions?: any;
+            merge?: boolean;
+            callback?: (...params: any[]) => any;
+        };
+        cluster?: {
+            enabled?: boolean;
+            pixelRange?: number;
+            minimumClusterSize?: number;
+            includePoly?: boolean;
+            image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
+        };
+        popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
+        popupOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+            showNull?: string;
+        };
+        tooltip?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any) | any;
+        tooltipOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+            showNull?: string;
+        };
+        contextmenuItems?: any;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        center?: {
+            lng: number;
+            lat: number;
+            alt?: number;
+            heading?: number;
+            pitch?: number;
+            roll?: number;
+        };
+        extent?: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+            height?: number;
+        };
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+    /**
+     * 根据Rectangle区域去请求对应的区域内的数据
+     * @param options - 瓦片信息对象
+     * @returns 异步计算完成的Promise
+     */
+    queryGridData(options: any): Promise<any>;
+    /**
+     * 重新加载数据
+     * @returns 无
+     */
+    reload(): void;
+    /**
+     * 判断级别是否在当前图层的最大最小层级范围内
+     * @param level - 判断的级别
+     * @returns 是否在限定的范围内
+     */
+    isInRange(level: number): boolean;
+}
+
+/**
+ * 按视域一次性加载 WFS图层 (每次视域变化，按视域请求一次数据更新，只适合视域内数据量低于1000条数据的情况下使用)
  * @param [options] - 参数对象，包括以下：
  * @param options.url - WFS服务地址
  * @param [options.parameters] - 要在URL中 传递给WFS服务GetFeature请求的其他参数。
@@ -25958,7 +26180,7 @@ declare class TilesetLayer extends BaseGraphicLayer {
  * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
  * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
  */
-declare class WfsLayer extends LodGraphicLayer {
+declare class Wfs2Layer extends Lod2GraphicLayer {
     constructor(options?: {
         url: string;
         parameters?: {
@@ -25968,6 +26190,191 @@ declare class WfsLayer extends LodGraphicLayer {
             service?: string;
             version?: string;
         };
+        geometryName?: string;
+        headers?: any;
+        proxy?: string | Cesium.DefaultProxy;
+        layer: string;
+        IdField?: string;
+        getCapabilities?: boolean;
+        minimumLevel?: number;
+        maximumLevel?: number;
+        rectangle?: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+        };
+        bbox?: number[];
+        debuggerTileInfo?: boolean;
+        maxCacheCount?: number;
+        zIndex?: number;
+        symbol?: {
+            type?: GraphicType | string;
+            styleOptions?: any;
+            styleField?: string;
+            styleFieldOptions?: any;
+            merge?: boolean;
+            callback?: (...params: any[]) => any;
+        };
+        graphicOptions?: any;
+        chinaCRS?: ChinaCRS;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        simplify?: {
+            tolerance?: number;
+            highQuality?: boolean;
+            mutate?: boolean;
+        };
+        buildings?: {
+            bottomHeight?: string;
+            cloumn?: string;
+            height?: string | number;
+        };
+        cluster?: {
+            enabled?: boolean;
+            pixelRange?: number;
+            minimumClusterSize?: number;
+            includePoly?: boolean;
+            image?: string | ((...params: any[]) => any) | Globe.getCircleImageOptions;
+            style?: BillboardEntity.StyleOptions | any | any;
+        };
+        popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
+        popupOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+            showNull?: string;
+        };
+        tooltip?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any) | any;
+        tooltipOptions?: {
+            title?: string;
+            titleField?: string;
+            noTitle?: string;
+            showNull?: string;
+        };
+        contextmenuItems?: any;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        show?: boolean;
+        eventParent?: BaseClass | boolean;
+        center?: {
+            lng: number;
+            lat: number;
+            alt?: number;
+            heading?: number;
+            pitch?: number;
+            roll?: number;
+        };
+        extent?: {
+            xmin: number;
+            xmax: number;
+            ymin: number;
+            ymax: number;
+            height?: number;
+        };
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
+}
+
+/**
+ * WFS图层
+ * @param [options] - 参数对象，包括以下：
+ * @param options.url - WFS服务地址
+ * @param [options.parameters] - 要在URL中 传递给WFS服务GetFeature请求的其他参数。
+ * @param [options.parameters.maxFeatures] - 返回结果最大数量
+ * @param [options.parameters.cql_filter] - 筛选服务数据的SQL语句，  支持动态变量：层级 {level}
+ * @param [options.parameters.sortBy] - 排序的属性名称，默认升序，降序时+D
+ * @param [options.parameters.service = 'WFS'] - 服务类型
+ * @param [options.parameters.version = '1.0.0'] - 服务版本
+ * @param [options.filter] - 筛选服务数据的xml拼接方法，  支持动态变量：{level} {bbox}
+ * @param [options.geometryName = 'the_geom'] - geometry字段名称, 比如：geom 或 the_geom
+ * @param [options.headers] - 将被添加到HTTP请求头。
+ * @param [options.proxy] - 加载资源时使用的代理。
+ * @param options.layer - 图层名称（命名空间:图层名称），多个图层名称用逗号隔开
+ * @param [options.IdField = 'id'] - 数据中唯一标识的属性字段名称
+ * @param [options.getCapabilities = true] - 是否通过服务本身的GetCapabilities来读取一些参数，减少options配置项
+ * @param [options.minimumLevel = 0] - 图层所支持的最低层级，当地图小于该级别时，平台不去请求服务数据。【影响效率的重要参数】
+ * @param [options.maximumLevel] - 图层所支持的最大层级,当地图大于该级别时，平台不去请求服务数据。
+ * @param [options.rectangle] - 瓦片数据的矩形区域范围
+ * @param options.rectangle.xmin - 最小经度值, -180 至 180
+ * @param options.rectangle.xmax - 最大经度值, -180 至 180
+ * @param options.rectangle.ymin - 最小纬度值, -90 至 90
+ * @param options.rectangle.ymax - 最大纬度值, -90 至 90
+ * @param [options.bbox] - bbox规范的瓦片数据的矩形区域范围[xmin ,ymin ,xmax ,ymax],与rectangle二选一即可。
+ * @param [options.debuggerTileInfo] - 是否开启测试显示瓦片信息
+ * @param [options.maxCacheCount = 1000] - 记录临时缓存数据的最大数据量(有缓存的瓦片不再二次请求), 0时不记录
+ * @param [options.zIndex] - 控制图层的叠加层次（部分图层），默认按加载的顺序进行叠加，但也可以自定义叠加顺序，数字大的在上面。
+ * @param [options.symbol] - 矢量数据的style样式,为Function时是完全自定义的回调处理 symbol(attr, style, feature)
+ * @param [options.symbol.type] - 标识数据类型，默认是根据数据生成 point、polyline、polygon
+ * @param [options.symbol.styleOptions] - Style样式，每种不同类型数据都有不同的样式，具体见各矢量数据的style参数。{@link GraphicType}
+ * @param [options.symbol.styleField] - 按 styleField 属性设置不同样式。
+ * @param [options.symbol.styleFieldOptions] - 按styleField值与对应style样式的键值对象。键支持对attr的JS语法字符串，如 "attr.floors>10 && attr.floors<20": { color: "#ff0000" }  或 "floors>10 && floors<20": { color: "#ff0000" } ，默认与styleOptions合并，可以设置merge:false不合并。
+ * @param [options.symbol.merge] - 是否合并并覆盖json中已有的style，默认不合并。
+ * @param [options.symbol.callback] - 自定义判断处理返回style ，示例：callback: function (attr, styleOpt){  return { color: "#ff0000" };  }
+ * @param [options.graphicOptions] - 默认的graphic的构造参数，每种不同类型数据都有不同的属性，具体见各{@link GraphicType}矢量数据的构造参数。
+ * @param [options.chinaCRS] - 标识数据的国内坐标系（用于自动纠偏或加偏）
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.simplify] - 是否简化坐标点位，为空时不简化
+ * @param [options.simplify.tolerance = 0.0001] - 简化的程度，传值是经纬度的小数位
+ * @param [options.simplify.highQuality = true] - 是否花更多的时间用不同的算法创建更高质量的简化
+ * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
+ * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
+ * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
+ * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
+ * @param [options.buildings.height = 3.5] - 层高的  固定层高数值（如:10） 或 属性字段名称（如:{height}）
+ * @param [options.cluster] - 聚合参数(Tip:不参与聚合的类型：合并渲染对象、处于标绘或编辑状态的对象)：
+ * @param [options.cluster.enabled = false] - 是否开启聚合
+ * @param [options.cluster.pixelRange = 20] - 多少像素矩形范围内聚合
+ * @param [options.cluster.minimumClusterSize = 2] - 可以聚集的屏幕空间对象的最小数量
+ * @param [options.cluster.includePoly = true] - 是否对线面对象进行聚合
+ * @param [options.cluster.image] - 聚合点的图标样式，支持：string时直接传图片; object时定义内置样式; function时传：getImage:function(count) { return image}
+ * @param [options.cluster.style] - 聚合点的样式参数
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定，支持：'all'、数组、字符串模板
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数,还包括：
+ * @param [options.popupOptions.title] - 固定的标题名称
+ * @param [options.popupOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.popupOptions.noTitle] - 不显示标题
+ * @param [options.popupOptions.showNull = false] - 是否显示空值
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑定，参数与popup属性完全相同。
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数,还包括：
+ * @param [options.tooltipOptions.title] - 固定的标题名称
+ * @param [options.tooltipOptions.titleField] - 标题对应的属性字段名称
+ * @param [options.tooltipOptions.noTitle] - 不显示标题
+ * @param [options.tooltipOptions.showNull = false] - 是否显示空值
+ * @param [options.contextmenuItems] - 绑定的右键菜单值，也可以bindContextMenu方法绑定
+ * @param [options.id = mars3d.Util.createGuid()] - 图层id标识
+ * @param [options.pid] - 图层父级的id，一般图层管理中使用
+ * @param [options.name] - 图层名称
+ * @param [options.show = true] - 图层是否显示
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为map对象，false时不冒泡
+ * @param [options.center] - 图层自定义定位视角 {@link Map#setCameraView}
+ * @param options.center.lng - 经度值, -180至180
+ * @param options.center.lat - 纬度值, -90至90
+ * @param [options.center.alt] - 高度值
+ * @param [options.center.heading] - 方向角度值，绕垂直于地心的轴旋转角度, 0至360
+ * @param [options.center.pitch] - 俯仰角度值，绕纬度线旋转角度, -90至90
+ * @param [options.center.roll] - 翻滚角度值，绕经度线旋转角度, -90至90
+ * @param [options.extent] - 图层自定义定位的矩形区域，与center二选一即可。 {@link Map#flyToExtent}
+ * @param options.extent.xmin - 最小经度值, -180 至 180
+ * @param options.extent.xmax - 最大经度值, -180 至 180
+ * @param options.extent.ymin - 最小纬度值, -90 至 90
+ * @param options.extent.ymax - 最大纬度值, -90 至 90
+ * @param [options.extent.height = 0] - 矩形高度值
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseLayer#flyTo}方法参数。
+ */
+declare class WfsLayer extends LodGraphicLayer {
+    constructor(options?: {
+        url: string;
+        parameters?: {
+            maxFeatures?: number;
+            cql_filter?: string | ((...params: any[]) => any);
+            sortBy?: string;
+            service?: string;
+            version?: string;
+        };
+        filter?: string;
         geometryName?: string;
         headers?: any;
         proxy?: string | Cesium.DefaultProxy;
@@ -27549,12 +27956,6 @@ declare class EmptyTileLayer extends BaseTileLayer {
      * @returns 是否在限定的范围内
      */
     isInRange(level: number): boolean;
-    /**
-     * 判断所有瓦片 是否都在最大最小层级范围外，用于判断清除数据
-     * @param level - 判断的级别
-     * @returns 是否都在范围外
-     */
-    isAllOutRange(level: number): boolean;
     /**
      * 创建瓦片图层对应的ImageryProvider对象
      * @param [options = {}] - 参数对象，具体每类瓦片图层都不一样。
@@ -30604,6 +31005,7 @@ declare class Map extends BaseClass {
      * @param [options.height = canvas.height] - 图片的高度像素值
      * @param [options.type = 'image/jpeg'] - 图片格式
      * @param [options.encoderOptions = 1] - 在指定图片格式为 image/jpeg 或 image/webp的情况下，可以从 0 到 1 的区间内选择图片的质量。如果超出取值范围，将会使用默认值 0.92。其他参数会被忽略。
+     * @param [options.domtoimage = true] - 是否导出控件DOM元素，true时需要同时引入了dom-to-image.js （存在window.domtoimage对象）
      * @returns 截图完成后的回调方法的Promise
      */
     expImage(options?: {
@@ -30613,6 +31015,7 @@ declare class Map extends BaseClass {
         height?: number;
         type?: string;
         encoderOptions?: number;
+        domtoimage?: boolean;
     }): Promise<any>;
     /**
      * 设置鼠标的默认状态样式
@@ -34006,6 +34409,11 @@ declare class PointPlot extends BasePointEntity {
      * 编辑处理类
      */
     readonly EditClass: EditPoint;
+    /**
+     * 转为可以保存SML格式文件字符串
+     * @returns SML文件规范的内容字符串
+     */
+    toSML(): string;
 }
 
 declare namespace PolyPlot {
@@ -34028,6 +34436,8 @@ declare namespace PolyPlot {
      * @property [diffHeight = 0] - 立体高度
      * @property [wall = false] - 是否显示墙（在线的下面展示）
      * @property [wallOpacity = 0.4] - 墙的透明度，可选项：0.0-1.0
+     * @property [subCode] - 子标号编码, 多个时可以传入数组 或 使用;符号间隔
+     * @property [subColor = "#ff0000"] - 子标号颜色, 多个时可以传入数组 或 使用;符号间隔
      */
     type StyleOptions = any | {
         color?: string | Cesium.Color;
@@ -34047,6 +34457,8 @@ declare namespace PolyPlot {
         diffHeight?: number;
         wall?: boolean;
         wallOpacity?: number;
+        subCode?: string | string[];
+        subColor?: string | string[] | Cesium.Color;
     };
 }
 
@@ -34136,6 +34548,15 @@ declare class PolyPlot extends BasePolyEntity {
      * 编辑处理类
      */
     readonly EditClass: EditPoly;
+    /**
+     * 是否存在子标号
+     */
+    readonly hasSubCode: boolean;
+    /**
+     * 转为可以保存SML格式文件字符串
+     * @returns SML文件规范的内容字符串
+     */
+    toSML(): string;
 }
 
 /**
@@ -36428,6 +36849,85 @@ declare class QueryGeoServer extends BaseClass {
         更多参数?: any;
         success?: (...params: any[]) => any;
         error?: (...params: any[]) => any;
+    }): Promise<any>;
+    /**
+     * 清除
+     * @returns 无
+     */
+    clear(): void;
+}
+
+declare namespace QueryIServer {
+    /**
+     * 当前类支持的{@link EventType}事件类型
+     * @example
+     * //绑定监听事件
+     * layer.on(mars3d.EventType.load, function (event) {
+     *   console.log('矢量数据对象加载完成', event)
+     * })
+     * @property click - 左键单击 鼠标事件
+     * @property load - 完成加载，执行所有内部处理后
+     */
+    type EventType = {
+        click: string;
+        load: string;
+    };
+}
+
+/**
+ * 超图iServer WFS矢量服务查询类
+ * @param options - 参数对象，包括以下：
+ * @param options.url - iServer服务地址, 示例：'https://iserver.superma/iserver/services/map-china/rest/maps/China'
+ * @param [options.layerName] - 对应的超图服务图层名
+ * @param [options.crs = 'EPSG:4326'] - 图层对应的坐标系
+ * @param [options.toGeoJSON] - 超图json转geojson解析方法
+ *
+ *
+ * //以下是GeoJsonLayer图层参数
+ * @param [options.id = createGuid()] - 赋予给layer图层，图层id标识
+ * @param [options.pid] - 赋予给layer图层，图层父级的id，一般图层管理中使用
+ * @param [options.name] - 赋予给layer图层，图层名称
+ * @param [options.symbol] - 赋予给layer图层，图层矢量数据的style样式，参考{@link GeoJsonLayer}
+ * @param [options.graphicOptions] - 赋予给layer图层，图层默认的graphic的构造参数，参考{@link GeoJsonLayer}
+ * @param [options.popup] - 赋予给layer图层，图层绑定的popup弹窗值，参考{@link GeoJsonLayer}
+ * @param [options.tooltip] - 赋予给layer图层，图层绑定的tooltip弹窗值，参考{@link GeoJsonLayer}
+ */
+declare class QueryIServer extends BaseClass {
+    constructor(options: {
+        url: string;
+        layerName?: string;
+        crs?: string | CRS;
+        toGeoJSON?: (...params: any[]) => any;
+        id?: string | number;
+        pid?: string | number;
+        name?: string;
+        symbol?: any | ((...params: any[]) => any);
+        graphicOptions?: any;
+        popup?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any);
+        tooltip?: string | Globe.getTemplateHtml_template[] | ((...params: any[]) => any) | any;
+    });
+    /**
+     * iServer服务地址
+     */
+    url: string;
+    /**
+     * 用于显示查询结果的GeoJsonLayer图层，图层参数在当前类构造方法中传入
+     */
+    readonly layer: GeoJsonLayer;
+    /**
+     * 查询服务，基于filter条件
+     * @param queryOptions - 查询参数
+     * @param [queryOptions.queryParams] - 超图服务本身支持的一些查询条件，比如：{  attributeFilter: "SMID>10" }
+     * @param [queryOptions.graphic] - 限定的搜索区域
+     * @param [queryOptions.expectCount = 1000] - 返回结果最大数量
+     * @param [queryOptions.sortBy] - 排序的属性名称，默认升序，降序时+D
+     * @returns 查询完成的Promise,等价于success参数
+     */
+    query(queryOptions: {
+        queryParams?: any;
+        graphic?: BaseGraphic | any;
+        expectCount?: number;
+        sortBy?: string;
     }): Promise<any>;
     /**
      * 清除
@@ -40746,7 +41246,7 @@ declare namespace PointTrans {
      * @param [toProjParams = 'EPSG:4326'] - 转为返回的结果坐标系
      * @returns 返回结果坐标系的对应坐标数组,示例：[[115.866936, 35.062583],[115.866923, 35.062565]]
      */
-    function proj4TransArr(coords: number[], fromProjParams: string | CRS, toProjParams?: string | CRS): number[];
+    function proj4TransArr(coords: number[] | any, fromProjParams: string | CRS, toProjParams?: string | CRS): number[];
     /**
      * 笛卡尔坐标 转 当前屏幕像素坐标
      * @param scene - 场景对象，传入map.scene
@@ -42742,6 +43242,7 @@ declare namespace query {
 
   export { QueryGeoServer }
   export { QueryArcServer }
+  export { QueryIServer }
 }
 
 
