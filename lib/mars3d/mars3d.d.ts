@@ -2,10 +2,10 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.10.12
- * 编译日期：2026-01-21 12:22
+ * 版本信息：v3.11.0
+ * 编译日期：2026-02-08 17:33
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：火星科技免费公开版 ，2025-07-01
+ * 使用单位：火星科技免费公开版 ，2026-02-01
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -5391,12 +5391,14 @@ declare class BaseGraphic extends BaseClass {
      * 将矢量数据导出为GeoJSON格式规范对象。
      * @param [options] - 参数对象:
      * @param [options.noAlt] - 不导出高度值
+     * @param [options.closure] - 是否闭合，true时增加第1个点 【仅对Polygon类型有效】
      * @param [options.noStyle] - 不导出style样式，后期使用时在图层配置symbol
      * @param [options.standard] - 不导出options等mars3d属性，仅导出坐标和attr属性的标准简洁GeoJSON
      * @returns GeoJSON格式规范对象
      */
     toGeoJSON(options?: {
         noAlt?: boolean;
+        closure?: boolean;
         noStyle?: boolean;
         standard?: boolean;
     }): any;
@@ -16044,12 +16046,14 @@ declare class GroupGraphic extends BaseGraphic {
      * 将矢量数据导出为GeoJSON格式规范对象。
      * @param [options] - 参数对象:
      * @param [options.noAlt] - 不导出高度值
+     * @param [options.closure] - 是否闭合，true时增加第1个点 【仅对Polygon类型有效】
      * @param [options.noStyle] - 不导出style样式，后期使用时在图层配置symbol
      * @param [options.standard] - 不导出options等mars3d属性，仅导出坐标和attr属性的标准简洁GeoJSON
      * @returns GeoJSON格式规范对象
      */
     toGeoJSON(options?: {
         noAlt?: boolean;
+        closure?: boolean;
         noStyle?: boolean;
         standard?: boolean;
     }): any;
@@ -24054,6 +24058,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      * 将图层数据导出为GeoJSON格式规范对象。
      * @param [options] - 参数对象:
      * @param [options.noAlt] - 不导出高度值
+     * @param [options.closure] - 是否闭合，true时增加第1个点 【仅对Polygon类型有效】
      * @param [options.noStyle] - 不导出style样式，后期使用时在图层配置symbol
      * @param [options.standard] - 不导出options等mars3d属性，仅导出坐标和attr属性的标准简洁GeoJSON
      * @param [options.stopEdit = false] - 是否停止绘制或编辑
@@ -24061,6 +24066,7 @@ declare class GraphicLayer extends BaseGraphicLayer {
      */
     toGeoJSON(options?: {
         noAlt?: boolean;
+        closure?: boolean;
         noStyle?: boolean;
         standard?: boolean;
         stopEdit?: boolean;
@@ -41806,6 +41812,7 @@ declare namespace PolyUtil {
     function updateVolume(resultInter: VolumeResult, cutHeight: number): VolumeResult;
     /**
      * 获取 圆（或椭圆）边线上的坐标点数组
+     * (依赖cesium内部算法：Cesium.EllipseGeometryLibrary.computeEllipsePositions)
      * @param options - 参数对象:
      * @param options.position - 圆的中心坐标
      * @param [options.radius] - 如是圆时，半径（单位：米）
@@ -41824,6 +41831,19 @@ declare namespace PolyUtil {
         count?: number;
         granularity?: number;
         rotation?: number;
+    }): Cesium.Cartesian3[];
+    /**
+     * 获取 圆 边线上的坐标点数组
+     * @param options - 参数对象:
+     * @param options.position - 圆的中心坐标
+     * @param [options.radius] - 半径（单位：米）
+     * @param [options.count = 60] - 分割返回的点数量
+     * @returns 边线上的坐标点数组
+     */
+    function getCircleOuterPositions(options: {
+        position: Cesium.Cartesian3 | LngLatPoint;
+        radius?: number;
+        count?: number;
     }): Cesium.Cartesian3[];
     /**
      * 提取 地球视野 的中心点坐标
