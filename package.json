@@ -1,6 +1,6 @@
 {
   "name": "mars3d-es5-project",
-  "version": "3.10.0",
+  "version": "3.11.0",
   "description": "Mars3D平台基础项目",
   "main": "index.js",
   "private": true,
@@ -36,7 +36,7 @@
     "gulp-util": "^3.0.8",
     "http-server": "^14.1.1",
     "javascript-obfuscator": "^0.28.5",
-    "mars3d": "~3.10.0",
+    "mars3d": "~3.11.0",
     "plugin-error": "^1.0.1",
     "prettier": "^2.8.8",
     "through2": "^2.0.5",
