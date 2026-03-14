@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.11.0
- * 编译日期：2026-02-14 19:26
+ * 版本信息：v3.11.1
+ * 编译日期：2026-03-14 12:11
  * 版权所有：Copyright by 火星科技  http://mars3d.cn
  * 使用单位：火星科技免费公开版 ，2026-02-01
  */
@@ -12758,7 +12758,7 @@ declare namespace ModelEntity {
      * @property [incrementallyLoadTextures = true] - 确定模型加载后纹理是否会继续流进来。
      * @property [runAnimations = true] - 指定模型中指定的glTF动画是否应该启动。
      * @property [clampAnimations = true] - 指定在没有关键帧的情况下，glTF动画是否应该保持最后一个姿势。
-     * @property [lightColor] - 在为模型着色时指定光的颜色的属性。当undefined场景的浅色被使用代替。
+     * @property [lightColor] - 控制模型自身接收的光源颜色的参数，核心作用是为模型的光照计算指定一个 “滤镜色”—— 所有照射到该模型上的光源（定向光、环境光、太阳光等）都会先与这个颜色相乘，最终改变模型呈现的整体色调和亮度。
      * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
      * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
      * @property [clippingPlanes] - 用于裁剪模型的Plane平面集合
@@ -19406,8 +19406,8 @@ declare class EllipsoidPrimitive extends BasePointPrimitive {
 declare namespace FrustumPrimitive {
     /**
      * 四棱锥体 支持的样式信息
-     * @property [angle] - 四棱锥体张角（角度值，取值范围 0.01-89.99）
-     * @property [angle2 = angle] - 四棱锥体张角2，（角度值，取值范围 0.01-89.99）
+     * @property [angle] - 四棱锥体张角,竖直角（角度值，取值范围 0.01-89.99）。 已知问题：垂直角建议小于10°-80°，超出这个范围会出现明显的透视畸变。
+     * @property [angle2 = angle] - 四棱锥体张角2，水平角（角度值，取值范围 0.01-89.99）, 水平角计算为aspectRatio宽高比传给视锥体对象，如果你的宽高比必须匹配画布（避免画面拉伸），就不能同时强制匹配水平角 —— 二者只能选其一，这是透视投影的数学特性；
      * @property [heading = 0] - 方向角 （度数值，0至360度），没有指定targetPosition时有效
      * @property [pitch = 0] - 俯仰角（度数值，0至360度），没有指定targetPosition时有效
      * @property [roll = 0] - 翻滚角（度数值，0至360度），没有指定targetPosition时有效
@@ -19834,7 +19834,7 @@ declare namespace ModelPrimitive {
      * @property [runAnimations = true] - 指定模型中指定的glTF动画是否应该启动。
      * @property [clampAnimations = true] - 指定在没有关键帧的情况下，glTF动画是否应该保持最后一个姿势。
      * @property [releaseGltfJson = false] - When true, the glTF JSON is released once the glTF is loaded. This is is especially useful for cases like 3D Tiles, where each .gltf model is unique and caching the glTF JSON is not effective.
-     * @property [lightColor] - 在为模型着色时指定光的颜色的属性。当undefined场景的浅色被使用代替。
+     * @property [lightColor] - 控制模型自身接收的光源颜色的参数，核心作用是为模型的光照计算指定一个 “滤镜色”—— 所有照射到该模型上的光源（定向光、环境光、太阳光等）都会先与这个颜色相乘，最终改变模型呈现的整体色调和亮度。
      * @property [imageBasedLighting] - The properties for managing image-based lighting on this model.
      * @property [nodeTransformations] - 一个对象，其中键是节点的名称，值是{@link TranslationRotationScale}属性，描述要应用到该节点的转换。该转换是在节点的现有转换之后(如glTF中指定的那样)应用的，并且不会替换节点的现有转换。
      * @property [articulations] - An object, where keys are composed of an articulation name, a single space, and a stage name, and the values are numeric properties.
@@ -19914,7 +19914,7 @@ declare namespace ModelPrimitive {
         runAnimations?: boolean;
         clampAnimations?: boolean;
         releaseGltfJson?: boolean;
-        lightColor?: Cesium.Color;
+        lightColor?: Cesium.Color | number;
         imageBasedLighting?: Cesium.ImageBasedLighting;
         nodeTransformations?: Cesium.PropertyBag | {
             [key: string]: Cesium.TranslationRotationScale;

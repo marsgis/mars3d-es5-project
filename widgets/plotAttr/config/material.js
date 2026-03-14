@@ -34,7 +34,7 @@ const materialConfig = {
     { name: "image", label: "图片", type: "label", defval: "https://data.mars3d.cn/img/textures/fence.png" },
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
     { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 },
-
+    { name: "bgColor", label: "背景颜色", type: "color", defval: "rgba(0,0,0,0)" },
     {
       name: "repeat_x",
       label: "X重复数量",
@@ -236,41 +236,16 @@ const materialConfig = {
   ],
   Checkerboard: [
     {
-      name: "evenColor",
-      label: "主色", // entity用，属性材质
+      name: "lightColor",
+      label: "主色",
       type: "color",
-      defval: "#000000",
-      show({ graphicType }) {
-        return !graphicType.endsWith("P")
-      }
-    },
-    {
-      name: "oddColor",
-      label: "衬色",
-      type: "color",
-      defval: "#ffffff",
-      show({ graphicType }) {
-        return !graphicType.endsWith("P")
-      }
-    },
-
-    {
-      name: "lightColor", // primitive用，材质 【Cesium本身问题，命名不一样】
-      label: "主色P",
-      type: "color",
-      defval: "#000000",
-      show({ graphicType }) {
-        return graphicType.endsWith("P")
-      }
+      defval: "#000000"
     },
     {
       name: "darkColor",
-      label: "衬色P",
+      label: "衬色",
       type: "color",
-      defval: "#ffffff",
-      show({ graphicType }) {
-        return graphicType.endsWith("P")
-      }
+      defval: "#ffffff"
     },
     { name: "repeat_x", label: "横向数量", type: "number", step: 1, defval: 10 },
     { name: "repeat_y", label: "纵向数量", type: "number", step: 1, defval: 10 }
@@ -279,8 +254,8 @@ const materialConfig = {
     { name: "evenColor", label: "主色", type: "color", defval: "#000000" },
     { name: "oddColor", label: "衬色", type: "color", defval: "#ffffff" },
     { name: "repeat", label: "数量", type: "number", step: 1, defval: 10 },
-    { name: "orientation", label: "方向", type: "radio", defval: false },
-    { name: "offset", label: "起始位置", type: "number", step: 1, defval: 0 }
+    { name: "horizontal", label: "条纹方向", type: "radio", defval: false },
+    { name: "offset", label: "起始偏移", type: "number", min: 0.0, max: 1.0, step: 0.1, defval: 0 }
   ],
   PolyGradient: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },
@@ -355,7 +330,11 @@ const materialConfig = {
     { name: "count", label: "数量", type: "number", step: 1, defval: 1 },
     { name: "gradient", label: "圈间系数", type: "slider", min: 0, max: 1, step: 0.1, defval: 0.1 },
     { name: "diffusePower", label: "漫射系数", type: "number", min: 0, max: 50, step: 0.1, defval: 1.6 },
-    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 }
+    { name: "speed", label: "速度", type: "number", min: 0, max: 999, step: 1, defval: 10 },
+    { name: "square", label: "正方形", type: "radio", defval: false },
+    { name: "startAngle", label: "扇形开始角度", type: "slider", min: 0, max: 360, step: 1, defval: 0 },
+    { name: "endAngle", label: "扇形开始角度", type: "slider", min: 0, max: 360, step: 1, defval: 360 },
+    { name: "isDouble", label: "双扇形", type: "radio", defval: false }
   ],
   RadarLine: [
     { name: "color", label: "颜色", type: "color", defval: "#3388ff" },

@@ -1280,6 +1280,15 @@ const styleConfig = {
         max: 1,
         step: 0.01
       },
+      {
+        name: "lightColor",
+        label: "明暗程度",
+        type: "slider",
+        defval: 1.0,
+        min: 0.1,
+        max: 10.0,
+        step: 0.1
+      },
 
       {
         name: "silhouette",
@@ -1346,6 +1355,7 @@ const styleConfig = {
           return graphicType.endsWith("P")
         }
       },
+
       {
         name: "clampToGround",
         label: "是否贴地",
@@ -2195,7 +2205,23 @@ const styleConfig = {
           return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
         }
       },
-
+      {
+        name: "outline",
+        label: "是否边框",
+        type: "radio",
+        defval(style) {
+          return !!style?.outlineWidth || !!style?.outlineColor
+        }
+      },
+      {
+        name: "outlineColor",
+        label: "边框颜色",
+        type: "color",
+        defval: "#000000",
+        show({ allStyle }) {
+          return allStyle.outline
+        }
+      },
       {
         name: "distanceDisplayCondition",
         label: "是否按视距显示",
@@ -3592,6 +3618,7 @@ const styleConfig = {
           { label: "棋盘", value: "Checkerboard" },
           { label: "文本", value: "Text" },
 
+          { label: "波纹扩散", value: "CircleWave" },
           { label: "渐变面", value: "PolyGradient" },
           { label: "双色渐变面", value: "PolyGradient2" },
           { label: "水面", value: "Water" },
@@ -4307,7 +4334,9 @@ const styleConfig = {
       {
         name: "distance",
         label: "投射距离",
-        type: "text"
+        type: "number",
+        min: 0,
+        step: 1
       },
 
       {
@@ -4422,7 +4451,9 @@ const styleConfig = {
       {
         name: "distance",
         label: "投射距离",
-        type: "text"
+        type: "number",
+        min: 0,
+        step: 1
       },
 
       {
@@ -4751,7 +4782,7 @@ const styleConfig = {
         name: "serifWidth",
         label: "衬线线宽",
         type: "number",
-        min: 1.0,
+        min: 0.1,
         max: 50.0,
         step: 0.1,
         defval: 1.0,
@@ -4788,7 +4819,7 @@ const styleConfig = {
           { label: "蓝光水面", value: "WaterLight" }
         ],
         show({ style }) {
-          return style?.fill !== false && (style?.materialType ? this.data?.some((item) => item.value === style?.materialType) : true)
+          return style?.hasFill !== false && style?.fill
         }
       },
 
@@ -4834,7 +4865,26 @@ const styleConfig = {
         show({ style }) {
           return !style?.clampToGround && style?.wall
         }
-      }
+      },
+
+      {
+        name: "subCode",
+        label: "子标号编码",
+        type: "textarea",
+        defval: "",
+        show({ style }) {
+          return style?.hasSubCode
+        }
+      },
+      {
+        name: "subColor",
+        label: "子标号颜色",
+        type: "color",
+        defval: "#ff0000",
+        show({ style }) {
+          return style?.hasSubCode
+        }
+      },
     ]
   }
 }
