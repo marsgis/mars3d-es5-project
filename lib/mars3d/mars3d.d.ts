@@ -3,9 +3,9 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.11.1
- * 编译日期：2026-03-14 12:11
- * 版权所有：Copyright by 火星科技  http://mars3d.cn
- * 使用单位：火星科技免费公开版 ，2026-02-01
+ * 编译日期：2026-03-17 14:58
+ * 版权所有：Copyright by http://mars3d.cn
+ * 使用单位：免费公开版 ，2026-02-01
  */
 
 import * as Cesium from "mars3d-cesium"
@@ -33804,7 +33804,7 @@ declare class CylinderWaveMaterial extends Cesium.Material {
  *   style: {
  *     diffHeight: 5,
  *     material: new mars3d.material.TextMaterial({
- *       text: "火星科技",
+ *       text: "欢迎使用Mars3D平台",
  *       color: "#3388cc",
  *       outlineWidth: 4,
  *     }),
@@ -42316,8 +42316,8 @@ declare namespace Util {
     /**
      * 根据数据和格式化字符串模板，返回字符串
      * @example
-     * let str = mars3d.Util.template("<div>名称：{name}</div>", { name:"火星科技", date:"2017-8-25"} );
-     *  //str结果为 : "<div>名称：火星科技</div>"
+     * let str = mars3d.Util.template("<div>名称：{name}</div>", { name:"欢迎使用Mars3D平台", date:"2017-8-25"} );
+     *  //str结果为 : "<div>名称：欢迎使用Mars3D平台</div>"
      * @param str - 格式化字符串模版，属性字段为大括号，如 {name}
      * @param data - 数据对象
      * @param [toEmpty = false] - 是否将模板中未匹配项转为空值
