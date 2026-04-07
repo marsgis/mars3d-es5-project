@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.11.1
- * 编译日期：2026-03-17 14:58
+ * 版本信息：v3.11.2
+ * 编译日期：2026-04-07 19:58
  * 版权所有：Copyright by http://mars3d.cn
  * 使用单位：免费公开版 ，2026-02-01
  */
@@ -10354,10 +10354,14 @@ declare namespace BillboardEntity {
      * @property [setHeight] - 指定坐标高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [addHeight] - 在现有坐标基础上增加的高度值（对编辑时无效，仅初始化传入有效，常用于图层中配置）,也支持字符串模版配置
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
-     * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
-     * //  * @param {boolean} [highlight.enabled=true] 是否启用
+     * //  * @property {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
+     * //  * @property {boolean} [highlight.enabled=true] 是否启用
      * @property [label] - 支持附带文字的显示
-     * //  * @param {boolean} [label.combine=false] 文本是否使用Entity附带文本，比如使用动态坐标时，请传入true
+     * //  * @property {boolean} [label.combine=false] 文本是否使用Entity附带文本，比如使用动态坐标时，请传入true
+     * @property [bounce] - 是否构造后自动调用弹跳效果  {@link BillboardEntity#startBounce}
+     * @property [bounce.maxHeight = 50] - 弹跳的最大高度, 单位：像素
+     * @property [bounce.step = 1] - 弹跳增量, 控制速度，单位：像素
+     * @property [bounce.autoStop] - 是否自动停止，true时：会逐渐减弱至停止状态
      */
     type StyleOptions = any | {
         image?: string | HTMLCanvasElement;
@@ -10401,6 +10405,11 @@ declare namespace BillboardEntity {
         addHeight?: number | string;
         highlight?: BillboardEntity.StyleOptions | any;
         label?: LabelEntity.StyleOptions | any;
+        bounce?: {
+            maxHeight?: number;
+            step?: number;
+            autoStop?: boolean;
+        };
     };
 }
 
@@ -12575,6 +12584,10 @@ declare namespace LabelEntity {
      * @property [highlight] - 鼠标移入或单击(type:'click')后的对应高亮的部分样式，提示：原有style的配置项需要与highlightStyle配置有一一对应关系，否则无法清除
      * //  * @param {string} [highlight.type] 事件方式，鼠标移入高亮 或 单击高亮(type:'click')
      * //  * @param {boolean} [highlight.enabled=true] 是否启用
+     * @property [bounce] - 是否构造后自动调用弹跳效果  {@link BillboardEntity#startBounce}
+     * @property [bounce.maxHeight = 50] - 弹跳的最大高度, 单位：像素
+     * @property [bounce.step = 1] - 弹跳增量, 控制速度，单位：像素
+     * @property [bounce.autoStop] - 是否自动停止，true时：会逐渐减弱至停止状态
      */
     type StyleOptions = any | {
         text?: string;
@@ -12625,6 +12638,11 @@ declare namespace LabelEntity {
         addHeight?: number | string;
         templateEmptyStr?: string;
         highlight?: LabelEntity.StyleOptions | any;
+        bounce?: {
+            maxHeight?: number;
+            step?: number;
+            autoStop?: boolean;
+        };
     };
 }
 
@@ -19571,6 +19589,117 @@ declare class FrustumPrimitive extends BasePointPrimitive {
      * <br/>提示：父类属性，非所有子类都具备
      */
     roll: number;
+}
+
+declare namespace HollowCylinder {
+    /**
+     * 中空圆柱体 支持的样式信息
+     * @property [radius = 10] - 半径(单位：米)
+     * @property [thicknes = radius/3] - 壁厚(单位：米)，空心管的外层厚度
+     * @property [diffHeight] - 高度
+     * @property [heading = 0] - 方向角 （度数值，0至360度）
+     * @property [pitch = 0] - 俯仰角（度数值，0至360度）
+     * @property [roll = 0] - 翻滚角（度数值，0至360度）
+     * @property [materialType = "Color"] - 填充材质类型 ,可选项：{@link MaterialType}
+     * @property [materialOptions] - materialType对应的{@link MaterialType}中材质参数
+     * @property [slices = 64] - 边数
+     *
+     * //以下是 这是MaterialAppearance的参数
+     * @property [flat = false] - 当true时，在片段着色器中使用平面着色，不考虑光照。
+     * @property [faceForward = !closed] - 当true时，片段着色器根据需要翻转表面的法线，以确保法线面向查看器以避免黑点。
+     * @property [translucent = true] - 当true时，几何图形将显示为半透明，因此{@link Cesium.PerInstanceColorAppearance#renderState}将启用alpha混合。
+     * @property [closed = false] - 当true时，几何图形将被关闭，因此{@link Cesium.PerInstanceColorAppearance#renderState}启用了背面剔除。
+     * @property [vertexShaderSource] - 可选的GLSL顶点着色器源，覆盖默认的顶点着色器。
+     * @property [fragmentShaderSource] - 可选的GLSL片段着色器源覆盖默认的片段着色器。
+     * @property [renderState] - 可选渲染状态，以覆盖默认渲染状态。
+     * @property [label] - 支持附带文字的显示
+     */
+    type StyleOptions = any | {
+        radius?: number;
+        thicknes?: number;
+        diffHeight?: number;
+        heading?: number;
+        pitch?: number;
+        roll?: number;
+        materialType?: string;
+        materialOptions?: any;
+        slices?: number;
+        flat?: boolean;
+        faceForward?: boolean;
+        translucent?: boolean;
+        closed?: boolean;
+        vertexShaderSource?: string;
+        fragmentShaderSource?: string;
+        renderState?: any;
+        label?: LabelEntity.StyleOptions | any;
+    };
+}
+
+/**
+ * 中空圆柱体 Primitive图元矢量对象
+ * @param options - 参数对象，包括以下：
+ * @param [options.position] - 坐标位置
+ * @param [options.modelMatrix] - 将图元(所有几何实例)从模型转换为世界坐标的4x4变换矩阵,可以替代position。
+ * @param options.style - 样式信息
+ * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
+ * @param [options.appearance] - [cesium原生]用于渲染图元的外观。
+ * @param [options.attributes] - [cesium原生]每个实例的属性。
+ * @param [options.depthFailAppearance] - 当深度测试失败时，用于为该图元着色的外观。
+ * @param [options.vertexCacheOptimize = false] - 当true，几何顶点优化前和后顶点着色缓存。
+ * @param [options.interleave = false] - 当true时，几何顶点属性被交叉，这可以略微提高渲染性能，但会增加加载时间。
+ * @param [options.compressVertices = true] - 当true时，几何顶点被压缩，这将节省内存。提升效率。
+ * @param [options.releaseGeometryInstances = true] - 当true时，图元不保留对输入geometryInstances的引用以节省内存。
+ * @param [options.allowPicking = true] - 当true时，每个几何图形实例只能通过{@link Scene#pick}进行挑选。当false时，保存GPU内存。
+ * @param [options.cull = true] - 当true时，渲染器会根据图元的边界体积来剔除它们的截锥和地平线。设置为false，如果你手动剔除图元，可以获得较小的性能提升。
+ * @param [options.asynchronous = true] - 确定该图元是异步创建还是阻塞创建，直到就绪。
+ * @param [options.debugShowBoundingVolume = false] - 仅供调试。确定该图元命令的边界球是否显示。
+ * @param [options.debugShowShadowVolume = false] - 仅供调试。贴地时，确定是否绘制了图元中每个几何图形的阴影体积。必须是true创建卷之前要释放几何图形或选项。releaseGeometryInstance必须是false。
+ * @param [options.popup] - 绑定的popup弹窗值，也可以bindPopup方法绑定
+ * @param [options.popupOptions] - popup弹窗时的配置参数，也支持如pointerEvents等{@link Popup}构造参数
+ * @param [options.tooltip] - 绑定的tooltip弹窗值，也可以bindTooltip方法绑
+ * @param [options.tooltipOptions] - tooltip弹窗时的配置参数，也支持如pointerEvents等{@link Tooltip}构造参数
+ * @param [options.contextmenuItems] - 当矢量数据支持右键菜单时，也可以bindContextMenu方法绑定
+ * @param [options.id = createGuid()] - 矢量数据id标识
+ * @param [options.name] - 矢量数据名称
+ * @param [options.show = true] - 矢量数据是否显示
+ * @param [options.availability] - 指定时间范围内显示该对象
+ * @param [options.eventParent] - 指定的事件冒泡对象，默认为所加入的图层对象，false时不冒泡事件
+ * @param [options.allowDrillPick] - 是否允许鼠标穿透拾取
+ * @param [options.flyTo] - 加载完成数据后是否自动飞行定位到数据所在的区域。
+ * @param [options.flyToOptions] - 加载完成数据后是否自动飞行定位到数据所在的区域的对应 {@link BaseGraphic#flyTo}方法参数。
+ */
+declare class HollowCylinder extends BasePointPrimitive {
+    constructor(options: {
+        position?: LngLatPoint | Cesium.Cartesian3 | Cesium.PositionProperty | BaseGraphic.AjaxPosition | BaseGraphic.TimePosition | number[] | string;
+        modelMatrix?: Cesium.Matrix4;
+        style: HollowCylinder.StyleOptions | any;
+        attr?: any | BaseGraphic.AjaxAttr;
+        appearance?: Cesium.Appearance;
+        attributes?: Cesium.Appearance;
+        depthFailAppearance?: Cesium.Appearance;
+        vertexCacheOptimize?: boolean;
+        interleave?: boolean;
+        compressVertices?: boolean;
+        releaseGeometryInstances?: boolean;
+        allowPicking?: boolean;
+        cull?: boolean;
+        asynchronous?: boolean;
+        debugShowBoundingVolume?: boolean;
+        debugShowShadowVolume?: boolean;
+        popup?: string | any[] | ((...params: any[]) => any);
+        popupOptions?: Popup.StyleOptions | any;
+        tooltip?: string | any[] | ((...params: any[]) => any);
+        tooltipOptions?: Tooltip.StyleOptions | any;
+        contextmenuItems?: any;
+        id?: string | number;
+        name?: string;
+        show?: boolean;
+        availability?: Cesium.TimeIntervalCollection | Cesium.TimeInterval | any[] | any;
+        eventParent?: BaseClass | boolean;
+        allowDrillPick?: boolean | ((...params: any[]) => any);
+        flyTo?: boolean;
+        flyToOptions?: any;
+    });
 }
 
 /**
@@ -40509,6 +40638,30 @@ declare class PolylineVolumeStyleConver extends BaseStyleConver {
 }
 
 /**
+ * 通用 矢量数据style转换处理类
+ * @param [options] - 控制参数
+ */
+declare class PolyStyleConver extends BaseStyleConver {
+    constructor(options?: any);
+    /**
+     * 转换style到Cesium对象需要的格式
+     * @param style - 样式配置
+     * @param [czmVal = {}] - Cesium属性值
+     * @param [isEntity] - 是否为Entity对象
+     * @returns Cesium属性值
+     */
+    static toCesiumVal(style: any, czmVal?: any, isEntity?: boolean): any;
+    /**
+     * 导出Cesium的样式对象到json可以保存的格式
+     * @param czmVal - Cesium属性值
+     * @param [style = {}] - json简单对象
+     * @param [isEntity] - 是否为Entity对象
+     * @returns json简单对象
+     */
+    static toJSON(czmVal: any, style?: any, isEntity?: boolean): any;
+}
+
+/**
  * Rectangle 矢量数据style转换处理类
  * @param [options] - 控制参数
  */
@@ -43100,6 +43253,7 @@ declare namespace graphic {
   export { DoubleSidedPlane }
   export { ReflectionWater }
   export { VideoPrimitive }
+  export { HollowCylinder }
 
   //批量大数据primitive
   export { BaseCombine }

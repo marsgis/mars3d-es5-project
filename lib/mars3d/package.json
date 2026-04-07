@@ -1,6 +1,6 @@
 {
 	"name": "mars3d",
-	"version": "3.11.0",
+	"version": "3.11.1",
 	"description": "Mars3D三维可视化平台",
 	"main": "./mars3d.js",
 	"types": "./mars3d.d.ts",
@@ -12,7 +12,7 @@
 	"scripts": {},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/marsgis/mars3d.git"
+		"url": "git+https://github.com/marsgis/mars3d.git"
 	},
 	"bugs": {
 		"url": "https://github.com/marsgis/mars3d/issues",
