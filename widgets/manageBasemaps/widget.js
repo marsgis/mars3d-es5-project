@@ -45,6 +45,11 @@
     }
 
     updateBasemap(item) {
+      // 修改图层中切换底图，在底图中切换底图失效问题
+      const basemapLayer = map.getLayerById(item)
+      if (!basemapLayer.show) {
+        basemapLayer.show = true
+      }
       this.map.basemap = item
       // this.disableBase()
     }

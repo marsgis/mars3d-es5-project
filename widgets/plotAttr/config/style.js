@@ -1405,7 +1405,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
+        defval: true
       },
       {
         name: "materialType",
@@ -1422,7 +1422,6 @@ const styleConfig = {
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "放大扩散线", value: "ScanLine" },
-          { label: "半径扫描", value: "CircleScan" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "雷达线", value: "RadarLine" },
           { label: "波纹雷达扫描", value: "RadarWave" }
@@ -1613,7 +1612,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
+        defval: true
       },
       {
         name: "materialType",
@@ -1629,7 +1628,6 @@ const styleConfig = {
           { label: "棋盘", value: "Checkerboard" },
 
           { label: "放大扩散线", value: "ScanLine" },
-          { label: "半径扫描", value: "CircleScan" },
           { label: "波纹扩散", value: "CircleWave" },
           { label: "雷达线", value: "RadarLine" },
           { label: "波纹雷达扫描", value: "RadarWave" }
@@ -1920,7 +1918,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
+        defval: true
       },
       {
         name: "materialType",
@@ -2035,7 +2033,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
+        defval: true
       },
       {
         name: "materialType",
@@ -2186,7 +2184,7 @@ const styleConfig = {
         name: "fill",
         label: "是否填充",
         type: "radio",
-        defval: true,
+        defval: true
       },
       {
         name: "materialType",
@@ -2573,7 +2571,7 @@ const styleConfig = {
     style: [
       { name: "color", label: "光颜色", type: "color", defval: "rgba(0,255,0,0.4)" },
       { name: "intensity", label: "光强度", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 1.0 },
-      { name: "radius", label: "聚光灯半径", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 1.0 },
+      { name: "radius", label: "聚光灯半径", type: "number", min: 1.0, max: 999999999.0, step: 1, defval: 3000.0 },
       { name: "heading", label: "方向角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "pitch", label: "俯仰角", type: "slider", min: 0.0, max: 360.0, step: 0.01, defval: 0.0 },
       { name: "innerCone", label: "内圆锥角", type: "slider", min: 0.0, max: 45, step: 0.1, defval: 10.0 },
@@ -4884,7 +4882,7 @@ const styleConfig = {
         show({ style }) {
           return style?.hasSubCode
         }
-      },
+      }
     ]
   }
 }

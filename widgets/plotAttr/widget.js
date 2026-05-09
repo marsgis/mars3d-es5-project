@@ -192,8 +192,13 @@
     //文件处理
     getGeoJson() {
       let graphic = this.config.graphic
-      let geojson = graphic.toGeoJSON()
-      geojson.properties._layer = graphic._layer.name //记录分组信息
+      let geojson
+      if (graphic.type === "fixedRoute") {
+        geojson = graphic.toJSON()
+      } else {
+        geojson = graphic.toGeoJSON()
+        geojson.properties._layer = graphic._layer.name //记录分组信息
+      }
 
       return geojson
     }

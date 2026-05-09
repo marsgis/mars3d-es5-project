@@ -526,6 +526,11 @@ var plotEdit = {
         let wd = latlng[1]
         let height = latlng.length == 3 ? latlng[2] : 0
 
+        // 飞行漫游导入的数据中latlng 是 [经度，纬度，高程，时间]
+        if (latlng.length === 4) {
+          height = latlng[2]
+        }
+
         let addthml = ""
         if (latlngs.length < thisWidget.getMaxPointNum()) {
           addthml = '<i class="fa  fa-plus-square-o latlng-install" title="插入点" data-index="' + idx + '" ></i>&nbsp;&nbsp;'

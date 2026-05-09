@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.11.2
- * 编译日期：2026-04-07 19:58
+ * 版本信息：v3.11.3
+ * 编译日期：2026-05-09 09:52
  * 版权所有：Copyright by http://mars3d.cn
  * 使用单位：免费公开版 ，2026-02-01
  */
@@ -19569,6 +19569,12 @@ declare class FrustumPrimitive extends BasePointPrimitive {
      */
     readonly groundPosition: Cesium.Cartesian3;
     /**
+     * 取棱锥体远面4个顶点坐标
+     * @param [time = Cesium.JulianDate.now()] - 指定的时间值
+     * @returns 坐标数组
+     */
+    getFarPlanePositions(time?: Cesium.JulianDate): Cesium.Cartesian3[];
+    /**
      * 获取射线向地面与地球的4个交点坐标
      * @param [time = Cesium.JulianDate.now()] - 指定的时间值
      * @returns 坐标数组
@@ -23673,7 +23679,7 @@ declare namespace GeoJsonLayer {
  * @param [options.simplify.mutate = true] - 是否允许对输入进行变异（如果为true，则显著提高性能）
  * @param [options.buildings] - 标识当前图层为建筑物白膜类型数据
  * @param [options.buildings.bottomHeight] - 建筑物底部高度（如:0） 属性字段名称（如:{bottomHeight}）
- * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn
+ * @param [options.buildings.cloumn = 1] - 层数，楼的实际高度 = height*cloumn  或 属性字段名称（如:{floor}）
  * @param [options.buildings.height = 3.5] - 层高的  固定层高数值（如:10） 或 属性字段名称（如:{height}）
  * @param [options.proxy] - 加载资源时要使用的代理服务url。
  * @param [options.queryParameters] - 一个对象，其中包含在检索资源时将发送的查询参数。比如：queryParameters: {'access_token': '123-435-456-000'}

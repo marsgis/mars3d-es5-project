@@ -48,8 +48,11 @@
       if (!this.isActivate || !this.viewWindow) {
         return
       }
-
-      this.viewWindow.updateNode(e.layer)
+      let layer = e.layer
+      if (layer.isPrivate || !layer.name) {
+        return
+      }
+      this.viewWindow.updateNode(layer)
     }
     _onRemoveLayerHandler(e) {
       if (!this.isActivate || !this.viewWindow) {
