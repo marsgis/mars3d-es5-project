@@ -3,7 +3,7 @@
  * Mars3D三维可视化平台  mars3d
  *
  * 版本信息：v3.11.3
- * 编译日期：2026-05-09 09:52
+ * 编译日期：2026-05-13 11:46
  * 版权所有：Copyright by http://mars3d.cn
  * 使用单位：免费公开版 ，2026-02-01
  */
@@ -8867,6 +8867,7 @@ declare namespace DivGraphic {
  * @param options.style - 样式信息
  * @param [options.attr] - 附件的属性信息，可以任意附加属性，导出geojson或json时会自动处理导出。
  * @param [options.hasEdit = true] - 是否允许编辑
+ * @param [options.drawShow = true] - 绘制时，是否自动隐藏entity，可避免拾取坐标存在问题。
  * @param [options.hasEditContextMenu = true] - 编辑时，是否绑定右键编辑菜单
  * @param [options.hasEditRevoke = true] - 编辑时，是否记录编辑步骤中坐标记录，用于还原或撤销编辑
  * @param [options.testPoint] - 测试点 的对应样式 ，可以进行用于比较测试div的位置，方便调试CSS。
@@ -8901,6 +8902,7 @@ declare class DivGraphic extends BaseGraphic {
         style: DivGraphic.StyleOptions | any;
         attr?: any | BaseGraphic.AjaxAttr;
         hasEdit?: boolean;
+        drawShow?: boolean;
         hasEditContextMenu?: boolean;
         hasEditRevoke?: boolean;
         testPoint?: PointEntity.StyleOptions | any;
