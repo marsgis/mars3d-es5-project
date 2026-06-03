@@ -2,8 +2,8 @@
 /**
  * Mars3D三维可视化平台  mars3d
  *
- * 版本信息：v3.11.3
- * 编译日期：2026-05-13 11:46
+ * 版本信息：v3.11.4
+ * 编译日期：2026-05-20 17:31
  * 版权所有：Copyright by http://mars3d.cn
  * 使用单位：免费公开版 ，2026-02-01
  */
@@ -21337,6 +21337,7 @@ declare namespace ReflectionWater {
 /**
  * 反射水面(显示模型倒影) Primitive图元 矢量对象, 目前仅支持少量数据（多了就卡）
  * 依赖：需要map.scene.highDynamicRange需要是false
+ * 已知问题：该对象与部分矢量对象存在渲染冲突问题，比如造成Polygon是回调属性坐标时且开启distanceDisplayCondition时不显示填充物，请按需选用。
  * @param options - 参数对象，包括以下：
  * @param options.positions - 坐标位置
  * @param options.style - 样式信息
