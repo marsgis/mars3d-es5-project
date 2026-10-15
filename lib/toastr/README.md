@@ -1,10 +1,24 @@
-#toastr 通知提示插件
+# toastr
+JavaScript 消息提示组件
 
-github地址：https://github.com/CodeSeven/toastr 
-官方网址：http://www.toastrjs.com
+## 简要介绍
+提供非阻塞的 toast 通知（成功/警告/错误等）。
 
+## 相关地址
+- github地址：https://github.com/CodeSeven/toastr
 
-toastr.js是一个基于jQuery的非阻塞通知的JavaScript库。
-toastr.js可以设定四种通知模式：成功、出错、警告、提示。提示窗口的位置、动画效果等都可以通过参数来设置，
-并且可以在官方网站上通过勾选参数来生成JavaScript代码，操作简单，容易上手，推荐使用。
- 
+## 本地版本信息
+2.x
+
+## 本地文件说明
+目录内文件：`LICENSE`、`toastr.css`、`toastr.js`
+
+## 第三方组件署名声明
+
+> 著作权归上游权利人所有。请在复制、再分发时保留本声明及同目录许可证文件。
+
+- **组件名称**：toastr
+- **本地版本**：本地 2.x（文件头 2012-2015）
+- **上游地址**：https://github.com/CodeSeven/toastr
+- **版权归属**：Copyright 2012-2015 John Papa, Hans Fjällemark, Tim Ferrell 及贡献者
+- **许可证**：MIT（许可证全文见同目录 LICENSE）

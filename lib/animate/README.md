@@ -1,13 +1,25 @@
-#animate 跨浏览器的CSS3动画库
+# animate.css
+跨浏览器 CSS3 动画库
 
-github地址：https://github.com/daneden/animate.css
+## 简要介绍
+提供大量预设 CSS3 动画类（进入/强调/退出），可配合任意前端框架使用。
 
-本地版本： 3.5.2
-更新日期：
+## 相关地址
+- 官网地址：https://animate.style
+- github地址：https://github.com/daneden/animate.css
 
-介绍：
-	要在你的站点中使用 animate.css，只需将样式文件放入你的页面的 <head> 中，然后将 animated 样式添加到一个元素上，
-	并且加上任意一个动画的名字，就这样，你就得到了一个 CSS 动画的元素！
-	当你将 animate.css 与 jQuery 一起使用或者添加你自己的 CSS 规则时， 你可以用 animate.css 做一大堆其他的事，
-	使用 jQuery 动态添加动画：$('#yourElement').addClass('animated bounceOutLeft');
+## 本地版本信息
+3.5.2
 
+## 本地文件说明
+目录内文件：`animate.css`、`animate.min.css`、`LICENSE`
+
+## 第三方组件署名声明
+
+> 著作权归上游权利人所有。请在复制、再分发时保留本声明及同目录许可证文件。
+
+- **组件名称**：animate.css
+- **本地版本**：3.5.2
+- **上游地址**：https://github.com/animate-css/animate.css
+- **版权归属**：Copyright (c) Daniel Eden
+- **许可证**：MIT（许可证全文见同目录 LICENSE）
