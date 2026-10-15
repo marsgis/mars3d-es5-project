@@ -1,7 +1,11 @@
 /**
  * UI v1.0.0
  * Copyright 2015-2017 Muyao
- * Licensed under the Muyao License 1.0 
+ * Licensed under the Muyao License 1.0
+ *
+ * Original work: NProgress v0.2.0, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
+ * https://github.com/rstacruz/nprogress
+ * @license MIT
  */
 #nprogress {
 	pointer-events: none;

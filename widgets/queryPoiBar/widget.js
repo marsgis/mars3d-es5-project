@@ -184,7 +184,13 @@
       let radius = this.map.camera.positionCartographic.height //单位：米
       if (radius > 100000) {
         this.address = null
-        this.queryAddressDOM.innerHTML = ""
+        if (this.queryAddressDOM) {
+          this.queryAddressDOM.innerHTML = ""
+        }
+        return
+      }
+
+      if (!this.queryAddressDOM) {
         return
       }
 
@@ -536,7 +542,7 @@
         if (laststorage == null) {
           return
         }
-        this.arrHistory = eval(laststorage)
+        this.arrHistory = laststorage
         if (this.arrHistory == null || this.arrHistory.length == 0) {
           return
         }
@@ -565,7 +571,7 @@
       this.arrHistory = []
       localforage.getItem(this.storageName).then((laststorage) => {
         if (laststorage != null) {
-          this.arrHistory = eval(laststorage)
+          this.arrHistory = laststorage
         }
         //先删除之前相同记录
         haoutil.array.remove(this.arrHistory, data)

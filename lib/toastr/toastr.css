@@ -2,6 +2,10 @@
  * UI v1.0.0
  * Copyright 2015-2017 Muyao
  * Licensed under the Muyao License 1.0
+ *
+ * Original work: Toastr, Copyright 2012-2015 John Papa, Hans Fjällemark, and Tim Ferrell.
+ * https://github.com/CodeSeven/toastr
+ * Released under the MIT license - http://www.opensource.org/licenses/mit-license.php
  */
 .toast-title {
 	font-weight: 700;

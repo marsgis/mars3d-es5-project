@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 //当前代码来源：https://github.com/muyao1987/web-dist
 
 //在gulpfile中先载入gulp包，因为这个包提供了一些API
@@ -14,7 +13,7 @@ const cheerio = require("gulp-cheerio")
 const cssmin = require("gulp-clean-css")
 const obfuscator = require("javascript-obfuscator")
 
-const through2 = require("through2")
+const through2 = require("through2").default // through2 v5+ 为ESM，默认导出兼容v4的.obj
 const Vinyl = require("vinyl")
 const JavaScriptObfuscator = require("javascript-obfuscator")
 const PluginError = require("plugin-error")
@@ -26,8 +25,8 @@ const path = require("path")
 //////////////////////////以下参数可以根据实际情况调整/////////////////////
 const copyright = "版权所有 http://mars3d.cn"
 
-//这个时间后修改的文件不处理（增量更新时使用）
-var lastTime //   = new Date("2022-08-01 08:00:00")
+// 这个时间后修改的文件不处理（增量更新时改为具体时间，例如 new Date("2022-08-01 08:00:00")）
+let lastTime = null
 
 //排除不拷贝的文件类型后缀
 const noCopyFileType = [".psd", ".doc", ".docx", ".txt", ".md", ".zip", ".rar"]
@@ -77,7 +76,7 @@ var optsObfuscator = {
   deadCodeInjectionThreshold: 0.4, //死代码块的影响概率
 
   debugProtection: false, //是否禁止使用 F12开发者工具的控制台选项卡，可以用来在线代码的禁止别人调试
-  debugProtectionInterval: false, //如果选中，则会在“控制台”选项卡上使用间隔强制调试模式，从而更难使用“开发人员工具”的其他功能。
+  debugProtectionInterval: 0, //如果>0，则会在“控制台”选项卡上使用间隔强制调试模式，从而更难使用“开发人员工具”的其他功能。
   disableConsoleOutput: false, //是否禁止使用的console.log，console.info，console.error和console.warn。这使得调试器的使用更加困难。
   domainLock: [], //锁定混淆的源代码，使其仅在特定域和/或子域上运行。这使得某人只需复制并粘贴您的源代码并在其他地方运行就变得非常困难。
 
@@ -85,7 +84,7 @@ var optsObfuscator = {
   selfDefending: false, //【如果报错，改为false】使输出代码可抵抗格式设置和变量重命名。如果尝试在混淆后的代码上使用JavaScript美化器，则该代码将无法再使用，从而使其难以理解和修改。
 
   stringArray: true, //删除字符串文字并将它们放在一个特殊的数组中
-  stringArrayEncoding: "base64", //'rc4'  > 'base64'
+  stringArrayEncoding: ["base64"], //['rc4']  > ['base64']
   stringArrayThreshold: 0.75,
 
   transformObjectKeys: false //启用对象键的转换
@@ -102,6 +101,7 @@ gulp.task("build", (done) => {
 
   travel(srcPath)
 
+  const tasks = []
   fileList.forEach((t) => {
     var srcFile = t.pathname
     const outFilePath = distPath
@@ -112,7 +112,7 @@ gulp.task("build", (done) => {
       return
     }
 
-    let bannerData = { date: stat.mtime.format("yyyy-M-d HH:mm:ss") }
+    let bannerData = { date: formatDate(stat.mtime, "yyyy-M-d HH:mm:ss") }
     let banner = "/* <%= date %> | " + copyright + " */\n"
     let bannerHtml = "<!-- <%= date %> | " + copyright + " -->\n"
 
@@ -124,147 +124,183 @@ gulp.task("build", (done) => {
         } else {
           optsObfuscator.controlFlowFlattening = true
         }
-        gulp
-          .src(srcFile, {
-            base: srcPath
-          })
-          .pipe(
-            plumber({
-              errorHandler: function (err) {
+        tasks.push(
+          gulp
+            .src(srcFile, {
+              base: srcPath,
+              encoding: false
+            })
+            .pipe(
+              plumber({
+                errorHandler: function (err) {
+                  throwOnlyCopy(srcPath, srcFile, outFilePath, err)
+                }
+              })
+            )
+            .pipe(
+              utf8Convert({
+                encNotMatchHandle: function (file) {
+                  throwOnlyCopy(srcPath, srcFile, outFilePath, " 编码可能不是utf-8，避免乱码请检查！")
+                }
+              })
+            )
+            .pipe(
+              babel({
+                presets: ["@babel/preset-env"],
+                sourceType: "script",
+                compact: false
+              })
+            )
+            .pipe(
+              uglify().on("error", function (err) {
+                this.emit("end")
                 throwOnlyCopy(srcPath, srcFile, outFilePath, err)
-              }
-            })
-          )
-          .pipe(
-            utf8Convert({
-              encNotMatchHandle: function (file) {
-                throwOnlyCopy(srcPath, srcFile, outFilePath, " 编码可能不是utf-8，避免乱码请检查！")
-              }
-            })
-          )
-          .pipe(
-            babel({
-              presets: ["@babel/preset-env"],
-              sourceType: "script",
-              compact: false
-            })
-          )
-          .pipe(
-            uglify().on("error", function () {
-              this.emit("end")
-              throwOnlyCopy(srcPath, srcFile, outFilePath, err)
-            })
-          )
-          .pipe(optsObfuscator.compact ? obfuscatorGulp(optsObfuscator) : header(banner, bannerData))
-          .pipe(header(banner, bannerData))
-          .pipe(gulp.dest(outFilePath))
+              })
+            )
+            .pipe(optsObfuscator.compact ? obfuscatorGulp(optsObfuscator) : header(banner, bannerData))
+            .pipe(header(banner, bannerData))
+            .pipe(gulp.dest(outFilePath))
+        )
         break
       case ".html":
-        gulp
-          .src(srcFile, {
-            base: srcPath
-          })
-          .pipe(
-            plumber({
-              errorHandler: function (err) {
-                throwOnlyCopy(srcPath, srcFile, outFilePath, err)
-              }
+        tasks.push(
+          gulp
+            .src(srcFile, {
+              base: srcPath,
+              encoding: false
             })
-          )
-          .pipe(
-            utf8Convert({
-              encNotMatchHandle: function (file) {
-                throwOnlyCopy(srcPath, srcFile, outFilePath, " 编码可能不是utf-8，避免乱码请检查！")
-              }
-            })
-          )
-          .pipe(
-            cheerio({
-              run: function ($, file) {
-                $("script").each(function () {
-                  // html内联js编译
-                  const script = $(this)
-                  try {
-                    if (!script.attr("src")) {
-                      const scriptHtml = script.html()
-                      const result = babelCore.transformSync(scriptHtml, {
-                        presets: ["@babel/preset-env"],
-                        sourceType: "script",
-                        compact: false
-                      })
+            .pipe(
+              plumber({
+                errorHandler: function (err) {
+                  throwOnlyCopy(srcPath, srcFile, outFilePath, err)
+                }
+              })
+            )
+            .pipe(
+              utf8Convert({
+                encNotMatchHandle: function (file) {
+                  throwOnlyCopy(srcPath, srcFile, outFilePath, " 编码可能不是utf-8，避免乱码请检查！")
+                }
+              })
+            )
+            .pipe(
+              cheerio({
+                run: function ($, file) {
+                  $("script").each(function () {
+                    // html内联js编译
+                    const script = $(this)
+                    try {
+                      if (!script.attr("src")) {
+                        const scriptHtml = script.html()
+                        const result = babelCore.transformSync(scriptHtml, {
+                          presets: ["@babel/preset-env"],
+                          sourceType: "script",
+                          compact: false
+                        })
 
-                      if (optsObfuscator.compact) {
-                        //高级加密
-                        optsObfuscator.controlFlowFlattening = true
-                        var obfuscationResult = obfuscator.obfuscate(result.code, optsObfuscator)
-                        script.text(obfuscationResult.getObfuscatedCode())
-                      } else {
-                        //普通加密
-                        script.text(result.code)
+                        if (optsObfuscator.compact) {
+                          //高级加密
+                          optsObfuscator.controlFlowFlattening = true
+                          var obfuscationResult = obfuscator.obfuscate(result.code, optsObfuscator)
+                          script.text(obfuscationResult.getObfuscatedCode())
+                        } else {
+                          //普通加密
+                          script.text(result.code)
+                        }
                       }
+                    } catch (err) {
+                      console.log("转换html出错了", err)
+                      throwOnlyCopy(srcPath, srcFile, outFilePath, "html内联js编译错误！")
                     }
-                  } catch (err) {
-                    console.log("转换html出错了", err)
-                    throwOnlyCopy(srcPath, srcFile, outFilePath, "html内联js编译错误！")
-                  }
-                })
-              }
-            })
-          )
-          .pipe(
-            htmlmin({
-              collapseWhitespace: true, //清除空格，压缩html，作用比较大，引起的改变压缩量也特别大
-              collapseBooleanAttributes: true, //省略布尔属性的值，比如：<input checked="checked"/>,那么设置这个属性后，就会变成 <input checked/>
-              removeComments: true, //清除html中注释
-              removeEmptyAttributes: true, //清除所有的空属性
-              removeScriptTypeAttributes: true, //清除所有script标签中的type="text/javascript"属性
-              removeStyleLinkTypeAttributes: true, //清楚所有Link标签上的type属性
-              minifyJS: true, //压缩html中的javascript代码
-              minifyCSS: true //压缩html中的css代码
-            })
-          )
-          .pipe(header(bannerHtml, bannerData))
-          .pipe(gulp.dest(outFilePath))
+                  })
+                }
+              })
+            )
+            .pipe(
+              htmlmin({
+                collapseWhitespace: true, //清除空格，压缩html，作用比较大，引起的改变压缩量也特别大
+                collapseBooleanAttributes: true, //省略布尔属性的值，比如：<input checked="checked"/>,那么设置这个属性后，就会变成 <input checked/>
+                removeComments: true, //清除html中注释
+                removeEmptyAttributes: true, //清除所有的空属性
+                removeScriptTypeAttributes: true, //清除所有script标签中的type="text/javascript"属性
+                removeStyleLinkTypeAttributes: true, //清楚所有Link标签上的type属性
+                minifyJS: true, //压缩html中的javascript代码
+                minifyCSS: true //压缩html中的css代码
+              })
+            )
+            .pipe(header(bannerHtml, bannerData))
+            .pipe(gulp.dest(outFilePath))
+        )
         break
       case ".css":
-        gulp
-          .src(srcFile, {
-            base: srcPath
-          })
-          .pipe(
-            plumber({
-              errorHandler: function (err) {
-                throwOnlyCopy(srcPath, srcFile, outFilePath, err)
-              }
+        tasks.push(
+          gulp
+            .src(srcFile, {
+              base: srcPath,
+              encoding: false
             })
-          )
-          .pipe(
-            utf8Convert({
-              encNotMatchHandle: function (file) {
-                throwOnlyCopy(srcPath, srcFile, outFilePath, " 编码可能不是utf-8，避免乱码请检查！")
-              }
-            })
-          )
-          .pipe(
-            cssmin({
-              advanced: false, //类型：Boolean 默认：true [是否开启高级优化（合并选择器等）]
-              compatibility: "ie8", //保留ie7及以下兼容写法 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
-              keepSpecialComments: "*" //保留所有特殊前缀 当你用autoprefixer生成的浏览器前缀，如果不加这个参数，有可能将会删除你的部分前缀
-            })
-          )
-          .pipe(header(banner, bannerData))
-          .pipe(gulp.dest(outFilePath))
+            .pipe(
+              plumber({
+                errorHandler: function (err) {
+                  throwOnlyCopy(srcPath, srcFile, outFilePath, err)
+                }
+              })
+            )
+            .pipe(
+              utf8Convert({
+                encNotMatchHandle: function (file) {
+                  throwOnlyCopy(srcPath, srcFile, outFilePath, " 编码可能不是utf-8，避免乱码请检查！")
+                }
+              })
+            )
+            .pipe(
+              cssmin({
+                advanced: false, //类型：Boolean 默认：true [是否开启高级优化（合并选择器等）]
+                compatibility: "ie8", //保留ie7及以下兼容写法 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
+                keepSpecialComments: "*" //保留所有特殊前缀 当你用autoprefixer生成的浏览器前缀，如果不加这个参数，有可能将会删除你的部分前缀
+              })
+            )
+            .pipe(header(banner, bannerData))
+            .pipe(gulp.dest(outFilePath))
+        )
         break
       default:
-        gulp
-          .src(srcFile, {
-            base: srcPath
-          })
-          .pipe(gulp.dest(outFilePath))
+        tasks.push(
+          gulp
+            .src(srcFile, {
+              base: srcPath,
+              encoding: false
+            })
+            .pipe(gulp.dest(outFilePath))
+        )
         break
     }
   })
-  done()
+  if (tasks.length === 0) {
+    done()
+    return
+  }
+  let remaining = tasks.length
+  let settled = false
+  const finishTask = (err) => {
+    if (settled) {
+      return
+    }
+    if (err) {
+      settled = true
+      done(err)
+      return
+    }
+    remaining -= 1
+    if (remaining === 0) {
+      settled = true
+      done()
+    }
+  }
+  tasks.forEach((stream) => {
+    stream.on("end", () => finishTask())
+    stream.on("error", finishTask)
+  })
 
   // console.log('--------代码编译完成--------');
 })
@@ -321,7 +357,8 @@ function throwOnlyCopy(srcPath, pathname, outFilePath, message) {
   if (pathname && outFilePath) {
     gulp
       .src(pathname, {
-        base: srcPath
+        base: srcPath,
+        encoding: false
       })
       .pipe(gulp.dest(outFilePath))
   }
@@ -367,24 +404,23 @@ function obfuscatorGulp(options = {}) {
   })
 }
 
-// eslint-disable-next-line no-extend-native
-Date.prototype.format = function (fmt) {
-  var o = {
-    "M+": this.getMonth() + 1, //月份
-    "d+": this.getDate(), //日
-    "h+": this.getHours() % 12 == 0 ? 12 : this.getHours() % 12, //小时
-    "H+": this.getHours(), //小时
-    "m+": this.getMinutes(), //分
-    "s+": this.getSeconds(), //秒
-    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-    S: this.getMilliseconds() //毫秒
+function formatDate(date, fmt) {
+  const o = {
+    "M+": date.getMonth() + 1, //月份
+    "d+": date.getDate(), //日
+    "h+": date.getHours() % 12 === 0 ? 12 : date.getHours() % 12, //小时
+    "H+": date.getHours(), //小时
+    "m+": date.getMinutes(), //分
+    "s+": date.getSeconds(), //秒
+    "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+    S: date.getMilliseconds() //毫秒
   }
   if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length))
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substring(4 - RegExp.$1.length))
   }
-  for (var k in o) {
+  for (const k in o) {
     if (new RegExp("(" + k + ")").test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length))
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : ("00" + o[k]).substring(("" + o[k]).length))
     }
   }
   return fmt

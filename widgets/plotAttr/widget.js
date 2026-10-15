@@ -111,6 +111,9 @@
         }
 
         setTimeout(() => {
+          if (this.viewWindow == null) {
+            return
+          }
           this.viewWindow.plotEdit.startEditing({ ...graphicOptions, style: { ...(graphicOptions.style ?? {}), ...parentStyle } })
         }, 500)
 
@@ -123,6 +126,9 @@
             }
 
             setTimeout(() => {
+              if (this.viewWindow == null) {
+                return
+              }
               this.viewWindow.plotEdit.startEditing({
                 style: { show: !!typeData, ...(typeData ?? {}) },
                 type: typeItem,

@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 let thisWidget
 
 //当前页面业务
