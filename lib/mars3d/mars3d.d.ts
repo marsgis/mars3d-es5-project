@@ -7,7 +7,7 @@
  *
  * Apache-2.0 WITH Mars3D Additional Terms | https://mars3d.cn
  * Runtime logo and F12 console notice must be retained.
- * Commercial license: https://mall.marsgis.cn
+ * Commercial license: http://mars3d.cn/buy.html
  */
 
 import * as Cesium from "mars3d-cesium"
