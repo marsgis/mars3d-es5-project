@@ -26,7 +26,7 @@ Mars3D基础项目 是基于[Mars3D平台](http://mars3d.cn)做的一个应用�
 
 原生JS版 (widget方式) 的特点：
 1. 基于**传统模式原生JS**技术栈下开发的
-2. 使用[es5-widget](lib\mars3d\thirdParty\es5-widget\es5-widget.js)插件进行模块化封装调用各功能
+2. 使用[es5-widget](lib\czmThirdParty\es5-widget\es5-widget.js)插件进行模块化封装调用各功能
 3. 在传统技术栈时(vue还没成熟流行时)多年来应用于无数项目，归纳总结的一个基础的项目模版
 
  > 如果您不熟悉原生JS，也可以阅读：[基础项目Vue版](http://mars3d.cn/docs/guide/project-vue/) 、[基础项目React版](http://mars3d.cn/docs/guide/project-react/)
