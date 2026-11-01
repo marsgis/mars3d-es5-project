@@ -2,7 +2,7 @@
 /**
  * Mars3D三维可视化平台  mars3d 免费公开版
  * 版本信息：v3.12.0
- * 编译日期：2026-10-31 22:34 HX
+ * 编译日期：2026-11-01 21:36 ZX
  * 版权所有：Copyright by http://mars3d.cn
  *
  * Apache-2.0 WITH Mars3D Additional Terms | https://mars3d.cn
@@ -19,7 +19,6 @@ declare const name: string
 declare const website: string
 
 declare const proj4: any
-declare const provider: any
 declare const turf: any
 
 /**
@@ -4080,6 +4079,10 @@ declare class BaseThing extends BaseClass {
      */
     id: string | number;
     /**
+     * 当前对象所在的地图对象
+     */
+    readonly map: Map;
+    /**
      * 设置对象的启用和禁用状态。
      */
     enabled: boolean;
@@ -4715,6 +4718,10 @@ declare class TaskItem extends BaseClass {
      * 当前任务的唯一标识id
      */
     id: number | string;
+    /**
+     * 当前任务所在的地图对象
+     */
+    readonly map: Map;
     /**
      * 当前任务的名称
      */
@@ -5783,6 +5790,14 @@ declare class BaseGraphic extends BaseClass {
      */
     readonly isPoint: boolean;
     /**
+     * 当前对象所在的地图对象
+     */
+    readonly map: Map;
+    /**
+     * 当前对象所在的图层对象
+     */
+    readonly layer: BaseLayer;
+    /**
      * 对象的id标识
      */
     id: string | number;
@@ -6022,6 +6037,22 @@ declare class BaseGraphic extends BaseClass {
         noStyle?: boolean;
         standard?: boolean;
     }): any | undefined;
+    /**
+     * 样式转换为 JSON 的扩展点。
+     * 子类可覆写本方法，或继续兼容覆写 _style2Json。
+     * @param style - 样式对象
+     * @param [styleJson] - 已有样式 JSON
+     * @returns 转换后的样式 JSON
+     */
+    styleToJSON(style: any, styleJson?: any): any;
+    /**
+     * 导出 JSON 的扩展点。
+     * 子类可覆写本方法，或继续兼容覆写 _toJSON_Ex。
+     * @param json - 待导出的 JSON 对象
+     * @param [options] - 导出参数
+     * @returns 传入的 JSON 对象
+     */
+    toJSONEx(json: any, options?: any): any;
     /**
      * 将矢量数据的坐标、样式及属性等信息导出为对象，可以用于存储。
      * @param [options] - 参数对象:
@@ -9764,6 +9795,12 @@ declare class DivGraphic extends BaseGraphic {
      * 中心点坐标（笛卡尔坐标）
      */
     readonly center: Cesium.Cartesian3 | Cesium.SampledPositionProperty;
+    /**
+     * 对象添加到图层前创建一些对象的钩子方法，
+     * 只会调用一次
+     * @returns 无
+     */
+    _mountedHook(): void;
 }
 
 declare namespace DivLightPoint {
@@ -9998,6 +10035,12 @@ declare class DivPlane extends DivGraphic {
      * 父容器DOM对象
      */
     readonly parentContainer: HTMLElement;
+    /**
+     * 对象添加到图层前创建一些对象的钩子方法，
+     * 只会调用一次
+     * @returns 无
+     */
+    _mountedHook(): void;
 }
 
 declare namespace DivUpLabel {
@@ -10430,6 +10473,10 @@ declare class BaseEntity extends BaseGraphic {
      */
     readonly entity: Cesium.Entity;
     /**
+     * 当前矢量对象的轮廓 Entity 数组（只读副本）
+     */
+    readonly entityOutlines: Cesium.Entity[];
+    /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
     readonly entityGraphic: any;
@@ -10466,6 +10513,13 @@ declare class BaseEntity extends BaseGraphic {
      * @returns 无
      */
     closeHighlight(): void;
+    /**
+     * 创建当前矢量对象对应的 Cesium.Entity 对象。
+     * 子类可覆写 _createEntity，或直接调用本方法。
+     * @param [addattr] - 附加到 Entity 的参数
+     * @returns 创建的 Cesium.Entity 对象
+     */
+    createEntity(addattr?: any): Cesium.Entity;
     /**
      * 设置整体透明度(globalAlpha值), 不是所有类型均支持，主要看数据类型和材质类型决定。
      * 对象本身透明度请用 graphic.setStyle({ opacity: value })
@@ -12444,6 +12498,10 @@ declare class DivBillboardEntity extends BillboardEntity {
  * 标绘处理对应的编辑基类
  */
 declare class EditBase {
+    /**
+     * 当前编辑对应的矢量对象
+     */
+    readonly graphic: BaseGraphic;
     /**
      * 矢量数据对应的 Cesium内部对象的具体类型对象
      */
@@ -23028,6 +23086,10 @@ declare class BaseLayer extends BaseClass {
      */
     id: string | number;
     /**
+     * 当前图层所在的地图对象
+     */
+    readonly map: Map;
+    /**
      * 名称
      */
     name: string;
@@ -30781,6 +30843,25 @@ declare class ContextMenu extends BaseControl {
 }
 
 /**
+ * 添加版权水印；授权版验证失败或免费版调用时按配置添加。
+ * @param scene - Cesium Scene
+ * @param [licenseUrl] - 授权校验地址
+ */
+declare function add(scene: any, licenseUrl?: string): void;
+
+/**
+ * 重新校验版权图；仅对已存在水印状态的 scene 生效，授权通过时不误加水印。
+ * @param scene - Cesium Scene
+ */
+declare function refresh(scene: any): void;
+
+/**
+ * 清理版权图及其定时器/监听；Map 销毁时调用。
+ * @param scene - Cesium Scene
+ */
+declare function remove(scene: any): void;
+
+/**
  * 地图鼠标事件 统一管理类，由Map内部创建
  * @param map - 地图对象
  * @param [options = {}] - 控制参数
@@ -30814,6 +30895,14 @@ declare class MouseEvent {
      * @returns 无
      */
     clearMoveTargetDelay(): void;
+    /**
+     * 获取 屏幕XY坐标 对应的 笛卡尔三维坐标
+     * @param position - 屏幕坐标
+     * @param [pickedObject] - 已拾取到的对象，传入后不再重复 scene.pick
+     * @param [skipPick = false] - 调用方已完成拾取时跳过内部 scene.pick（每次 pick 都是一次渲染+回读）
+     * @returns 坐标
+     */
+    getCurrentMousePosition(position: Cesium.Cartesian2, pickedObject?: any, skipPick?: boolean): Cesium.Cartesian3 | undefined | null;
     /**
      * 获取拾取到的Cesium选中对象
      * @param event - 单击或鼠标移入事件对象
@@ -31751,9 +31840,11 @@ declare class Map extends BaseClass {
     /**
      * 获取 屏幕XY坐标 对应的 笛卡尔三维坐标
      * @param position - 屏幕XY坐标（如鼠标所在位置)
+     * @param [pickedObject] - 已拾取到的对象，传入后不再重复 scene.pick
+     * @param [skipPick = false] - 调用方已完成拾取时跳过内部 scene.pick（避免又一次拾取渲染+回读）
      * @returns 笛卡尔三维坐标
      */
-    getCurrentMousePosition(position: Cesium.Cartesian2): Cesium.Cartesian3;
+    getCurrentMousePosition(position: Cesium.Cartesian2, pickedObject?: any, skipPick?: boolean): Cesium.Cartesian3;
     /**
      * 取地图屏幕中心点坐标
      * @param [toCartesian] - 返回Cesium.Cartesian3格式坐标
@@ -39655,6 +39746,10 @@ declare class FloodByMaterial extends TerrainEditBase {
      */
     color: Cesium.Color;
     /**
+     * 当前淹没分析的最高高度（单位：米）
+     */
+    readonly maxHeight: number;
+    /**
      * 是否显示区域外的地图
      */
     showElseArea: boolean;
@@ -44102,6 +44197,20 @@ declare namespace layer {
 }
 
 /**
+ * 瓦片图层数据提供者命名空间
+ */
+declare namespace provider {
+  export { XyzImageryProvider }
+  export { TdtImageryProvider }
+  export { GaodeImageryProvider }
+  export { BaiduImageryProvider }
+  export { TencentImageryProvider }
+  export { GoogleImageryProvider }
+  export { OsmImageryProvider }
+  export { EmptyImageryProvider }
+}
+
+/**
  * 服务查询类 命名空间
  */
 declare namespace query {
@@ -44165,17 +44274,11 @@ declare namespace thing {
 }
 
 export {
-  name, website, update, version, proj4, Tle, WindUtil, PlotUtil,
-  BaseClass, BaseThing, GroupThing, MarsArray, ColorOptsConver, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, TaskItem,
+  name, website, update, version, proj4, turf,
+  BaseClass, BaseThing, GroupThing, MarsArray, ColorOptsConver, LngLatPoint, LngLatArray, GroundSkyBox, MultipleSkyBox, LocalWorldTransform, CRS, ChinaCRS, EventType, State, Token, ColorRamp, TaskItem, Texture3, PointCluster, PointCollision,
   MaterialType, GraphicType, LayerType, ControlType, EffectType, ThingType, Lang, MoveType, ClipType, Icon, EditPointType, QueryServiceType, QueryRouteType,
   DomUtil, MeasureUtil, PointUtil, PolyUtil, PointTrans, Util, Log, MaterialUtil, GraphicUtil, DrawUtil, LayerUtil, ControlUtil, EffectUtil, ThingUtil,
-  BaseMaterialConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
+  BaseMaterialConver, ImageOptsConver, BaseStyleConver, BillboardStyleConver, CloudStyleConver, BoxStyleConver, CircleStyleConver, CorridorStyleConver, CylinderStyleConver, DivGraphicStyleConver, EllipsoidStyleConver, LabelStyleConver, ModelStyleConver, PathStyleConver, PlaneStyleConver, PointStyleConver, PolygonStyleConver, PolylineStyleConver, PolylineVolumeStyleConver, RectangleStyleConver, RectangularSensorStyleConver, WallStyleConver,
   material, graphic, edit, provider, layer, thing, effect, control, query,
   Map,
-};
-
-export {
-  EchartsLayer, HeatLayer, MapVLayer, WindLayer, CanvasWindLayer,
-  TdtDmLayer, TdtTerrainProvider, CamberRadar, JammingRadar, FixedJammingRadar,
-  ConicSensor, RectSensor, SatelliteSensor, Satellite,
 };
